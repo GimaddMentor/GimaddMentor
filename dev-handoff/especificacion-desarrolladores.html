@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Gimadd Mentor — Especificación para desarrollo de APP</title>
+  <style>
+    :root { --text: #111827; --muted: #6b7280; --border: #e5e7eb; --accent: #1d4ed8; --lime: #b8d63a; }
+    * { box-sizing: border-box; }
+    body { font-family: "Inter", system-ui, -apple-system, sans-serif; color: var(--text); line-height: 1.55; max-width: 900px; margin: 0 auto; padding: 2rem 1.5rem 4rem; font-size: 10.5pt; }
+    h1 { font-size: 1.65rem; letter-spacing: -0.03em; margin: 0 0 0.5rem; }
+    h2 { font-size: 1.2rem; margin: 2rem 0 0.75rem; padding-bottom: 0.35rem; border-bottom: 2px solid var(--lime); page-break-after: avoid; }
+    h3 { font-size: 1rem; margin: 1.25rem 0 0.5rem; color: var(--accent); page-break-after: avoid; }
+    .meta { color: var(--muted); font-size: 0.95rem; margin-bottom: 2rem; }
+    p { margin: 0.65rem 0; }
+    ul, ol { margin: 0.5rem 0; padding-left: 1.35rem; }
+    li { margin: 0.35rem 0; }
+    code, pre { font-family: ui-monospace, "Cascadia Code", monospace; font-size: 0.82rem; }
+    pre { background: #f9fafb; border: 1px solid var(--border); border-radius: 8px; padding: 0.85rem 1rem; overflow-x: auto; page-break-inside: avoid; }
+    .note { background: #fffbeb; border: 1px solid #fcd34d; border-radius: 8px; padding: 0.75rem 1rem; margin: 1rem 0; font-size: 0.95rem; }
+    .fig { margin: 1.25rem 0; page-break-inside: avoid; }
+    .fig img { width: 100%; max-width: 430px; border: 1px solid var(--border); border-radius: 12px; display: block; margin: 0 auto; box-shadow: 0 4px 24px rgba(0,0,0,0.08); }
+    .fig figcaption { font-size: 0.88rem; color: var(--muted); text-align: center; margin-top: 0.5rem; }
+    .mindmap { width: 100%; max-height: 95vh; object-fit: contain; }
+    table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.92rem; page-break-inside: avoid; }
+    th, td { border: 1px solid var(--border); padding: 0.45rem 0.6rem; text-align: left; }
+    th { background: #f3f4f6; }
+    @media print {
+      body { padding: 0; max-width: none; font-size: 9.5pt; }
+      h2 { break-before: page; }
+      h2:first-of-type { break-before: auto; }
+      a { color: inherit; text-decoration: none; }
+      .no-print { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Especificación técnica — Gimadd Mentor (prototipo HTML)</h1>
+  <p class="meta">Documento para el equipo de desarrollo de la aplicación móvil / web. Describe la lógica funcional y de datos del archivo demo <strong>gimadd-mentor-jugador-app.html</strong>, con mapa mental, ejemplos y capturas obtenidas del propio prototipo.</p>
+
+  <p class="no-print" style="background:#ecfdf5;padding:0.65rem 1rem;border-radius:8px;font-size:0.9rem"><strong>PDF:</strong> En Chrome o Edge: Archivo → Imprimir → Guardar como PDF. O ejecutar desde la carpeta <code>dev-handoff</code>: <code>./generar-pdf.sh</code></p>
+
+  <h2>1. Mapa mental de la lógica</h2>
+  <p>Visión global: una sola página (<abbr title="Single Page Application">SPA</abbr>) con cinco vistas principales, dos almacenes lógicos (objetivos y partidos), sincronización entre pestañas y exportación del HTML con datos incrustados.</p>
+  <figure class="fig">
+    <img class="mindmap" src="mapa-mental-logica.svg" alt="Mapa mental SVG de la lógica del prototipo Gimadd Mentor" />
+    <figcaption>Fig. 1 — Mapa mental (vectorial, escalable)</figcaption>
+  </figure>
+
+  <h2>2. Vistas de la aplicación (navegación)</h2>
+  <p>La función <code>showView(name)</code> activa la sección con <code>data-view</code> igual a <code>name</code> (clase <code>is-active</code>) y ajusta la clase del <code>body</code>. Para documentación y capturas, el prototipo admite carga inicial con hash: <code>#jugador</code>, <code>#objetivos</code>, <code>#entrenador</code>, <code>#diario</code> (sin hash = inicio).</p>
+
+  <table>
+    <thead><tr><th>Vista</th><th>Propósito</th></tr></thead>
+    <tbody>
+      <tr><td><code>home</code></td><td>Elegir perfil jugador o entrenador; descargar HTML completo con datos actuales.</td></tr>
+      <tr><td><code>jugador</code></td><td>Hub del jugador: flujo videoanálisis, aviso, accesos a objetivos (perfil) y diario de partidos.</td></tr>
+      <tr><td><code>objetivos</code></td><td>Perfil del jugador con pestañas: Plan de acción (pendiente revisión + plan en curso), Activos, Completados.</td></tr>
+      <tr><td><code>entrenador</code></td><td>Panel con tres bloques: Revisión/vídeo, Objetivos (misma taxonomía en subpestañas), Partidos (solo lectura).</td></tr>
+      <tr><td><code>diario</code></td><td>Registro de partidos, estadísticas, formulario de partido con ítems de plan de acción enlazados a objetivos.</td></tr>
+    </tbody>
+  </table>
+
+  <h3>2.1 Capturas del prototipo</h3>
+
+  <figure class="fig">
+    <img src="assets/vista-home.png" width="430" alt="Pantalla inicio elección de perfil" />
+    <figcaption>Fig. 2 — Inicio: selección jugador / entrenador y exportación del HTML</figcaption>
+  </figure>
+
+  <figure class="fig">
+    <img src="assets/vista-jugador.png" width="430" alt="Área jugador" />
+    <figcaption>Fig. 3 — Área jugador: atajos a perfil de objetivos y diario</figcaption>
+  </figure>
+
+  <figure class="fig">
+    <img src="assets/vista-objetivos.png" width="430" alt="Perfil objetivos con pestañas" />
+    <figcaption>Fig. 4 — Perfil (objetivos): pestaña «Plan de acción» con secciones y contadores. Las otras pestañas alternan paneles sin recargar.</figcaption>
+  </figure>
+
+  <figure class="fig">
+    <img src="assets/vista-entrenador.png" width="430" alt="Panel entrenador" />
+    <figcaption>Fig. 5 — Entrenador: subpestaña activa «Revisión / vídeo»; Objetivos y Partidos comparten la misma barra superior.</figcaption>
+  </figure>
+
+  <figure class="fig">
+    <img src="assets/vista-diario.png" width="430" alt="Diario de partidos" />
+    <figcaption>Fig. 6 — Diario: lista de partidos, estadísticas y enlace a objetivos</figcaption>
+  </figure>
+
+  <h2>3. Modelo de datos — Objetivos</h2>
+  <p><strong>localStorage:</strong> clave <code>gimadd_objetivos_v1</code> (array JSON). Clave de versión embebida: <code>gimadd_objetivos_v1_fileId</code> comparada con <code>gimadd-store-meta.fileId</code> en el HTML: si cambia, se reinicializa desde el JSON embebido <code>gimadd-objetivos-seed</code> (útil al importar un backup).</p>
+
+  <h3>3.1 Campos relevantes por objetivo</h3>
+  <table>
+    <thead><tr><th>Campo</th><th>Tipo / valores</th><th>Notas</th></tr></thead>
+    <tbody>
+      <tr><td><code>id</code></td><td>string</td><td>Identificador estable (p. ej. <code>g-…</code>).</td></tr>
+      <tr><td><code>titulo</code></td><td>string</td><td>Texto mostrado en tarjetas.</td></tr>
+      <tr><td><code>estado</code></td><td><code>activo</code> | <code>pendiente_revision</code> | <code>completado</code></td><td>Drive el split en listas y badges.</td></tr>
+      <tr><td><code>completado</code></td><td>boolean</td><td>Derivado coherente con <code>estado</code>.</td></tr>
+      <tr><td><code>enPlanAccion</code></td><td>boolean</td><td>Solo sentido si está activo: entra en «plan en proceso».</td></tr>
+      <tr><td><code>tipoObjetivo</code></td><td><code>clase</code> | <code>partido</code></td><td>Etiqueta UI.</td></tr>
+      <tr><td><code>partidosMeta</code></td><td>number 1–50</td><td>Umbral de sesiones/partidos a practicar en diario antes de pasar a revisión.</td></tr>
+      <tr><td><code>progreso</code></td><td>number 0–100</td><td>Slider / barra jugador y entrenador.</td></tr>
+      <tr><td><code>practicasUmbralOffset</code></td><td>number</td><td>Al reactivar un objetivo, se alinea el conteo de prácticas con el histórico.</td></tr>
+      <tr><td><code>jugadorSubioVideoTrasRevision</code></td><td>boolean</td><td>Si en revisión el jugador confirmó nuevo vídeo; alimenta dashboard entrenador.</td></tr>
+      <tr><td><code>creadoPor</code></td><td><code>jugador</code> | <code>entrenador</code></td><td>Copy contextual en tarjeta.</td></tr>
+      <tr><td><code>fechaLimite</code>, <code>fechaCompletado</code></td><td>ISO fecha (string)</td><td>Opcionales.</td></tr>
+    </tbody>
+  </table>
+
+  <h3>3.2 Clasificación <code>splitGoals</code></h3>
+  <ul>
+    <li><strong>pend (Pendiente de revisión):</strong> <code>estado === "pendiente_revision"</code>.</li>
+    <li><strong>plan (Plan de acción en proceso):</strong> activo y <code>enPlanAccion</code> verdadero.</li>
+    <li><strong>act (Activos fuera del plan):</strong> activo y sin plan.</li>
+    <li><strong>done (Completados):</strong> <code>estado === "completado"</code>.</li>
+  </ul>
+  <p><strong>Pestaña «Plan de acción» (jugador y coach):</strong> muestra en orden las secciones <em>pend</em> + <em>plan</em>; el número entre paréntesis en la pestaña es <code>pend.length + plan.length</code>.</p>
+
+  <h3>3.3 Ejemplo de objeto objetivo (simplificado)</h3>
+  <pre>{
+  "id": "g-1777482161796-7qk73oj",
+  "titulo": "mejorar saque",
+  "estado": "activo",
+  "enPlanAccion": true,
+  "tipoObjetivo": "partido",
+  "partidosMeta": 4,
+  "progreso": 85,
+  "practicasUmbralOffset": 0,
+  "jugadorSubioVideoTrasRevision": true,
+  "creadoPor": "jugador",
+  "completado": false
+}</pre>
+
+  <h2>4. Modelo de datos — Partidos (diario)</h2>
+  <p><strong>localStorage:</strong> <code>gimadd_partidos_v1</code>, con <code>gimadd_partidos_v1_fileId</code> alineado a <code>gimadd-diario-meta</code>. Array de partidos; cada uno puede incluir <code>planAccion</code>: lista de ítems ligada a objetivos por <code>objetivoId</code>.</p>
+
+  <h3>4.1 Ejemplo de ítem planAccion en un partido</h3>
+  <pre>{
+  "objetivoId": "g-1777482161796-7qk73oj",
+  "titulo": "mejorar saque",
+  "practicado": true,
+  "sensaciones": "he metido un montón de puntos de saque"
+}</pre>
+
+  <h3>4.2 Transición automática a revisión</h3>
+  <p>Para cada objetivo <strong>activo</strong> con <strong>plan</strong>, se cuenta cuántos partidos tienen al menos un ítem de <code>planAccion</code> con ese <code>objetivoId</code> y <code>practicado: true</code>, restando <code>practicasUmbralOffset</code>. Si el total ≥ <code>partidosMeta</code>, <code>recalcGoalsFromMatches()</code> pasa el objetivo a <code>pendiente_revision</code>, reinicia la bandera de vídeo y guarda.</p>
+
+  <h2>5. Sincronización y guardado</h2>
+  <ul>
+    <li><strong>Evento <code>storage</code>:</strong> otras pestañas del mismo origen recargan objetivos o partidos y refrescan UI.</li>
+    <li><strong>BroadcastChannel</strong> <code>gimadd_objetivos_channel</code> y <code>gimadd_partidos_channel</code>: aviso inmediato; en el mismo documento el canal también recibe el mensaje, por eso <code>saveGoals</code> durante <code>render()</code> usa <code>{ broadcast: false }</code> para evitar un bucle infinito.</li>
+    <li><strong><code>refreshAllGoalUI()</code>:</strong> bandera central tras cambios: banner inicio, listas jugador, espejo coach, dashboard revisión, tabla partidos coach, sección plan en formulario diario.</li>
+  </ul>
+
+  <div class="note"><strong>Implementación nativa:</strong> reemplazar localStorage/BroadcastChannel por API + base de datos y mecanismo push o tiempo real acordado; conservar los mismos contratos de datos facilita la migración desde este prototipo.</div>
+
+  <h2>6. Flujos de interacción (ejemplos)</h2>
+
+  <h3>6.1 Jugador crea objetivo y lo pone en plan</h3>
+  <ol>
+    <li>Pulsa FAB «+» en vista objetivos; modal con título, fecha opcional, tipo, número de sesiones meta, checkbox plan de acción.</li>
+    <li><code>goalForm.onsubmit</code> crea o actualiza el elemento en el array y llama <code>saveGoals</code> + <code>refreshAllGoalUI</code>.</li>
+    <li>El objetivo aparece en la pestaña Plan de acción (sección «en proceso») si está activo y marcado en plan.</li>
+  </ol>
+
+  <h3>6.2 Jugador registra partido con práctica de objetivo</h3>
+  <ol>
+    <li>En diario, «Agregar resultado partido»; el formulario ofrece objetivos activos en plan para marcar prácticas y sensaciones.</li>
+    <li>Al guardar, <code>persistMatches</code> + <code>recalcGoalsFromMatches</code>; si se alcanza el umbral, el objetivo pasa a «Pendiente de revisión» y el banner de aviso puede mostrarse en el hub jugador.</li>
+  </ol>
+
+  <h3>6.3 Entrenador completa o reactiva</h3>
+  <ol>
+    <li>En dashboard de tarjetas o en el espejo de objetivos, acciones «Marcar completado» / «Reactivar con nuevo %».</li>
+    <li>Los sliders de progreso en tarjetas tipo espejo actualizan <code>progreso</code> en caliente.</li>
+  </ol>
+
+  <h3>6.4 Exportación <code>downloadFullApp()</code></h3>
+  <p>Genera un nuevo archivo HTML sustituyendo los bloques JSON incrustados por los datos vivos y nuevos <code>fileId</code> para objetivos y diario, de modo que al abrir el archivo en otro sitio no se mezclen entradas antiguas de <code>localStorage</code>.</p>
+
+  <h2>7. Resumen de archivos y claves (referencia rápida)</h2>
+  <table>
+    <thead><tr><th>Elemento</th><th>Identificador</th></tr></thead>
+    <tbody>
+      <tr><td>Meta objetivos embebido</td><td><code>#gimadd-store-meta</code></td></tr>
+      <tr><td>Seed objetivos embebido</td><td><code>#gimadd-objetivos-seed</code></td></tr>
+      <tr><td>Meta diario embebido</td><td><code>#gimadd-diario-meta</code></td></tr>
+      <tr><td>Seed partidos embebido</td><td><code>#gimadd-partidos-seed</code></td></tr>
+      <tr><td>localStorage objetivos</td><td><code>gimadd_objetivos_v1</code></td></tr>
+      <tr><td>localStorage partidos</td><td><code>gimadd_partidos_v1</code></td></tr>
+    </tbody>
+  </table>
+
+  <p style="margin-top:2rem;color:var(--muted);font-size:0.88rem">Generado para Gimadd Mentor — <time datetime="2026-04-30">abril 2026</time>. Prototipo fuente en la misma carpeta padre: <code>gimadd-mentor-jugador-app.html</code>.</p>
+
+</body>
+</html>

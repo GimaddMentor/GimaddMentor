@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Gimadd Mentor — Servicios (vista jugador)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --yellow: #f5d547;
+      --yellow-soft: #fff9e0;
+      --yellow-dark: #e6c73a;
+      --bg: #f4f4f5;
+      --card: #ffffff;
+      --text: #111827;
+      --muted: #6b7280;
+      --border: #e5e7eb;
+      --radius: 16px;
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Inter", system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding-bottom: calc(5rem + var(--safe-bottom));
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
+      padding: 0.75rem 1rem 0.65rem;
+    }
+    .topbar-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      max-width: 520px;
+      margin: 0 auto;
+    }
+    .logo {
+      font-weight: 800;
+      font-size: 0.95rem;
+      letter-spacing: -0.03em;
+    }
+    .logo span { color: var(--yellow-dark); }
+    .coach-pill {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.8rem;
+      color: var(--muted);
+      max-width: 55%;
+    }
+    .coach-pill strong {
+      color: var(--text);
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .avatar-sm {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid var(--yellow-soft);
+      flex-shrink: 0;
+    }
+
+    .page-title {
+      max-width: 520px;
+      margin: 0 auto;
+      padding: 1.25rem 1rem 0.5rem;
+    }
+    .page-title h1 {
+      margin: 0;
+      font-size: 1.35rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+    }
+    .page-title p {
+      margin: 0.35rem 0 0;
+      font-size: 0.875rem;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+
+    .main {
+      max-width: 520px;
+      margin: 0 auto;
+      padding: 0 1rem 1rem;
+    }
+
+    .section {
+      margin-top: 1.5rem;
+    }
+    .section:first-of-type { margin-top: 0.75rem; }
+    .section-head {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 0.5rem;
+      margin-bottom: 0.65rem;
+    }
+    .section-head h2 {
+      margin: 0;
+      font-size: 0.95rem;
+      font-weight: 700;
+    }
+    .section-head span {
+      font-size: 0.65rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+    }
+
+    .card {
+      background: var(--card);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      margin-bottom: 0.85rem;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    }
+    .card-body {
+      display: grid;
+      grid-template-columns: 92px 1fr;
+      gap: 0.85rem;
+      padding: 0.85rem;
+      align-items: start;
+    }
+    .card-thumb {
+      width: 92px;
+      height: 92px;
+      border-radius: 12px;
+      object-fit: cover;
+      background: #f3f4f6;
+    }
+    .tag {
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--muted);
+      margin-bottom: 0.2rem;
+    }
+    .card h3 {
+      margin: 0 0 0.35rem;
+      font-size: 1rem;
+      font-weight: 700;
+      line-height: 1.25;
+    }
+    .card .desc {
+      margin: 0 0 0.55rem;
+      font-size: 0.78rem;
+      color: var(--muted);
+      line-height: 1.45;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .prices {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text);
+      line-height: 1.4;
+    }
+    .prices .parejas {
+      color: var(--muted);
+      font-weight: 500;
+      font-size: 0.76rem;
+    }
+    .card-actions {
+      display: flex;
+      gap: 0.5rem;
+      padding: 0 0.85rem 0.85rem;
+    }
+    .btn {
+      flex: 1;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.65rem 0.75rem;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 0.82rem;
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .btn-primary {
+      background: var(--yellow);
+      color: #111827;
+      box-shadow: 0 2px 8px rgba(245, 213, 71, 0.4);
+    }
+    .btn-primary:active { transform: scale(0.98); }
+    .btn-ghost {
+      background: var(--bg);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .hint-banner {
+      background: var(--yellow-soft);
+      border: 1px solid rgba(245, 213, 71, 0.45);
+      border-radius: 12px;
+      padding: 0.65rem 0.85rem;
+      font-size: 0.75rem;
+      color: #854d0e;
+      line-height: 1.45;
+      margin-bottom: 1rem;
+    }
+
+    .nav-bottom {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: var(--card);
+      border-top: 1px solid var(--border);
+      padding: 0.35rem 0.5rem calc(0.5rem + var(--safe-bottom));
+      z-index: 30;
+    }
+    .nav-bottom-inner {
+      max-width: 520px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+    }
+    .nav-bottom a {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.15rem;
+      text-decoration: none;
+      color: var(--muted);
+      font-size: 0.62rem;
+      font-weight: 600;
+      padding: 0.35rem 0.5rem;
+      border-radius: 10px;
+      min-width: 4rem;
+    }
+    .nav-bottom a.active {
+      color: #854d0e;
+      background: var(--yellow-soft);
+    }
+    .nav-bottom .ico { font-size: 1.15rem; line-height: 1; }
+
+    @media (min-width: 540px) {
+      body { padding-bottom: 1.5rem; }
+      .nav-bottom { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-row">
+      <div class="logo">GIMADD <span>MENTOR</span></div>
+      <div class="coach-pill" title="Tu entrenador">
+        <img
+          class="avatar-sm"
+          src="https://images.unsplash.com/photo-1672223304816-d96242210bcc?auto=format&fit=crop&w=96&h=96&q=80"
+          alt=""
+          width="32"
+          height="32"
+          loading="lazy"
+        />
+        <span>Tu coach: <strong>Olivia Rhye</strong></span>
+      </div>
+    </div>
+  </header>
+
+  <div class="page-title">
+    <h1>Servicios disponibles</h1>
+    <p>Contrata videoanálisis, sesiones en pista, packs, suscripción mensual o un programa de acompañamiento (3, 6 o 12 meses). Los precios en <strong>parejas</strong> aplican cuando reserváis en dupla.</p>
+  </div>
+
+  <main class="main">
+    <div class="hint-banner">
+      Vista prototipo <strong>jugador</strong>: mismo catálogo que gestiona tu entrenador, con precios <em>individual</em> y <em>modalidad parejas</em>.
+    </div>
+
+    <section class="section" aria-labelledby="sec-ind">
+      <div class="section-head">
+        <h2 id="sec-ind">Servicios individuales</h2>
+        <span>Uso puntual</span>
+      </div>
+
+      <article class="card">
+        <div class="card-body">
+          <img
+            class="card-thumb"
+            src="https://images.unsplash.com/photo-1651140753772-c12fdcd7077d?auto=format&fit=crop&w=280&h=280&q=80"
+            alt=""
+            width="92"
+            height="92"
+            loading="lazy"
+          />
+          <div>
+            <div class="tag">Videoanálisis</div>
+            <h3>Videoanálisis</h3>
+            <p class="desc">
+              Sube tu vídeo desde la app. Tu coach analiza con marcas de tiempo y te devuelve el informe con recomendaciones.
+            </p>
+            <div class="prices">
+              individual 45 €<br />
+              <span class="parejas">parejas 72 € · entrega orientativa 48 h</span>
+            </div>
+          </div>
+        </div>
+        <div class="card-actions">
+          <button type="button" class="btn btn-primary">Contratar</button>
+          <button type="button" class="btn btn-ghost">Detalle</button>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="card-body">
+          <img
+            class="card-thumb"
+            src="https://images.unsplash.com/photo-1743456110628-6508997cf730?auto=format&fit=crop&w=280&h=280&q=80"
+            alt=""
+            width="92"
+            height="92"
+            loading="lazy"
+          />
+          <div>
+            <div class="tag">Mentoría en pista</div>
+            <h3>Mentoría en pista</h3>
+            <p class="desc">
+              Sesión presencial: trabajo técnico, táctico o mixto según lo que acordéis con tu entrenador.
+            </p>
+            <div class="prices">
+              individual 55 €<br />
+              <span class="parejas">parejas 90 € · sesión 60 min</span>
+            </div>
+          </div>
+        </div>
+        <div class="card-actions">
+          <button type="button" class="btn btn-primary">Reservar</button>
+          <button type="button" class="btn btn-ghost">Detalle</button>
+        </div>
+      </article>
+    </section>
+
+    <section class="section" aria-labelledby="sec-pack">
+      <div class="section-head">
+        <h2 id="sec-pack">Packs</h2>
+        <span>Pago único</span>
+      </div>
+
+      <article class="card">
+        <div class="card-body">
+          <img
+            class="card-thumb"
+            src="https://images.unsplash.com/photo-1646649853703-7645147474ba?auto=format&fit=crop&w=280&h=280&q=80"
+            alt=""
+            width="92"
+            height="92"
+            loading="lazy"
+          />
+          <div>
+            <div class="tag">Pack</div>
+            <h3>Pack intensivo</h3>
+            <p class="desc">
+              7 sesiones en pista y 5 videoanálisis. Validez 3 meses · 60 min por clase en pista. Ideal para una temporada corta de trabajo.
+            </p>
+            <div class="prices">
+              individual 420 €<br />
+              <span class="parejas">parejas 360 € · validez 3 meses</span>
+            </div>
+          </div>
+        </div>
+        <div class="card-actions">
+          <button type="button" class="btn btn-primary">Comprar pack</button>
+          <button type="button" class="btn btn-ghost">Condiciones</button>
+        </div>
+      </article>
+    </section>
+
+    <section class="section" aria-labelledby="sec-mes">
+      <div class="section-head">
+        <h2 id="sec-mes">Planes mensuales y acompañamiento</h2>
+        <span>Suscripción · programas a medida</span>
+      </div>
+
+      <article class="card">
+        <div class="card-body">
+          <img
+            class="card-thumb"
+            src="https://images.unsplash.com/photo-1510846699902-9211b99dac11?auto=format&fit=crop&w=280&h=280&q=80"
+            alt=""
+            width="92"
+            height="92"
+            loading="lazy"
+          />
+          <div>
+            <div class="tag">Mensualidad</div>
+            <h3>Plan Pro mensual</h3>
+            <p class="desc">
+              4 sesiones en pista y 2 videoanálisis al mes. Cupos que se renuevan cada periodo. Cancela cuando quieras según política del coach.
+            </p>
+            <div class="prices">
+              individual 149 €/mes<br />
+              <span class="parejas">parejas 199 €/mes · 60 min/clase pista</span>
+            </div>
+          </div>
+        </div>
+        <div class="card-actions">
+          <button type="button" class="btn btn-primary">Suscribirme</button>
+          <button type="button" class="btn btn-ghost">FAQ</button>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="card-body">
+          <img
+            class="card-thumb"
+            src="https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?auto=format&fit=crop&w=280&h=280&q=80"
+            alt=""
+            width="92"
+            height="92"
+            loading="lazy"
+          />
+          <div>
+            <div class="tag">Acompañamiento</div>
+            <h3>Impulso Momentum — 90 días contigo</h3>
+            <p class="desc">
+              Programa trimestral 100 % personalizado: dudas al vuelo y asesoramiento en técnica, táctica, físico y mental. Sin número fijo de clases en contrato — el foco es tu mejora durante esos 3 meses.
+            </p>
+            <div class="prices">
+              individual 429 € (programa 3 meses)<br />
+              <span class="parejas">parejas 589 € · pago único por periodo</span>
+            </div>
+          </div>
+        </div>
+        <div class="card-actions">
+          <button type="button" class="btn btn-primary">Contratar programa</button>
+          <button type="button" class="btn btn-ghost">Qué incluye</button>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="card-body">
+          <img
+            class="card-thumb"
+            src="https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?auto=format&fit=crop&w=280&h=280&q=80"
+            alt=""
+            width="92"
+            height="92"
+            loading="lazy"
+          />
+          <div>
+            <div class="tag">Acompañamiento</div>
+            <h3>Progresión Semestral — media temporada Pro</h3>
+            <p class="desc">
+              Media temporada con tu coach al lado: hábitos, táctica y mentalidad. Misma filosofía que un pack premium pero adaptable cada semana — sin cupos rígidos de pista.
+            </p>
+            <div class="prices">
+              individual 789 € (programa 6 meses)<br />
+              <span class="parejas">parejas 1.099 € · pago único por periodo</span>
+            </div>
+          </div>
+        </div>
+        <div class="card-actions">
+          <button type="button" class="btn btn-primary">Contratar programa</button>
+          <button type="button" class="btn btn-ghost">Qué incluye</button>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="card-body">
+          <img
+            class="card-thumb"
+            src="https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?auto=format&fit=crop&w=280&h=280&q=80"
+            alt=""
+            width="92"
+            height="92"
+            loading="lazy"
+          />
+          <div>
+            <div class="tag">Acompañamiento</div>
+            <h3>Legado Anual — el año de tu salto</h3>
+            <p class="desc">
+              Doce meses para transformar tu juego con seguimiento continuo: vídeo, pista, cuerpo y cabeza alineados a tus torneos. Compromiso de mejora, no de “X” clases cerradas en papel.
+            </p>
+            <div class="prices">
+              individual 1.349 € (programa 12 meses)<br />
+              <span class="parejas">parejas 1.849 € · pago único por periodo</span>
+            </div>
+          </div>
+        </div>
+        <div class="card-actions">
+          <button type="button" class="btn btn-primary">Contratar programa</button>
+          <button type="button" class="btn btn-ghost">Qué incluye</button>
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <nav class="nav-bottom" aria-label="Navegación principal">
+    <div class="nav-bottom-inner">
+      <a href="#" class="active"><span class="ico" aria-hidden="true">🏠</span>Inicio</a>
+      <a href="#"><span class="ico" aria-hidden="true">🛒</span>Servicios</a>
+      <a href="#"><span class="ico" aria-hidden="true">📅</span>Sesiones</a>
+      <a href="#"><span class="ico" aria-hidden="true">👤</span>Perfil</a>
+    </div>
+  </nav>
+  <script>
+    (function () {
+      function postToParent(view) {
+        try {
+          if (window.parent !== window) {
+            window.parent.postMessage(
+              { gimaddMentor: true, action: "showView", view: view },
+              "*"
+            );
+          }
+        } catch (e) {}
+      }
+      document.addEventListener("click", function (e) {
+        var btn = e.target.closest("button.btn-primary");
+        if (!btn) return;
+        if (btn.textContent.trim() !== "Reservar") return;
+        var card = btn.closest("article.card");
+        if (!card) return;
+        var h3 = card.querySelector("h3");
+        if (!h3 || h3.textContent.trim() !== "Mentoría en pista") return;
+        e.preventDefault();
+        postToParent("jug-agenda");
+      });
+    })();
+  </script>
+</body>
+</html>

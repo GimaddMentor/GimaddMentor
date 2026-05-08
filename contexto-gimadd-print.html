@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Gimadd Mentor — Contexto para ChatGPT / desarrollo</title>
+  <style>
+    body { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; color: #111; line-height: 1.5; max-width: 800px; margin: 0 auto; padding: 1.5rem; font-size: 11pt; }
+    h1 { font-size: 1.45rem; border-bottom: 2px solid #b8d63a; padding-bottom: 0.35rem; }
+    h2 { font-size: 1.15rem; margin-top: 1.75rem; page-break-after: avoid; }
+    hr { border: none; border-top: 1px solid #e5e7eb; margin: 1.25rem 0; }
+    pre { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 6px; padding: 0.75rem 1rem; font-size: 0.78rem; overflow-x: auto; white-space: pre-wrap; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.92rem; margin: 0.75rem 0; }
+    th, td { border: 1px solid #e5e7eb; padding: 0.35rem 0.5rem; text-align: left; vertical-align: top; }
+    th { background: #f3f4f6; }
+    ul { padding-left: 1.25rem; }
+    li { margin: 0.25rem 0; }
+    .lead { color: #374151; }
+    @media print {
+      body { padding: 0; font-size: 10pt; }
+      h2 { break-inside: avoid; }
+      pre { break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+
+<h1>Contexto del proyecto Gimadd Mentor (prototipo HTML)</h1>
+<p class="lead"><strong>Uso:</strong> copia todo este documento y pégalo en ChatGPT cuando quieras que entienda el prototipo sin abrir el código. Describe la lógica funcional y técnica de <code>gimadd-mentor-jugador-app.html</code> (una sola página, SPA en JavaScript vanilla).</p>
+
+<hr />
+
+<h2>1. Mapa mental (Mermaid)</h2>
+<p>Puedes pegar este bloque en ChatGPT; si el modelo renderiza Mermaid, verá el diagrama. Si no, sirve igual como estructura jerárquica legible.</p>
+<pre><code>mindmap
+  root((Gimadd Mentor HTML))
+    Objetivo del prototipo
+      Demo jugador + entrenador
+      Misma máquina mismo almacenamiento
+      Exportar todo en un HTML descargable
+    Vistas SPA
+      home elegir perfil
+      jugador hub
+      objetivos perfil 3 tabs
+      entrenador revision obj partidos
+      diario partidos
+    Datos objetivos
+      localStorage gimadd_objetivos_v1
+      fileId gimadd-store-meta
+      seed gimadd-objetivos-seed
+    Datos partidos
+      localStorage gimadd_partidos_v1
+      fileId gimadd-diario-meta
+      seed gimadd-partidos-seed
+      matches en memoria variable matches
+    Modelo objetivo
+      estado activo pendiente_revision completado
+      enPlanAccion tipoObjetivo partidosMeta
+      progreso practicasUmbralOffset
+      jugadorSubioVideoTrasRevision creadoPor
+    Clasificación UI splitGoals
+      pend revision
+      plan proceso
+      act fuera plan
+      done completados
+    Tabs perfil jugador y coach
+      Plan accion pend + plan contador suma
+      Activos solo act
+      Completados solo done
+    Diario partidos
+      planAccion por objetivoId practicado
+      recalcGoalsFromMatches umbral
+    Coach
+      dashboard video pendientes
+      espejo mismas tarjetas que jugador
+      completar reactivar sliders
+    Sincronización
+      storage event otras pestañas
+      BroadcastChannel objetivos y partidos
+      saveGoals broadcast false en render anti bucle
+    refreshAllGoalUI
+      todas las listas y banners
+    Export downloadFullApp
+      nuevos fileId JSON embebido</code></pre>
+<p><em>(Bloque completo en sintaxis Mermaid: anteponer la línea <code>mindmap</code> dentro de <code>```mermaid</code> si lo pegas en ChatGPT.)</em></p>
+
+<hr />
+
+<h2>2. Mismo mapa en texto (árbol)</h2>
+<pre>gimadd-mentor-jugador-app.html (SPA)
+├── Vista `home`          → Elegir jugador / entrenador; botón descargar HTML con datos incrustados
+├── Vista `jugador`       → Explicación flujo videoanálisis; banner aviso si hay objetivos en revisión;
+│                           accesos a `objetivos` (perfil) y `diario`; botón simula “subí vídeo”
+├── Vista `objetivos`     → Perfil “Juan” + stats + 3 tabs:
+│   ├── Plan de acción    → sub-secciones: Pendiente de revisión | Plan de acción en proceso
+│   ├── Objetivos activos → activos sin plan
+│   └── Objetivos completados
+│                           FAB + modal crear/editar; barra/slider progreso si activo; acciones editar, quitar plan, borrar
+├── Vista `entrenador`    → Roster demo (solo Juan con datos) + 3 paneles:
+│   ├── Revisión / vídeo  → Lista “sin vídeo confirmado” + todos los pendiente_revisión; acciones completar/reactivar
+│   ├── Objetivos          → Sub-tabs iguales que jugador + FAB coach + espejo con sliders
+│   └── Partidos          → Lista partidos solo lectura
+├── Vista `diario`        → Lista partidos, stats, formulario partido con plan de acción enlazado a objetivos activos en plan
+├── Persistencia
+│   ├── Objetivos: localStorage `gimadd_objetivos_v1` + `gimadd_objetivos_v1_fileId` vs meta embebida
+│   └── Partidos: localStorage `gimadd_partidos_v1` + `gimadd_partidos_v1_fileId` vs meta diario
+├── Sincronización multi-pestaña
+│   ├── `storage` (clave objetivos o partidos)
+│   └── BroadcastChannel `gimadd_objetivos_channel` / `gimadd_partidos_channel`
+└── Regla crítica: `render()` persiste con `saveGoals(goals, { broadcast: false })` para no re-entrar `onmessage` del mismo canal en la misma pestaña (evita cuelgue)</pre>
+
+<hr />
+
+<h2>3. Qué problema resuelve el prototipo</h2>
+<ul>
+  <li>Un <strong>jugador</strong> y un <strong>entrenador</strong> comparten <strong>objetivos</strong> y <strong>diario de partidos</strong> en el <strong>mismo navegador</strong> (demo local).</li>
+  <li>El <strong>plan de acción</strong> del jugador en el diario cuenta prácticas; al llegar a un <strong>umbral</strong> (<code>partidosMeta</code>), el objetivo pasa a <strong>pendiente de revisión</strong> (videoanálisis).</li>
+  <li>El entrenador <strong>completa</strong> objetivos o los <strong>reactiva</strong> con un %; el jugador <strong>no</strong> marca completado.</li>
+  <li>Todo puede <strong>volcarse en el HTML</strong> descargado (nuevos <code>fileId</code> para no mezclar datos viejos de <code>localStorage</code> al abrir otro archivo).</li>
+</ul>
+
+<hr />
+
+<h2>4. Navegación técnica</h2>
+<ul>
+  <li>Función <strong><code>showView(name)</code></strong>: pone <code>is-active</code> en <code>&lt;section class="app-view" data-view="..."&gt;</code> y clase <code>app-{name}</code> en <code>&lt;body&gt;</code>.</li>
+  <li><strong>Carga con hash</strong> (para enlaces / pruebas): si la URL tiene <code>#jugador</code>, <code>#objetivos</code>, <code>#entrenador</code> o <code>#diario</code>, el arranque llama a <code>showView</code> con ese id; si no hay hash, <code>home</code>.</li>
+</ul>
+
+<hr />
+
+<h2>5. Modelo de datos — Objetivo</h2>
+<table>
+  <thead><tr><th>Campo</th><th>Rol</th></tr></thead>
+  <tbody>
+    <tr><td><code>id</code></td><td>String único (p. ej. <code>g-{timestamp}-{random}</code>)</td></tr>
+    <tr><td><code>titulo</code></td><td>Texto</td></tr>
+    <tr><td><code>estado</code></td><td><code>activo</code> | <code>pendiente_revision</code> | <code>completado</code></td></tr>
+    <tr><td><code>completado</code></td><td>Booleano coherente con <code>estado</code></td></tr>
+    <tr><td><code>enPlanAccion</code></td><td>Bool; solo activos en plan van a “plan en proceso”</td></tr>
+    <tr><td><code>tipoObjetivo</code></td><td><code>clase</code> | <code>partido</code> (normalizado)</td></tr>
+    <tr><td><code>partidosMeta</code></td><td>Entero 1–50; umbral de partidos con práctica marcada</td></tr>
+    <tr><td><code>progreso</code></td><td>0–100; barra + slider</td></tr>
+    <tr><td><code>practicasUmbralOffset</code></td><td>Al reactivar, se alinea el conteo con el histórico</td></tr>
+    <tr><td><code>jugadorSubioVideoTrasRevision</code></td><td>Tras revisión por umbral = false; botón hub puede poner true</td></tr>
+    <tr><td><code>pendienteRevisionDesde</code></td><td>Fecha ISO cuando entra en pendiente por umbral</td></tr>
+    <tr><td><code>fechaLimite</code>, <code>fechaCompletado</code></td><td>Opcionales</td></tr>
+    <tr><td><code>creadoPor</code></td><td><code>jugador</code> | <code>entrenador</code></td></tr>
+  </tbody>
+</table>
+<p><strong><code>splitGoals(goals)</code>:</strong> pend = pendiente_revision; plan = activo + enPlanAccion; act = activo sin plan; done = completado.<br />
+<strong>Pestaña Plan de acción:</strong> contador = pend.length + plan.length.</p>
+
+<hr />
+
+<h2>6. Modelo de datos — Partido (diario)</h2>
+<p><code>planAccion</code>: array de <code>{ objetivoId, titulo, practicado, sensaciones }</code>. <strong>effectivePracticasCount</strong> = partidos con ítem practicado para ese id, menos <code>practicasUmbralOffset</code>. <strong>recalcGoalsFromMatches</strong> promueve a revisión si ≥ <code>partidosMeta</code>.</p>
+
+<hr />
+
+<h2>7. Funciones centrales</h2>
+<ul>
+  <li><strong>loadGoals / saveGoals:</strong> localStorage + sync DOM <code>gimadd-objetivos-seed</code>; BroadcastChannel salvo <code>{ broadcast: false }</code>.</li>
+  <li><strong>render, renderCoachGoalsMirror, renderEntrenadorDashboard, refreshAllGoalUI, persistMatches.</strong></li>
+</ul>
+
+<hr />
+
+<h2>8. Interacciones importantes</h2>
+<p>Modal objetivo (título, fecha, tipo, partidosMeta, plan); tarjetas jugador <code>data-action</code>; progreso con pointer/slider; espejo coach; dashboard completar/reactivar; botón vídeo; <strong>downloadFullApp()</strong>.</p>
+
+<hr />
+
+<h2>9. Invariantes</h2>
+<ul>
+  <li><strong>BroadcastChannel</strong> en la misma pestaña dispara <code>onmessage</code> → <code>render()</code> usa <code>saveGoals(..., { broadcast: false })</code>.</li>
+  <li><strong>fileId</strong> embebido distinto → reset desde seed del HTML.</li>
+</ul>
+
+<hr />
+
+<h2>10. Resumen</h2>
+<p><em>SPA offline-first con localStorage + JSON embebido, storage + BroadcastChannel, splitGoals, tres pestañas objetivos (plan = pend+plan, activos, completados), umbral de prácticas → pendiente de revisión.</em></p>
+
+<p style="margin-top:2rem;color:#6b7280;font-size:0.9rem">Fuente: <code>gimadd-mentor-jugador-app.html</code> · <code>CONTEXTO-GIMADD-PARA-CHATGPT.md</code></p>
+
+</body>
+</html>

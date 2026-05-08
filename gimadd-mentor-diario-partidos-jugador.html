@@ -1,0 +1,1193 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Gimadd Mentor — Mi diario de partidos (jugador)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --lime: #d9f64a;
+      --lime-dark: #b8d63a;
+      --bg: #fafafa;
+      --surface: #ffffff;
+      --muted: #9ca3af;
+      --text: #111827;
+      --border: #e8e8e8;
+      --card-bg: #f3f4f6;
+      --win: #22c55e;
+      --radius: 14px;
+      --radius-sm: 10px;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Inter", system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    .app-header {
+      padding: 0.75rem 1rem;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+    }
+    .app-header-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .back {
+      border: none;
+      background: none;
+      font-size: 1.25rem;
+      cursor: pointer;
+      padding: 0.25rem;
+      color: var(--text);
+      line-height: 1;
+    }
+    .title-page {
+      font-size: 1.15rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin: 0;
+      flex: 1;
+      text-align: center;
+    }
+    .app-header-inner > a:last-child {
+      flex-shrink: 0;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--text);
+      text-decoration: none;
+    }
+    .app-header-inner > a:last-child:hover {
+      text-decoration: underline;
+    }
+    .title-page .hl {
+      background: var(--lime);
+      padding: 0.08em 0.28em;
+      border-radius: 6px;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+      max-width: 1200px;
+      margin: 0 auto;
+      min-height: calc(100vh - 52px);
+      border-left: 1px solid var(--border);
+      border-right: 1px solid var(--border);
+      background: var(--surface);
+    }
+    @media (max-width: 900px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+      .layout.form-focus .col-left {
+        display: none;
+      }
+      .layout.form-focus .col-right {
+        min-height: calc(100vh - 52px);
+      }
+    }
+
+    .col-left, .col-right {
+      padding: 1.25rem 1.25rem 2rem;
+      overflow-y: auto;
+    }
+    .col-left {
+      border-right: 1px solid var(--border);
+    }
+    @media (max-width: 900px) {
+      .col-left { border-right: none; }
+    }
+
+    .btn-add {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.85rem 1rem;
+      margin-bottom: 1.25rem;
+      border: none;
+      border-radius: var(--radius);
+      background: var(--lime);
+      color: var(--text);
+      font-weight: 700;
+      font-size: 0.95rem;
+      cursor: pointer;
+      font-family: inherit;
+      box-shadow: 0 2px 12px rgba(217, 246, 74, 0.35);
+    }
+    .btn-add:hover { filter: brightness(1.03); }
+
+    .section-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--muted);
+      margin: 0 0 0.6rem;
+    }
+
+    .match-card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      padding: 0.9rem 1rem;
+      margin-bottom: 0.75rem;
+      border: 1px solid var(--border);
+    }
+    .match-card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 0.5rem;
+    }
+    .match-card .badge {
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 0.2rem 0.5rem;
+      border-radius: 6px;
+    }
+    .badge-win { background: rgba(34, 197, 94, 0.2); color: #15803d; }
+    .badge-loss { background: rgba(239, 68, 68, 0.15); color: #b91c1c; }
+    .btn-edit-match {
+      margin-top: 0.6rem;
+      padding: 0.4rem 0.85rem;
+      font-size: 0.72rem;
+      font-weight: 700;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      font-family: inherit;
+      color: var(--text);
+    }
+    .btn-edit-match:hover {
+      border-color: var(--lime-dark);
+      background: rgba(217, 246, 74, 0.18);
+    }
+    .match-date {
+      font-size: 0.78rem;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .score-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+    }
+    .score-table th {
+      text-align: center;
+      font-weight: 600;
+      color: var(--muted);
+      padding: 0.25rem 0.2rem;
+      font-size: 0.68rem;
+      text-transform: uppercase;
+    }
+    .score-table td {
+      text-align: center;
+      padding: 0.35rem 0.2rem;
+      font-weight: 600;
+    }
+    .score-table td.win-set {
+      color: var(--win);
+      font-weight: 800;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.6rem;
+      margin-bottom: 1.25rem;
+    }
+    .stat-box {
+      background: var(--card-bg);
+      border-radius: var(--radius-sm);
+      padding: 0.75rem;
+      text-align: center;
+      border: 1px solid var(--border);
+    }
+    .stat-box .n {
+      font-size: 1.35rem;
+      font-weight: 800;
+      margin-top: 0.15rem;
+    }
+    .stat-box .l {
+      font-size: 0.72rem;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .emoji-row {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+    .emoji-chip {
+      flex: 1;
+      min-width: 48px;
+      text-align: center;
+      padding: 0.5rem;
+      border-radius: var(--radius-sm);
+      border: 2px solid transparent;
+      background: var(--card-bg);
+      cursor: default;
+      font-size: 1.35rem;
+    }
+    .emoji-chip.on {
+      border-color: var(--lime-dark);
+      background: rgba(217, 246, 74, 0.25);
+    }
+    .emoji-chip small {
+      display: block;
+      font-size: 0.6rem;
+      color: var(--muted);
+      margin-top: 0.15rem;
+      font-weight: 600;
+    }
+
+    /* Right column — form */
+    .col-right {
+      background: #fcfcfc;
+    }
+    .col-right-placeholder {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 360px;
+      color: var(--muted);
+      text-align: center;
+      padding: 2rem;
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+    .layout.form-focus .col-right-placeholder { display: none; }
+    .form-panel { display: none; }
+    .layout.form-focus .form-panel { display: block; }
+
+    .form-head {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1.25rem;
+    }
+    .btn-close {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      font-size: 1.1rem;
+      cursor: pointer;
+      line-height: 1;
+    }
+    .form-head h2 {
+      margin: 0;
+      font-size: 1.1rem;
+      font-weight: 800;
+    }
+
+    .field { margin-bottom: 1rem; }
+    .field label {
+      display: block;
+      font-size: 0.78rem;
+      font-weight: 600;
+      margin-bottom: 0.35rem;
+      color: var(--text);
+    }
+    input[type="text"],
+    input[type="date"],
+    textarea,
+    select {
+      width: 100%;
+      padding: 0.65rem 0.75rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      font: inherit;
+      background: var(--surface);
+    }
+    textarea { min-height: 72px; resize: vertical; }
+    .input-row-date {
+      position: relative;
+    }
+    .input-row-date input { padding-right: 2rem; }
+
+    .seg {
+      display: flex;
+      gap: 0;
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+    .seg button {
+      flex: 1;
+      padding: 0.65rem;
+      border: none;
+      background: var(--card-bg);
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .seg button.active {
+      background: var(--surface);
+      box-shadow: inset 0 0 0 2px var(--lime);
+    }
+
+    .score-input-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+    }
+    .score-inputTable input {
+      width: 100%;
+      max-width: 52px;
+      margin: 0 auto;
+      display: block;
+      text-align: center;
+      padding: 0.45rem;
+    }
+    .score-input-table th {
+      font-size: 0.65rem;
+      color: var(--muted);
+      font-weight: 700;
+      text-transform: uppercase;
+      padding: 0.3rem;
+    }
+    .score-input-table td:first-child {
+      font-weight: 600;
+      font-size: 0.78rem;
+      padding-right: 0.5rem;
+    }
+
+    .plan-accion {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1rem;
+      margin-bottom: 1rem;
+    }
+    .plan-accion h3 {
+      margin: 0 0 0.75rem;
+      font-size: 0.9rem;
+      font-weight: 800;
+    }
+    .obj-block {
+      background: var(--surface);
+      border-radius: var(--radius-sm);
+      padding: 0.85rem;
+      margin-bottom: 0.75rem;
+      border: 1px solid var(--border);
+    }
+    .obj-block:last-child { margin-bottom: 0; }
+    .obj-block .obj-title {
+      font-size: 0.82rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+    .obj-block select {
+      margin-bottom: 0.45rem;
+    }
+
+    .btn-save {
+      width: 100%;
+      padding: 0.9rem;
+      border: none;
+      border-radius: var(--radius);
+      background: var(--lime);
+      font-weight: 800;
+      font-size: 0.95rem;
+      cursor: pointer;
+      font-family: inherit;
+      margin-top: 0.5rem;
+      box-shadow: 0 2px 12px rgba(217, 246, 74, 0.35);
+    }
+
+    .emoji-pick {
+      display: flex;
+      gap: 0.35rem;
+      margin-bottom: 0.5rem;
+    }
+    .emoji-pick label {
+      flex: 1;
+      text-align: center;
+      cursor: pointer;
+    }
+    .emoji-pick input { position: absolute; opacity: 0; pointer-events: none; }
+    .emoji-pick span {
+      display: block;
+      padding: 0.45rem;
+      border-radius: var(--radius-sm);
+      border: 2px solid var(--border);
+      font-size: 1.25rem;
+      background: var(--surface);
+    }
+    .emoji-pick input:checked + span {
+      border-color: var(--lime-dark);
+      background: rgba(217, 246, 74, 0.2);
+    }
+    .emoji-pick small {
+      font-size: 0.55rem;
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    .persist-bar-diario {
+      margin-bottom: 1rem;
+      padding: 0.65rem 0.75rem;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+    }
+    .persist-bar-diario button {
+      width: 100%;
+      padding: 0.55rem 0.75rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      background: var(--surface);
+      font-weight: 700;
+      font-family: inherit;
+      font-size: 0.78rem;
+      cursor: pointer;
+    }
+    .persist-bar-diario button:hover {
+      border-color: var(--lime-dark);
+      background: rgba(217, 246, 74, 0.2);
+    }
+    .persist-bar-diario .hint {
+      display: block;
+      margin-top: 0.4rem;
+      font-size: 0.72rem;
+      color: var(--muted);
+      line-height: 1.4;
+    }
+  </style>
+</head>
+<body>
+  <header class="app-header">
+    <div class="app-header-inner">
+      <button type="button" class="back" aria-label="Volver">←</button>
+      <h1 class="title-page">Mi <span class="hl">Diario</span></h1>
+      <a href="gimadd-mentor-objetivos-jugador.html">Objetivos</a>
+    </div>
+  </header>
+
+  <div class="layout" id="layout">
+    <div class="col-left">
+      <button type="button" class="btn-add" id="btnOpenForm">
+        <span aria-hidden="true">＋</span> Agregar resultado partido
+      </button>
+
+      <div class="persist-bar-diario">
+        <button type="button" id="btnDownloadHtmlDiario">Descargar HTML con partidos guardados</button>
+        <span class="hint">Los partidos se guardan en el navegador y también quedan copiados <strong>dentro del HTML</strong> al descargar; sustituye el archivo en tu carpeta para no perderlos.</span>
+        <span class="hint" style="margin-top:0.35rem;display:block">El <strong>plan de acción</strong> usa los mismos objetivos que creas en Objetivos (localStorage y el bloque JSON <code>gimadd-objetivos-seed</code> de esta página). Con archivos <code>file://</code>, si no ves los objetivos nuevos, descarga otra vez el diario tras guardar objetivos o abre ambos desde un servidor local (por ejemplo <code>python3 -m http.server</code> en esta carpeta).</span>
+      </div>
+
+      <p class="section-label">Partidos recientes</p>
+      <div id="listMatches"></div>
+
+      <p class="section-label" style="margin-top:1.25rem">Estadísticas mensuales</p>
+      <div class="stats-grid" id="statsGrid">
+        <div class="stat-box"><div class="l">Partidos</div><div class="n" id="stTotal">0</div></div>
+        <div class="stat-box"><div class="l">Ganados</div><div class="n" id="stWins">0</div></div>
+        <div class="stat-box"><div class="l">Perdidos</div><div class="n" id="stLoss">0</div></div>
+        <div class="stat-box"><div class="l">Victorias</div><div class="n" id="stPct">—</div></div>
+      </div>
+
+      <p class="section-label">Resumen sensaciones de partidos</p>
+      <div class="emoji-row" id="summaryEmojis" aria-live="polite"></div>
+    </div>
+
+    <div class="col-right">
+      <div class="col-right-placeholder" id="placeholderRight">
+        Pulsa <strong>Agregar resultado partido</strong> para registrar un partido, resultado, sensaciones y tu <strong>plan de acción</strong> (objetivos marcados en <a href="gimadd-mentor-objetivos-jugador.html">Objetivos</a>).
+      </div>
+
+      <div class="form-panel" id="formPanel">
+        <div class="form-head">
+          <button type="button" class="btn-close" id="btnCloseForm" aria-label="Cerrar">✕</button>
+          <h2 id="formTitle">Agregar partido</h2>
+        </div>
+
+        <form id="matchForm">
+          <div class="field">
+            <label for="mDate">Fecha del partido</label>
+            <div class="input-row-date">
+              <input type="date" id="mDate" required />
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Resultado</label>
+            <div class="seg" role="group" aria-label="Victoria o derrota">
+              <button type="button" class="active" data-outcome="win" id="segWin">Victoria</button>
+              <button type="button" data-outcome="loss" id="segLoss">Derrota</button>
+            </div>
+            <input type="hidden" id="mOutcome" value="win" />
+          </div>
+
+          <div class="field">
+            <label>Sets (1–4)</label>
+            <table class="score-input-table">
+              <thead>
+                <tr>
+                  <th></th>
+                  <th>Set 1</th>
+                  <th>Set 2</th>
+                  <th>Set 3</th>
+                  <th>Set 4</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Mi equipo</td>
+                  <td><input type="number" min="0" max="20" class="set-us" data-set="0" placeholder="—" /></td>
+                  <td><input type="number" min="0" max="20" class="set-us" data-set="1" placeholder="—" /></td>
+                  <td><input type="number" min="0" max="20" class="set-us" data-set="2" placeholder="—" /></td>
+                  <td><input type="number" min="0" max="20" class="set-us" data-set="3" placeholder="—" /></td>
+                </tr>
+                <tr>
+                  <td>Rivales</td>
+                  <td><input type="number" min="0" max="20" class="set-them" data-set="0" placeholder="—" /></td>
+                  <td><input type="number" min="0" max="20" class="set-them" data-set="1" placeholder="—" /></td>
+                  <td><input type="number" min="0" max="20" class="set-them" data-set="2" placeholder="—" /></td>
+                  <td><input type="number" min="0" max="20" class="set-them" data-set="3" placeholder="—" /></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="field">
+            <label for="mPartner">Pareja (opcional)</label>
+            <input type="text" id="mPartner" placeholder="Nombre de tu pareja" autocomplete="off" />
+          </div>
+          <div class="field">
+            <label for="mClub">Club (opcional)</label>
+            <input type="text" id="mClub" placeholder="Club o pista" autocomplete="off" />
+          </div>
+
+          <div class="field">
+            <label>Sensaciones generales del partido</label>
+            <div class="emoji-pick" role="radiogroup" aria-label="Valoración sensaciones">
+              <label><input type="radio" name="mFeel" value="1" /><span>😠<small>1</small></span></label>
+              <label><input type="radio" name="mFeel" value="2" /><span>😢<small>2</small></span></label>
+              <label><input type="radio" name="mFeel" value="3" checked /><span>😐<small>3</small></span></label>
+              <label><input type="radio" name="mFeel" value="4" /><span>😊<small>4</small></span></label>
+            </div>
+            <textarea id="mFeelText" placeholder="Escribe tus sensaciones aquí…"></textarea>
+          </div>
+
+          <section class="plan-accion" aria-labelledby="planTitulo">
+            <h3 id="planTitulo">Plan de acción</h3>
+            <div id="planAccionContainer"></div>
+          </section>
+
+          <div class="field">
+            <label for="mNotes">Notas adicionales</label>
+            <textarea id="mNotes" rows="3" placeholder="Cualquier detalle extra…"></textarea>
+          </div>
+
+          <button type="submit" class="btn-save" id="btnSubmitMatch">Guardar partido</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0,0,0,0);
+      border: 0;
+    }
+  </style>
+
+  <script type="application/json" id="gimadd-diario-meta">{"fileId":"diario-local-v1"}</script>
+  <!-- Copia sincronizada de objetivos (misma clave localStorage que la pantalla Objetivos) -->
+  <script type="application/json" id="gimadd-store-meta">{"fileId":"obj-local-v1"}</script>
+  <script type="application/json" id="gimadd-objetivos-seed">
+[]
+  </script>
+  <script type="application/json" id="gimadd-partidos-seed">
+[]
+  </script>
+
+  <script>
+(function () {
+  const layout = document.getElementById("layout");
+  const btnOpen = document.getElementById("btnOpenForm");
+  const btnClose = document.getElementById("btnCloseForm");
+  const form = document.getElementById("matchForm");
+  const listEl = document.getElementById("listMatches");
+  const placeholder = document.getElementById("placeholderRight");
+
+  const segWin = document.getElementById("segWin");
+  const segLoss = document.getElementById("segLoss");
+  const mOutcome = document.getElementById("mOutcome");
+  const formTitle = document.getElementById("formTitle");
+  const btnSave = document.getElementById("btnSubmitMatch");
+
+  /** @type {Array<object>} */
+  let matches = [];
+
+  /** @type {string|null} */
+  let editingId = null;
+
+  const MATCHES_STORAGE_KEY = "gimadd_partidos_v1";
+  const MATCHES_FILE_ID_KEY = "gimadd_partidos_v1_fileId";
+
+  function jsonForHtmlEmbeddingDiario(obj) {
+    return JSON.stringify(obj, null, 2).replace(/</g, "\\u003c");
+  }
+
+  function getDiarioEmbedMeta() {
+    const el = document.getElementById("gimadd-diario-meta");
+    if (!el) return { fileId: "diario-local-v1" };
+    try {
+      return JSON.parse(el.textContent);
+    } catch (e) {
+      return { fileId: "diario-local-v1" };
+    }
+  }
+
+  function loadMatchesFromEmbed() {
+    const el = document.getElementById("gimadd-partidos-seed");
+    if (!el) return [];
+    try {
+      const arr = JSON.parse(el.textContent.trim());
+      return Array.isArray(arr) ? arr : [];
+    } catch (e) {
+      return [];
+    }
+  }
+
+  function syncPartidosEmbedDom(arr) {
+    const el = document.getElementById("gimadd-partidos-seed");
+    if (el) el.textContent = "\n" + jsonForHtmlEmbeddingDiario(arr) + "\n";
+  }
+
+  function loadMatchesIntoMemory() {
+    const meta = getDiarioEmbedMeta();
+    const fid = meta.fileId || "diario-local-v1";
+    const lastFid = localStorage.getItem(MATCHES_FILE_ID_KEY);
+    const fromEmbed = loadMatchesFromEmbed();
+
+    if (lastFid !== fid) {
+      localStorage.setItem(MATCHES_FILE_ID_KEY, fid);
+      try {
+        localStorage.setItem(MATCHES_STORAGE_KEY, JSON.stringify(fromEmbed));
+      } catch (e) {}
+      syncPartidosEmbedDom(fromEmbed);
+      matches = fromEmbed;
+      return;
+    }
+
+    try {
+      const raw = localStorage.getItem(MATCHES_STORAGE_KEY);
+      if (raw != null && raw !== "") {
+        const arr = JSON.parse(raw);
+        if (Array.isArray(arr)) {
+          matches = arr;
+          syncPartidosEmbedDom(matches);
+          return;
+        }
+      }
+    } catch (e) {}
+    matches = fromEmbed;
+    syncPartidosEmbedDom(matches);
+  }
+
+  function persistMatches() {
+    try {
+      localStorage.setItem(MATCHES_STORAGE_KEY, JSON.stringify(matches));
+    } catch (e) {}
+    syncPartidosEmbedDom(matches);
+  }
+
+  function downloadHtmlDiario() {
+    const objetivosSnapshot = loadObjetivosFromStorage();
+    const newDiarioFid = "diario-" + Date.now() + "-" + Math.random().toString(36).slice(2, 10);
+    const newObjFid = "obj-" + Date.now() + "-" + Math.random().toString(36).slice(2, 10);
+    const diarioMetaJson = jsonForHtmlEmbeddingDiario({ fileId: newDiarioFid });
+    const objMetaJson = jsonForHtmlEmbeddingDiario({ fileId: newObjFid });
+    const partidosJson = jsonForHtmlEmbeddingDiario(matches);
+    const objetivosJson = jsonForHtmlEmbeddingDiario(objetivosSnapshot);
+    let html = "<!DOCTYPE html>\n" + document.documentElement.outerHTML;
+    html = html.replace(
+      /<script type="application\/json" id="gimadd-diario-meta">[\s\S]*?<\/script>/,
+      '<script type="application/json" id="gimadd-diario-meta">' + diarioMetaJson + "<\/script>"
+    );
+    html = html.replace(
+      /<script type="application\/json" id="gimadd-store-meta">[\s\S]*?<\/script>/,
+      '<script type="application/json" id="gimadd-store-meta">' + objMetaJson + "<\/script>"
+    );
+    html = html.replace(
+      /<script type="application\/json" id="gimadd-objetivos-seed">[\s\S]*?<\/script>/,
+      '<script type="application/json" id="gimadd-objetivos-seed">\n' + objetivosJson + "\n<\/script>"
+    );
+    html = html.replace(
+      /<script type="application\/json" id="gimadd-partidos-seed">[\s\S]*?<\/script>/,
+      '<script type="application/json" id="gimadd-partidos-seed">\n' + partidosJson + "\n<\/script>"
+    );
+    const blob = new Blob([html], { type: "text/html;charset=utf-8" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "gimadd-mentor-diario-partidos-jugador.html";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(a.href);
+  }
+
+  const OBJ_STORAGE_KEY = "gimadd_objetivos_v1";
+  const OBJ_FILE_ID_KEY = "gimadd_objetivos_v1_fileId";
+
+  function jsonForHtmlEmbeddingObjetivos(obj) {
+    return JSON.stringify(obj, null, 2).replace(/</g, "\\u003c");
+  }
+
+  function getObjetivosEmbedMeta() {
+    const el = document.getElementById("gimadd-store-meta");
+    if (!el) return { fileId: "obj-local-v1" };
+    try {
+      return JSON.parse(el.textContent);
+    } catch (e) {
+      return { fileId: "obj-local-v1" };
+    }
+  }
+
+  function loadObjetivosFromEmbed() {
+    const el = document.getElementById("gimadd-objetivos-seed");
+    if (!el) return [];
+    try {
+      const arr = JSON.parse(el.textContent.trim());
+      return Array.isArray(arr) ? arr : [];
+    } catch (e) {
+      return [];
+    }
+  }
+
+  function syncObjetivosEmbedDom(goals) {
+    const el = document.getElementById("gimadd-objetivos-seed");
+    if (el) el.textContent = "\n" + jsonForHtmlEmbeddingObjetivos(goals) + "\n";
+  }
+
+  function loadObjetivosFromStorage() {
+    const meta = getObjetivosEmbedMeta();
+    const fid = meta.fileId || "obj-local-v1";
+    const lastFid = localStorage.getItem(OBJ_FILE_ID_KEY);
+    const fromEmbed = loadObjetivosFromEmbed();
+
+    if (lastFid !== fid) {
+      localStorage.setItem(OBJ_FILE_ID_KEY, fid);
+      try {
+        localStorage.setItem(OBJ_STORAGE_KEY, JSON.stringify(fromEmbed));
+      } catch (e) {}
+      syncObjetivosEmbedDom(fromEmbed);
+      return fromEmbed;
+    }
+
+    try {
+      const raw = localStorage.getItem(OBJ_STORAGE_KEY);
+      if (raw != null && raw !== "") {
+        const arr = JSON.parse(raw);
+        if (Array.isArray(arr)) {
+          syncObjetivosEmbedDom(arr);
+          return arr;
+        }
+      }
+    } catch (e) {}
+    syncObjetivosEmbedDom(fromEmbed);
+    return fromEmbed;
+  }
+
+  function getPlanObjetivosForDiario() {
+    return loadObjetivosFromStorage().filter((o) => o.enPlanAccion && !o.completado);
+  }
+
+  function escapeHtmlDiario(s) {
+    const d = document.createElement("div");
+    d.textContent = s;
+    return d.innerHTML;
+  }
+
+  function renderPlanAccionSection() {
+    const container = document.getElementById("planAccionContainer");
+    if (!container) return;
+    const list = getPlanObjetivosForDiario();
+    if (!list.length) {
+      container.innerHTML =
+        '<p class="plan-empty-msg" style="font-size:0.82rem;color:var(--muted);margin:0;line-height:1.45">No hay objetivos en el plan de acción. Márcalos en la pantalla <a href="gimadd-mentor-objetivos-jugador.html" style="color:inherit;font-weight:700">Objetivos</a>.</p>';
+      return;
+    }
+    container.innerHTML = list
+      .map(
+        (o) => {
+          const p = Math.round(Math.min(100, Math.max(0, Number(o.progreso) || 0)));
+          return (
+            `<div class="obj-block" data-objetivo-id="${o.id}">` +
+            `<div class="obj-title">${escapeHtmlDiario(o.titulo)} <span style="font-size:0.72rem;font-weight:600;color:var(--muted)">(${p}%)</span></div>` +
+            `<label class="sr-only" for="pract-${o.id}">Practicado</label>` +
+            `<select id="pract-${o.id}" class="plan-pract" data-objetivo-id="${o.id}">` +
+            `<option value="practicado">Practicado</option>` +
+            `<option value="no-practicado">No practicado</option>` +
+            `</select>` +
+            `<label class="sr-only" for="sens-${o.id}">Sensaciones</label>` +
+            `<textarea id="sens-${o.id}" class="plan-sens" data-objetivo-id="${o.id}" rows="2" placeholder="Sensaciones sobre este objetivo…"></textarea>` +
+            `</div>`
+          );
+        }
+      )
+      .join("");
+  }
+
+  function collectPlanAccionFromForm() {
+    const list = getPlanObjetivosForDiario();
+    return list.map((o) => {
+      const practEl = document.querySelector('.plan-pract[data-objetivo-id="' + o.id + '"]');
+      const sensEl = document.querySelector('.plan-sens[data-objetivo-id="' + o.id + '"]');
+      return {
+        objetivoId: o.id,
+        titulo: o.titulo,
+        practicado: practEl ? practEl.value === "practicado" : true,
+        sensaciones: sensEl ? sensEl.value.trim() : "",
+      };
+    });
+  }
+
+  function fillPlanAccionFromMatch(planAccion) {
+    const arr = planAccion || [];
+    const byTitulo = (t) => loadObjetivosFromStorage().find((x) => x.titulo === t);
+    arr.forEach((pa) => {
+      let id = pa.objetivoId;
+      if (!id && pa.titulo) {
+        const o = byTitulo(pa.titulo);
+        if (o) id = o.id;
+      }
+      if (!id) return;
+      const practEl = document.querySelector('.plan-pract[data-objetivo-id="' + id + '"]');
+      const sensEl = document.querySelector('.plan-sens[data-objetivo-id="' + id + '"]');
+      if (practEl) practEl.value = pa.practicado ? "practicado" : "no-practicado";
+      if (sensEl) sensEl.value = pa.sensaciones || "";
+    });
+  }
+
+
+  function genId() {
+    return "m-" + Date.now() + "-" + Math.random().toString(36).slice(2, 9);
+  }
+
+  function ensureMatchIds() {
+    matches.forEach((m) => {
+      if (!m.id) m.id = genId();
+    });
+  }
+
+  function setOutcomeUI(outcome) {
+    if (outcome === "win") {
+      segWin.classList.add("active");
+      segLoss.classList.remove("active");
+      mOutcome.value = "win";
+    } else {
+      segLoss.classList.add("active");
+      segWin.classList.remove("active");
+      mOutcome.value = "loss";
+    }
+  }
+
+  function resetFormForNew() {
+    editingId = null;
+    formTitle.textContent = "Agregar partido";
+    btnSave.textContent = "Guardar partido";
+    form.reset();
+    setOutcomeUI("win");
+    const feel3 = form.querySelector('input[name="mFeel"][value="3"]');
+    if (feel3) feel3.checked = true;
+    document.getElementById("mDate").valueAsDate = new Date();
+    document.querySelectorAll(".set-us, .set-them").forEach((inp) => {
+      inp.value = "";
+    });
+    renderPlanAccionSection();
+  }
+
+  function openForm() {
+    layout.classList.add("form-focus");
+    placeholder.style.display = "none";
+  }
+
+  function closeForm() {
+    layout.classList.remove("form-focus");
+    placeholder.style.display = "";
+  }
+
+  function openFormNew() {
+    resetFormForNew();
+    openForm();
+  }
+
+  function populateFormForEdit(m) {
+    if (!m.id) m.id = genId();
+    editingId = m.id;
+    formTitle.textContent = "Editar partido";
+    btnSave.textContent = "Guardar cambios";
+    document.getElementById("mDate").value = m.date;
+    setOutcomeUI(m.outcome === "loss" ? "loss" : "win");
+    document.querySelectorAll(".set-us, .set-them").forEach((inp) => {
+      inp.value = "";
+    });
+    (m.sets || []).forEach((st, i) => {
+      if (!st || i > 3) return;
+      const usIn = document.querySelector('.set-us[data-set="' + i + '"]');
+      const themIn = document.querySelector('.set-them[data-set="' + i + '"]');
+      if (usIn) usIn.value = String(st.us);
+      if (themIn) themIn.value = String(st.them);
+    });
+    document.getElementById("mPartner").value = m.partner || "";
+    document.getElementById("mClub").value = m.club || "";
+    const feel = Math.min(4, Math.max(1, m.feel || 3));
+    const feelInput = form.querySelector('input[name="mFeel"][value="' + feel + '"]');
+    if (feelInput) feelInput.checked = true;
+    document.getElementById("mFeelText").value = m.feelText || "";
+    document.getElementById("mNotes").value = m.notes || "";
+    renderPlanAccionSection();
+    fillPlanAccionFromMatch(m.planAccion);
+    openForm();
+  }
+
+  btnOpen.addEventListener("click", openFormNew);
+  btnClose.addEventListener("click", () => {
+    closeForm();
+    resetFormForNew();
+  });
+
+  segWin.addEventListener("click", () => setOutcomeUI("win"));
+  segLoss.addEventListener("click", () => setOutcomeUI("loss"));
+
+  function readSets() {
+    const us = Array.from(document.querySelectorAll(".set-us")).map((i) =>
+      i.value === "" ? null : parseInt(i.value, 10)
+    );
+    const them = Array.from(document.querySelectorAll(".set-them")).map((i) =>
+      i.value === "" ? null : parseInt(i.value, 10)
+    );
+    const played = [];
+    for (let s = 0; s < 4; s++) {
+      if (us[s] != null && them[s] != null && !Number.isNaN(us[s]) && !Number.isNaN(them[s])) {
+        played.push({ us: us[s], them: them[s] });
+      }
+    }
+    return played;
+  }
+
+  function formatDate(iso) {
+    try {
+      const d = new Date(iso + "T12:00:00");
+      return d.toLocaleDateString("es", { day: "numeric", month: "long" });
+    } catch (e) {
+      return iso;
+    }
+  }
+
+  function renderList() {
+    ensureMatchIds();
+    if (!matches.length) {
+      listEl.innerHTML =
+        '<p style="color:var(--muted);font-size:0.88rem">Aún no hay partidos. Añade el primero.</p>';
+      updateStats();
+      updateSummaryEmojis();
+      return;
+    }
+    const sorted = [...matches].sort((a, b) => (a.date < b.date ? 1 : -1));
+    listEl.innerHTML = sorted
+      .map((m) => {
+        const setCellsUs = [0, 1, 2, 3]
+          .map((i) => {
+            const st = m.sets[i];
+            if (!st) return "<td>—</td>";
+            const cls = st.us > st.them ? " win-set" : "";
+            return `<td class="${cls.trim()}">${st.us}</td>`;
+          })
+          .join("");
+        const setCellsThem = [0, 1, 2, 3]
+          .map((i) => {
+            const st = m.sets[i];
+            if (!st) return "<td>—</td>";
+            const cls = st.them > st.us ? " win-set" : "";
+            return `<td class="${cls.trim()}">${st.them}</td>`;
+          })
+          .join("");
+        const badge =
+          m.outcome === "win"
+            ? '<span class="badge badge-win">Victoria</span>'
+            : '<span class="badge badge-loss">Derrota</span>';
+        return `
+          <article class="match-card">
+            <div class="match-card-top">
+              ${badge}
+              <span class="match-date">${formatDate(m.date)}</span>
+            </div>
+            <table class="score-table">
+              <thead><tr><th></th><th>S1</th><th>S2</th><th>S3</th><th>S4</th></tr></thead>
+              <tbody>
+                <tr><td>Mi equipo</td>${setCellsUs}</tr>
+                <tr><td>Rivales</td>${setCellsThem}</tr>
+              </tbody>
+            </table>
+            ${m.partner || m.club ? `<p style="font-size:0.72rem;color:var(--muted);margin:0.5rem 0 0">${[m.partner, m.club].filter(Boolean).join(" · ")}</p>` : ""}
+            <button type="button" class="btn-edit-match" data-edit-id="${m.id}" aria-label="Editar partido">Editar</button>
+          </article>`;
+      })
+      .join("");
+    updateStats();
+    updateSummaryEmojis();
+  }
+
+  listEl.addEventListener("click", (e) => {
+    const btn = e.target.closest("[data-edit-id]");
+    if (!btn) return;
+    const id = btn.getAttribute("data-edit-id");
+    const m = matches.find((x) => x.id === id);
+    if (m) populateFormForEdit(m);
+  });
+
+  function updateStats() {
+    const now = new Date();
+    const ym = now.getFullYear() + "-" + String(now.getMonth() + 1).padStart(2, "0");
+    const monthMatches = matches.filter((m) => m.date.startsWith(ym));
+    const wins = monthMatches.filter((m) => m.outcome === "win").length;
+    const loss = monthMatches.filter((m) => m.outcome === "loss").length;
+    const total = monthMatches.length;
+    const pct = total ? Math.round((wins / total) * 100) + "%" : "—";
+    document.getElementById("stTotal").textContent = String(total);
+    document.getElementById("stWins").textContent = String(wins);
+    document.getElementById("stLoss").textContent = String(loss);
+    document.getElementById("stPct").textContent = pct;
+  }
+
+  function updateSummaryEmojis() {
+    const el = document.getElementById("summaryEmojis");
+    if (!matches.length) {
+      el.innerHTML =
+        '<span style="font-size:0.85rem;color:var(--muted)">Sin datos aún.</span>';
+      return;
+    }
+    const avg =
+      matches.reduce((s, m) => s + (m.feel || 3), 0) / matches.length;
+    const rounded = Math.min(4, Math.max(1, Math.round(avg)));
+    const chips = [
+      { v: 1, e: "😠" },
+      { v: 2, e: "😢" },
+      { v: 3, e: "😐" },
+      { v: 4, e: "😊" },
+    ];
+    el.innerHTML = chips
+      .map(
+        (c) =>
+          `<div class="emoji-chip${c.v === rounded ? " on" : ""}">${c.e}<small>${c.v}</small></div>`
+      )
+      .join("");
+  }
+
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const sets = readSets();
+    if (!sets.length) {
+      alert("Introduce al menos un set con resultado para ambos equipos.");
+      return;
+    }
+    const payload = {
+      id: editingId || genId(),
+      date: document.getElementById("mDate").value,
+      outcome: mOutcome.value,
+      sets: [0, 1, 2, 3].map((i) => sets[i] || null),
+      partner: document.getElementById("mPartner").value.trim(),
+      club: document.getElementById("mClub").value.trim(),
+      feel: parseInt(form.querySelector('input[name="mFeel"]:checked').value, 10),
+      feelText: document.getElementById("mFeelText").value.trim(),
+      notes: document.getElementById("mNotes").value.trim(),
+      planAccion: collectPlanAccionFromForm(),
+    };
+    payload.sets = payload.sets.map((s, i) => {
+      if (s) return s;
+      return null;
+    });
+    const normalizedSets = [];
+    for (let i = 0; i < 4; i++) {
+      if (payload.sets[i]) normalizedSets.push(payload.sets[i]);
+    }
+    payload.sets = normalizedSets;
+    if (editingId) {
+      const idx = matches.findIndex((x) => x.id === editingId);
+      if (idx >= 0) {
+        payload.id = editingId;
+        matches[idx] = payload;
+      } else {
+        matches.push(payload);
+      }
+    } else {
+      matches.push(payload);
+    }
+    console.log(editingId ? "Partido actualizado (demo):" : "Partido guardado (demo):", payload);
+    persistMatches();
+    renderList();
+    closeForm();
+    resetFormForNew();
+  });
+
+  window.addEventListener("storage", function (e) {
+    if (e.key === OBJ_STORAGE_KEY || e.key === OBJ_FILE_ID_KEY) {
+      loadObjetivosFromStorage();
+      renderPlanAccionSection();
+    }
+  });
+
+  try {
+    const bcObj = new BroadcastChannel("gimadd_objetivos_channel");
+    bcObj.onmessage = function () {
+      loadObjetivosFromStorage();
+      renderPlanAccionSection();
+    };
+  } catch (e) {}
+
+  document.addEventListener("visibilitychange", function () {
+    if (document.visibilityState !== "visible") return;
+    loadObjetivosFromStorage();
+    if (!layout.classList.contains("form-focus")) {
+      renderPlanAccionSection();
+    }
+  });
+
+  window.addEventListener("focus", function () {
+    loadObjetivosFromStorage();
+    if (!layout.classList.contains("form-focus")) {
+      renderPlanAccionSection();
+    }
+  });
+
+  loadMatchesIntoMemory();
+  document.getElementById("btnDownloadHtmlDiario").onclick = function () {
+    downloadHtmlDiario();
+  };
+
+  resetFormForNew();
+  renderList();
+})();
+  </script>
+</body>
+</html>

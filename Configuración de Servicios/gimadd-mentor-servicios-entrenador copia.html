@@ -1,0 +1,1340 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Gimadd Mentor — Servicios, packs y mensualidades</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --yellow: #f5d547;
+      --yellow-soft: #fff9e0;
+      --yellow-dark: #e6c73a;
+      --bg: #f6f6f7;
+      --card: #ffffff;
+      --text: #1a1a1a;
+      --muted: #6b7280;
+      --border: #e5e7eb;
+      --sidebar-w: 260px;
+      --radius: 14px;
+      --shadow: 0 1px 3px rgba(0,0,0,.06), 0 8px 24px rgba(0,0,0,.04);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Inter", system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+    .app {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: var(--sidebar-w);
+      background: var(--card);
+      border-right: 1px solid var(--border);
+      padding: 1.25rem 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+    }
+    .logo {
+      font-weight: 800;
+      font-size: 1.05rem;
+      letter-spacing: -0.02em;
+    }
+    .logo span { color: var(--yellow-dark); }
+    .sidebar-search {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 0.75rem;
+      background: var(--bg);
+      border-radius: 10px;
+      font-size: 0.875rem;
+      color: var(--muted);
+    }
+    .sidebar-search input {
+      border: none;
+      background: transparent;
+      flex: 1;
+      font: inherit;
+      outline: none;
+    }
+    .nav {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+      margin-top: 0.5rem;
+    }
+    .nav a {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.65rem 0.75rem;
+      border-radius: 10px;
+      color: var(--text);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+    .nav a:hover { background: var(--bg); }
+    .nav a.active {
+      background: var(--yellow-soft);
+      color: #854d0e;
+      font-weight: 600;
+    }
+    .nav .ico { opacity: 0.7; font-size: 1rem; }
+    .sidebar-foot {
+      margin-top: auto;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border);
+    }
+    .sidebar-foot a {
+      font-size: 0.85rem;
+      color: var(--muted);
+      text-decoration: none;
+      display: block;
+      padding: 0.35rem 0.75rem;
+    }
+    .user-card {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      padding: 0.75rem;
+      margin-top: 0.75rem;
+      background: var(--bg);
+      border-radius: 12px;
+    }
+    .avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--yellow), #f0a);
+      flex-shrink: 0;
+    }
+    .user-card strong { display: block; font-size: 0.85rem; }
+    .user-card small { color: var(--muted); font-size: 0.75rem; }
+
+    /* Main */
+    .main {
+      flex: 1;
+      padding: 1.5rem 2rem 2.5rem;
+      max-width: 960px;
+    }
+    .toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+    }
+    .toolbar h1 {
+      margin: 0;
+      font-size: 1.5rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .back {
+      border: none;
+      background: none;
+      cursor: pointer;
+      padding: 0.25rem;
+      font-size: 1.25rem;
+      line-height: 1;
+      color: var(--muted);
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+      padding: 0.65rem 1.1rem;
+      border-radius: 999px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
+      transition: transform 0.05s, box-shadow 0.15s;
+    }
+    .btn:active { transform: scale(0.98); }
+    .btn-primary {
+      background: var(--yellow);
+      color: #1a1a1a;
+      box-shadow: 0 2px 8px rgba(245, 213, 71, 0.45);
+    }
+    .btn-primary:hover { filter: brightness(1.03); }
+    .btn-ghost {
+      background: var(--card);
+      border: 1px solid var(--border);
+      color: var(--text);
+    }
+
+    .section-title {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+      margin-bottom: 0.75rem;
+    }
+
+    .section-block {
+      margin-bottom: 2rem;
+    }
+    .section-block:last-of-type {
+      margin-bottom: 0;
+    }
+    .section-heading {
+      font-size: 1.05rem;
+      font-weight: 700;
+      margin: 0 0 0.75rem;
+      letter-spacing: -0.02em;
+    }
+
+    .service-list { display: flex; flex-direction: column; gap: 1rem; }
+
+    .service-card {
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 1.1rem 1.25rem;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 1rem;
+      align-items: start;
+      border: 1px solid var(--border);
+      cursor: pointer;
+      text-align: left;
+      font: inherit;
+      width: 100%;
+      transition: box-shadow 0.15s, border-color 0.15s;
+    }
+    button.service-card {
+      appearance: none;
+      -webkit-appearance: none;
+    }
+    .service-card:hover {
+      border-color: rgba(230, 199, 58, 0.65);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.07);
+    }
+    .service-card:focus {
+      outline: 2px solid var(--yellow-dark);
+      outline-offset: 2px;
+    }
+    .service-card:focus:not(:focus-visible) {
+      outline: none;
+    }
+    .service-card .tag {
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.25rem;
+    }
+    .service-card h2 {
+      margin: 0 0 0.35rem;
+      font-size: 1.1rem;
+      font-weight: 700;
+    }
+    .service-card p.desc {
+      margin: 0 0 0.75rem;
+      font-size: 0.875rem;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+    .service-card .meta {
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+    .service-card .stats-small {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-top: 0.5rem;
+    }
+    .thumb {
+      width: 88px;
+      height: 88px;
+      border-radius: 12px;
+      object-fit: cover;
+      background: var(--bg);
+      border: 1px solid var(--border);
+    }
+    .empty-state {
+      text-align: center;
+      padding: 2.5rem 1rem;
+      color: var(--muted);
+      background: var(--card);
+      border-radius: var(--radius);
+      border: 1px dashed var(--border);
+    }
+
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+    @media (max-width: 720px) {
+      .stats-row { grid-template-columns: 1fr; }
+      .app { flex-direction: column; }
+      .sidebar { width: 100%; height: auto; position: relative; }
+    }
+    .stat-box {
+      background: var(--yellow-soft);
+      border: 1px solid rgba(245, 213, 71, 0.5);
+      border-radius: var(--radius);
+      padding: 1.1rem 1.25rem;
+    }
+    .stat-box .label { font-size: 0.8rem; color: #854d0e; font-weight: 600; }
+    .stat-box .value { font-size: 1.5rem; font-weight: 800; margin-top: 0.25rem; }
+
+    /* Modal */
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.35);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      z-index: 100;
+      overflow-y: auto;
+    }
+    .overlay.open { display: flex; }
+    .modal {
+      background: var(--card);
+      border-radius: 18px;
+      width: 100%;
+      max-width: 520px;
+      max-height: calc(100vh - 2rem);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 24px 80px rgba(0,0,0,.18);
+    }
+    .modal-head {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 1rem 1.1rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .modal-head h2 { margin: 0; font-size: 1.15rem; flex: 1; }
+    .modal-body {
+      padding: 1.1rem 1.25rem 1.25rem;
+      overflow-y: auto;
+    }
+    .field { margin-bottom: 1.1rem; }
+    .field label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin-bottom: 0.4rem;
+      color: var(--text);
+    }
+    .upload-zone {
+      border: 2px dashed var(--border);
+      border-radius: 12px;
+      padding: 1.75rem 1rem;
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.85rem;
+      cursor: pointer;
+      background: var(--bg);
+    }
+    .upload-zone:hover { border-color: var(--yellow-dark); background: var(--yellow-soft); }
+    .upload-zone input { display: none; }
+
+    .segmented {
+      display: flex;
+      gap: 0.35rem;
+      padding: 0.25rem;
+      background: var(--bg);
+      border-radius: 12px;
+    }
+    .segmented button {
+      flex: 1;
+      border: none;
+      background: transparent;
+      padding: 0.55rem 0.5rem;
+      font-size: 0.78rem;
+      font-weight: 600;
+      border-radius: 10px;
+      cursor: pointer;
+      font-family: inherit;
+      color: var(--muted);
+    }
+    @media (min-width: 480px) {
+      .segmented button { font-size: 0.82rem; padding: 0.6rem 0.65rem; }
+    }
+    .segmented button.active {
+      background: var(--card);
+      color: var(--text);
+      box-shadow: 0 1px 3px rgba(0,0,0,.08);
+    }
+    .segmented button:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    select, textarea, input[type="text"], input[type="number"] {
+      width: 100%;
+      padding: 0.6rem 0.75rem;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      font: inherit;
+      background: var(--card);
+    }
+    textarea { resize: vertical; min-height: 72px; }
+    .hint { font-size: 0.75rem; color: var(--muted); margin-top: 0.35rem; }
+
+    .slider-row {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .slider-row input[type="range"] {
+      flex: 1;
+      accent-color: var(--yellow-dark);
+      height: 6px;
+    }
+    .slider-val {
+      min-width: 4.5rem;
+      text-align: right;
+      font-weight: 700;
+      font-size: 0.9rem;
+    }
+
+    .checks {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.65rem 1rem;
+    }
+    .checks label {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-weight: 500;
+      font-size: 0.85rem;
+      cursor: pointer;
+    }
+    .checks input { width: auto; }
+
+    .grid2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+    }
+    @media (max-width: 420px) { .grid2 { grid-template-columns: 1fr; } }
+
+    .subblock {
+      display: none;
+      padding: 0.85rem;
+      background: var(--bg);
+      border-radius: 12px;
+      margin-top: 0.5rem;
+      border: 1px solid var(--border);
+    }
+    .subblock.visible { display: block; }
+
+    .modal-foot {
+      display: flex;
+      gap: 0.75rem;
+      padding: 1rem 1.25rem;
+      border-top: 1px solid var(--border);
+      background: var(--card);
+    }
+    .modal-foot .btn { flex: 1; padding: 0.75rem; border-radius: 12px; }
+
+    .pill-info {
+      font-size: 0.75rem;
+      background: var(--yellow-soft);
+      color: #854d0e;
+      padding: 0.5rem 0.65rem;
+      border-radius: 8px;
+      line-height: 1.4;
+      margin-top: 0.5rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="logo">GIMADD <span>MENTOR</span></div>
+      <div class="sidebar-search">
+        <span class="ico">🔍</span>
+        <input type="search" placeholder="Buscar" aria-label="Buscar" />
+      </div>
+      <nav class="nav">
+        <a href="#"><span class="ico">🏠</span> Inicio</a>
+        <a href="#"><span class="ico">📅</span> Calendario</a>
+        <a href="#"><span class="ico">👥</span> Clientes</a>
+        <a href="#"><span class="ico">🎾</span> Clases</a>
+        <a href="#" class="active"><span class="ico">⚙️</span> Servicios</a>
+      </nav>
+      <div class="sidebar-foot">
+        <a href="#">Configuración</a>
+        <div class="user-card">
+          <div class="avatar" aria-hidden="true"></div>
+          <div>
+            <strong>Olivia Rhye</strong>
+            <small>coach@gimadd.com</small>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <main class="main">
+      <div class="toolbar">
+        <h1>
+          <button type="button" class="back" aria-label="Volver">←</button>
+          Servicios
+        </h1>
+        <button type="button" class="btn btn-primary" id="btnOpenModal">+ Añadir servicio</button>
+      </div>
+
+      <div class="section-block">
+        <h2 class="section-heading">Servicios individuales</h2>
+        <p class="section-title">Videoanálisis y mentoría en pista (predefinidos)</p>
+        <div class="service-list" id="listIndividual"></div>
+      </div>
+
+      <div class="section-block">
+        <h2 class="section-heading">Packs</h2>
+        <p class="section-title">Pago único · cupos combinados</p>
+        <div class="service-list" id="listPack"></div>
+      </div>
+
+      <div class="section-block">
+        <h2 class="section-heading">Servicios mensuales</h2>
+        <p class="section-title">Suscripción con cupos por mes</p>
+        <div class="service-list" id="listMonthly"></div>
+      </div>
+
+      <div class="stats-row" aria-live="polite">
+        <div class="stat-box">
+          <div class="label">Servicios activos</div>
+          <div class="value" id="statCount">0</div>
+        </div>
+        <div class="stat-box">
+          <div class="label">Reservas mensuales</div>
+          <div class="value" id="statRes">—</div>
+        </div>
+        <div class="stat-box">
+          <div class="label">Ganancias mensuales</div>
+          <div class="value" id="statEarn">—</div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal">
+      <div class="modal-head">
+        <button type="button" class="back" id="btnCloseX" aria-label="Cerrar">✕</button>
+        <h2 id="modalTitle">Agregar servicio</h2>
+      </div>
+      <div class="modal-body">
+        <div class="field">
+          <label>Imagen (opcional)</label>
+          <label class="upload-zone" id="uploadZone">
+            <input type="file" id="fileImg" accept="image/*" />
+            <div>☁️ <strong>Subir una imagen</strong></div>
+            <div class="hint" id="fileName">PNG o JPG</div>
+          </label>
+        </div>
+
+        <div class="field">
+          <label>Tipo de oferta</label>
+          <div class="segmented" role="tablist">
+            <button type="button" class="active" data-mode="individual" role="tab" aria-selected="true">Servicio individual</button>
+            <button type="button" data-mode="pack" role="tab" aria-selected="false">Pack (pago único)</button>
+            <button type="button" data-mode="monthly" role="tab" aria-selected="false">Mensualidad</button>
+          </div>
+          <p class="pill-info" id="modeHint">
+            Servicios base y precio modalidad parejas (dos jugadores) configurable en cada uno.
+          </p>
+        </div>
+
+        <!-- Individual -->
+        <div id="blockIndividual">
+          <div class="field">
+            <label for="indTipo">Servicio predefinido</label>
+            <select id="indTipo">
+              <option value="video">Videoanálisis</option>
+              <option value="pista">Mentoría en pista</option>
+            </select>
+            <p class="hint">Plantillas base; ajusta nombre, tiempo, precios individual y parejas, y descripción.</p>
+          </div>
+          <div class="field">
+            <label for="indNombre">Nombre del servicio</label>
+            <input type="text" id="indNombre" maxlength="80" placeholder="" autocomplete="off" />
+          </div>
+          <div class="field" id="indDurWrap">
+            <label>Duración de la sesión en pista</label>
+            <div class="slider-row">
+              <input type="range" id="indDur" min="30" max="120" step="5" value="60" />
+              <span class="slider-val" id="indDurVal">60 min</span>
+            </div>
+          </div>
+          <div class="field">
+            <label>Precio (individual / referencia)</label>
+            <div class="slider-row">
+              <input type="range" id="indPrice" min="10" max="200" step="5" value="50" />
+              <span class="slider-val" id="indPriceVal">50 €</span>
+            </div>
+          </div>
+          <div class="field">
+            <label>Precio modalidad parejas</label>
+            <div class="slider-row">
+              <input type="range" id="indPrecioPareja" min="15" max="280" step="5" value="72" />
+              <span class="slider-val" id="indPrecioParejaVal">72 €</span>
+            </div>
+            <p class="hint">Tarifa cuando el servicio se contrata en pareja (dos jugadores).</p>
+          </div>
+          <div class="field" id="indPlazoWrap" style="display:none;">
+            <label for="indPlazo">Tiempo orientativo de entrega (videoanálisis)</label>
+            <select id="indPlazo">
+              <option value="24">24 h</option>
+              <option value="48" selected>48 h</option>
+              <option value="72">72 h</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Pack -->
+        <div id="blockPack" style="display:none;">
+          <div class="grid2">
+            <div class="field">
+              <label for="packClases">Clases presenciales incluidas</label>
+              <input type="number" id="packClases" min="0" max="99" value="7" />
+            </div>
+            <div class="field">
+              <label for="packVideos">Videoanálisis incluidos</label>
+              <input type="number" id="packVideos" min="0" max="99" value="5" />
+            </div>
+          </div>
+          <div class="field">
+            <label>Duración por clase en pista</label>
+            <div class="slider-row">
+              <input type="range" id="packDurClase" min="30" max="120" step="5" value="60" />
+              <span class="slider-val" id="packDurClaseVal">60 min</span>
+            </div>
+          </div>
+          <div class="field">
+            <label>Validez del pack</label>
+            <div class="slider-row">
+              <input type="range" id="packMeses" min="1" max="12" step="1" value="3" />
+              <span class="slider-val" id="packMesesVal">3 meses</span>
+            </div>
+          </div>
+          <div class="field">
+            <label>Precio total del pack (pago único)</label>
+            <div class="slider-row">
+              <input type="range" id="packPrice" min="50" max="2000" step="10" value="420" />
+              <span class="slider-val" id="packPriceVal">420 €</span>
+            </div>
+          </div>
+          <div class="field">
+            <label>Precio del pack modalidad parejas</label>
+            <div class="slider-row">
+              <input type="range" id="packPrecioPareja" min="50" max="2000" step="10" value="360" />
+              <span class="slider-val" id="packPrecioParejaVal">360 €</span>
+            </div>
+            <p class="hint">Importe cuando el pack se adquiere en modalidad pareja.</p>
+          </div>
+        </div>
+
+        <!-- Monthly -->
+        <div id="blockMonthly" style="display:none;">
+          <div class="grid2">
+            <div class="field">
+              <label for="mesClases">Clases presenciales / mes</label>
+              <input type="number" id="mesClases" min="0" max="30" value="4" />
+            </div>
+            <div class="field">
+              <label for="mesVideos">Videoanálisis / mes</label>
+              <input type="number" id="mesVideos" min="0" max="30" value="2" />
+            </div>
+          </div>
+          <div class="field">
+            <label>Duración por clase en pista</label>
+            <div class="slider-row">
+              <input type="range" id="mesDur" min="30" max="120" step="5" value="60" />
+              <span class="slider-val" id="mesDurVal">60 min</span>
+            </div>
+          </div>
+          <div class="field">
+            <label>Precio mensual</label>
+            <div class="slider-row">
+              <input type="range" id="mesPrice" min="29" max="800" step="1" value="149" />
+              <span class="slider-val" id="mesPriceVal">149 €/mes</span>
+            </div>
+          </div>
+          <div class="field">
+            <label>Precio mensual modalidad parejas</label>
+            <div class="slider-row">
+              <input type="range" id="mesPrecioPareja" min="39" max="900" step="1" value="199" />
+              <span class="slider-val" id="mesPrecioParejaVal">199 €/mes</span>
+            </div>
+          </div>
+          <p class="hint">La mensualidad renueva cada mes hasta cancelación; los cupos se reinician según tu política (definición operativa fuera de este prototipo).</p>
+        </div>
+
+        <div class="field">
+          <label for="desc">Descripción</label>
+          <textarea id="desc" maxlength="200" placeholder="Describe qué incluye esta oferta…"></textarea>
+          <div class="hint"><span id="charCount">0</span> / 200 caracteres máximo</div>
+        </div>
+
+        <div class="field" id="nivelesWrap">
+          <label>Nivel de jugador (opcional)</label>
+          <div class="checks">
+            <label><input type="checkbox" name="lvl" value="principiante" /> Principiante</label>
+            <label><input type="checkbox" name="lvl" value="intermedio" /> Intermedio</label>
+            <label><input type="checkbox" name="lvl" value="avanzado" /> Avanzado</label>
+          </div>
+        </div>
+      </div>
+      <div class="modal-foot">
+        <button type="button" class="btn btn-ghost" id="btnCancel">Cancelar</button>
+        <button type="button" class="btn btn-primary" id="btnSave">Guardar servicio</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+(function () {
+  const MODE = { individual: "individual", pack: "pack", monthly: "monthly" };
+  let currentMode = MODE.individual;
+  /** @type {string|null} */
+  let editingId = null;
+
+  /** Miniaturas por tipo (Unsplash, uso demo) */
+  /** Imágenes verificadas Unsplash (búsqueda «padel tennis» / pista azul) */
+  const SERVICE_IMG = {
+    video:
+      "https://images.unsplash.com/photo-1651140753772-c12fdcd7077d?auto=format&fit=crop&w=280&h=280&q=80",
+    pista:
+      "https://images.unsplash.com/photo-1743456110628-6508997cf730?auto=format&fit=crop&w=280&h=280&q=80",
+    pack:
+      "https://images.unsplash.com/photo-1646649853703-7645147474ba?auto=format&fit=crop&w=280&h=280&q=80",
+    monthly:
+      "https://images.unsplash.com/photo-1510846699902-9211b99dac11?auto=format&fit=crop&w=280&h=280&q=80",
+  };
+
+  function pickDefaultImage(item) {
+    if (item.mode === MODE.individual) {
+      return item.detail && item.detail.tipo === "pista" ? SERVICE_IMG.pista : SERVICE_IMG.video;
+    }
+    if (item.mode === MODE.pack) return SERVICE_IMG.pack;
+    return SERVICE_IMG.monthly;
+  }
+
+  let servicesIndividual = [
+    {
+      id: "preset_videoanalisis",
+      mode: "individual",
+      presetKey: "video",
+      tag: "Videoanálisis",
+      title: "Videoanálisis",
+      desc:
+        "El jugador graba y sube el vídeo desde la app; recibes notificación, realizas el análisis con marcas temporales y se lo devuelves al jugador.",
+      meta: "individual 45 € · parejas 72 € · entrega 48 h",
+      foot: "Predefinido · tiempo, precio, nombre y descripción configurables al duplicar o crear uno nuevo",
+      img: SERVICE_IMG.video,
+      detail: { tipo: "video", precio: 45, precioParejas: 72, plazoHoras: 48 },
+    },
+    {
+      id: "preset_mentoria_pista",
+      mode: "individual",
+      presetKey: "pista",
+      tag: "Mentoría en pista",
+      title: "Mentoría en pista",
+      desc: "Sesión presencial en pista: trabajo técnico, táctico o mixto según tu planificación.",
+      meta: "individual 55 € · parejas 90 € · 60 min",
+      foot: "Predefinido · duración, precio, nombre y descripción configurables al crear tu oferta",
+      img: SERVICE_IMG.pista,
+      detail: { tipo: "pista", duracionMin: 60, precio: 55, precioParejas: 90 },
+    },
+  ];
+
+  let servicesPack = [
+    {
+      id: "example_pack_intensivo",
+      mode: "pack",
+      tag: "Pack",
+      title: "Pack intensivo — 7 pista + 5 videoanálisis",
+      desc:
+        "Pago único para combinar mentorías en pista y revisiones de vídeo en un mismo periodo. Ideal para una temporada de trabajo concentrado.",
+      meta: "individual 420 € · parejas 360 € · validez 3 meses · 60 min/clase",
+      foot: "Ejemplo · crea el tuyo con + Añadir servicio → Pack (pago único)",
+      img: SERVICE_IMG.pack,
+      detail: {
+        clasesPista: 7,
+        videoanalisis: 5,
+        duracionClaseMin: 60,
+        validezMeses: 3,
+        precioTotal: 420,
+        precioParejas: 360,
+      },
+    },
+  ];
+
+  let servicesMonthly = [
+    {
+      id: "example_plan_pro_mensual",
+      mode: "monthly",
+      tag: "Mensualidad",
+      title: "Plan Pro mensual",
+      desc:
+        "Cuatro sesiones en pista y dos videoanálisis al mes. Pensado para seguimiento continuo con cupos que se renuevan cada periodo.",
+      meta: "individual 149 €/mes · parejas 199 €/mes · 60 min por clase en pista",
+      foot: "Ejemplo · crea el tuyo con + Añadir servicio → Mensualidad",
+      img: SERVICE_IMG.monthly,
+      detail: {
+        clasesPistaMes: 4,
+        videoanalisisMes: 2,
+        duracionClaseMin: 60,
+        precioMensual: 149,
+        precioParejas: 199,
+      },
+    },
+  ];
+
+  const els = {
+    listIndividual: document.getElementById("listIndividual"),
+    listPack: document.getElementById("listPack"),
+    listMonthly: document.getElementById("listMonthly"),
+    overlay: document.getElementById("overlay"),
+    btnOpen: document.getElementById("btnOpenModal"),
+    btnCloseX: document.getElementById("btnCloseX"),
+    btnCancel: document.getElementById("btnCancel"),
+    btnSave: document.getElementById("btnSave"),
+    statCount: document.getElementById("statCount"),
+    statRes: document.getElementById("statRes"),
+    statEarn: document.getElementById("statEarn"),
+    modeButtons: document.querySelectorAll(".segmented button"),
+    modeHint: document.getElementById("modeHint"),
+    blockIndividual: document.getElementById("blockIndividual"),
+    blockPack: document.getElementById("blockPack"),
+    blockMonthly: document.getElementById("blockMonthly"),
+    indTipo: document.getElementById("indTipo"),
+    indDurWrap: document.getElementById("indDurWrap"),
+    indDur: document.getElementById("indDur"),
+    indDurVal: document.getElementById("indDurVal"),
+    indPrice: document.getElementById("indPrice"),
+    indPriceVal: document.getElementById("indPriceVal"),
+    indPrecioPareja: document.getElementById("indPrecioPareja"),
+    indPrecioParejaVal: document.getElementById("indPrecioParejaVal"),
+    indPlazoWrap: document.getElementById("indPlazoWrap"),
+    indNombre: document.getElementById("indNombre"),
+    indPlazo: document.getElementById("indPlazo"),
+    desc: document.getElementById("desc"),
+    charCount: document.getElementById("charCount"),
+    uploadZone: document.getElementById("uploadZone"),
+    fileImg: document.getElementById("fileImg"),
+    fileName: document.getElementById("fileName"),
+    packClases: document.getElementById("packClases"),
+    packVideos: document.getElementById("packVideos"),
+    packDurClase: document.getElementById("packDurClase"),
+    packDurClaseVal: document.getElementById("packDurClaseVal"),
+    packMeses: document.getElementById("packMeses"),
+    packMesesVal: document.getElementById("packMesesVal"),
+    packPrice: document.getElementById("packPrice"),
+    packPriceVal: document.getElementById("packPriceVal"),
+    packPrecioPareja: document.getElementById("packPrecioPareja"),
+    packPrecioParejaVal: document.getElementById("packPrecioParejaVal"),
+    mesClases: document.getElementById("mesClases"),
+    mesVideos: document.getElementById("mesVideos"),
+    mesDur: document.getElementById("mesDur"),
+    mesDurVal: document.getElementById("mesDurVal"),
+    mesPrice: document.getElementById("mesPrice"),
+    mesPriceVal: document.getElementById("mesPriceVal"),
+    mesPrecioPareja: document.getElementById("mesPrecioPareja"),
+    mesPrecioParejaVal: document.getElementById("mesPrecioParejaVal"),
+    modalTitle: document.getElementById("modalTitle"),
+    btnSave: document.getElementById("btnSave"),
+  };
+
+  const placeholderImg =
+    "data:image/svg+xml," +
+    encodeURIComponent(
+      `<svg xmlns="http://www.w3.org/2000/svg" width="88" height="88" viewBox="0 0 88 88"><rect fill="#f3f4f6" width="88" height="88" rx="12"/><text x="50%" y="52%" dominant-baseline="middle" text-anchor="middle" fill="#9ca3af" font-family="system-ui" font-size="11">IMG</text></svg>`
+    );
+
+  function setModeTabsDisabled(disabled) {
+    els.modeButtons.forEach((b) => {
+      b.disabled = disabled;
+    });
+  }
+
+  function setMode(mode) {
+    currentMode = mode;
+    els.modeButtons.forEach((b) => {
+      const on = b.dataset.mode === mode;
+      b.classList.toggle("active", on);
+      b.setAttribute("aria-selected", on ? "true" : "false");
+    });
+    els.blockIndividual.style.display = mode === MODE.individual ? "block" : "none";
+    els.blockPack.style.display = mode === MODE.pack ? "block" : "none";
+    els.blockMonthly.style.display = mode === MODE.monthly ? "block" : "none";
+
+    if (mode === MODE.individual) {
+      els.modeHint.textContent =
+        "Videoanálisis y mentoría en pista; precio de referencia y precio modalidad parejas en cada uno.";
+    } else if (mode === MODE.pack) {
+      els.modeHint.textContent =
+        "Pack de pago único: cupos, validez, precio estándar y precio modalidad parejas.";
+    } else {
+      els.modeHint.textContent =
+        "Mensualidad: cupos por mes, precio mensual y precio mensual en modalidad parejas.";
+    }
+    syncIndividualVisibility();
+  }
+
+  els.modeButtons.forEach((b) => {
+    b.addEventListener("click", () => setMode(b.dataset.mode));
+  });
+
+  const DEFAULT_NAMES = {
+    video: "Videoanálisis",
+    pista: "Mentoría en pista",
+  };
+
+  function syncIndividualVisibility() {
+    const t = els.indTipo.value;
+    const isVideoLike = t === "video";
+    els.indDurWrap.style.display = isVideoLike ? "none" : "block";
+    els.indPlazoWrap.style.display = isVideoLike ? "block" : "none";
+    const def = DEFAULT_NAMES[t] || DEFAULT_NAMES.pista;
+    els.indNombre.placeholder = def;
+    if (!els.indNombre.dataset.touched) {
+      els.indNombre.value = "";
+    }
+  }
+  els.indTipo.addEventListener("change", () => {
+    els.indNombre.dataset.touched = "";
+    const t = els.indTipo.value;
+    if (t === "video") {
+      els.indPrice.value = "45";
+      els.indPrecioPareja.value = "72";
+      els.indPlazo.value = "48";
+    } else {
+      els.indPrice.value = "55";
+      els.indPrecioPareja.value = "90";
+      els.indDur.value = "60";
+      els.indDur.dispatchEvent(new Event("input"));
+    }
+    els.indPrice.dispatchEvent(new Event("input"));
+    els.indPrecioPareja.dispatchEvent(new Event("input"));
+    syncIndividualVisibility();
+  });
+  els.indNombre.addEventListener("input", () => {
+    els.indNombre.dataset.touched = els.indNombre.value.trim() ? "1" : "";
+  });
+
+  function bindSlider(range, label, fmt) {
+    const update = () => {
+      label.textContent = fmt(range.value);
+    };
+    range.addEventListener("input", update);
+    update();
+  }
+
+  bindSlider(els.indDur, els.indDurVal, (v) => `${v} min`);
+  bindSlider(els.indPrice, els.indPriceVal, (v) => `${v} €`);
+  bindSlider(els.indPrecioPareja, els.indPrecioParejaVal, (v) => `${v} €`);
+  bindSlider(els.packDurClase, els.packDurClaseVal, (v) => `${v} min`);
+  bindSlider(els.packMeses, els.packMesesVal, (v) => `${v} mes${v === "1" ? "" : "es"}`);
+  bindSlider(els.packPrice, els.packPriceVal, (v) => `${v} €`);
+  bindSlider(els.packPrecioPareja, els.packPrecioParejaVal, (v) => `${v} €`);
+  bindSlider(els.mesDur, els.mesDurVal, (v) => `${v} min`);
+  bindSlider(els.mesPrice, els.mesPriceVal, (v) => `${v} €/mes`);
+  bindSlider(els.mesPrecioPareja, els.mesPrecioParejaVal, (v) => `${v} €/mes`);
+
+  els.desc.addEventListener("input", () => {
+    els.charCount.textContent = els.desc.value.length;
+  });
+
+  els.uploadZone.addEventListener("click", () => els.fileImg.click());
+  els.fileImg.addEventListener("change", () => {
+    const f = els.fileImg.files[0];
+    els.fileName.textContent = f ? f.name : "PNG o JPG";
+  });
+
+  function resetPackMonthlyDefaults() {
+    els.packClases.value = "7";
+    els.packVideos.value = "5";
+    els.packDurClase.value = "60";
+    els.packDurClase.dispatchEvent(new Event("input"));
+    els.packMeses.value = "3";
+    els.packMeses.dispatchEvent(new Event("input"));
+    els.packPrice.value = "420";
+    els.packPrice.dispatchEvent(new Event("input"));
+    els.packPrecioPareja.value = "360";
+    els.packPrecioPareja.dispatchEvent(new Event("input"));
+    els.mesClases.value = "4";
+    els.mesVideos.value = "2";
+    els.mesDur.value = "60";
+    els.mesDur.dispatchEvent(new Event("input"));
+    els.mesPrice.value = "149";
+    els.mesPrice.dispatchEvent(new Event("input"));
+    els.mesPrecioPareja.value = "199";
+    els.mesPrecioPareja.dispatchEvent(new Event("input"));
+  }
+
+  function openModalCreate() {
+    editingId = null;
+    setModeTabsDisabled(false);
+    els.modalTitle.textContent = "Agregar servicio";
+    els.btnSave.textContent = "Guardar servicio";
+    els.overlay.classList.add("open");
+    els.desc.value = "";
+    els.charCount.textContent = "0";
+    els.fileImg.value = "";
+    els.fileName.textContent = "PNG o JPG";
+    document.querySelectorAll('input[name="lvl"]').forEach((c) => (c.checked = false));
+    setMode(MODE.individual);
+    els.indTipo.value = "video";
+    els.indNombre.value = "";
+    delete els.indNombre.dataset.touched;
+    els.indPrice.value = "45";
+    els.indPrice.dispatchEvent(new Event("input"));
+    els.indPrecioPareja.value = "72";
+    els.indPrecioPareja.dispatchEvent(new Event("input"));
+    els.indDur.value = "60";
+    els.indDur.dispatchEvent(new Event("input"));
+    els.indPlazo.value = "48";
+    resetPackMonthlyDefaults();
+    syncIndividualVisibility();
+  }
+
+  function nearestPlazoOption(h) {
+    const opts = [24, 48, 72];
+    let best = opts[0];
+    let d = Math.abs(h - best);
+    for (const o of opts) {
+      const nd = Math.abs(h - o);
+      if (nd < d) {
+        d = nd;
+        best = o;
+      }
+    }
+    return String(best);
+  }
+
+  function populateFromItem(s) {
+    els.desc.value = s.desc || "";
+    els.charCount.textContent = String(els.desc.value.length);
+    els.fileImg.value = "";
+    els.fileName.textContent = s.img ? "Puedes sustituir la imagen" : "PNG o JPG";
+
+    if (s.mode === MODE.individual) {
+      const d = s.detail || {};
+      const tipoRaw = d.tipo || s.presetKey || "pista";
+      els.indTipo.value = tipoRaw === "pista" ? "pista" : "video";
+      const def = DEFAULT_NAMES[els.indTipo.value] || DEFAULT_NAMES.pista;
+      if (s.title && s.title !== def) {
+        els.indNombre.value = s.title;
+        els.indNombre.dataset.touched = "1";
+      } else {
+        els.indNombre.value = "";
+        delete els.indNombre.dataset.touched;
+      }
+      const isVid = els.indTipo.value === "video";
+      els.indPrice.value = String(d.precio != null ? d.precio : isVid ? 45 : 55);
+      els.indPrice.dispatchEvent(new Event("input"));
+      els.indPrecioPareja.value = String(d.precioParejas != null ? d.precioParejas : isVid ? 72 : 90);
+      els.indPrecioPareja.dispatchEvent(new Event("input"));
+      els.indDur.value = String(d.duracionMin != null ? d.duracionMin : 60);
+      els.indDur.dispatchEvent(new Event("input"));
+      const ph = d.plazoHoras != null ? d.plazoHoras : 48;
+      els.indPlazo.value = nearestPlazoOption(+ph);
+    } else if (s.mode === MODE.pack) {
+      const d = s.detail || {};
+      els.packClases.value = String(d.clasesPista != null ? d.clasesPista : 7);
+      els.packVideos.value = String(d.videoanalisis != null ? d.videoanalisis : 5);
+      els.packDurClase.value = String(d.duracionClaseMin != null ? d.duracionClaseMin : 60);
+      els.packDurClase.dispatchEvent(new Event("input"));
+      els.packMeses.value = String(d.validezMeses != null ? d.validezMeses : 3);
+      els.packMeses.dispatchEvent(new Event("input"));
+      els.packPrice.value = String(d.precioTotal != null ? d.precioTotal : 420);
+      els.packPrice.dispatchEvent(new Event("input"));
+      els.packPrecioPareja.value = String(
+        d.precioParejas != null ? d.precioParejas : Math.round((d.precioTotal != null ? d.precioTotal : 420) * 0.86)
+      );
+      els.packPrecioPareja.dispatchEvent(new Event("input"));
+    } else {
+      const d = s.detail || {};
+      els.mesClases.value = String(d.clasesPistaMes != null ? d.clasesPistaMes : 4);
+      els.mesVideos.value = String(d.videoanalisisMes != null ? d.videoanalisisMes : 2);
+      els.mesDur.value = String(d.duracionClaseMin != null ? d.duracionClaseMin : 60);
+      els.mesDur.dispatchEvent(new Event("input"));
+      els.mesPrice.value = String(d.precioMensual != null ? d.precioMensual : 149);
+      els.mesPrice.dispatchEvent(new Event("input"));
+      els.mesPrecioPareja.value = String(
+        d.precioParejas != null ? d.precioParejas : Math.round((d.precioMensual != null ? d.precioMensual : 149) * 1.33)
+      );
+      els.mesPrecioPareja.dispatchEvent(new Event("input"));
+    }
+    if (s.mode === MODE.individual) {
+      syncIndividualVisibility();
+    }
+  }
+
+  function openModalEdit(s) {
+    editingId = s.id;
+    setModeTabsDisabled(true);
+    els.modalTitle.textContent = "Editar servicio";
+    els.btnSave.textContent = "Guardar cambios";
+    els.overlay.classList.add("open");
+    setMode(s.mode);
+    populateFromItem(s);
+  }
+
+  function closeModal() {
+    editingId = null;
+    setModeTabsDisabled(false);
+    els.overlay.classList.remove("open");
+  }
+
+  els.btnOpen.addEventListener("click", openModalCreate);
+  els.btnCloseX.addEventListener("click", closeModal);
+  els.btnCancel.addEventListener("click", closeModal);
+  els.overlay.addEventListener("click", (e) => {
+    if (e.target === els.overlay) closeModal();
+  });
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && els.overlay.classList.contains("open")) closeModal();
+  });
+
+  function buildItem() {
+    const desc = els.desc.value.trim() || "Sin descripción.";
+    const levels = Array.from(document.querySelectorAll('input[name="lvl"]:checked')).map((c) => c.value);
+
+    if (currentMode === MODE.individual) {
+      const tipo = els.indTipo.value;
+      const isVideo = tipo === "video";
+      const price = +els.indPrice.value;
+      const pricePareja = +els.indPrecioPareja.value;
+      const dur = +els.indDur.value;
+      const plazoH = els.indPlazo ? +els.indPlazo.value : 48;
+      const defaultName = DEFAULT_NAMES[tipo] || DEFAULT_NAMES.pista;
+      const nameRaw = els.indNombre.value.trim();
+      const title = nameRaw || defaultName;
+      if (isVideo) {
+        return {
+          mode: MODE.individual,
+          presetKey: "video",
+          tag: "Videoanálisis",
+          title,
+          desc,
+          meta: `individual ${price} € · parejas ${pricePareja} € · entrega orientativa ${plazoH} h`,
+          foot: "El jugador sube el vídeo; tú devuelves análisis con marcas temporales.",
+          price,
+          detail: {
+            tipo: "video",
+            precio: price,
+            precioParejas: pricePareja,
+            plazoHoras: plazoH,
+            nombrePublico: title,
+          },
+        };
+      }
+      return {
+        mode: MODE.individual,
+        presetKey: "pista",
+        tag: "Mentoría en pista",
+        title,
+        desc,
+        meta: `individual ${price} € · parejas ${pricePareja} € · ${dur} min`,
+        foot: "Sesión presencial en pista · duración y precios según configuras.",
+        price,
+        detail: {
+          tipo: "pista",
+          duracionMin: dur,
+          precio: price,
+          precioParejas: pricePareja,
+          nombrePublico: title,
+        },
+      };
+    }
+
+    if (currentMode === MODE.pack) {
+      const c = +els.packClases.value || 0;
+      const v = +els.packVideos.value || 0;
+      const dur = +els.packDurClase.value;
+      const meses = +els.packMeses.value;
+      const price = +els.packPrice.value;
+      const pricePareja = +els.packPrecioPareja.value;
+      return {
+        mode: MODE.pack,
+        tag: "Pack",
+        title: `Pack: ${c} clase(s) pista + ${v} videoanálisis`,
+        desc,
+        meta: `individual ${price} € · parejas ${pricePareja} € · validez ${meses} mes(es) · ${dur} min/clase`,
+        foot: "Pago único · cupos consumibles dentro del periodo.",
+        price,
+        detail: {
+          clasesPista: c,
+          videoanalisis: v,
+          duracionClaseMin: dur,
+          validezMeses: meses,
+          precioTotal: price,
+          precioParejas: pricePareja,
+        },
+      };
+    }
+
+    const mc = +els.mesClases.value || 0;
+    const mv = +els.mesVideos.value || 0;
+    const dur = +els.mesDur.value;
+    const price = +els.mesPrice.value;
+    const pricePareja = +els.mesPrecioPareja.value;
+    return {
+      mode: MODE.monthly,
+      tag: "Mensualidad",
+      title: `Mensual: ${mc} pista + ${mv} vídeo / mes`,
+      desc,
+      meta: `individual ${price} €/mes · parejas ${pricePareja} €/mes · ${dur} min por clase en pista`,
+      foot: "Suscripción mensual · edita cupos y precio cuando quieras.",
+      price,
+      detail: {
+        clasesPistaMes: mc,
+        videoanalisisMes: mv,
+        duracionClaseMin: dur,
+        precioMensual: price,
+        precioParejas: pricePareja,
+      },
+    };
+  }
+
+  function findServiceById(id) {
+    let index = servicesIndividual.findIndex((x) => x.id === id);
+    if (index !== -1) {
+      return { listKey: "individual", index, item: servicesIndividual[index] };
+    }
+    index = servicesPack.findIndex((x) => x.id === id);
+    if (index !== -1) {
+      return { listKey: "pack", index, item: servicesPack[index] };
+    }
+    index = servicesMonthly.findIndex((x) => x.id === id);
+    if (index !== -1) {
+      return { listKey: "monthly", index, item: servicesMonthly[index] };
+    }
+    return null;
+  }
+
+  function replaceService(found, newItem) {
+    if (found.listKey === "individual") servicesIndividual[found.index] = newItem;
+    else if (found.listKey === "pack") servicesPack[found.index] = newItem;
+    else servicesMonthly[found.index] = newItem;
+  }
+
+  els.btnSave.addEventListener("click", () => {
+    const item = buildItem();
+    if (editingId) {
+      const found = findServiceById(editingId);
+      if (!found) {
+        closeModal();
+        render();
+        return;
+      }
+      const merged = { ...item, id: found.item.id, img: found.item.img || pickDefaultImage(item) };
+      if (found.item.mode !== MODE.individual) {
+        merged.title = found.item.title;
+        merged.tag = found.item.tag;
+        merged.foot = found.item.foot;
+      }
+      replaceService(found, merged);
+      console.log("Servicio actualizado (prototipo):", merged);
+    } else {
+      const merged = { ...item, id: "srv_" + Date.now(), img: pickDefaultImage(item) };
+      if (merged.mode === MODE.individual) servicesIndividual.unshift(merged);
+      else if (merged.mode === MODE.pack) servicesPack.unshift(merged);
+      else servicesMonthly.unshift(merged);
+      console.log("Servicio guardado (prototipo):", merged);
+    }
+    render();
+    closeModal();
+  });
+
+  function renderSection(container, items, emptyHtml) {
+    container.innerHTML = "";
+    if (!items.length) {
+      container.innerHTML = emptyHtml;
+      return;
+    }
+    items.forEach((s) => {
+      const card = document.createElement("button");
+      card.type = "button";
+      card.className = "service-card";
+      card.setAttribute("aria-label", "Editar: " + s.title);
+      card.innerHTML = `
+          <div>
+            <div class="tag">${escapeHtml(s.tag)}</div>
+            <h2>${escapeHtml(s.title)}</h2>
+            <p class="desc">${escapeHtml(s.desc)}</p>
+            <div class="meta">${escapeHtml(s.meta)}</div>
+            <div class="stats-small">${escapeHtml(s.foot)}</div>
+          </div>
+          <img class="thumb" src="${s.img || placeholderImg}" alt="${escapeHtml(s.title)}" width="88" height="88" loading="lazy" decoding="async" />
+        `;
+      card.addEventListener("click", () => openModalEdit(s));
+      container.appendChild(card);
+    });
+  }
+
+  function render() {
+    const total =
+      servicesIndividual.length + servicesPack.length + servicesMonthly.length;
+    renderSection(
+      els.listIndividual,
+      servicesIndividual,
+      '<div class="empty-state">No hay servicios individuales. Usa <strong>+ Añadir servicio</strong> → Servicio individual.</div>'
+    );
+    renderSection(
+      els.listPack,
+      servicesPack,
+      '<div class="empty-state">No hay packs. Usa <strong>+ Añadir servicio</strong> → Pack (pago único).</div>'
+    );
+    renderSection(
+      els.listMonthly,
+      servicesMonthly,
+      '<div class="empty-state">No hay mensualidades. Usa <strong>+ Añadir servicio</strong> → Mensualidad.</div>'
+    );
+    els.statCount.textContent = String(total);
+    els.statRes.textContent = total ? "35" : "—";
+    els.statEarn.textContent = total ? "3.560 €" : "—";
+  }
+
+  function escapeHtml(str) {
+    return String(str)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
+  }
+
+  setMode(MODE.individual);
+  syncIndividualVisibility();
+  render();
+})();
+  </script>
+</body>
+</html>

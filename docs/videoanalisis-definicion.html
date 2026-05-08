@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Gimadd Mentor — Definición de videoanálisis</title>
+  <style>
+    @page { margin: 18mm; }
+    * { box-sizing: border-box; }
+    body {
+      font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+      font-size: 11pt;
+      line-height: 1.45;
+      color: #111827;
+      max-width: 210mm;
+      margin: 0 auto;
+      padding: 12mm;
+    }
+    h1 { font-size: 1.55rem; margin: 0 0 0.75rem; letter-spacing: -0.02em; }
+    h2 { font-size: 1.15rem; margin: 1.35rem 0 0.5rem; border-bottom: 1px solid #e5e7eb; padding-bottom: 0.25rem; }
+    h3 { font-size: 0.95rem; margin: 1rem 0 0.35rem; color: #374151; }
+    p, li { margin: 0 0 0.5rem; }
+    ul { margin: 0.35rem 0 0.65rem 1.1rem; padding: 0; }
+    table { width: 100%; border-collapse: collapse; font-size: 10pt; margin: 0.5rem 0 0.85rem; }
+    th, td { border: 1px solid #d1d5db; padding: 0.45rem 0.55rem; text-align: left; vertical-align: top; }
+    th { background: #f9fafb; font-weight: 700; }
+    code { font-size: 0.88em; background: #f3f4f6; padding: 0.12em 0.35em; border-radius: 4px; }
+    .meta { font-size: 9.5pt; color: #6b7280; margin-bottom: 1rem; }
+    .box { background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; padding: 0.65rem 0.85rem; margin: 0.65rem 0; font-size: 10pt; }
+    .transition-map-wrap {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 1rem;
+      margin: 0.6rem 0 1rem;
+      overflow: visible;
+    }
+    .transition-map-wrap svg { display: block; width: 100%; max-width: 100%; height: auto; }
+    .diagram { font-family: ui-monospace, monospace; font-size: 9.2pt; background: #f8fafc; border: 1px solid #e2e8f0; padding: 0.75rem; border-radius: 8px; white-space: pre-wrap; margin: 0.5rem 0 0.85rem; }
+    .footer { margin-top: 2rem; font-size: 9pt; color: #9ca3af; }
+  </style>
+</head>
+<body>
+
+<h1>Definición de producto — Videoanálisis (Gimadd Mentor)</h1>
+<p class="meta">Documento de especificación UX y flujo de negocio. Generado para equipos de diseño e implementación.</p>
+
+<h2>1. Contratación (concepto de datos)</h2>
+<table>
+  <thead>
+    <tr><th>Modalidad</th><th>Representación en la app</th><th>Regla simple</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Individual</strong></td>
+      <td>1 crédito = 1 ciclo de videoanálisis</td>
+      <td>Al completar el ciclo, el crédito se consume</td>
+    </tr>
+    <tr>
+      <td><strong>Pack</strong></td>
+      <td>Saldo <em>N</em> créditos</td>
+      <td>Cada ciclo descuenta 1 crédito; la política exacta (al abrir ciclo vs al cerrarlo) debe ser explícita en copy y en reglas de negocio</td>
+    </tr>
+    <tr>
+      <td><strong>Programa / mensualidad</strong></td>
+      <td>Créditos por periodo o regeneración</td>
+      <td>Misma máquina de estados que el resto; solo cambian saldo, fecha de renovación y mensajes (“tienes X análisis este mes”)</td>
+    </tr>
+  </tbody>
+</table>
+<p>En demo se puede modelar un objeto ligero por jugador, por ejemplo: <code>videoAnalysisContract: { mode, creditsRemaining, renewsAt }</code>.</p>
+
+<h2>2. Estados del ciclo de videoanálisis</h2>
+<p>Un <strong>ciclo</strong> abarca desde que hay análisis contratado hasta que el entrenador publica feedback y objetivos y el jugador “arranca” el plan; el siguiente ciclo vuelve a <em>Pendiente de vídeo</em> cuando el plan se completa en diario (flujo actual del producto).</p>
+<table>
+  <thead>
+    <tr><th>Estado</th><th>Quién lo ve</th><th>Significado</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Pendiente de vídeo</strong></td>
+      <td>Jugador (y hub de urgentes)</td>
+      <td>Tiene análisis disponible pero aún no hay vídeo asociado al ciclo</td>
+    </tr>
+    <tr>
+      <td><strong>Pendiente de análisis</strong></td>
+      <td>Entrenador (prioritario); jugador en “enviado”</td>
+      <td>Vídeo recibido; falta análisis, marcas temporales, objetivos y feedback multimedia</td>
+    </tr>
+    <tr>
+      <td><strong>Completado</strong></td>
+      <td>Ambos</td>
+      <td>Feedback publicado y objetivos creados y enganchados al plan (los relevantes al plan de acción, el resto donde corresponda en el modelo actual)</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3>2.1 Mapa de transiciones</h3>
+<p class="meta" style="margin-top:0">Diagrama de estados del ciclo de videoanálisis y disparadores de cada cambio.</p>
+<div class="transition-map-wrap">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 720" role="img" aria-labelledby="mapTitle mapDesc">
+    <title id="mapTitle">Mapa de transiciones del videoanálisis</title>
+    <desc id="mapDesc">Desde crédito disponible a pendiente de vídeo, análisis, completado, bucle o sin crédito.</desc>
+    <defs>
+      <marker id="arr" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
+        <polygon points="0 0, 10 4, 0 8" fill="#4b5563"/>
+      </marker>
+      <filter id="sh" x="-5%" y="-5%" width="110%" height="110%">
+        <feDropShadow dx="0" dy="1" stdDeviation="2" flood-opacity="0.12"/>
+      </filter>
+    </defs>
+    <line x1="310" y1="38" x2="310" y2="68" stroke="#6b7280" stroke-width="1.5" marker-end="url(#arr)"/>
+    <text x="310" y="55" text-anchor="middle" font-size="11" fill="#6b7280" font-family="Segoe UI, system-ui, sans-serif">nuevo ciclo / crédito</text>
+    <ellipse cx="310" cy="22" rx="100" ry="16" fill="#fef3c7" stroke="#d97706" stroke-width="1.5"/>
+    <text x="310" y="26" text-anchor="middle" font-size="11" font-weight="700" fill="#92400e" font-family="Segoe UI, system-ui, sans-serif">Crédito disponible</text>
+    <rect x="190" y="72" width="240" height="52" rx="10" fill="#fffbeb" stroke="#f59e0b" stroke-width="2" filter="url(#sh)"/>
+    <text x="310" y="98" text-anchor="middle" font-size="13" font-weight="700" fill="#111827" font-family="Segoe UI, system-ui, sans-serif">Pendiente de vídeo</text>
+    <text x="310" y="116" text-anchor="middle" font-size="10" fill="#78716c" font-family="Segoe UI, system-ui, sans-serif">Jugador: subir o grabar</text>
+    <line x1="310" y1="124" x2="310" y2="154" stroke="#6b7280" stroke-width="1.5" marker-end="url(#arr)"/>
+    <text x="318" y="146" font-size="10" fill="#374151" font-family="Segoe UI, system-ui, sans-serif">Jugador sube vídeo</text>
+    <rect x="175" y="158" width="270" height="56" rx="10" fill="#eff6ff" stroke="#3b82f6" stroke-width="2" filter="url(#sh)"/>
+    <text x="310" y="186" text-anchor="middle" font-size="13" font-weight="700" fill="#111827" font-family="Segoe UI, system-ui, sans-serif">Pendiente de análisis</text>
+    <text x="310" y="204" text-anchor="middle" font-size="10" fill="#64748b" font-family="Segoe UI, system-ui, sans-serif">Coach: marcas, objetivos, feedback</text>
+    <line x1="310" y1="214" x2="310" y2="246" stroke="#6b7280" stroke-width="1.5" marker-end="url(#arr)"/>
+    <text x="318" y="236" font-size="10" fill="#374151" font-family="Segoe UI, system-ui, sans-serif">Coach publica análisis</text>
+    <rect x="190" y="250" width="240" height="52" rx="10" fill="#ecfdf5" stroke="#16a34a" stroke-width="2" filter="url(#sh)"/>
+    <text x="310" y="276" text-anchor="middle" font-size="13" font-weight="700" fill="#111827" font-family="Segoe UI, system-ui, sans-serif">Completado</text>
+    <text x="310" y="294" text-anchor="middle" font-size="10" fill="#64748b" font-family="Segoe UI, system-ui, sans-serif">Feedback + objetivos en plan</text>
+    <path d="M 325 302 C 420 302 520 180 520 110 L 432 110" fill="none" stroke="#7c3aed" stroke-width="2" marker-end="url(#arr)"/>
+    <text x="405" y="268" font-size="10" fill="#5b21b6" font-family="Segoe UI, system-ui, sans-serif">Bucle: plan completado en diario + crédito →</text>
+    <line x1="310" y1="302" x2="310" y2="360" stroke="#6b7280" stroke-width="1.5" marker-end="url(#arr)"/>
+    <text x="318" y="335" font-size="10" fill="#374151" font-family="Segoe UI, system-ui, sans-serif">Plan completado · sin crédito</text>
+    <rect x="190" y="362" width="240" height="52" rx="10" fill="#f4f4f5" stroke="#71717a" stroke-width="2" filter="url(#sh)"/>
+    <text x="310" y="388" text-anchor="middle" font-size="13" font-weight="700" fill="#111827" font-family="Segoe UI, system-ui, sans-serif">Sin análisis contratado</text>
+    <text x="310" y="406" text-anchor="middle" font-size="10" fill="#64748b" font-family="Segoe UI, system-ui, sans-serif">CTA: contratar / pack / programa</text>
+  </svg>
+</div>
+
+<h3>2.2 Tabla resumen de transiciones</h3>
+<table>
+  <thead>
+    <tr><th>Desde</th><th>Hacia</th><th>Disparador</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>— (nuevo ciclo)</td>
+      <td>Pendiente de vídeo</td>
+      <td>Crédito disponible (individual, pack o programa)</td>
+    </tr>
+    <tr>
+      <td>Pendiente de vídeo</td>
+      <td>Pendiente de análisis</td>
+      <td>El jugador sube (o confirma) el vídeo del ciclo</td>
+    </tr>
+    <tr>
+      <td>Pendiente de análisis</td>
+      <td>Completado</td>
+      <td>El entrenador publica análisis: feedback + objetivos</td>
+    </tr>
+    <tr>
+      <td>Completado</td>
+      <td>Pendiente de vídeo</td>
+      <td>Plan de acción completado en diario <strong>y</strong> sigue habiendo crédito → nuevo ciclo</td>
+    </tr>
+    <tr>
+      <td>Completado</td>
+      <td>Sin análisis contratado</td>
+      <td>Plan completado pero <strong>sin</strong> crédito restante</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3>2.3 Diagrama lógico (texto)</h3>
+<div class="diagram">[Crédito disponible] → Pendiente de vídeo
+Pendiente de vídeo → Pendiente de análisis  (jugador sube vídeo)
+Pendiente de análisis → Completado          (entrenador publica análisis)
+Completado → Pendiente de vídeo            (plan de acción completado en diario + hay crédito)
+
+Si no hay crédito al cerrar el plan → “Sin análisis contratado” + CTA a contratar / pack / programa.</div>
+
+<h2>3. Pantalla entrenador — Videoanálisis (revisión)</h2>
+<p><strong>Objetivo:</strong> una sola pantalla de trabajo donde el coach no salte entre muchas vistas.</p>
+
+<h3>3.1 Estructura</h3>
+<ul>
+  <li><strong>Barra superior (contexto):</strong> nombre del jugador, badge de estado (“Pendiente de análisis”), duración del vídeo, acceso colapsable a “Ver plan actual”.</li>
+</ul>
+
+<h3>3.2 Zona A — Reproductor del vídeo del jugador</h3>
+<ul>
+  <li>Play / pausa</li>
+  <li>Retroceder 5 s / Avanzar 5 s</li>
+  <li>Timeline (scrubber) + tiempo actual / duración</li>
+  <li>Opcional: pantalla completa; velocidad 0,75× / 1× / 1,25×</li>
+  <li>Al pausar: atajo “Añadir nota aquí” (timestamp actual)</li>
+</ul>
+
+<h3>3.3 Zona B — Timestamps con comentarios</h3>
+<ul>
+  <li>Lista ordenada por <code>time_seconds</code></li>
+  <li>Cada ítem: tiempo legible (MM:SS) + comentario + editar / borrar</li>
+  <li>Tap en una marca → el reproductor salta a ese instante</li>
+  <li>CTA: “Añadir marca en el tiempo actual”</li>
+</ul>
+<p><strong>Modelo mínimo:</strong> <code>{ time_seconds, comment }</code> (extensible con <code>type</code>: técnica / táctica / mental).</p>
+
+<h3>3.4 Zona C — Objetivos desde esta revisión</h3>
+<ul>
+  <li>Bloque “Crear objetivos” reutilizando formulario compacto (título, enfoque partido/clase, meta de prácticas, prioridad)</li>
+  <li>Lista de objetivos en borrador antes de publicar</li>
+  <li>Por objetivo: marcar “Añadir al plan de acción” vs almacenar donde ya encaje el modelo actual</li>
+  <li>Botón claro: “Publicar análisis” con validación (p. ej. obligar feedback mínimo según política)</li>
+</ul>
+
+<h3>3.5 Zona D — Feedback al jugador</h3>
+<ul>
+  <li>Vídeo de feedback (subida o enlace externo tipo Loom)</li>
+  <li>Audio de feedback</li>
+  <li>Imágenes de feedback (carrusel + leyendas opcionales)</li>
+  <li>Nota global (texto corto visible arriba en la vista jugador)</li>
+</ul>
+
+<h3>3.6 Acción final</h3>
+<p>Botón primario: <strong>“Publicar y notificar al jugador”</strong> → estado Completado; notificación in-app (y push en producto real).</p>
+
+<h2>4. Pantalla jugador — Videoanálisis</h2>
+<p><strong>Objetivo:</strong> claridad de estado y una acción obvia en cada momento.</p>
+
+<h3>4.1 Pendiente de vídeo</h3>
+<ul>
+  <li>Mensaje hero: “Tienes un videoanálisis listo · sube tu vídeo”</li>
+  <li>Acciones: Grabar · Subir archivo (coherente con flujos de urgentes / grabación)</li>
+  <li>Microcopy orientado a acción: “Cuanto antes subas, antes tienes tu plan personalizado.”</li>
+</ul>
+
+<h3>4.2 Vídeo enviado / en cola</h3>
+<ul>
+  <li>“Tu entrenador está analizando tu vídeo” + indicador de espera (en demo puede ser estático)</li>
+  <li>Enlaces secundarios: diario, plan actual</li>
+</ul>
+
+<h3>4.3 Completado</h3>
+<ul>
+  <li>Card de feedback (vídeo / audio / imágenes + nota global)</li>
+  <li>Marcas con comentarios: lista; tap en marca → salta en reproductor de solo lectura</li>
+  <li>Sección “Tu nuevo plan”: objetivos incorporados al plan de acción + CTA “Ir al plan de acción”</li>
+  <li>Cierre de bucle: “Pon en práctica lo acordado; cuando completes el plan, sube el siguiente vídeo y seguimos evolucionando.”</li>
+</ul>
+
+<h2>5. Notificaciones y mensajes (tono de bucle continuo)</h2>
+<table>
+  <thead>
+    <tr><th>Momento</th><th>Jugador</th><th>Entrenador</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Crédito disponible / nuevo ciclo</td>
+      <td>“Tu entrenador está esperando tu vídeo. Un análisis te espera.”</td>
+      <td>(Opcional) “{nombre} tiene análisis pendiente de vídeo.”</td>
+    </tr>
+    <tr>
+      <td>Vídeo subido</td>
+      <td>“Recibido. En cuanto tengas tu análisis te avisamos.”</td>
+      <td>“Nuevo vídeo para analizar — abre Videoanálisis.”</td>
+    </tr>
+    <tr>
+      <td>Análisis publicado</td>
+      <td>“Tu videoanálisis está listo: feedback y objetivos nuevos. ¡A practicar!”</td>
+      <td>—</td>
+    </tr>
+    <tr>
+      <td>Plan completado en diario</td>
+      <td>“Plan completado — sube <strong>otro vídeo</strong> y seguimos el siguiente nivel.”</td>
+      <td>“{nombre} completó el plan — conviene pedir nuevo vídeo si procede.”</td>
+    </tr>
+    <tr>
+      <td>Sin crédito</td>
+      <td>“Has completado el plan. Contrata o activa tu pack para el siguiente análisis.”</td>
+      <td>—</td>
+    </tr>
+  </tbody>
+</table>
+<div class="box">
+  <strong>Principios de copy:</strong> verbo en imperativo suave, siguiente paso siempre visible, evitar pantallas sin CTA. El bucle debe sentirse natural, no como un cierre.
+</div>
+
+<h2>6. Encaje con el bucle actual del producto</h2>
+<ul>
+  <li>Al completar prácticas de <strong>todos</strong> los objetivos del plan en diario → transición ya existente hacia revisión / nuevo vídeo;</li>
+  <li>eso debe abrir un <strong>nuevo ciclo</strong> de videoanálisis en “Pendiente de vídeo” si hay crédito;</li>
+  <li>las <strong>acciones urgentes</strong> del jugador pueden mostrar una tarjeta agrupada “Videoanálisis: sube tu vídeo”;</li>
+  <li>la pestaña entrenador <strong>Videoanálisis</strong> lista ciclos por jugador con badge; la pantalla de revisión concentrada evita dispersión.</li>
+</ul>
+
+<h2>7. Prioridad sugerida de implementación</h2>
+<ol>
+  <li>Modelo <code>VideoAnalysisCycle</code> + estados + crédito demo.</li>
+  <li>Reproductor en vista entrenador + timestamps persistentes.</li>
+  <li>Publicar: feedback + creación de objetivos (reutilizar lógica actual de objetivos).</li>
+  <li>Vista jugador espejo (lectura + CTAs).</li>
+  <li>Notificaciones in-app (banner, hub).</li>
+  <li>Pantalla completa, integración Loom, packs reales, etc.</li>
+</ol>
+
+<p class="footer">Gimadd Mentor · Documento de definición de videoanálisis · Versión para exportación PDF</p>
+
+</body>
+</html>

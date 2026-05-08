@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Gimadd Mentor — Plan de acción y objetivos (resumen ejecutivo)</title>
+  <style>
+    @page { margin: 18mm 16mm; }
+    body {
+      font-family: "Georgia", "Times New Roman", serif;
+      color: #1a1a1a;
+      line-height: 1.62;
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 0.5rem 0 2rem;
+      font-size: 11.5pt;
+    }
+    h1 {
+      font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+      font-size: 1.55rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin: 0 0 0.35rem;
+      color: #111;
+      border-bottom: 3px solid #c5d63a;
+      padding-bottom: 0.45rem;
+    }
+    .subtitle {
+      font-family: system-ui, sans-serif;
+      font-size: 0.95rem;
+      color: #5c5c5c;
+      margin: 0 0 1.75rem;
+      font-weight: 500;
+    }
+    h2 {
+      font-family: system-ui, sans-serif;
+      font-size: 1.05rem;
+      font-weight: 800;
+      margin: 1.85rem 0 0.65rem;
+      color: #1e3a5f;
+      page-break-after: avoid;
+    }
+    p { margin: 0.6rem 0; text-align: justify; hyphens: auto; }
+    ul { margin: 0.5rem 0 0.65rem; padding-left: 1.2rem; }
+    li { margin: 0.35rem 0; }
+    .lead {
+      font-size: 1.05rem;
+      line-height: 1.55;
+      color: #333;
+      border-left: 4px solid #c5d63a;
+      padding: 0.5rem 0 0.5rem 1rem;
+      margin: 1rem 0 1.25rem;
+      background: #fafbf5;
+    }
+    .flow {
+      font-family: system-ui, sans-serif;
+      background: #f4f6f9;
+      border: 1px solid #d8dde6;
+      border-radius: 10px;
+      padding: 1rem 1.15rem 1.1rem;
+      margin: 1rem 0;
+      font-size: 0.95rem;
+      line-height: 1.65;
+      page-break-inside: avoid;
+    }
+    .flow strong { color: #1e3a5f; }
+    .pill {
+      display: inline-block;
+      font-family: system-ui, sans-serif;
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 0.2rem 0.5rem;
+      border-radius: 6px;
+      margin-right: 0.35rem;
+      vertical-align: middle;
+    }
+    .p-activo { background: #dbeafe; color: #1d4ed8; }
+    .p-plan { background: #fef3c7; color: #92400e; }
+    .p-rev { background: #ffedd5; color: #c2410c; }
+    .p-done { background: #dcfce7; color: #15803d; }
+    .func-list {
+      font-family: system-ui, sans-serif;
+      font-size: 0.92rem;
+      background: #fafafa;
+      border: 1px solid #e5e5e5;
+      border-radius: 8px;
+      padding: 0.85rem 1rem;
+      margin: 0.75rem 0;
+      page-break-inside: avoid;
+    }
+    .func-list strong { color: #111; }
+    .footer {
+      margin-top: 2.25rem;
+      padding-top: 1rem;
+      border-top: 1px solid #e5e5e5;
+      font-family: system-ui, sans-serif;
+      font-size: 0.82rem;
+      color: #737373;
+    }
+    @media print {
+      body { padding: 0; font-size: 10.8pt; }
+      h2 { break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Plan de acción y objetivos</h1>
+  <p class="subtitle">Resumen ejecutivo · Gimadd Mentor · Funcionalidades del prototipo (actualizado abril 2026)</p>
+
+  <p class="lead">
+    El producto conecta al <strong>jugador</strong> con su <strong>entrenador</strong> alrededor de <strong>objetivos de mejora</strong> y de un <strong>plan de acción</strong> medible en el <strong>diario de partidos</strong>. El flujo encaja con <strong>packs de videoanálisis</strong>: práctica registrada, umbral acordado, paso a <strong>pendiente de revisión</strong>, nuevo vídeo y cierre o reactivación por el entrenador.
+  </p>
+
+  <h2>Inventario de funcionalidades (demo única)</h2>
+  <p>Las siguientes capacidades están implementadas en el prototipo y deben considerarse al productizar:</p>
+  <div class="func-list">
+    <strong>Perfiles y navegación.</strong> Pantalla inicial con elección jugador / entrenador; área jugador con accesos a perfil de objetivos y diario; panel entrenador con revisión / vídeo, objetivos (espejo del jugador) y partidos en solo lectura. URLs con ancla (#jugador, #objetivos, #entrenador, #diario) para abrir directamente cada vista.
+  </div>
+  <div class="func-list">
+    <strong>Pestañas de objetivos (jugador y entrenador).</strong> Tres pestañas con contador de cantidad: (1) <em>Plan de acción</em> —agrupa «pendiente de revisión» y «plan de acción en curso»; (2) <em>Objetivos activos</em> (fuera del plan); (3) <em>Objetivos completados</em>. El entrenador replica la misma estructura dentro del bloque Objetivos.
+  </div>
+  <div class="func-list">
+    <strong>Objetivos — crear y gestionar.</strong> Alta y edición desde jugador o entrenador (título, enfoque clase/partido, umbral de prácticas antes de revisión, fecha límite opcional, inclusión en plan de acción). Progreso 0–100&nbsp;% con barra y control deslizante (jugador en activos; entrenador también en activo y pendiente de revisión). Acciones: editar, añadir/quitar del plan, eliminar. Completado y reactivación con nuevo % son responsabilidad del entrenador.
+  </div>
+  <div class="func-list">
+    <strong>«Ver detalles» en cada objetivo.</strong> Muestra el historial de <strong>comentarios del diario</strong> vinculados a ese objetivo: las sensaciones escritas al guardar un partido con el objetivo en el plan, con la <strong>fecha del partido</strong>, ordenadas de más reciente a más antigua.
+  </div>
+  <div class="func-list">
+    <strong>Diario de partidos.</strong> Alta de partido con fecha, resultado, sets, pareja/club, valoración y sensaciones generales. Sección <strong>plan de acción</strong> del formulario: por cada objetivo activo en plan, marcación practicado / no practicado y <strong>campo de sensaciones</strong> por objetivo (alimenta «Ver detalles» y el umbral de prácticas).
+  </div>
+  <div class="func-list">
+    <strong>Umbral y transición automática.</strong> Cuando el número de partidos con práctica registrada alcanza el valor acordado (<em>partidos / sesiones meta</em>), el objetivo pasa a <strong>pendiente de revisión</strong> y se notifica al jugador en el área correspondiente.
+  </div>
+  <div class="func-list">
+    <strong>Videoanálisis — señales para el negocio.</strong> Botón que simula «he subido un nuevo vídeo»; dashboard del entrenador con lista de pendientes de revisión sin vídeo confirmado vs. con confirmación; aviso contextual los <strong>lunes</strong> para recordatorios operativos.
+  </div>
+  <div class="func-list">
+    <strong>Exportación y continuidad de datos.</strong> Botón para <strong>descargar la aplicación completa en un solo HTML</strong> con objetivos y partidos embebidos y nuevos identificadores de versión, para backup o traspaso sin perder el historial. En producción se sustituirá por sincronización en servidor.
+  </div>
+  <div class="func-list">
+    <strong>Demo técnica local.</strong> En el prototipo, jugador y entrenador comparten almacenamiento en el mismo navegador; en producto real: cuentas separadas, API y notificaciones push o en tiempo real.
+  </div>
+
+  <h2>¿Qué es un objetivo?</h2>
+  <p>Un <strong>objetivo</strong> es una meta concreta (por ejemplo: «mejorar el saque»). Puede orientarse a <strong>clase</strong> o a <strong>partido</strong>. Lleva <strong>progreso en %</strong>; el entrenador marca <strong>completado</strong> o <strong>reactiva</strong> con un nuevo punto de partida alineado al historial de prácticas.</p>
+
+  <h2>¿Qué es el plan de acción?</h2>
+  <p>Objetivos activos marcados como <strong>prioridad</strong> para el ciclo actual. El jugador los practica, los registra en cada partido del diario y acumula «prácticas contadas» hasta el umbral que dispara la <strong>revisión con el entrenador</strong>.</p>
+
+  <h2>Estados del objetivo</h2>
+  <ul>
+    <li><span class="pill p-activo">Activo</span> En curso; progreso editable según reglas jugador/coach.</li>
+    <li><span class="pill p-plan">En plan</span> Subconjunto de activos con foco explícito en el diario.</li>
+    <li><span class="pill p-rev">Pendiente de revisión</span> Umbral de prácticas alcanzado; toca análisis / vídeo.</li>
+    <li><span class="pill p-done">Completado</span> Cerrado por el entrenador tras el videoanálisis.</li>
+  </ul>
+
+  <h2>Flujo jugador (resumen)</h2>
+  <div class="flow">
+    <strong>1.</strong> Organiza objetivos en las tres pestañas y el plan de acción.<br />
+    <strong>2.</strong> Registra partidos; completa el plan por objetivo (practicado + sensaciones).<br />
+    <strong>3.</strong> Al superar el umbral, el objetivo pide revisión; confirma vídeo nuevo cuando corresponda.<br />
+    <strong>4.</strong> Usa «Ver detalles» para revisar todo lo dicho en el diario sobre un objetivo.<br />
+    <strong>5.</strong> Puede descargar el HTML con todos los datos como copia de seguridad portátil.
+  </div>
+
+  <h2>Flujo entrenador (resumen)</h2>
+  <div class="flow">
+    <strong>1.</strong> Prioriza revisión / vídeo y el estado de confirmación del jugador.<br />
+    <strong>2.</strong> Gestiona los mismos objetivos que el jugador (crear, progreso, plan, completar, reactivar).<br />
+    <strong>3.</strong> Lee el diario en solo lectura y el detalle de comentarios por objetivo vía «Ver detalles».<br />
+    <strong>4.</strong> Apoyo de recordatorios (lunes) para seguimiento comercial y operativo.
+  </div>
+
+  <h2>Valor para el negocio</h2>
+  <ul>
+    <li>Servicio <strong>cadenciado</strong> (practica N veces → revisión), escalable y fácil de explicar al cliente.</li>
+    <li><strong>Traza documentada</strong>: sensaciones por partido y por objetivo, visible en un clic («Ver detalles»).</li>
+    <li><strong>Diferenciación</strong> frente a «solo vídeo»: objetivos + diario + estados + rol claro del coach.</li>
+    <li>Camino claro a <strong>producto SaaS</strong> manteniendo esta lógica de negocio.</li>
+  </ul>
+
+  <h2>Nota de alcance</h2>
+  <p>El prototipo valida flujos y mensajes; la versión comercial añadirá autenticación, backend, subida real de vídeo y notificaciones. La <strong>lógica de estados, plan, diario, umbral, detalle de comentarios y exportación conceptual</strong> debe mantenerse como referencia de producto.</p>
+
+  <div class="footer">
+    Documento interno · Gimadd Mentor · Actualizado abril 2026 · Copia de seguridad del HTML principal en carpeta <em>copias-seguridad</em> del proyecto diseño-servicios.
+  </div>
+
+</body>
+</html>

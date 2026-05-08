@@ -1,0 +1,3404 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Gimadd Mentor — Jugador (objetivos y diario)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+
+    :root {
+      --lime: #e8f54a;
+      --lime-strong: #d9f64a;
+      --lime-dark: #b8d63a;
+      --bg: #fafafa;
+      --surface: #ffffff;
+      --muted: #9ca3af;
+      --text: #111827;
+      --border: #e8e8e8;
+      --card: #f3f4f6;
+      --win: #22c55e;
+      --radius: 14px;
+      --radius-sm: 10px;
+      --maxw: 520px;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Inter", system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding-bottom: 5rem;
+    }
+
+    .hero {
+      background: linear-gradient(180deg, var(--lime-strong) 0%, rgba(232, 245, 74, 0.35) 55%, var(--surface) 100%);
+      padding: 0.75rem 1rem 1.5rem;
+      border-radius: 0 0 24px 24px;
+    }
+    .hero-top {
+      max-width: var(--maxw);
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+    }
+    .hero-top button {
+      border: none;
+      background: none;
+      font-size: 1.2rem;
+      cursor: pointer;
+      padding: 0.35rem;
+      color: var(--text);
+      line-height: 1;
+    }
+    .hero-top h1 {
+      margin: 0;
+      font-size: 1rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      flex: 1;
+      text-align: center;
+    }
+
+    .profile-block {
+      max-width: var(--maxw);
+      margin: -2.25rem auto 0;
+      padding: 0 1rem;
+      position: relative;
+      text-align: center;
+    }
+    .avatar {
+      width: 88px;
+      height: 88px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 4px solid var(--surface);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      display: block;
+      margin: 0 auto;
+    }
+    .profile-name {
+      margin: 0.75rem 0 0.15rem;
+      font-size: 1.15rem;
+      font-weight: 800;
+    }
+    .profile-meta {
+      font-size: 0.78rem;
+      color: var(--muted);
+      line-height: 1.5;
+      margin: 0;
+    }
+
+    .stats-strip {
+      max-width: var(--maxw);
+      margin: 1rem auto 0;
+      padding: 0 1rem;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.5rem;
+    }
+    .stat-mini {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 0.65rem;
+      text-align: center;
+    }
+    .stat-mini .l { font-size: 0.68rem; color: var(--muted); font-weight: 600; }
+    .stat-mini .v { font-size: 1.05rem; font-weight: 800; margin-top: 0.2rem; }
+
+    .tabs {
+      max-width: var(--maxw);
+      margin: 1.25rem auto 0;
+      padding: 0 1rem;
+      display: flex;
+      gap: 0.25rem;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 0;
+    }
+    .tabs a {
+      flex: 0 0 auto;
+      padding: 0.65rem 0.5rem;
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--muted);
+      text-decoration: none;
+      white-space: nowrap;
+      border-bottom: 3px solid transparent;
+      margin-bottom: -1px;
+    }
+    .tabs a.on {
+      color: var(--text);
+      font-weight: 800;
+      border-bottom-color: var(--lime-strong);
+    }
+    .tabs.profile-obj-tabs button {
+      flex: 0 0 auto;
+      padding: 0.65rem 0.45rem;
+      font-size: 0.68rem;
+      font-weight: 600;
+      color: var(--muted);
+      background: none;
+      border: none;
+      border-bottom: 3px solid transparent;
+      margin-bottom: -1px;
+      cursor: pointer;
+      font-family: inherit;
+      white-space: nowrap;
+    }
+    .tabs.profile-obj-tabs button.on {
+      color: var(--text);
+      font-weight: 800;
+      border-bottom-color: var(--lime-strong);
+    }
+    .tabs.profile-obj-tabs .tab-count {
+      font-weight: 800;
+      margin-left: 0.12rem;
+    }
+    .jugador-obj-panel {
+      display: none;
+    }
+    .jugador-obj-panel.is-on {
+      display: block;
+    }
+    .coach-obj-subnav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+      margin: 1rem 0 0.75rem;
+    }
+    .coach-obj-subnav button {
+      flex: 1;
+      min-width: 5rem;
+      padding: 0.5rem 0.55rem;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--card);
+      font-family: inherit;
+      font-weight: 700;
+      font-size: 0.72rem;
+      cursor: pointer;
+      color: var(--text);
+    }
+    .coach-obj-subnav button.on {
+      background: var(--lime-strong);
+      border-color: transparent;
+      box-shadow: 0 2px 10px rgba(217, 246, 74, 0.35);
+    }
+    .coach-obj-subnav .tab-count {
+      font-weight: 800;
+      margin-left: 0.12rem;
+    }
+    .coach-obj-subpanel {
+      display: none;
+    }
+    .coach-obj-subpanel.is-on {
+      display: block;
+    }
+    .coach-obj-subpanel .section-head:first-child {
+      margin-top: 0.25rem;
+    }
+
+    .persist-bar {
+      max-width: var(--maxw);
+      margin: 0.75rem auto 0;
+      padding: 0.65rem 1rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-size: 0.72rem;
+      line-height: 1.45;
+      color: var(--muted);
+    }
+    .persist-bar button {
+      display: block;
+      width: 100%;
+      margin-bottom: 0.4rem;
+      padding: 0.55rem 0.75rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      background: var(--card);
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      font-size: 0.78rem;
+      color: var(--text);
+    }
+    .persist-bar button:hover {
+      border-color: var(--lime-dark);
+      background: rgba(217, 246, 74, 0.2);
+    }
+
+    .progress-hint {
+      font-size: 0.72rem;
+      color: var(--muted);
+      max-width: var(--maxw);
+      margin: 0.85rem auto 0;
+      padding: 0 1rem;
+      line-height: 1.4;
+    }
+
+    main {
+      max-width: var(--maxw);
+      margin: 0 auto;
+      padding: 1rem 1rem 0;
+      position: relative;
+      z-index: 2;
+    }
+    .section-head {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      margin: 1.5rem 0 0.65rem;
+      gap: 0.5rem;
+    }
+    .section-head:first-child { margin-top: 0.25rem; }
+    .section-head h2 {
+      margin: 0;
+      font-size: 0.95rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+    .section-head .count {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--muted);
+    }
+
+    .goal-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1rem;
+      margin-bottom: 0.75rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    }
+    .goal-card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 0.75rem;
+      margin-bottom: 0.5rem;
+    }
+    .goal-title {
+      margin: 0;
+      font-size: 0.92rem;
+      font-weight: 800;
+      line-height: 1.3;
+      flex: 1;
+    }
+    .goal-pct {
+      font-size: 0.95rem;
+      font-weight: 800;
+      flex-shrink: 0;
+    }
+    .goal-pct.full { color: var(--win); }
+    .goal-sub {
+      font-size: 0.72rem;
+      color: var(--muted);
+      margin: 0 0 0.6rem;
+    }
+    .progress-track {
+      height: 12px;
+      border-radius: 999px;
+      background: var(--card);
+      overflow: hidden;
+      border: 1px solid var(--border);
+      cursor: pointer;
+      touch-action: none;
+      user-select: none;
+    }
+    .progress-fill {
+      height: 100%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--lime-strong), #f5ff7a);
+      transition: width 0.2s ease;
+    }
+    .progress-slider-wrap {
+      margin-top: 0.65rem;
+      display: block;
+    }
+    .progress-slider-wrap label {
+      font-size: 0.68rem;
+      font-weight: 700;
+      color: var(--muted);
+      display: block;
+      margin-bottom: 0.35rem;
+    }
+    .progress-slider-wrap input[type="range"] {
+      width: 100%;
+      height: 2rem;
+      accent-color: var(--lime-dark);
+      cursor: pointer;
+    }
+    .goal-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+      margin-top: 0.65rem;
+    }
+    .goal-actions button {
+      font-size: 0.68rem;
+      font-weight: 700;
+      padding: 0.35rem 0.65rem;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .goal-actions button.danger { color: #b91c1c; border-color: rgba(185, 28, 28, 0.35); }
+    .goal-actions button.primary {
+      background: rgba(217, 246, 74, 0.35);
+      border-color: var(--lime-dark);
+    }
+
+    .empty-hint {
+      font-size: 0.82rem;
+      color: var(--muted);
+      margin: 0;
+      padding: 0.5rem 0 1rem;
+    }
+
+    .fab-wrap {
+      position: fixed;
+      right: 1.25rem;
+      bottom: 1.25rem;
+      z-index: 40;
+      pointer-events: none;
+    }
+    .fab-wrap .fab {
+      pointer-events: auto;
+    }
+    .fab {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      border: none;
+      background: var(--lime-strong);
+      color: var(--text);
+      font-size: 1.6rem;
+      font-weight: 300;
+      cursor: pointer;
+      box-shadow: 0 4px 20px rgba(217, 246, 74, 0.55);
+      line-height: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: inherit;
+    }
+    .fab:active { transform: scale(0.96); }
+
+    /* Modal */
+    .modal-back {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(17, 24, 39, 0.45);
+      z-index: 50;
+      align-items: flex-end;
+      justify-content: center;
+      padding: 0;
+    }
+    .modal-back.show { display: flex; }
+    @media (min-width: 540px) {
+      .modal-back { align-items: center; padding: 1rem; }
+    }
+    .modal {
+      background: var(--surface);
+      width: 100%;
+      max-width: var(--maxw);
+      border-radius: 20px 20px 0 0;
+      padding: 1.25rem 1.25rem calc(1.25rem + env(safe-area-inset-bottom));
+      max-height: 92vh;
+      overflow-y: auto;
+      box-shadow: 0 -8px 40px rgba(0,0,0,0.15);
+    }
+    @media (min-width: 540px) {
+      .modal { border-radius: var(--radius); }
+    }
+    .modal h3 {
+      margin: 0 0 1rem;
+      font-size: 1.05rem;
+      font-weight: 800;
+    }
+    .field { margin-bottom: 0.9rem; }
+    .field label {
+      display: block;
+      font-size: 0.75rem;
+      font-weight: 600;
+      margin-bottom: 0.35rem;
+    }
+    .field input[type="text"],
+    .field input[type="date"],
+    .field input[type="number"],
+    .field textarea,
+    .field select {
+      width: 100%;
+      padding: 0.65rem 0.75rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      font: inherit;
+    }
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      padding: 0.75rem;
+      background: var(--card);
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+    }
+    .toggle-row input { width: 1.15rem; height: 1.15rem; accent-color: var(--lime-dark); }
+    .toggle-row div { flex: 1; }
+    .toggle-row strong { display: block; font-size: 0.85rem; }
+    .toggle-row small { color: var(--muted); font-size: 0.72rem; }
+
+    .modal-actions {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 1.25rem;
+    }
+    .modal-actions button {
+      flex: 1;
+      padding: 0.85rem;
+      border-radius: var(--radius-sm);
+      font-weight: 800;
+      font-family: inherit;
+      cursor: pointer;
+      border: 1px solid var(--border);
+      background: var(--card);
+    }
+    .modal-actions button.submit {
+      background: var(--lime-strong);
+      border-color: transparent;
+      box-shadow: 0 2px 12px rgba(217, 246, 74, 0.35);
+    }
+  
+
+    :root {
+      --lime: #d9f64a;
+      --lime-dark: #b8d63a;
+      --bg: #fafafa;
+      --surface: #ffffff;
+      --muted: #9ca3af;
+      --text: #111827;
+      --border: #e8e8e8;
+      --card-bg: #f3f4f6;
+      --win: #22c55e;
+      --radius: 14px;
+      --radius-sm: 10px;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Inter", system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    .app-header {
+      padding: 0.75rem 1rem;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+    }
+    .app-header-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .back {
+      border: none;
+      background: none;
+      font-size: 1.25rem;
+      cursor: pointer;
+      padding: 0.25rem;
+      color: var(--text);
+      line-height: 1;
+    }
+    .title-page {
+      font-size: 1.15rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin: 0;
+      flex: 1;
+      text-align: center;
+    }
+    .app-header-inner > a:last-child {
+      flex-shrink: 0;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--text);
+      text-decoration: none;
+    }
+    .app-header-inner > a:last-child:hover {
+      text-decoration: underline;
+    }
+    .title-page .hl {
+      background: var(--lime);
+      padding: 0.08em 0.28em;
+      border-radius: 6px;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+      max-width: 1200px;
+      margin: 0 auto;
+      min-height: calc(100vh - 52px);
+      border-left: 1px solid var(--border);
+      border-right: 1px solid var(--border);
+      background: var(--surface);
+    }
+    @media (max-width: 900px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+      .layout.form-focus .col-left {
+        display: none;
+      }
+      .layout.form-focus .col-right {
+        min-height: calc(100vh - 52px);
+      }
+    }
+
+    .col-left, .col-right {
+      padding: 1.25rem 1.25rem 2rem;
+      overflow-y: auto;
+    }
+    .col-left {
+      border-right: 1px solid var(--border);
+    }
+    @media (max-width: 900px) {
+      .col-left { border-right: none; }
+    }
+
+    .btn-add {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.85rem 1rem;
+      margin-bottom: 1.25rem;
+      border: none;
+      border-radius: var(--radius);
+      background: var(--lime);
+      color: var(--text);
+      font-weight: 700;
+      font-size: 0.95rem;
+      cursor: pointer;
+      font-family: inherit;
+      box-shadow: 0 2px 12px rgba(217, 246, 74, 0.35);
+    }
+    .btn-add:hover { filter: brightness(1.03); }
+
+    .section-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--muted);
+      margin: 0 0 0.6rem;
+    }
+
+    .match-card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      padding: 0.9rem 1rem;
+      margin-bottom: 0.75rem;
+      border: 1px solid var(--border);
+    }
+    .match-card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 0.5rem;
+    }
+    .match-card .badge {
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 0.2rem 0.5rem;
+      border-radius: 6px;
+    }
+    .badge-win { background: rgba(34, 197, 94, 0.2); color: #15803d; }
+    .badge-loss { background: rgba(239, 68, 68, 0.15); color: #b91c1c; }
+    .btn-edit-match {
+      margin-top: 0.6rem;
+      padding: 0.4rem 0.85rem;
+      font-size: 0.72rem;
+      font-weight: 700;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      font-family: inherit;
+      color: var(--text);
+    }
+    .btn-edit-match:hover {
+      border-color: var(--lime-dark);
+      background: rgba(217, 246, 74, 0.18);
+    }
+    .match-date {
+      font-size: 0.78rem;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .score-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+    }
+    .score-table th {
+      text-align: center;
+      font-weight: 600;
+      color: var(--muted);
+      padding: 0.25rem 0.2rem;
+      font-size: 0.68rem;
+      text-transform: uppercase;
+    }
+    .score-table td {
+      text-align: center;
+      padding: 0.35rem 0.2rem;
+      font-weight: 600;
+    }
+    .score-table td.win-set {
+      color: var(--win);
+      font-weight: 800;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.6rem;
+      margin-bottom: 1.25rem;
+    }
+    .stat-box {
+      background: var(--card-bg);
+      border-radius: var(--radius-sm);
+      padding: 0.75rem;
+      text-align: center;
+      border: 1px solid var(--border);
+    }
+    .stat-box .n {
+      font-size: 1.35rem;
+      font-weight: 800;
+      margin-top: 0.15rem;
+    }
+    .stat-box .l {
+      font-size: 0.72rem;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .emoji-row {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+    .emoji-chip {
+      flex: 1;
+      min-width: 48px;
+      text-align: center;
+      padding: 0.5rem;
+      border-radius: var(--radius-sm);
+      border: 2px solid transparent;
+      background: var(--card-bg);
+      cursor: default;
+      font-size: 1.35rem;
+    }
+    .emoji-chip.on {
+      border-color: var(--lime-dark);
+      background: rgba(217, 246, 74, 0.25);
+    }
+    .emoji-chip small {
+      display: block;
+      font-size: 0.6rem;
+      color: var(--muted);
+      margin-top: 0.15rem;
+      font-weight: 600;
+    }
+
+    /* Right column — form */
+    .col-right {
+      background: #fcfcfc;
+    }
+    .col-right-placeholder {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 360px;
+      color: var(--muted);
+      text-align: center;
+      padding: 2rem;
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+    .layout.form-focus .col-right-placeholder { display: none; }
+    .form-panel { display: none; }
+    .layout.form-focus .form-panel { display: block; }
+
+    .form-head {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1.25rem;
+    }
+    .btn-close {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      font-size: 1.1rem;
+      cursor: pointer;
+      line-height: 1;
+    }
+    .form-head h2 {
+      margin: 0;
+      font-size: 1.1rem;
+      font-weight: 800;
+    }
+
+    .field { margin-bottom: 1rem; }
+    .field label {
+      display: block;
+      font-size: 0.78rem;
+      font-weight: 600;
+      margin-bottom: 0.35rem;
+      color: var(--text);
+    }
+    input[type="text"],
+    input[type="date"],
+    textarea,
+    select {
+      width: 100%;
+      padding: 0.65rem 0.75rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      font: inherit;
+      background: var(--surface);
+    }
+    textarea { min-height: 72px; resize: vertical; }
+    .input-row-date {
+      position: relative;
+    }
+    .input-row-date input { padding-right: 2rem; }
+
+    .seg {
+      display: flex;
+      gap: 0;
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+    .seg button {
+      flex: 1;
+      padding: 0.65rem;
+      border: none;
+      background: var(--card-bg);
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .seg button.active {
+      background: var(--surface);
+      box-shadow: inset 0 0 0 2px var(--lime);
+    }
+
+    .score-input-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+    }
+    .score-inputTable input {
+      width: 100%;
+      max-width: 52px;
+      margin: 0 auto;
+      display: block;
+      text-align: center;
+      padding: 0.45rem;
+    }
+    .score-input-table th {
+      font-size: 0.65rem;
+      color: var(--muted);
+      font-weight: 700;
+      text-transform: uppercase;
+      padding: 0.3rem;
+    }
+    .score-input-table td:first-child {
+      font-weight: 600;
+      font-size: 0.78rem;
+      padding-right: 0.5rem;
+    }
+
+    .plan-accion {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1rem;
+      margin-bottom: 1rem;
+    }
+    .plan-accion h3 {
+      margin: 0 0 0.75rem;
+      font-size: 0.9rem;
+      font-weight: 800;
+    }
+    .obj-block {
+      background: var(--surface);
+      border-radius: var(--radius-sm);
+      padding: 0.85rem;
+      margin-bottom: 0.75rem;
+      border: 1px solid var(--border);
+    }
+    .obj-block:last-child { margin-bottom: 0; }
+    .obj-block .obj-title {
+      font-size: 0.82rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+    .obj-block select {
+      margin-bottom: 0.45rem;
+    }
+
+    .btn-save {
+      width: 100%;
+      padding: 0.9rem;
+      border: none;
+      border-radius: var(--radius);
+      background: var(--lime);
+      font-weight: 800;
+      font-size: 0.95rem;
+      cursor: pointer;
+      font-family: inherit;
+      margin-top: 0.5rem;
+      box-shadow: 0 2px 12px rgba(217, 246, 74, 0.35);
+    }
+
+    .emoji-pick {
+      display: flex;
+      gap: 0.35rem;
+      margin-bottom: 0.5rem;
+    }
+    .emoji-pick label {
+      flex: 1;
+      text-align: center;
+      cursor: pointer;
+    }
+    .emoji-pick input { position: absolute; opacity: 0; pointer-events: none; }
+    .emoji-pick span {
+      display: block;
+      padding: 0.45rem;
+      border-radius: var(--radius-sm);
+      border: 2px solid var(--border);
+      font-size: 1.25rem;
+      background: var(--surface);
+    }
+    .emoji-pick input:checked + span {
+      border-color: var(--lime-dark);
+      background: rgba(217, 246, 74, 0.2);
+    }
+    .emoji-pick small {
+      font-size: 0.55rem;
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    .persist-bar-diario {
+      margin-bottom: 1rem;
+      padding: 0.65rem 0.75rem;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+    }
+    .persist-bar-diario button {
+      width: 100%;
+      padding: 0.55rem 0.75rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      background: var(--surface);
+      font-weight: 700;
+      font-family: inherit;
+      font-size: 0.78rem;
+      cursor: pointer;
+    }
+    .persist-bar-diario button:hover {
+      border-color: var(--lime-dark);
+      background: rgba(217, 246, 74, 0.2);
+    }
+    .persist-bar-diario .hint {
+      display: block;
+      margin-top: 0.4rem;
+      font-size: 0.72rem;
+      color: var(--muted);
+      line-height: 1.4;
+    }
+  
+
+    :root { --lime-strong: #d9f64a; --card: #f3f4f6; }
+    .app-view { display: none; }
+    .app-view.is-active { display: block; }
+    .app-view-home.is-active { display: flex; flex-direction: column; min-height: 100vh; }
+    .app-view-jugador.is-active { display: flex; flex-direction: column; min-height: 100vh; }
+    body.app-body { margin: 0; font-family: "Inter", system-ui, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+    body.app-home { padding-bottom: 0 !important; }
+    body.app-jugador { padding-bottom: 0 !important; }
+    body.app-objetivos { padding-bottom: 5rem; }
+    body.app-entrenador { padding-bottom: 1rem; }
+    .home-hero {
+      background: linear-gradient(180deg, var(--lime-strong) 0%, rgba(232, 245, 74, 0.35) 50%, var(--surface, #fff) 100%);
+      padding: 2rem 1.25rem 2.5rem;
+      text-align: center;
+      border-radius: 0 0 28px 28px;
+    }
+    .home-hero h1 { margin: 0 0 0.35rem; font-size: 1.5rem; font-weight: 800; letter-spacing: -0.03em; }
+    .home-hero p { font-size: 0.88rem; color: var(--muted, #9ca3af); margin: 0; max-width: 22rem; margin-left: auto; margin-right: auto; line-height: 1.45; }
+    .home-actions { max-width: 420px; margin: -1.5rem auto 0; padding: 0 1rem; display: flex; flex-direction: column; gap: 0.85rem; }
+    .home-btn {
+      display: block; width: 100%; text-align: left; padding: 1.1rem 1.15rem; border: none; border-radius: 14px;
+      background: var(--surface, #fff); border: 1px solid var(--border, #e8e8e8); cursor: pointer; font-family: inherit;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+    }
+    .home-btn:active { transform: scale(0.99); }
+    .home-btn .t { display: block; font-size: 1.05rem; font-weight: 800; color: var(--text, #111); }
+    .home-btn .d { display: block; font-size: 0.78rem; color: var(--muted); margin-top: 0.25rem; font-weight: 500; line-height: 1.35; }
+    .home-btn-obj .t::before { content: "◎ "; }
+    .home-btn-dia .t::before { content: "◇ "; }
+    .persist-app-home { max-width: 420px; margin: 1.5rem auto 2rem; padding: 0 1rem; }
+    .persist-app-home button {
+      width: 100%; padding: 0.65rem 0.85rem; border-radius: 10px; border: 1px solid var(--border);
+      background: var(--card, #f3f4f6); font-weight: 700; font-family: inherit; cursor: pointer; font-size: 0.8rem;
+    }
+    .persist-app-home button:hover { border-color: var(--lime-dark, #b8d63a); background: rgba(217,246,74,0.2); }
+    .persist-app-home .hint { font-size: 0.72rem; color: var(--muted); margin: 0.5rem 0 0; line-height: 1.4; }
+    .header-link-btn {
+      flex-shrink: 0; font-size: 0.78rem; font-weight: 700; color: var(--text); background: none; border: none;
+      cursor: pointer; font-family: inherit; padding: 0.25rem;
+    }
+    .header-link-btn:hover { text-decoration: underline; }
+
+    .flow-box { max-width: 420px; margin: 0 auto 1rem; padding: 0 1rem; }
+    .flow-toggle {
+      width: 100%; text-align: left; padding: 0.75rem 1rem; border: 1px solid var(--border); border-radius: 12px;
+      background: var(--surface); font-weight: 800; font-family: inherit; cursor: pointer; font-size: 0.85rem;
+    }
+    .flow-toggle:hover { border-color: var(--lime-dark); }
+    .flow-panel {
+      display: none; margin-top: 0.5rem; padding: 0.85rem 1rem; border: 1px solid var(--border); border-radius: 12px;
+      background: var(--card); font-size: 0.78rem; line-height: 1.55; color: var(--text);
+    }
+    .flow-panel.open { display: block; }
+    .flow-panel ol { margin: 0.35rem 0 0 1.1rem; padding: 0; }
+    .flow-panel li { margin-bottom: 0.5rem; }
+    .flow-panel .note { font-size: 0.72rem; color: var(--muted); margin-top: 0.65rem; }
+    .badge-estado {
+      display: inline-block; font-size: 0.62rem; font-weight: 800; padding: 0.2rem 0.45rem; border-radius: 6px;
+      margin-left: 0.35rem; vertical-align: middle;
+    }
+    .be-activo { background: rgba(59,130,246,0.2); color: #1d4ed8; }
+    .be-pendiente { background: rgba(245,158,11,0.25); color: #b45309; }
+    .be-hecho { background: rgba(34,197,94,0.2); color: #15803d; }
+    .home-btn-coach .t::before { content: "▣ "; }
+    .notif-banner {
+      max-width: 420px; margin: 0 auto 1rem; padding: 0.75rem 1rem; border-radius: 12px; border: 1px solid var(--border);
+      background: #fffbeb; font-size: 0.78rem; display: none;
+    }
+    .notif-banner.show { display: block; }
+    .notif-banner strong { display: block; margin-bottom: 0.35rem; }
+    .coach-dash { max-width: 720px; margin: 0 auto; padding: 1rem; }
+    .coach-dash h1 { font-size: 1.15rem; margin: 0 0 0.5rem; }
+    .coach-dash .sub { font-size: 0.8rem; color: var(--muted); margin-bottom: 1rem; line-height: 1.45; }
+    .coach-card {
+      border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem; margin-bottom: 0.75rem;
+      background: var(--surface);
+    }
+    .coach-card h4 { margin: 0 0 0.35rem; font-size: 0.9rem; }
+    .coach-card .meta { font-size: 0.72rem; color: var(--muted); margin-bottom: 0.5rem; }
+    .coach-actions { display: flex; flex-wrap: wrap; gap: 0.35rem; margin-top: 0.5rem; align-items: center; }
+    .coach-actions button { font-size: 0.68rem; font-weight: 700; padding: 0.4rem 0.65rem; border-radius: 8px; border: 1px solid var(--border); background: var(--card); cursor: pointer; font-family: inherit; }
+    .coach-actions input[type="range"] { flex: 1; min-width: 120px; accent-color: var(--lime-dark); }
+    .btn-nuevo-video { width: 100%; max-width: 420px; margin: 0 auto 0.5rem; display: block; padding: 0.55rem; border-radius: 10px; border: 1px dashed var(--border); background: var(--surface); font-weight: 700; cursor: pointer; font-family: inherit; font-size: 0.78rem; }
+
+    .profile-pick {
+      max-width: 420px; margin: 0 auto; padding: 0 1rem 1.5rem; display: flex; flex-direction: column; gap: 0.85rem;
+    }
+    .profile-card {
+      display: block; width: 100%; text-align: left; padding: 1.15rem 1.2rem; border: none; border-radius: 16px; cursor: pointer; font-family: inherit;
+      background: var(--surface); border: 2px solid var(--border); box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+      transition: border-color 0.15s, transform 0.1s;
+    }
+    .profile-card:active { transform: scale(0.99); }
+    .profile-card:hover { border-color: var(--lime-dark); }
+    .profile-card.jugador { border-left: 5px solid var(--lime-dark); }
+    .profile-card.entrenador { border-left: 5px solid #1d4ed8; }
+    .profile-card .tag {
+      font-size: 0.62rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); margin-bottom: 0.35rem;
+    }
+    .profile-card .tag.ent { color: #1d4ed8; }
+    .profile-card .tag.jug { color: #64732d; }
+    .profile-card .t2 { font-size: 1.15rem; font-weight: 800; letter-spacing: -0.02em; margin: 0; }
+    .profile-card .d2 { font-size: 0.8rem; color: var(--muted); margin: 0.4rem 0 0; line-height: 1.45; font-weight: 500; }
+
+    .home-subtitle { text-align: center; font-size: 0.82rem; color: var(--muted); max-width: 26rem; margin: 0 auto 1rem; padding: 0 1rem; line-height: 1.45; }
+
+    .coach-subnav {
+      display: flex; flex-wrap: wrap; gap: 0.35rem; margin-bottom: 1rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--border);
+    }
+    .coach-subnav button {
+      flex: 1; min-width: 5.5rem; padding: 0.55rem 0.65rem; border-radius: 10px; border: 1px solid var(--border);
+      background: var(--card); font-family: inherit; font-weight: 700; font-size: 0.74rem; cursor: pointer; color: var(--text);
+    }
+    .coach-subnav button.on { background: var(--lime-strong); border-color: transparent; box-shadow: 0 2px 10px rgba(217,246,74,0.35); }
+    .coach-panel { display: none; }
+    .coach-panel.is-on { display: block; }
+    .progress-track--readonly { cursor: default; pointer-events: none; }
+    .coach-partido-readonly { margin-top: 0.5rem; font-size: 0.72rem; color: var(--muted); line-height: 1.4; }
+    .coach-fab-row { margin: 1rem 0; }
+    .coach-roster-wrap { margin-bottom: 1rem; }
+    .coach-roster-label { font-size: 0.65rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); margin: 0 0 0.4rem; }
+    .coach-roster { display: flex; flex-wrap: wrap; gap: 0.35rem; align-items: center; }
+    .coach-roster-pill {
+      font-size: 0.72rem; font-weight: 700; padding: 0.35rem 0.65rem; border-radius: 999px; border: 1px solid var(--border);
+      font-family: inherit; background: var(--surface); color: var(--text);
+    }
+    .coach-roster-pill.is-active { background: rgba(217,246,74,0.35); border-color: var(--lime-dark); }
+    .coach-roster-pill.is-placeholder { opacity: 0.65; background: var(--card); color: var(--muted); cursor: default; }
+    button.coach-roster-pill.is-active:disabled { cursor: default; opacity: 1; }
+
+  </style>
+</head>
+<body class="app-body app-home">
+  <section class="app-view app-view-home is-active" data-view="home" id="view-home">
+    <div class="home-hero">
+      <h1>Gimadd <span style="background:var(--lime,#d9f64a);padding:0.08em 0.25em;border-radius:6px">Mentor</span></h1>
+      <p>Una sola app demo: elige tu perfil. Objetivos y partidos se guardan en el navegador y se comparten entre jugador y entrenador en este dispositivo (también se incrustan al exportar el HTML).</p>
+    </div>
+    <p class="home-subtitle"><strong>Mismo almacenamiento:</strong> lo que define el entrenador o registra el jugador se refleja al instante en el otro perfil.</p>
+
+    <div class="profile-pick">
+      <button type="button" class="profile-card jugador" id="pickJugador" aria-label="Entrar como jugador">
+        <div class="tag jug">Perfil jugador</div>
+        <p class="t2">Soy jugador</p>
+        <p class="d2">Objetivos, plan de acción, diario de partidos, videoanálisis y avisos. El entrenador verá tus partidos y los objetivos que compartís.</p>
+      </button>
+      <button type="button" class="profile-card entrenador" id="pickEntrenador" aria-label="Entrar como entrenador">
+        <div class="tag ent">Perfil entrenador</div>
+        <p class="t2">Soy entrenador</p>
+        <p class="d2">Crear y gestionar objetivos del jugador, revisiones de videoanálisis, completar o reactivar metas, y ver el diario de partidos.</p>
+      </button>
+    </div>
+
+    <div class="persist-app-home">
+      <button type="button" id="btnDownloadFullApp">Descargar aplicación completa (objetivos + partidos en este HTML)</button>
+      <p class="hint">Guarda el archivo descargado y reemplaza este para conservar todo aunque borres datos del sitio.</p>
+    </div>
+  </section>
+
+  <section class="app-view app-view-jugador" data-view="jugador" id="view-jugador">
+    <div class="home-hero" style="padding:1.5rem 1rem 1.75rem">
+      <button type="button" class="back" aria-label="Volver a elegir perfil" id="btnBackJugadorHub" style="position:absolute;left:1rem;top:1rem;background:none;border:none;font-size:1.2rem;cursor:pointer">←</button>
+      <h1 style="margin-top:0.5rem">Área <span style="background:var(--lime,#d9f64a);padding:0.08em 0.25em;border-radius:6px">jugador</span></h1>
+      <p style="margin-bottom:0">Juan García · Objetivos y diario compartidos con tu entrenador.</p>
+    </div>
+    <div id="homeNotifJugador" class="notif-banner" role="status" style="margin-top:0.5rem"></div>
+
+    <div class="flow-box">
+      <button type="button" class="flow-toggle" id="btnToggleFlow" aria-expanded="false">Flujo pack de videoanálisis (4 vídeos)</button>
+      <div class="flow-panel" id="panelFlow">
+        <ol>
+          <li>El <strong>cliente contrata</strong> un pack de 4 videoanálisis.</li>
+          <li>Recibe un <strong>email con instrucciones</strong> para grabarse (solo la primera vez).</li>
+          <li><strong>Sube el primer vídeo</strong> para que el entrenador lo analice.</li>
+          <li>El entrenador recibe una <strong>notificación</strong>: videoanálisis pendiente de <em>(nombre del cliente)</em>.</li>
+          <li>El entrenador graba un <strong>Loom</strong> con correcciones y marca los objetivos de mejora.</li>
+          <li>Elige <strong>3 objetivos</strong> y los añade al <strong>plan de acción</strong> para centrarse en el siguiente partido.</li>
+          <li>Cada objetivo puede orientarse a <strong>clase</strong> o a <strong>partido</strong>; se define cuántos partidos/sesiones practicar (por defecto 3).</li>
+          <li>Al marcar el objetivo como <strong>practicado</strong> ese número de veces en el diario, pasa a <strong>pendiente de revisión</strong>: aviso al entrenador y al jugador (nuevo vídeo).</li>
+          <li><strong>Completado</strong> del objetivo lo marca solo el entrenador tras el siguiente análisis.</li>
+        </ol>
+        <p class="note">Los lunes, el entrenador recibe un aviso para revisar jugadores con objetivos pendientes de revisión que <strong>aún no han subido</strong> un nuevo vídeo (sección en el dashboard).</p>
+      </div>
+    </div>
+
+    <button type="button" class="btn-nuevo-video" id="btnConfirmaVideoJugador" title="Simula que has subido un nuevo vídeo">He subido un nuevo vídeo para el entrenador</button>
+
+    <div class="home-actions">
+      <button type="button" class="home-btn home-btn-obj" id="openObjetivos">
+        <span class="t">Objetivos</span>
+        <span class="d">Progreso, plan de acción y estados (activo, pendiente de revisión, completado). Lo mismo ve el entrenador.</span>
+      </button>
+      <button type="button" class="home-btn home-btn-dia" id="openDiario">
+        <span class="t">Diario de partidos</span>
+        <span class="d">Registra partidos y prácticas del plan. El entrenador los verá en su panel «Partidos».</span>
+      </button>
+    </div>
+  </section>
+
+  <section class="app-view" data-view="objetivos" id="view-objetivos">
+<header class="hero">
+    <div class="hero-top">
+      <button type="button" aria-label="Volver" id="btnBackObjetivos">←</button>
+      <h1>Perfil</h1>
+      <button type="button" aria-label="Menú">⋮</button>
+    </div>
+  </header>
+
+  <div class="profile-block">
+    <img class="avatar" src="https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=200&h=200&fit=crop" width="88" height="88" alt="" />
+    <p class="profile-name">Juan García</p>
+    <p class="profile-meta">
+      26 años · +34 611 222 333<br />
+      juan@ejemplo.com · Madrid
+    </p>
+  </div>
+
+  <div class="stats-strip">
+    <div class="stat-mini"><div class="l">Nivel de habilidad</div><div class="v">Intermedio</div></div>
+    <div class="stat-mini"><div class="l">Sesiones totales</div><div class="v">45</div></div>
+  </div>
+
+  <nav class="tabs profile-obj-tabs" aria-label="Vistas de objetivos">
+    <button type="button" class="on" data-jugador-obj-tab="plan" aria-selected="true">
+      Plan de acción <span class="tab-count" id="jugadorTabCntPlan">(0)</span>
+    </button>
+    <button type="button" data-jugador-obj-tab="activos" aria-selected="false">
+      Objetivos activos <span class="tab-count" id="jugadorTabCntAct">(0)</span>
+    </button>
+    <button type="button" data-jugador-obj-tab="completados" aria-selected="false">
+      Objetivos completados <span class="tab-count" id="jugadorTabCntDone">(0)</span>
+    </button>
+  </nav>
+
+  <p class="progress-hint">En objetivos <strong>activos</strong>, desliza el control o arrastra sobre la barra para el progreso (0–100&nbsp;%). El <strong>marcar completado</strong> lo gestiona el entrenador en el siguiente videoanálisis. El plan de acción se sincroniza con el diario; las prácticas en partidos cuentan para la revisión con el entrenador. El <strong>diario de partidos</strong> está en el área jugador (botón en la pantalla anterior).</p>
+
+  <main>
+    <div class="jugador-obj-panel is-on" data-jugador-obj-panel="plan">
+      <div class="section-head">
+        <h2>Pendiente de revisión</h2>
+        <span class="count" id="cntPend">(0)</span>
+      </div>
+      <div id="listPend"></div>
+
+      <div class="section-head">
+        <h2>Plan de acción en proceso</h2>
+        <span class="count" id="cntPlan">(0)</span>
+      </div>
+      <div id="listPlan"></div>
+    </div>
+
+    <div class="jugador-obj-panel" data-jugador-obj-panel="activos">
+      <div class="section-head">
+        <h2>Objetivos activos</h2>
+        <span class="count" id="cntAct">(0)</span>
+      </div>
+      <div id="listAct"></div>
+    </div>
+
+    <div class="jugador-obj-panel" data-jugador-obj-panel="completados">
+      <div class="section-head">
+        <h2>Objetivos completados</h2>
+        <span class="count" id="cntDone">(0)</span>
+      </div>
+      <div id="listDone"></div>
+    </div>
+  </main>
+
+  <div class="fab-wrap">
+    <button type="button" class="fab" id="fabNew" aria-label="Nuevo objetivo">＋</button>
+  </div>
+
+  </section>
+
+  <section class="app-view" data-view="entrenador" id="view-entrenador">
+    <header class="app-header">
+      <div class="app-header-inner">
+        <button type="button" class="back" aria-label="Volver" id="btnBackEntrenador">←</button>
+        <h1 class="title-page">Panel <span class="hl">Entrenador</span></h1>
+      </div>
+    </header>
+    <div class="coach-dash">
+      <div class="coach-roster-wrap">
+        <p class="coach-roster-label">Jugadores</p>
+        <div class="coach-roster" role="list">
+          <button type="button" class="coach-roster-pill is-active" disabled title="Perfil conectado en esta demo">Juan García</button>
+          <span class="coach-roster-pill is-placeholder" title="Ejemplo (sin datos)">Marta Ruiz</span>
+          <span class="coach-roster-pill is-placeholder" title="Ejemplo (sin datos)">Carlos Medina</span>
+          <span class="coach-roster-pill is-placeholder" title="Ejemplo (sin datos)">Ana Torres</span>
+          <span class="coach-roster-pill is-placeholder" title="Ejemplo (sin datos)">Lucía Fernández</span>
+          <span class="coach-roster-pill is-placeholder" title="Ejemplo (sin datos)">Diego Ramos</span>
+        </div>
+        <p class="sub" style="margin-top:0.4rem;margin-bottom:0;font-size:0.72rem">En esta demo solo <strong id="coachNombreInline">Juan García</strong> tiene datos enlazados; los demás nombres son referencia visual.</p>
+      </div>
+
+      <p class="sub" style="margin-top:0">Seguimiento de <strong id="coachNombreCliente">Juan García</strong>. Objetivos y partidos compartidos en tiempo real en este dispositivo.</p>
+
+      <nav class="coach-subnav" aria-label="Secciones entrenador">
+        <button type="button" class="on" data-coach-tab="revision">Revisión / vídeo</button>
+        <button type="button" data-coach-tab="objetivos">Objetivos</button>
+        <button type="button" data-coach-tab="partidos">Partidos</button>
+      </nav>
+
+      <div class="coach-panel is-on" id="coachPanelRevision" data-coach-panel="revision">
+        <h1 style="font-size:1.05rem">Videoanálisis · pendientes</h1>
+        <p class="sub">Objetivos en <strong>pendiente de revisión</strong> sin vídeo confirmado por el jugador (recordatorio los <strong>lunes</strong>).</p>
+        <div id="coachListSinVideo"></div>
+        <p class="sub" style="margin-top:1.5rem">Todos los objetivos en pendiente de revisión:</p>
+        <div id="coachListTodosPend"></div>
+      </div>
+
+      <div class="coach-panel" id="coachPanelObjetivos" data-coach-panel="objetivos">
+        <div class="coach-fab-row">
+          <button type="button" id="fabNewCoach">＋ Nuevo objetivo para Juan</button>
+        </div>
+        <p class="sub">Edita cada objetivo, arrastra la barra o usa el slider para el <strong>progreso %</strong> (activo y pendiente de revisión). Misma estructura de pestañas que en el perfil del jugador.</p>
+        <nav class="coach-obj-subnav" aria-label="Vistas de objetivos (entrenador)">
+          <button type="button" class="on" data-coach-obj-tab="plan" aria-selected="true">
+            Plan de acción <span class="tab-count" id="coachTabCntPlan">(0)</span>
+          </button>
+          <button type="button" data-coach-obj-tab="activos" aria-selected="false">
+            Objetivos activos <span class="tab-count" id="coachTabCntAct">(0)</span>
+          </button>
+          <button type="button" data-coach-obj-tab="completados" aria-selected="false">
+            Objetivos completados <span class="tab-count" id="coachTabCntDone">(0)</span>
+          </button>
+        </nav>
+        <div class="coach-obj-subpanel is-on" data-coach-obj-panel="plan">
+          <div class="section-head">
+            <h2>Pendiente de revisión</h2>
+            <span class="count" id="coachCntPend">(0)</span>
+          </div>
+          <div id="coachListPend"></div>
+          <div class="section-head">
+            <h2>Plan de acción en proceso</h2>
+            <span class="count" id="coachCntPlan">(0)</span>
+          </div>
+          <div id="coachListPlan"></div>
+        </div>
+        <div class="coach-obj-subpanel" data-coach-obj-panel="activos">
+          <div class="section-head">
+            <h2>Objetivos activos</h2>
+            <span class="count" id="coachCntActSection">(0)</span>
+          </div>
+          <div id="coachListAct"></div>
+        </div>
+        <div class="coach-obj-subpanel" data-coach-obj-panel="completados">
+          <div class="section-head">
+            <h2>Objetivos completados</h2>
+            <span class="count" id="coachCntDoneSection">(0)</span>
+          </div>
+          <div id="coachListDone"></div>
+        </div>
+      </div>
+
+      <div class="coach-panel" id="coachPanelPartidos" data-coach-panel="partidos">
+        <h1 style="font-size:1.05rem">Diario del jugador</h1>
+        <p class="sub">Partidos registrados por <strong>Juan</strong> (solo lectura).</p>
+        <div id="coachListMatches"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="app-view" data-view="diario" id="view-diario">
+<header class="app-header">
+    <div class="app-header-inner">
+      <button type="button" class="back" aria-label="Volver" id="btnBackDiario">←</button>
+      <h1 class="title-page">Mi <span class="hl">Diario</span></h1>
+      <button type="button" class="header-link-btn" id="headerOpenObjetivos">Objetivos</button>
+    </div>
+  </header>
+
+  <div class="layout" id="layout">
+    <div class="col-left">
+      <button type="button" class="btn-add" id="btnOpenForm">
+        <span aria-hidden="true">＋</span> Agregar resultado partido
+      </button>
+
+      <p class="section-label">Partidos recientes</p>
+      <div id="listMatches"></div>
+
+      <p class="section-label" style="margin-top:1.25rem">Estadísticas mensuales</p>
+      <div class="stats-grid" id="statsGrid">
+        <div class="stat-box"><div class="l">Partidos</div><div class="n" id="stTotal">0</div></div>
+        <div class="stat-box"><div class="l">Ganados</div><div class="n" id="stWins">0</div></div>
+        <div class="stat-box"><div class="l">Perdidos</div><div class="n" id="stLoss">0</div></div>
+        <div class="stat-box"><div class="l">Victorias</div><div class="n" id="stPct">—</div></div>
+      </div>
+
+      <p class="section-label">Resumen sensaciones de partidos</p>
+      <div class="emoji-row" id="summaryEmojis" aria-live="polite"></div>
+    </div>
+
+    <div class="col-right">
+      <div class="col-right-placeholder" id="placeholderRight">
+        Pulsa <strong>Agregar resultado partido</strong> para registrar un partido, resultado, sensaciones y tu <strong>plan de acción</strong> (objetivos activos en <button type="button" class="header-link-btn nav-open-obj">Objetivos</button>).
+      </div>
+
+      <div class="form-panel" id="formPanel">
+        <div class="form-head">
+          <button type="button" class="btn-close" id="btnCloseForm" aria-label="Cerrar">✕</button>
+          <h2 id="formTitle">Agregar partido</h2>
+        </div>
+
+        <form id="matchForm">
+          <div class="field">
+            <label for="mDate">Fecha del partido</label>
+            <div class="input-row-date">
+              <input type="date" id="mDate" required />
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Resultado</label>
+            <div class="seg" role="group" aria-label="Victoria o derrota">
+              <button type="button" class="active" data-outcome="win" id="segWin">Victoria</button>
+              <button type="button" data-outcome="loss" id="segLoss">Derrota</button>
+            </div>
+            <input type="hidden" id="mOutcome" value="win" />
+          </div>
+
+          <div class="field">
+            <label>Sets (1–4)</label>
+            <table class="score-input-table">
+              <thead>
+                <tr>
+                  <th></th>
+                  <th>Set 1</th>
+                  <th>Set 2</th>
+                  <th>Set 3</th>
+                  <th>Set 4</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Mi equipo</td>
+                  <td><input type="number" min="0" max="20" class="set-us" data-set="0" placeholder="—" /></td>
+                  <td><input type="number" min="0" max="20" class="set-us" data-set="1" placeholder="—" /></td>
+                  <td><input type="number" min="0" max="20" class="set-us" data-set="2" placeholder="—" /></td>
+                  <td><input type="number" min="0" max="20" class="set-us" data-set="3" placeholder="—" /></td>
+                </tr>
+                <tr>
+                  <td>Rivales</td>
+                  <td><input type="number" min="0" max="20" class="set-them" data-set="0" placeholder="—" /></td>
+                  <td><input type="number" min="0" max="20" class="set-them" data-set="1" placeholder="—" /></td>
+                  <td><input type="number" min="0" max="20" class="set-them" data-set="2" placeholder="—" /></td>
+                  <td><input type="number" min="0" max="20" class="set-them" data-set="3" placeholder="—" /></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="field">
+            <label for="mPartner">Pareja (opcional)</label>
+            <input type="text" id="mPartner" placeholder="Nombre de tu pareja" autocomplete="off" />
+          </div>
+          <div class="field">
+            <label for="mClub">Club (opcional)</label>
+            <input type="text" id="mClub" placeholder="Club o pista" autocomplete="off" />
+          </div>
+
+          <div class="field">
+            <label>Sensaciones generales del partido</label>
+            <div class="emoji-pick" role="radiogroup" aria-label="Valoración sensaciones">
+              <label><input type="radio" name="mFeel" value="1" /><span>😠<small>1</small></span></label>
+              <label><input type="radio" name="mFeel" value="2" /><span>😢<small>2</small></span></label>
+              <label><input type="radio" name="mFeel" value="3" checked /><span>😐<small>3</small></span></label>
+              <label><input type="radio" name="mFeel" value="4" /><span>😊<small>4</small></span></label>
+            </div>
+            <textarea id="mFeelText" placeholder="Escribe tus sensaciones aquí…"></textarea>
+          </div>
+
+          <section class="plan-accion" aria-labelledby="planTitulo">
+            <h3 id="planTitulo">Plan de acción</h3>
+            <div id="planAccionContainer"></div>
+          </section>
+
+          <div class="field">
+            <label for="mNotes">Notas adicionales</label>
+            <textarea id="mNotes" rows="3" placeholder="Cualquier detalle extra…"></textarea>
+          </div>
+
+          <button type="submit" class="btn-save" id="btnSubmitMatch">Guardar partido</button>
+        </form>
+      </div>
+    </div>
+  </div>
+  </section>
+
+  <div class="modal-back" id="modalBack" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal" id="modalPanel">
+      <h3 id="modalTitle">Nuevo objetivo</h3>
+      <form id="goalForm">
+        <input type="hidden" id="editGoalId" value="" />
+        <div class="field">
+          <label for="gTitulo">Título del objetivo</label>
+          <input type="text" id="gTitulo" required placeholder="Ej. Mejorar la precisión del saque" autocomplete="off" />
+        </div>
+        <div class="field">
+          <label for="gTipo">Enfoque del objetivo</label>
+          <select id="gTipo">
+            <option value="partido">Mejorar en partido</option>
+            <option value="clase">Mejorar en clase</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="gPartidosMeta">Partidos / sesiones a registrar como &laquo;practicado&raquo; en el diario antes de revisión con el entrenador</label>
+          <input type="number" id="gPartidosMeta" min="1" max="20" value="3" />
+        </div>
+        <div class="field">
+          <label for="gFecha">Fecha límite (opcional)</label>
+          <input type="date" id="gFecha" />
+        </div>
+        <div class="field">
+          <div class="toggle-row">
+            <input type="checkbox" id="gPlan" />
+            <div>
+              <strong>Añadir al plan de acción</strong>
+              <small>Los objetivos del plan aparecen al registrar un partido en el diario.</small>
+            </div>
+          </div>
+        </div>
+        <div class="modal-actions">
+          <button type="button" id="btnCancelModal">Cancelar</button>
+          <button type="submit" class="submit" id="btnSaveGoal">Guardar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <style>
+    .sr-only {
+      position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+      overflow: hidden; clip: rect(0,0,0,0); border: 0;
+    }
+  </style>
+
+  <script type="application/json" id="gimadd-store-meta">{
+  "fileId": "obj-1777486649184-gcyjpi8e"
+}</script>
+  <script type="application/json" id="gimadd-objetivos-seed">
+[
+  {
+    "id": "g-1777482161796-7qk73oj",
+    "titulo": "mejorar saque",
+    "fechaLimite": "",
+    "progreso": 37,
+    "enPlanAccion": true,
+    "completado": false,
+    "fechaCompletado": null,
+    "estado": "activo",
+    "tipoObjetivo": "partido",
+    "partidosMeta": 3,
+    "practicasUmbralOffset": 0,
+    "jugadorSubioVideoTrasRevision": true
+  },
+  {
+    "id": "g-1777482182408-wat5wyb",
+    "titulo": "mejorar bolea",
+    "fechaLimite": "",
+    "progreso": 0,
+    "enPlanAccion": true,
+    "completado": false,
+    "fechaCompletado": null,
+    "estado": "activo",
+    "tipoObjetivo": "partido",
+    "partidosMeta": 3,
+    "practicasUmbralOffset": 0,
+    "jugadorSubioVideoTrasRevision": true
+  },
+  {
+    "id": "g-1777482193546-67sqfvs",
+    "titulo": "mejorar posicionamiento",
+    "fechaLimite": "",
+    "progreso": 0,
+    "enPlanAccion": false,
+    "completado": false,
+    "fechaCompletado": null,
+    "estado": "activo",
+    "tipoObjetivo": "partido",
+    "partidosMeta": 3,
+    "practicasUmbralOffset": 0,
+    "jugadorSubioVideoTrasRevision": true
+  },
+  {
+    "id": "g-1777482209641-6jug9v3",
+    "titulo": "mejorar vibora",
+    "fechaLimite": "2026-04-30",
+    "progreso": 0,
+    "enPlanAccion": true,
+    "completado": false,
+    "fechaCompletado": null,
+    "estado": "activo",
+    "tipoObjetivo": "partido",
+    "partidosMeta": 3,
+    "practicasUmbralOffset": 0,
+    "jugadorSubioVideoTrasRevision": true
+  },
+  {
+    "id": "g-1777482296807-li47fhl",
+    "titulo": "remate",
+    "fechaLimite": "",
+    "progreso": 100,
+    "enPlanAccion": false,
+    "completado": true,
+    "fechaCompletado": "2026-04-29",
+    "estado": "completado",
+    "tipoObjetivo": "partido",
+    "partidosMeta": 3,
+    "practicasUmbralOffset": 0,
+    "jugadorSubioVideoTrasRevision": true
+  }
+]
+</script>
+  <script type="application/json" id="gimadd-diario-meta">{
+  "fileId": "diario-1777486649184-c4cjq4lt"
+}</script>
+  <script type="application/json" id="gimadd-partidos-seed">
+[
+  {
+    "id": "m-1777482896065-npqtowk",
+    "date": "2026-04-29",
+    "outcome": "loss",
+    "sets": [
+      {
+        "us": 2,
+        "them": 6
+      },
+      {
+        "us": 6,
+        "them": 4
+      },
+      {
+        "us": 2,
+        "them": 6
+      }
+    ],
+    "partner": "Mario",
+    "club": "Manolos",
+    "feel": 1,
+    "feelText": "un desastre total",
+    "notes": "Tengo que controlar mi caracter cuando pierdo",
+    "planAccion": [
+      {
+        "objetivoId": "g-1777482161796-7qk73oj",
+        "titulo": "mejorar saque",
+        "practicado": true,
+        "sensaciones": "si"
+      },
+      {
+        "objetivoId": "g-1777482182408-wat5wyb",
+        "titulo": "mejorar bolea",
+        "practicado": true,
+        "sensaciones": "estoy mejorando"
+      },
+      {
+        "objetivoId": "g-1777482209641-6jug9v3",
+        "titulo": "mejorar vibora",
+        "practicado": true,
+        "sensaciones": "he metido 50%"
+      }
+    ]
+  },
+  {
+    "id": "m-1777483001985-t5w1pbk",
+    "date": "2026-04-29",
+    "outcome": "win",
+    "sets": [
+      {
+        "us": 6,
+        "them": 4
+      },
+      {
+        "us": 4,
+        "them": 6
+      },
+      {
+        "us": 6,
+        "them": 1
+      }
+    ],
+    "partner": "Mario",
+    "club": "Manolos",
+    "feel": 4,
+    "feelText": "paliza le hemos dado",
+    "notes": "muy buenas sensaciones. Esto va mejorando",
+    "planAccion": [
+      {
+        "objetivoId": "g-1777482161796-7qk73oj",
+        "titulo": "mejorar saque",
+        "practicado": true,
+        "sensaciones": "he metido un montón de puntos de saque"
+      },
+      {
+        "objetivoId": "g-1777482182408-wat5wyb",
+        "titulo": "mejorar bolea",
+        "practicado": true,
+        "sensaciones": "aun tengo que seguir practicando"
+      },
+      {
+        "objetivoId": "g-1777482209641-6jug9v3",
+        "titulo": "mejorar vibora",
+        "practicado": false,
+        "sensaciones": "no me sentía cómodo"
+      }
+    ]
+  }
+]
+</script>
+
+  <script>
+(function () {
+
+  var STORAGE_KEY = "gimadd_objetivos_v1";
+  var FILE_ID_KEY = "gimadd_objetivos_v1_fileId";
+  /** Partidos en memoria (debe existir antes del primer render de objetivos) */
+  var matches = [];
+  /** Quién abrió el formulario de objetivo (para creadoPor y copys) */
+  var goalFormOpenedFrom = "jugador";
+
+  function refreshAllGoalUI() {
+    updateHomeNotifBanner();
+    render();
+    renderCoachGoalsMirror();
+    renderEntrenadorDashboard();
+    renderCoachMatches();
+    if (typeof renderPlanAccionSection === "function") {
+      try {
+        renderPlanAccionSection();
+      } catch (err) {}
+    }
+  }
+
+  function jsonForHtmlEmbedding(obj) {
+    return JSON.stringify(obj, null, 2).replace(/</g, "\\u003c");
+  }
+
+  function getEmbedMeta() {
+    var el = document.getElementById("gimadd-store-meta");
+    if (!el) return { fileId: "obj-local-v1" };
+    try {
+      return JSON.parse(el.textContent);
+    } catch (e) {
+      return { fileId: "obj-local-v1" };
+    }
+  }
+
+  function loadGoalsFromEmbed() {
+    var el = document.getElementById("gimadd-objetivos-seed");
+    if (!el) return [];
+    try {
+      var arr = JSON.parse(el.textContent.trim());
+      return Array.isArray(arr) ? arr : [];
+    } catch (e) {
+      return [];
+    }
+  }
+
+  function syncEmbedDom(goals) {
+    var el = document.getElementById("gimadd-objetivos-seed");
+    if (el) el.textContent = "\n" + jsonForHtmlEmbedding(goals) + "\n";
+  }
+
+  function loadGoals() {
+    var meta = getEmbedMeta();
+    var fid = meta.fileId || "obj-local-v1";
+    var lastFid = localStorage.getItem(FILE_ID_KEY);
+    var fromEmbed = loadGoalsFromEmbed();
+
+    if (lastFid !== fid) {
+      localStorage.setItem(FILE_ID_KEY, fid);
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(fromEmbed));
+      } catch (e) {}
+      syncEmbedDom(fromEmbed);
+      return fromEmbed;
+    }
+
+    try {
+      var raw = localStorage.getItem(STORAGE_KEY);
+      if (raw != null && raw !== "") {
+        var arr = JSON.parse(raw);
+        if (Array.isArray(arr)) {
+          syncEmbedDom(arr);
+          return arr;
+        }
+      }
+    } catch (e) {}
+    syncEmbedDom(fromEmbed);
+    return fromEmbed;
+  }
+
+  /**
+   * @param {object} [opts] Pass { broadcast: false } when saving as part of a pure
+   *   redraw/normalize so we do not synchronously re-enter bcObj.onmessage (same-tab
+   *   BroadcastChannel loop that could freeze the page).
+   */
+  function saveGoals(goals, opts) {
+    var broadcast = !opts || opts.broadcast !== false;
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(goals));
+    } catch (e) {}
+    syncEmbedDom(goals);
+    if (!broadcast) return;
+    try {
+      var ch = new BroadcastChannel("gimadd_objetivos_channel");
+      ch.postMessage({ type: "objetivos" });
+      ch.close();
+    } catch (err) {}
+  }
+
+
+  function genGoalId() {
+    return "g-" + Date.now() + "-" + Math.random().toString(36).slice(2, 9);
+  }
+
+  function normalizeGoal(g) {
+    if (!g || !g.id) return;
+    if (!g.estado) {
+      g.estado = g.completado ? "completado" : "activo";
+    }
+    if (g.estado === "completado") {
+      g.completado = true;
+    } else {
+      g.completado = false;
+    }
+    if (g.tipoObjetivo !== "clase" && g.tipoObjetivo !== "partido") {
+      g.tipoObjetivo = "partido";
+    }
+    var pm = parseInt(String(g.partidosMeta), 10);
+    if (!pm || pm < 1 || pm > 50) g.partidosMeta = 3;
+    else g.partidosMeta = pm;
+    if (g.practicasUmbralOffset == null || isNaN(Number(g.practicasUmbralOffset))) {
+      g.practicasUmbralOffset = 0;
+    } else g.practicasUmbralOffset = Number(g.practicasUmbralOffset);
+    if (typeof g.jugadorSubioVideoTrasRevision !== "boolean") {
+      g.jugadorSubioVideoTrasRevision = true;
+    }
+    if (!g.creadoPor) g.creadoPor = "jugador";
+    if (g.creadoPor !== "entrenador" && g.creadoPor !== "jugador") g.creadoPor = "jugador";
+  }
+
+  function normalizeGoalsList(goals) {
+    goals.forEach(normalizeGoal);
+    return goals;
+  }
+
+  function countPracticasGoalInMatches(goalId) {
+    return matches.reduce(function (n, m) {
+      var pa = m.planAccion || [];
+      var hit = pa.some(function (p) {
+        return p.objetivoId === goalId && p.practicado;
+      });
+      return n + (hit ? 1 : 0);
+    }, 0);
+  }
+
+  function effectivePracticasCount(g) {
+    var total = countPracticasGoalInMatches(g.id);
+    var off = Number(g.practicasUmbralOffset) || 0;
+    return Math.max(0, total - off);
+  }
+
+  function splitGoals(goals) {
+    var plan = [];
+    var act = [];
+    var done = [];
+    var pend = [];
+    goals.forEach(function (g) {
+      normalizeGoal(g);
+      if (g.estado === "completado") {
+        done.push(g);
+      } else if (g.estado === "pendiente_revision") {
+        pend.push(g);
+      } else if (g.enPlanAccion) {
+        plan.push(g);
+      } else {
+        act.push(g);
+      }
+    });
+    return { plan: plan, act: act, done: done, pend: pend };
+  }
+
+  function badgeEstadoHtml(g) {
+    if (g.estado === "pendiente_revision") {
+      return '<span class="badge-estado be-pendiente">Pendiente revisión</span>';
+    }
+    if (g.estado === "completado") {
+      return '<span class="badge-estado be-hecho">Completado</span>';
+    }
+    return '<span class="badge-estado be-activo">Activo</span>';
+  }
+
+  function badgeTipoHtml(g) {
+    var lab = g.tipoObjetivo === "clase" ? "Clase" : "Partido";
+    var cls = g.tipoObjetivo === "clase" ? "be-pendiente" : "be-activo";
+    return '<span class="badge-estado ' + cls + '" style="opacity:0.85">' + lab + "</span>";
+  }
+
+  function formatShort(iso) {
+    if (!iso) return "";
+    try {
+      var d = new Date(iso + "T12:00:00");
+      return d.toLocaleDateString("es", { day: "numeric", month: "short", year: "numeric" });
+    } catch (e) {
+      return iso;
+    }
+  }
+
+  function pctClass(p) {
+    return p >= 100 ? "goal-pct full" : "goal-pct";
+  }
+
+  function renderCard(g, opts) {
+    opts = opts || {};
+    var sub = "";
+    if (g.estado === "completado" && g.fechaCompletado) {
+      sub = "Completado: " + formatShort(g.fechaCompletado);
+    } else if (g.fechaLimite) {
+      sub = "Fecha límite: " + formatShort(g.fechaLimite);
+    }
+    var pracLine = "";
+    if (g.estado === "activo" && g.enPlanAccion) {
+      var eff = effectivePracticasCount(g);
+      var meta = g.partidosMeta || 3;
+      pracLine =
+        "Prácticas en diario hacia revisión: " + eff + " / " + meta + " (tras umbral, pasa a pendiente de revisión).";
+    } else if (g.estado === "pendiente_revision") {
+      pracLine =
+        "Pendiente de revisión en el siguiente videoanálisis. Envía un nuevo vídeo si el entrenador aún no lo ha visto.";
+    }
+    if (g.creadoPor === "entrenador" && g.estado !== "completado") {
+      pracLine = (pracLine ? pracLine + " " : "") + "(Objetivo definido por el entrenador.)";
+    }
+    var p = Math.min(100, Math.max(0, Number(g.progreso) || 0));
+    var canDrag = g.estado === "activo";
+    var trackAttrs = canDrag ? ' data-progress-id="' + g.id + '"' : "";
+    var tipoBadges = badgeTipoHtml(g) + badgeEstadoHtml(g);
+    var html =
+      '<article class="goal-card" data-id="' +
+      g.id +
+      '">' +
+      '<div class="goal-card-top">' +
+      '<p class="goal-title">' +
+      escapeHtml(g.titulo) +
+      tipoBadges +
+      "</p>" +
+      '<span class="' +
+      pctClass(p) +
+      '">' +
+      Math.round(p) +
+      "%</span>" +
+      "</div>" +
+      (pracLine ? '<p class="goal-sub">' + escapeHtml(pracLine) + "</p>" : "") +
+      (sub ? '<p class="goal-sub" style="margin-top:0.35rem">' + escapeHtml(sub) + "</p>" : '<p class="goal-sub"></p>') +
+      '<div class="progress-track"' +
+      trackAttrs +
+      '><div class="progress-fill" style="width:' +
+      p +
+      '%"></div></div>';
+    if (canDrag) {
+      html +=
+        '<div class="progress-slider-wrap">' +
+        '<label for="rng-' +
+        g.id +
+        '">Desliza para ajustar el porcentaje</label>' +
+        '<input type="range" id="rng-' +
+        g.id +
+        '" class="rng-progress" min="0" max="100" step="1" value="' +
+        Math.round(p) +
+        '" data-id="' +
+        g.id +
+        '" />' +
+        "</div>";
+    }
+    html += '<div class="goal-actions">';
+    if (g.estado === "activo") {
+      html +=
+        '<button type="button" class="primary" data-action="edit" data-id="' +
+        g.id +
+        '">Editar</button>';
+      html +=
+        '<button type="button" data-action="toggle-plan" data-id="' +
+        g.id +
+        '">' +
+        (g.enPlanAccion ? "Quitar del plan" : "Añadir al plan") +
+        "</button>";
+    } else if (g.estado === "pendiente_revision") {
+      html +=
+        '<button type="button" data-action="edit" data-id="' +
+        g.id +
+        '">Editar</button>';
+      html +=
+        '<span style="font-size:0.68rem;color:var(--muted);align-self:center">El entrenador gestiona completado o reactivación.</span>';
+    }
+    html +=
+      '<button type="button" class="danger" data-action="delete" data-id="' +
+      g.id +
+      '">Eliminar</button>';
+    html += "</div></article>";
+    return html;
+  }
+
+  function renderGoalCardCoach(g) {
+    normalizeGoal(g);
+    var sub = "";
+    if (g.estado === "completado" && g.fechaCompletado) {
+      sub = "Completado: " + formatShort(g.fechaCompletado);
+    } else if (g.fechaLimite) {
+      sub = "Fecha límite: " + formatShort(g.fechaLimite);
+    }
+    var pracLine = "";
+    if (g.estado === "activo" && g.enPlanAccion) {
+      var eff = effectivePracticasCount(g);
+      var meta = g.partidosMeta || 3;
+      pracLine = "Prácticas en diario hacia revisión: " + eff + " / " + meta + ".";
+    } else if (g.estado === "pendiente_revision") {
+      pracLine =
+        "Pendiente de revisión · vídeo del jugador: " +
+        (g.jugadorSubioVideoTrasRevision ? "confirmado" : "no confirmado") +
+        ".";
+    }
+    if (g.creadoPor === "entrenador") {
+      pracLine = (pracLine ? pracLine + " " : "") + "(Creado por entrenador.)";
+    }
+    var p = Math.min(100, Math.max(0, Number(g.progreso) || 0));
+    var tipoBadges = badgeTipoHtml(g) + badgeEstadoHtml(g);
+    var canCoachEditProgress = g.estado === "activo" || g.estado === "pendiente_revision";
+    var html =
+      '<article class="goal-card coach-goal-card" data-id="' +
+      g.id +
+      '">' +
+      '<div class="goal-card-top">' +
+      '<p class="goal-title">' +
+      escapeHtml(g.titulo) +
+      tipoBadges +
+      "</p>" +
+      '<span class="' +
+      pctClass(p) +
+      '">' +
+      Math.round(p) +
+      "%</span>" +
+      "</div>" +
+      (pracLine ? '<p class="goal-sub">' + escapeHtml(pracLine) + "</p>" : "") +
+      (sub ? '<p class="goal-sub" style="margin-top:0.35rem">' + escapeHtml(sub) + "</p>" : "");
+    if (canCoachEditProgress) {
+      html +=
+        '<div class="progress-track" data-coach-progress-id="' +
+        g.id +
+        '"><div class="progress-fill" style="width:' +
+        p +
+        '%"></div></div>' +
+        '<div class="progress-slider-wrap">' +
+        '<label for="rng-coach-' +
+        g.id +
+        '">Progreso (0–100&nbsp;%) — arrastra la barra o desliza</label>' +
+        '<input type="range" id="rng-coach-' +
+        g.id +
+        '" class="rng-coach-progress" min="0" max="100" step="1" value="' +
+        Math.round(p) +
+        '" data-coach-prog-id="' +
+        g.id +
+        '" />' +
+        "</div>";
+    } else {
+      html +=
+        '<div class="progress-track progress-track--readonly"><div class="progress-fill" style="width:' +
+        p +
+        '%"></div></div>';
+    }
+    html += '<div class="goal-actions">';
+    if (g.estado === "activo") {
+      html +=
+        '<button type="button" class="primary" data-coach-goal-action="edit" data-coach-goal-id="' +
+        g.id +
+        '">Editar</button>';
+      html +=
+        '<button type="button" data-coach-goal-action="toggle-plan" data-coach-goal-id="' +
+        g.id +
+        '">' +
+        (g.enPlanAccion ? "Quitar del plan" : "Añadir al plan") +
+        "</button>";
+    } else if (g.estado === "pendiente_revision") {
+      html +=
+        '<button type="button" class="primary" data-coach-goal-action="edit" data-coach-goal-id="' +
+        g.id +
+        '">Editar</button>';
+      html +=
+        '<button type="button" data-coach-goal-action="completar" data-coach-goal-id="' +
+        g.id +
+        '">Marcar completado</button>';
+      html +=
+        '<button type="button" data-coach-goal-action="reactivar" data-coach-goal-id="' +
+        g.id +
+        '">Reactivar (nuevo %)</button>';
+    } else if (g.estado === "completado") {
+      html +=
+        '<span style="font-size:0.68rem;color:var(--muted);align-self:center">Objetivo completado.</span>';
+    }
+    html +=
+      '<button type="button" class="danger" data-coach-goal-action="delete" data-coach-goal-id="' +
+      g.id +
+      '">Eliminar</button>';
+    html += "</div>";
+    if (g.estado === "pendiente_revision") {
+      var p0 = Math.round(p);
+      html +=
+        '<div class="coach-actions" style="width:100%;margin-top:0.35rem">' +
+        '<label style="font-size:0.65rem;color:var(--muted);display:flex;align-items:center;gap:0.5rem;flex:1;min-width:0"><span>% al reactivar</span>' +
+        '<input type="range" data-coach-goal-rng="' +
+        g.id +
+        '" min="0" max="100" value="' +
+        p0 +
+        '" /></label>' +
+        '<span data-coach-goal-pct="' +
+        g.id +
+        '" style="font-size:0.75rem;font-weight:800;flex-shrink:0">' +
+        p0 +
+        "%</span></div>";
+    }
+    html += "</article>";
+    return html;
+  }
+
+  function handleCoachMirrorGoalClick(btn) {
+    var id = btn.getAttribute("data-coach-goal-id");
+    var act = btn.getAttribute("data-coach-goal-action");
+    var goals = loadGoals();
+    var g = goals.find(function (x) {
+      return String(x.id) === String(id);
+    });
+    if (!g) return;
+    normalizeGoal(g);
+    if (act === "edit") {
+      goalFormOpenedFrom = "entrenador";
+      openModal(id);
+      return;
+    }
+    if (act === "delete") {
+      if (!confirm("¿Eliminar este objetivo?")) return;
+      goals = goals.filter(function (x) {
+        return String(x.id) !== String(id);
+      });
+      saveGoals(goals);
+      refreshAllGoalUI();
+      return;
+    }
+    if (act === "toggle-plan") {
+      if (g.estado !== "activo") return;
+      g.enPlanAccion = !g.enPlanAccion;
+      saveGoals(goals);
+      refreshAllGoalUI();
+      return;
+    }
+    if (act === "completar") {
+      g.estado = "completado";
+      g.completado = true;
+      g.fechaCompletado = new Date().toISOString().slice(0, 10);
+      g.enPlanAccion = false;
+      g.progreso = 100;
+      g.jugadorSubioVideoTrasRevision = true;
+      saveGoals(goals);
+      refreshAllGoalUI();
+      return;
+    }
+    if (act === "reactivar") {
+      var vEnt = document.getElementById("view-entrenador");
+      var rng = vEnt ? vEnt.querySelector('input[data-coach-goal-rng="' + id + '"]') : null;
+      var pct = rng ? parseInt(rng.value, 10) : Math.round(Math.min(100, Math.max(0, Number(g.progreso) || 0)));
+      if (isNaN(pct)) pct = 0;
+      g.estado = "activo";
+      g.completado = false;
+      g.fechaCompletado = null;
+      g.progreso = pct;
+      g.practicasUmbralOffset = countPracticasGoalInMatches(g.id);
+      g.jugadorSubioVideoTrasRevision = true;
+      saveGoals(goals);
+      refreshAllGoalUI();
+    }
+  }
+
+  function renderCoachGoalsMirror() {
+    var elPend = document.getElementById("coachListPend");
+    if (!elPend) return;
+    var goals = normalizeGoalsList(loadGoals());
+    var split = splitGoals(goals);
+    var blocks = [
+      { cnt: "coachCntPend", list: "coachListPend", arr: split.pend, empty: "Sin objetivos pendientes de revisión." },
+      { cnt: "coachCntPlan", list: "coachListPlan", arr: split.plan, empty: "Ninguno en plan de acción." },
+      { cnt: "coachCntActSection", list: "coachListAct", arr: split.act, empty: "Sin activos fuera del plan." },
+      { cnt: "coachCntDoneSection", list: "coachListDone", arr: split.done, empty: "Sin completados." },
+    ];
+    blocks.forEach(function (b) {
+      var cnt = document.getElementById(b.cnt);
+      var el = document.getElementById(b.list);
+      if (!cnt || !el) return;
+      cnt.textContent = "(" + b.arr.length + ")";
+      if (!b.arr.length) {
+        el.innerHTML = '<p class="empty-hint">' + b.empty + "</p>";
+      } else {
+        el.innerHTML = b.arr.map(function (x) { return renderGoalCardCoach(x); }).join("");
+      }
+    });
+    var nCoachPlan = split.pend.length + split.plan.length;
+    var ctp = document.getElementById("coachTabCntPlan");
+    if (ctp) ctp.textContent = "(" + nCoachPlan + ")";
+    var cta = document.getElementById("coachTabCntAct");
+    if (cta) cta.textContent = "(" + split.act.length + ")";
+    var ctd = document.getElementById("coachTabCntDone");
+    if (ctd) ctd.textContent = "(" + split.done.length + ")";
+    bindCoachRanges();
+  }
+
+  function bindCoachRanges() {
+    var vc = document.getElementById("view-entrenador");
+    if (!vc) return;
+    vc.querySelectorAll(".rng-coach-progress").forEach(function (rng) {
+      rng.oninput = function () {
+        var id = rng.getAttribute("data-coach-prog-id");
+        var v = parseInt(rng.value, 10);
+        var goals = loadGoals();
+        var g = goals.find(function (x) {
+          return String(x.id) === String(id);
+        });
+        if (g && (g.estado === "activo" || g.estado === "pendiente_revision")) {
+          g.progreso = v;
+          saveGoals(goals);
+          refreshAllGoalUI();
+        }
+      };
+    });
+  }
+
+  function escapeHtml(s) {
+    var d = document.createElement("div");
+    d.textContent = s;
+    return d.innerHTML;
+  }
+
+  function render() {
+    var goals = normalizeGoalsList(loadGoals());
+    saveGoals(goals, { broadcast: false });
+    var split = splitGoals(goals);
+    var nJugPlan = split.pend.length + split.plan.length;
+    var jtp = document.getElementById("jugadorTabCntPlan");
+    if (jtp) jtp.textContent = "(" + nJugPlan + ")";
+    var jta = document.getElementById("jugadorTabCntAct");
+    if (jta) jta.textContent = "(" + split.act.length + ")";
+    var jtd = document.getElementById("jugadorTabCntDone");
+    if (jtd) jtd.textContent = "(" + split.done.length + ")";
+
+    document.getElementById("cntPend").textContent = "(" + split.pend.length + ")";
+    document.getElementById("cntPlan").textContent = "(" + split.plan.length + ")";
+    document.getElementById("cntAct").textContent = "(" + split.act.length + ")";
+    document.getElementById("cntDone").textContent = "(" + split.done.length + ")";
+
+    var elPend = document.getElementById("listPend");
+    var elPlan = document.getElementById("listPlan");
+    var elAct = document.getElementById("listAct");
+    var elDone = document.getElementById("listDone");
+
+    if (!split.pend.length) {
+      elPend.innerHTML =
+        '<p class="empty-hint">No hay objetivos pendientes de revisión. Al practicar en el diario el número de partidos/sesiones definido, pasarán aquí y recibirás un aviso.</p>';
+    } else {
+      elPend.innerHTML = split.pend.map(function (g) { return renderCard(g); }).join("");
+    }
+
+    if (!split.plan.length) {
+      elPlan.innerHTML =
+        '<p class="empty-hint">Ningún objetivo activo en el plan de acción. Marca &laquo;Añadir al plan de acción&raquo; al crear o editar un objetivo.</p>';
+    } else {
+      elPlan.innerHTML = split.plan.map(function (g) { return renderCard(g); }).join("");
+    }
+
+    if (!split.act.length) {
+      elAct.innerHTML =
+        '<p class="empty-hint">No tienes objetivos activos fuera del plan. Crea uno con el botón +.</p>';
+    } else {
+      elAct.innerHTML = split.act.map(function (g) { return renderCard(g); }).join("");
+    }
+
+    if (!split.done.length) {
+      elDone.innerHTML =
+        '<p class="empty-hint">Aún no hay objetivos completados (el entrenador los marca en el videoanálisis).</p>';
+    } else {
+      elDone.innerHTML = split.done.map(function (g) { return renderCard(g); }).join("");
+    }
+
+    bindRanges();
+  }
+
+  function bindRanges() {
+    document.querySelectorAll(".rng-progress").forEach(function (rng) {
+      rng.oninput = function () {
+        var id = rng.getAttribute("data-id");
+        var v = parseInt(rng.value, 10);
+        var goals = loadGoals();
+        var g = goals.find(function (x) { return String(x.id) === String(id); });
+        if (g && g.estado === "activo") {
+          g.progreso = v;
+          saveGoals(goals);
+          refreshAllGoalUI();
+        }
+      };
+    });
+  }
+
+  function seedIfEmpty() {
+    /* Sin datos de ejemplo: crea objetivos con el botón + */
+  }
+
+  var modalBack = document.getElementById("modalBack");
+  var goalForm = document.getElementById("goalForm");
+
+  function openModal(editId) {
+    goalForm.reset();
+    document.getElementById("editGoalId").value = editId || "";
+    document.getElementById("modalTitle").textContent = editId ? "Editar objetivo" : "Nuevo objetivo";
+    if (!editId) {
+      document.getElementById("gPlan").checked = false;
+    } else {
+      var goals = loadGoals();
+      var g = goals.find(function (x) { return String(x.id) === String(editId); });
+      if (g) {
+        document.getElementById("gTitulo").value = g.titulo;
+        document.getElementById("gFecha").value = g.fechaLimite || "";
+        document.getElementById("gTipo").value = g.tipoObjetivo === "clase" ? "clase" : "partido";
+        document.getElementById("gPartidosMeta").value = String(g.partidosMeta || 3);
+        document.getElementById("gPlan").checked = !!g.enPlanAccion && g.estado === "activo";
+      }
+    }
+    modalBack.classList.add("show");
+  }
+
+  function closeModal() {
+    modalBack.classList.remove("show");
+  }
+
+  document.getElementById("fabNew").onclick = function () {
+    goalFormOpenedFrom = "jugador";
+    openModal(null);
+  };
+  document.getElementById("btnCancelModal").onclick = closeModal;
+  modalBack.onclick = function (e) {
+    if (e.target === modalBack) closeModal();
+  };
+
+  goalForm.onsubmit = function (e) {
+    e.preventDefault();
+    var editId = document.getElementById("editGoalId").value;
+    var titulo = document.getElementById("gTitulo").value.trim();
+    if (!titulo) return;
+    var fecha = document.getElementById("gFecha").value;
+    var enPlan = document.getElementById("gPlan").checked;
+    var tipoEl = document.getElementById("gTipo");
+    var tipo = tipoEl && tipoEl.value === "clase" ? "clase" : "partido";
+    var partidosMeta = parseInt(document.getElementById("gPartidosMeta").value, 10);
+    if (!partidosMeta || partidosMeta < 1) partidosMeta = 3;
+    if (partidosMeta > 50) partidosMeta = 50;
+    var goals = loadGoals();
+
+    if (editId) {
+      var g = goals.find(function (x) { return String(x.id) === String(editId); });
+      if (g) {
+        g.titulo = titulo;
+        g.fechaLimite = fecha;
+        g.tipoObjetivo = tipo;
+        g.partidosMeta = partidosMeta;
+        if (g.estado === "activo") {
+          g.enPlanAccion = enPlan;
+        }
+      }
+    } else {
+      goals.push({
+        id: genGoalId(),
+        titulo: titulo,
+        fechaLimite: fecha,
+        progreso: 0,
+        enPlanAccion: enPlan,
+        estado: "activo",
+        completado: false,
+        fechaCompletado: null,
+        tipoObjetivo: tipo,
+        partidosMeta: partidosMeta,
+        practicasUmbralOffset: 0,
+        jugadorSubioVideoTrasRevision: true,
+        creadoPor: goalFormOpenedFrom === "entrenador" ? "entrenador" : "jugador",
+      });
+    }
+    saveGoals(goals);
+    closeModal();
+    refreshAllGoalUI();
+  };
+
+  var viewObjetivosEl = document.getElementById("view-objetivos");
+  if (viewObjetivosEl) {
+    viewObjetivosEl.addEventListener("pointerdown", function (e) {
+      var track = e.target.closest(".progress-track[data-progress-id]");
+      if (!track || !viewObjetivosEl.contains(track)) return;
+      var id = track.getAttribute("data-progress-id");
+      var goals = loadGoals();
+      var g = goals.find(function (x) {
+        return String(x.id) === String(id);
+      });
+      if (!g || g.estado !== "activo") return;
+
+      var article = track.closest(".goal-card");
+      var fill = track.querySelector(".progress-fill");
+      var pctEl = article.querySelector(".goal-pct");
+      var rng = article.querySelector(".rng-progress");
+
+      function pctFromClientX(clientX) {
+        var rect = track.getBoundingClientRect();
+        var w = rect.width || 1;
+        return Math.round(Math.max(0, Math.min(100, ((clientX - rect.left) / w) * 100)));
+      }
+
+      function paint(pct) {
+        if (fill) fill.style.width = pct + "%";
+        if (pctEl) {
+          pctEl.textContent = pct + "%";
+          pctEl.className = pct >= 100 ? "goal-pct full" : "goal-pct";
+        }
+        if (rng) rng.value = String(pct);
+        g.progreso = pct;
+      }
+
+      paint(pctFromClientX(e.clientX));
+
+      var onMove = function (ev) {
+        paint(pctFromClientX(ev.clientX));
+      };
+      var onUp = function () {
+        saveGoals(goals);
+        document.removeEventListener("pointermove", onMove);
+        document.removeEventListener("pointerup", onUp);
+        document.removeEventListener("pointercancel", onUp);
+        refreshAllGoalUI();
+      };
+      document.addEventListener("pointermove", onMove);
+      document.addEventListener("pointerup", onUp);
+      document.addEventListener("pointercancel", onUp);
+    });
+
+    viewObjetivosEl.addEventListener("click", function (e) {
+      var jTab = e.target.closest("[data-jugador-obj-tab]");
+      if (jTab && viewObjetivosEl.contains(jTab)) {
+        var jname = jTab.getAttribute("data-jugador-obj-tab");
+        viewObjetivosEl.querySelectorAll(".profile-obj-tabs [data-jugador-obj-tab]").forEach(function (b) {
+          var on = b.getAttribute("data-jugador-obj-tab") === jname;
+          b.classList.toggle("on", on);
+          b.setAttribute("aria-selected", on ? "true" : "false");
+        });
+        viewObjetivosEl.querySelectorAll(".jugador-obj-panel").forEach(function (p) {
+          p.classList.toggle("is-on", p.getAttribute("data-jugador-obj-panel") === jname);
+        });
+        return;
+      }
+      var btn = e.target.closest("button[data-action]");
+      if (!btn || !viewObjetivosEl.contains(btn)) return;
+      var id = btn.getAttribute("data-id");
+      var action = btn.getAttribute("data-action");
+      var goals = loadGoals();
+      var g = goals.find(function (x) {
+        return String(x.id) === String(id);
+      });
+      if (!g) return;
+
+      if (action === "edit") {
+        goalFormOpenedFrom = "jugador";
+        openModal(id);
+        return;
+      }
+
+      if (action === "delete") {
+        if (!confirm("¿Eliminar este objetivo?")) return;
+        goals = goals.filter(function (x) {
+          return String(x.id) !== String(id);
+        });
+        saveGoals(goals);
+        refreshAllGoalUI();
+        return;
+      }
+
+      if (action === "toggle-plan") {
+        if (g.estado !== "activo") return;
+        g.enPlanAccion = !g.enPlanAccion;
+        saveGoals(goals);
+        refreshAllGoalUI();
+        return;
+      }
+    });
+  }
+
+
+  function updateHomeNotifBanner() {
+    var el = document.getElementById("homeNotifJugador");
+    if (!el) return;
+    var goals = normalizeGoalsList(loadGoals());
+    var pend = goals.filter(function (g) {
+      return g.estado === "pendiente_revision";
+    });
+    if (!pend.length) {
+      el.classList.remove("show");
+      el.innerHTML = "";
+      return;
+    }
+    el.classList.add("show");
+    el.innerHTML =
+      "<strong>Videoanálisis / revisión de objetivos</strong> " +
+      "Tienes " +
+      pend.length +
+      " objetivo(s) en <strong>pendiente de revisión</strong>. Envía un <strong>nuevo vídeo</strong> al entrenador para que evalúe la evolución. Cuando lo hayas subido, pulsa &laquo;He subido un nuevo vídeo para el entrenador&raquo;." +
+      ' <span style="display:block;margin-top:0.4rem;font-size:0.72rem;color:var(--muted)">Notificaciones simuladas en esta demo (jugador y entrenador).</span>';
+  }
+
+  function recalcGoalsFromMatches() {
+    var goals = loadGoals();
+    var changed = false;
+    goals.forEach(function (g) {
+      normalizeGoal(g);
+      if (g.estado !== "activo" || !g.enPlanAccion) return;
+      var eff = effectivePracticasCount(g);
+      var meta = g.partidosMeta || 3;
+      if (eff >= meta) {
+        g.estado = "pendiente_revision";
+        g.completado = false;
+        g.jugadorSubioVideoTrasRevision = false;
+        g.pendienteRevisionDesde = new Date().toISOString().slice(0, 10);
+        changed = true;
+      }
+    });
+    if (changed) saveGoals(goals);
+    refreshAllGoalUI();
+  }
+
+  function coachCardHtml(g, nombreCliente) {
+    var vid = g.jugadorSubioVideoTrasRevision ? "Sí (confirmado)" : "No confirmado";
+    var p0 = Math.round(Math.min(100, Math.max(0, Number(g.progreso) || 0)));
+    return (
+      '<article class="coach-card" data-coach-goal="' +
+      g.id +
+      '"><h4>' +
+      escapeHtml(g.titulo) +
+      "</h4>" +
+      '<p class="meta">Cliente: ' +
+      escapeHtml(nombreCliente) +
+      " · Vídeo nuevo del jugador: " +
+      vid +
+      " · Prácticas en diario (total): " +
+      countPracticasGoalInMatches(g.id) +
+      "</p>" +
+      '<div class="coach-actions">' +
+      '<button type="button" data-coach-act="completar" data-id="' +
+      g.id +
+      '">Marcar completado</button>' +
+      '<button type="button" data-coach-act="reactivar" data-id="' +
+      g.id +
+      '">Reactivar con nuevo %</button>' +
+      '</div>' +
+      '<div class="coach-actions" style="margin-top:0.35rem">' +
+      '<label style="font-size:0.65rem;color:var(--muted);display:flex;align-items:center;gap:0.5rem;flex:1;min-width:0"><span>Nuevo % si reactivas</span>' +
+      '<input type="range" data-coach-rng="' +
+      g.id +
+      '" min="0" max="100" value="' +
+      p0 +
+      '" /></label>' +
+      '<span data-coach-pct="' +
+      g.id +
+      '" style="font-size:0.75rem;font-weight:800;flex-shrink:0">' +
+      p0 +
+      "%</span>" +
+      "</div></article>"
+    );
+  }
+
+  function renderEntrenadorDashboard() {
+    var elSin = document.getElementById("coachListSinVideo");
+    var elTodos = document.getElementById("coachListTodosPend");
+    if (!elSin || !elTodos) return;
+    var goals = normalizeGoalsList(loadGoals());
+    var nombreEl = document.querySelector(".profile-name");
+    var nombre = (nombreEl && nombreEl.textContent.trim()) || "Jugador";
+    var coachNombre = document.getElementById("coachNombreCliente");
+    if (coachNombre) coachNombre.textContent = nombre;
+    var coachInline = document.getElementById("coachNombreInline");
+    if (coachInline) coachInline.textContent = nombre;
+
+    var pendAll = goals.filter(function (g) {
+      return g.estado === "pendiente_revision";
+    });
+    var pendSin = pendAll.filter(function (g) {
+      return !g.jugadorSubioVideoTrasRevision;
+    });
+
+    var lunes = new Date().getDay() === 1;
+    var mondayNote = lunes
+      ? '<p class="sub" style="background:#fff7ed;border:1px solid var(--border);padding:0.65rem;border-radius:10px;margin-bottom:0.75rem">Hoy es <strong>lunes</strong>: en producción se enviaría al entrenador un recordatorio para revisar jugadores con revisión pendiente y sin vídeo nuevo confirmado.</p>'
+      : "";
+
+    if (!pendSin.length) {
+      elSin.innerHTML =
+        mondayNote +
+        '<p class="empty-hint">Ningún caso: todos los objetivos pendientes tienen vídeo confirmado, o no hay pendientes. Los que aparecen aquí son <strong>pendiente de revisión</strong> y el jugador <strong>aún no ha pulsado</strong> &laquo;He subido un nuevo vídeo&raquo;.</p>';
+    } else {
+      elSin.innerHTML =
+        mondayNote +
+        pendSin
+          .map(function (g) {
+            return coachCardHtml(g, nombre);
+          })
+          .join("");
+    }
+
+    if (!pendAll.length) {
+      elTodos.innerHTML = '<p class="empty-hint">No hay objetivos en pendiente de revisión.</p>';
+    } else {
+      elTodos.innerHTML = pendAll
+        .map(function (g) {
+          return coachCardHtml(g, nombre);
+        })
+        .join("");
+    }
+  }
+
+  document.getElementById("btnBackObjetivos").onclick = function () {
+    showView("jugador");
+  };
+
+  seedIfEmpty();
+
+
+  // ---------- Diario partidos ----------
+
+  const layout = document.getElementById("layout");
+  const btnOpen = document.getElementById("btnOpenForm");
+  const btnClose = document.getElementById("btnCloseForm");
+  const form = document.getElementById("matchForm");
+  const listEl = document.getElementById("listMatches");
+  const placeholder = document.getElementById("placeholderRight");
+
+  const segWin = document.getElementById("segWin");
+  const segLoss = document.getElementById("segLoss");
+  const mOutcome = document.getElementById("mOutcome");
+  const formTitle = document.getElementById("formTitle");
+  const btnSave = document.getElementById("btnSubmitMatch");
+
+  /** @type {string|null} */
+  var editingId = null;
+
+  const MATCHES_STORAGE_KEY = "gimadd_partidos_v1";
+  const MATCHES_FILE_ID_KEY = "gimadd_partidos_v1_fileId";
+
+  function jsonForHtmlEmbeddingDiario(obj) {
+    return JSON.stringify(obj, null, 2).replace(/</g, "\\u003c");
+  }
+
+  function getDiarioEmbedMeta() {
+    const el = document.getElementById("gimadd-diario-meta");
+    if (!el) return { fileId: "diario-local-v1" };
+    try {
+      return JSON.parse(el.textContent);
+    } catch (e) {
+      return { fileId: "diario-local-v1" };
+    }
+  }
+
+  function loadMatchesFromEmbed() {
+    const el = document.getElementById("gimadd-partidos-seed");
+    if (!el) return [];
+    try {
+      const arr = JSON.parse(el.textContent.trim());
+      return Array.isArray(arr) ? arr : [];
+    } catch (e) {
+      return [];
+    }
+  }
+
+  function syncPartidosEmbedDom(arr) {
+    const el = document.getElementById("gimadd-partidos-seed");
+    if (el) el.textContent = "\n" + jsonForHtmlEmbeddingDiario(arr) + "\n";
+  }
+
+  function loadMatchesIntoMemory() {
+    const meta = getDiarioEmbedMeta();
+    const fid = meta.fileId || "diario-local-v1";
+    const lastFid = localStorage.getItem(MATCHES_FILE_ID_KEY);
+    const fromEmbed = loadMatchesFromEmbed();
+
+    if (lastFid !== fid) {
+      localStorage.setItem(MATCHES_FILE_ID_KEY, fid);
+      try {
+        localStorage.setItem(MATCHES_STORAGE_KEY, JSON.stringify(fromEmbed));
+      } catch (e) {}
+      syncPartidosEmbedDom(fromEmbed);
+      matches = fromEmbed;
+      return;
+    }
+
+    try {
+      const raw = localStorage.getItem(MATCHES_STORAGE_KEY);
+      if (raw != null && raw !== "") {
+        const arr = JSON.parse(raw);
+        if (Array.isArray(arr)) {
+          matches = arr;
+          syncPartidosEmbedDom(matches);
+          return;
+        }
+      }
+    } catch (e) {}
+    matches = fromEmbed;
+    syncPartidosEmbedDom(matches);
+  }
+
+  function persistMatches() {
+    try {
+      localStorage.setItem(MATCHES_STORAGE_KEY, JSON.stringify(matches));
+    } catch (e) {}
+    syncPartidosEmbedDom(matches);
+    try {
+      var chp = new BroadcastChannel("gimadd_partidos_channel");
+      chp.postMessage({ type: "partidos" });
+      chp.close();
+    } catch (e2) {}
+    renderCoachMatches();
+  }
+
+
+
+  function getPlanObjetivosForDiario() {
+    return normalizeGoalsList(loadGoals()).filter(function (o) {
+      return o.enPlanAccion && o.estado === "activo";
+    });
+  }
+
+  function escapeHtmlDiario(s) {
+    const d = document.createElement("div");
+    d.textContent = s;
+    return d.innerHTML;
+  }
+
+  function renderCoachMatches() {
+    var el = document.getElementById("coachListMatches");
+    if (!el) return;
+    ensureMatchIds();
+    if (!matches.length) {
+      el.innerHTML =
+        '<p class="empty-hint">El jugador aún no ha registrado partidos.</p>';
+      return;
+    }
+    function planSummary(m) {
+      var pa = m.planAccion || [];
+      if (!pa.length) return "";
+      var parts = pa.map(function (p) {
+        var t = escapeHtmlDiario(p.titulo || "");
+        var st = p.practicado ? "Practicado" : "No practicado";
+        var sx = p.sensaciones ? " · " + escapeHtmlDiario(p.sensaciones) : "";
+        return t + ": " + st + sx;
+      });
+      return (
+        '<div class="coach-partido-readonly"><strong>Plan de acción:</strong><br/>' +
+        parts.join("<br/>") +
+        "</div>"
+      );
+    }
+    var sorted = matches.slice().sort(function (a, b) {
+      return a.date < b.date ? 1 : -1;
+    });
+    el.innerHTML = sorted
+      .map(function (m) {
+        var setCellsUs = [0, 1, 2, 3]
+          .map(function (i) {
+            var st = m.sets[i];
+            if (!st) return "<td>—</td>";
+            var cls = st.us > st.them ? " win-set" : "";
+            return '<td class="' + cls.trim() + '">' + st.us + "</td>";
+          })
+          .join("");
+        var setCellsThem = [0, 1, 2, 3]
+          .map(function (i) {
+            var st = m.sets[i];
+            if (!st) return "<td>—</td>";
+            var cls = st.them > st.us ? " win-set" : "";
+            return '<td class="' + cls.trim() + '">' + st.them + "</td>";
+          })
+          .join("");
+        var badge =
+          m.outcome === "win"
+            ? '<span class="badge badge-win">Victoria</span>'
+            : '<span class="badge badge-loss">Derrota</span>';
+        return (
+          '<article class="match-card">' +
+          '<div class="match-card-top">' +
+          badge +
+          '<span class="match-date">' +
+          formatDate(m.date) +
+          "</span></div>" +
+          '<table class="score-table">' +
+          '<thead><tr><th></th><th>S1</th><th>S2</th><th>S3</th><th>S4</th></tr></thead><tbody>' +
+          "<tr><td>Mi equipo</td>" +
+          setCellsUs +
+          "</tr><tr><td>Rivales</td>" +
+          setCellsThem +
+          "</tr></tbody></table>" +
+          (m.partner || m.club
+            ? '<p style="font-size:0.72rem;color:var(--muted);margin:0.5rem 0 0">' +
+              [m.partner, m.club].filter(Boolean).join(" · ") +
+              "</p>"
+            : "") +
+          (m.feelText
+            ? '<p class="coach-partido-readonly"><strong>Sensaciones:</strong> ' +
+              escapeHtmlDiario(m.feelText) +
+              "</p>"
+            : "") +
+          planSummary(m) +
+          "</article>"
+        );
+      })
+      .join("");
+  }
+
+  function renderPlanAccionSection() {
+    const container = document.getElementById("planAccionContainer");
+    if (!container) return;
+    const list = getPlanObjetivosForDiario();
+    if (!list.length) {
+      container.innerHTML =
+        '<p class="plan-empty-msg" style="font-size:0.82rem;color:var(--muted);margin:0;line-height:1.45">No hay objetivos en el plan de acción. Márcalos en <button type="button" class="goto-objetivos-from-plan" style="background:none;border:none;padding:0;font:inherit;font-weight:700;color:inherit;cursor:pointer;text-decoration:underline">Objetivos</button>.</p>';
+      const btnGo = container.querySelector(".goto-objetivos-from-plan");
+      if (btnGo) btnGo.onclick = function () { showView("objetivos"); };
+      return;
+    }
+    container.innerHTML = list
+      .map(
+        (o) => {
+          const p = Math.round(Math.min(100, Math.max(0, Number(o.progreso) || 0)));
+          return (
+            `<div class="obj-block" data-objetivo-id="${o.id}">` +
+            `<div class="obj-title">${escapeHtmlDiario(o.titulo)} <span style="font-size:0.72rem;font-weight:600;color:var(--muted)">(${p}%)</span></div>` +
+            `<label class="sr-only" for="pract-${o.id}">Practicado</label>` +
+            `<select id="pract-${o.id}" class="plan-pract" data-objetivo-id="${o.id}">` +
+            `<option value="practicado">Practicado</option>` +
+            `<option value="no-practicado">No practicado</option>` +
+            `</select>` +
+            `<label class="sr-only" for="sens-${o.id}">Sensaciones</label>` +
+            `<textarea id="sens-${o.id}" class="plan-sens" data-objetivo-id="${o.id}" rows="2" placeholder="Sensaciones sobre este objetivo…"></textarea>` +
+            `</div>`
+          );
+        }
+      )
+      .join("");
+  }
+
+  function collectPlanAccionFromForm() {
+    const list = getPlanObjetivosForDiario();
+    return list.map((o) => {
+      const practEl = document.querySelector('.plan-pract[data-objetivo-id="' + o.id + '"]');
+      const sensEl = document.querySelector('.plan-sens[data-objetivo-id="' + o.id + '"]');
+      return {
+        objetivoId: o.id,
+        titulo: o.titulo,
+        practicado: practEl ? practEl.value === "practicado" : true,
+        sensaciones: sensEl ? sensEl.value.trim() : "",
+      };
+    });
+  }
+
+  function fillPlanAccionFromMatch(planAccion) {
+    const arr = planAccion || [];
+    const byTitulo = (t) => loadGoals().find((x) => x.titulo === t);
+    arr.forEach((pa) => {
+      let id = pa.objetivoId;
+      if (!id && pa.titulo) {
+        const o = byTitulo(pa.titulo);
+        if (o) id = o.id;
+      }
+      if (!id) return;
+      const practEl = document.querySelector('.plan-pract[data-objetivo-id="' + id + '"]');
+      const sensEl = document.querySelector('.plan-sens[data-objetivo-id="' + id + '"]');
+      if (practEl) practEl.value = pa.practicado ? "practicado" : "no-practicado";
+      if (sensEl) sensEl.value = pa.sensaciones || "";
+    });
+  }
+
+
+  function genMatchId() {
+    return "m-" + Date.now() + "-" + Math.random().toString(36).slice(2, 9);
+  }
+
+  function ensureMatchIds() {
+    matches.forEach((m) => {
+      if (!m.id) m.id = genMatchId();
+    });
+  }
+
+  function setOutcomeUI(outcome) {
+    if (outcome === "win") {
+      segWin.classList.add("active");
+      segLoss.classList.remove("active");
+      mOutcome.value = "win";
+    } else {
+      segLoss.classList.add("active");
+      segWin.classList.remove("active");
+      mOutcome.value = "loss";
+    }
+  }
+
+  function resetFormForNew() {
+    editingId = null;
+    formTitle.textContent = "Agregar partido";
+    btnSave.textContent = "Guardar partido";
+    form.reset();
+    setOutcomeUI("win");
+    const feel3 = form.querySelector('input[name="mFeel"][value="3"]');
+    if (feel3) feel3.checked = true;
+    document.getElementById("mDate").valueAsDate = new Date();
+    document.querySelectorAll(".set-us, .set-them").forEach((inp) => {
+      inp.value = "";
+    });
+    renderPlanAccionSection();
+  }
+
+  function openForm() {
+    layout.classList.add("form-focus");
+    placeholder.style.display = "none";
+  }
+
+  function closeForm() {
+    layout.classList.remove("form-focus");
+    placeholder.style.display = "";
+  }
+
+  function openFormNew() {
+    resetFormForNew();
+    openForm();
+  }
+
+  function populateFormForEdit(m) {
+    if (!m.id) m.id = genMatchId();
+    editingId = m.id;
+    formTitle.textContent = "Editar partido";
+    btnSave.textContent = "Guardar cambios";
+    document.getElementById("mDate").value = m.date;
+    setOutcomeUI(m.outcome === "loss" ? "loss" : "win");
+    document.querySelectorAll(".set-us, .set-them").forEach((inp) => {
+      inp.value = "";
+    });
+    (m.sets || []).forEach((st, i) => {
+      if (!st || i > 3) return;
+      const usIn = document.querySelector('.set-us[data-set="' + i + '"]');
+      const themIn = document.querySelector('.set-them[data-set="' + i + '"]');
+      if (usIn) usIn.value = String(st.us);
+      if (themIn) themIn.value = String(st.them);
+    });
+    document.getElementById("mPartner").value = m.partner || "";
+    document.getElementById("mClub").value = m.club || "";
+    const feel = Math.min(4, Math.max(1, m.feel || 3));
+    const feelInput = form.querySelector('input[name="mFeel"][value="' + feel + '"]');
+    if (feelInput) feelInput.checked = true;
+    document.getElementById("mFeelText").value = m.feelText || "";
+    document.getElementById("mNotes").value = m.notes || "";
+    renderPlanAccionSection();
+    fillPlanAccionFromMatch(m.planAccion);
+    openForm();
+  }
+
+  btnOpen.addEventListener("click", openFormNew);
+  btnClose.addEventListener("click", () => {
+    closeForm();
+    resetFormForNew();
+  });
+
+  segWin.addEventListener("click", () => setOutcomeUI("win"));
+  segLoss.addEventListener("click", () => setOutcomeUI("loss"));
+
+  function readSets() {
+    const us = Array.from(document.querySelectorAll(".set-us")).map((i) =>
+      i.value === "" ? null : parseInt(i.value, 10)
+    );
+    const them = Array.from(document.querySelectorAll(".set-them")).map((i) =>
+      i.value === "" ? null : parseInt(i.value, 10)
+    );
+    const played = [];
+    for (let s = 0; s < 4; s++) {
+      if (us[s] != null && them[s] != null && !Number.isNaN(us[s]) && !Number.isNaN(them[s])) {
+        played.push({ us: us[s], them: them[s] });
+      }
+    }
+    return played;
+  }
+
+  function formatDate(iso) {
+    try {
+      const d = new Date(iso + "T12:00:00");
+      return d.toLocaleDateString("es", { day: "numeric", month: "long" });
+    } catch (e) {
+      return iso;
+    }
+  }
+
+  function renderList() {
+    ensureMatchIds();
+    if (!matches.length) {
+      listEl.innerHTML =
+        '<p style="color:var(--muted);font-size:0.88rem">Aún no hay partidos. Añade el primero.</p>';
+      updateStats();
+      updateSummaryEmojis();
+      return;
+    }
+    const sorted = [...matches].sort((a, b) => (a.date < b.date ? 1 : -1));
+    listEl.innerHTML = sorted
+      .map((m) => {
+        const setCellsUs = [0, 1, 2, 3]
+          .map((i) => {
+            const st = m.sets[i];
+            if (!st) return "<td>—</td>";
+            const cls = st.us > st.them ? " win-set" : "";
+            return `<td class="${cls.trim()}">${st.us}</td>`;
+          })
+          .join("");
+        const setCellsThem = [0, 1, 2, 3]
+          .map((i) => {
+            const st = m.sets[i];
+            if (!st) return "<td>—</td>";
+            const cls = st.them > st.us ? " win-set" : "";
+            return `<td class="${cls.trim()}">${st.them}</td>`;
+          })
+          .join("");
+        const badge =
+          m.outcome === "win"
+            ? '<span class="badge badge-win">Victoria</span>'
+            : '<span class="badge badge-loss">Derrota</span>';
+        return `
+          <article class="match-card">
+            <div class="match-card-top">
+              ${badge}
+              <span class="match-date">${formatDate(m.date)}</span>
+            </div>
+            <table class="score-table">
+              <thead><tr><th></th><th>S1</th><th>S2</th><th>S3</th><th>S4</th></tr></thead>
+              <tbody>
+                <tr><td>Mi equipo</td>${setCellsUs}</tr>
+                <tr><td>Rivales</td>${setCellsThem}</tr>
+              </tbody>
+            </table>
+            ${m.partner || m.club ? `<p style="font-size:0.72rem;color:var(--muted);margin:0.5rem 0 0">${[m.partner, m.club].filter(Boolean).join(" · ")}</p>` : ""}
+            <button type="button" class="btn-edit-match" data-edit-id="${m.id}" aria-label="Editar partido">Editar</button>
+          </article>`;
+      })
+      .join("");
+    updateStats();
+    updateSummaryEmojis();
+  }
+
+  listEl.addEventListener("click", (e) => {
+    const btn = e.target.closest("[data-edit-id]");
+    if (!btn) return;
+    const id = btn.getAttribute("data-edit-id");
+    const m = matches.find((x) => x.id === id);
+    if (m) populateFormForEdit(m);
+  });
+
+  function updateStats() {
+    const now = new Date();
+    const ym = now.getFullYear() + "-" + String(now.getMonth() + 1).padStart(2, "0");
+    const monthMatches = matches.filter((m) => m.date.startsWith(ym));
+    const wins = monthMatches.filter((m) => m.outcome === "win").length;
+    const loss = monthMatches.filter((m) => m.outcome === "loss").length;
+    const total = monthMatches.length;
+    const pct = total ? Math.round((wins / total) * 100) + "%" : "—";
+    document.getElementById("stTotal").textContent = String(total);
+    document.getElementById("stWins").textContent = String(wins);
+    document.getElementById("stLoss").textContent = String(loss);
+    document.getElementById("stPct").textContent = pct;
+  }
+
+  function updateSummaryEmojis() {
+    const el = document.getElementById("summaryEmojis");
+    if (!matches.length) {
+      el.innerHTML =
+        '<span style="font-size:0.85rem;color:var(--muted)">Sin datos aún.</span>';
+      return;
+    }
+    const avg =
+      matches.reduce((s, m) => s + (m.feel || 3), 0) / matches.length;
+    const rounded = Math.min(4, Math.max(1, Math.round(avg)));
+    const chips = [
+      { v: 1, e: "😠" },
+      { v: 2, e: "😢" },
+      { v: 3, e: "😐" },
+      { v: 4, e: "😊" },
+    ];
+    el.innerHTML = chips
+      .map(
+        (c) =>
+          `<div class="emoji-chip${c.v === rounded ? " on" : ""}">${c.e}<small>${c.v}</small></div>`
+      )
+      .join("");
+  }
+
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const sets = readSets();
+    if (!sets.length) {
+      alert("Introduce al menos un set con resultado para ambos equipos.");
+      return;
+    }
+    const payload = {
+      id: editingId || genMatchId(),
+      date: document.getElementById("mDate").value,
+      outcome: mOutcome.value,
+      sets: [0, 1, 2, 3].map((i) => sets[i] || null),
+      partner: document.getElementById("mPartner").value.trim(),
+      club: document.getElementById("mClub").value.trim(),
+      feel: parseInt(form.querySelector('input[name="mFeel"]:checked').value, 10),
+      feelText: document.getElementById("mFeelText").value.trim(),
+      notes: document.getElementById("mNotes").value.trim(),
+      planAccion: collectPlanAccionFromForm(),
+    };
+    payload.sets = payload.sets.map((s, i) => {
+      if (s) return s;
+      return null;
+    });
+    const normalizedSets = [];
+    for (let i = 0; i < 4; i++) {
+      if (payload.sets[i]) normalizedSets.push(payload.sets[i]);
+    }
+    payload.sets = normalizedSets;
+    if (editingId) {
+      const idx = matches.findIndex((x) => x.id === editingId);
+      if (idx >= 0) {
+        payload.id = editingId;
+        matches[idx] = payload;
+      } else {
+        matches.push(payload);
+      }
+    } else {
+      matches.push(payload);
+    }
+    console.log(editingId ? "Partido actualizado (demo):" : "Partido guardado (demo):", payload);
+    persistMatches();
+    renderList();
+    recalcGoalsFromMatches();
+    closeForm();
+    resetFormForNew();
+  });
+
+  window.addEventListener("storage", function (e) {
+    if (e.key === STORAGE_KEY || e.key === FILE_ID_KEY) {
+      loadGoals();
+      refreshAllGoalUI();
+    }
+    if (e.key === MATCHES_STORAGE_KEY || e.key === MATCHES_FILE_ID_KEY) {
+      loadMatchesIntoMemory();
+      renderList();
+      renderCoachMatches();
+      recalcGoalsFromMatches();
+    }
+  });
+
+  try {
+    const bcObj = new BroadcastChannel("gimadd_objetivos_channel");
+    bcObj.onmessage = function () {
+      loadGoals();
+      refreshAllGoalUI();
+    };
+  } catch (e) {}
+
+  try {
+    const bcPart = new BroadcastChannel("gimadd_partidos_channel");
+    bcPart.onmessage = function () {
+      loadMatchesIntoMemory();
+      renderList();
+      renderCoachMatches();
+      recalcGoalsFromMatches();
+    };
+  } catch (e) {}
+
+  document.addEventListener("visibilitychange", function () {
+    if (document.visibilityState !== "visible") return;
+    loadGoals();
+    loadMatchesIntoMemory();
+    if (!layout.classList.contains("form-focus")) {
+      refreshAllGoalUI();
+      renderList();
+    } else {
+      renderCoachMatches();
+      renderCoachGoalsMirror();
+      renderEntrenadorDashboard();
+    }
+  });
+
+  window.addEventListener("focus", function () {
+    loadGoals();
+    loadMatchesIntoMemory();
+    if (!layout.classList.contains("form-focus")) {
+      refreshAllGoalUI();
+      renderList();
+    } else {
+      renderCoachMatches();
+      renderCoachGoalsMirror();
+      renderEntrenadorDashboard();
+    }
+  });
+
+
+  function showView(name) {
+    document.querySelectorAll(".app-view").forEach(function (el) {
+      el.classList.toggle("is-active", el.getAttribute("data-view") === name);
+    });
+    document.body.className = "app-body app-" + name;
+    if (name === "home" || name === "jugador") updateHomeNotifBanner();
+    if (name === "objetivos") render();
+    if (name === "diario") {
+      loadMatchesIntoMemory();
+      recalcGoalsFromMatches();
+      resetFormForNew();
+      closeForm();
+      renderList();
+    }
+    if (name === "entrenador") {
+      loadMatchesIntoMemory();
+      recalcGoalsFromMatches();
+    }
+  }
+
+  function downloadFullApp() {
+    var goals = loadGoals();
+    var newObjFid = "obj-" + Date.now() + "-" + Math.random().toString(36).slice(2, 10);
+    var newDiarioFid = "diario-" + Date.now() + "-" + Math.random().toString(36).slice(2, 10);
+    var objMetaJson = jsonForHtmlEmbedding({ fileId: newObjFid });
+    var objSeedJson = jsonForHtmlEmbedding(goals);
+    var diarioMetaJson = jsonForHtmlEmbeddingDiario({ fileId: newDiarioFid });
+    var partidosJson = jsonForHtmlEmbeddingDiario(matches);
+    var html = "<!DOCTYPE html>\n" + document.documentElement.outerHTML;
+    html = html.replace(
+      /<script type="application\/json" id="gimadd-store-meta">[\s\S]*?<\/script>/,
+      '<script type="application/json" id="gimadd-store-meta">' + objMetaJson + "<\/script>"
+    );
+    html = html.replace(
+      /<script type="application\/json" id="gimadd-objetivos-seed">[\s\S]*?<\/script>/,
+      '<script type="application/json" id="gimadd-objetivos-seed">\n' + objSeedJson + "\n<\/script>"
+    );
+    html = html.replace(
+      /<script type="application\/json" id="gimadd-diario-meta">[\s\S]*?<\/script>/,
+      '<script type="application/json" id="gimadd-diario-meta">' + diarioMetaJson + "<\/script>"
+    );
+    html = html.replace(
+      /<script type="application\/json" id="gimadd-partidos-seed">[\s\S]*?<\/script>/,
+      '<script type="application/json" id="gimadd-partidos-seed">\n' + partidosJson + "\n<\/script>"
+    );
+    var blob = new Blob([html], { type: "text/html;charset=utf-8" });
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "gimadd-mentor-jugador-app.html";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(a.href);
+  }
+
+  document.getElementById("openObjetivos").onclick = function () { showView("objetivos"); };
+  document.getElementById("openDiario").onclick = function () { showView("diario"); };
+  document.getElementById("pickJugador").onclick = function () { showView("jugador"); };
+  document.getElementById("pickEntrenador").onclick = function () { showView("entrenador"); };
+  document.getElementById("btnBackJugadorHub").onclick = function () { showView("home"); };
+  document.getElementById("btnDownloadFullApp").onclick = function () { downloadFullApp(); };
+  document.getElementById("btnBackDiario").onclick = function () { showView("jugador"); };
+  document.getElementById("btnBackEntrenador").onclick = function () { showView("home"); };
+  document.getElementById("headerOpenObjetivos").onclick = function () { showView("objetivos"); };
+  document.getElementById("fabNewCoach").onclick = function () {
+    goalFormOpenedFrom = "entrenador";
+    openModal(null);
+  };
+
+  var btnFlow = document.getElementById("btnToggleFlow");
+  var panelFlow = document.getElementById("panelFlow");
+  if (btnFlow && panelFlow) {
+    btnFlow.onclick = function () {
+      var open = panelFlow.classList.toggle("open");
+      btnFlow.setAttribute("aria-expanded", open ? "true" : "false");
+    };
+  }
+
+  document.getElementById("btnConfirmaVideoJugador").onclick = function () {
+    var goals = loadGoals();
+    var any = false;
+    goals.forEach(function (g) {
+      normalizeGoal(g);
+      if (g.estado === "pendiente_revision") {
+        g.jugadorSubioVideoTrasRevision = true;
+        any = true;
+      }
+    });
+    if (any) saveGoals(goals);
+    refreshAllGoalUI();
+  };
+
+  var viewCoach = document.getElementById("view-entrenador");
+  if (viewCoach) {
+    viewCoach.addEventListener("pointerdown", function (e) {
+      var track = e.target.closest(".progress-track[data-coach-progress-id]");
+      if (!track || !viewCoach.contains(track)) return;
+      var id = track.getAttribute("data-coach-progress-id");
+      var goals = loadGoals();
+      var g = goals.find(function (x) {
+        return String(x.id) === String(id);
+      });
+      if (!g) return;
+      normalizeGoal(g);
+      if (g.estado !== "activo" && g.estado !== "pendiente_revision") return;
+
+      var article = track.closest(".coach-goal-card");
+      if (!article) return;
+      var fill = track.querySelector(".progress-fill");
+      var pctEl = article.querySelector(".goal-pct");
+      var rng = article.querySelector(".rng-coach-progress");
+
+      function pctFromClientX(clientX) {
+        var rect = track.getBoundingClientRect();
+        var w = rect.width || 1;
+        return Math.round(Math.max(0, Math.min(100, ((clientX - rect.left) / w) * 100)));
+      }
+
+      function paint(pct) {
+        if (fill) fill.style.width = pct + "%";
+        if (pctEl) {
+          pctEl.textContent = pct + "%";
+          pctEl.className = pct >= 100 ? "goal-pct full" : "goal-pct";
+        }
+        if (rng) rng.value = String(pct);
+        g.progreso = pct;
+      }
+
+      paint(pctFromClientX(e.clientX));
+
+      var onMove = function (ev) {
+        paint(pctFromClientX(ev.clientX));
+      };
+      var onUp = function () {
+        saveGoals(goals);
+        document.removeEventListener("pointermove", onMove);
+        document.removeEventListener("pointerup", onUp);
+        document.removeEventListener("pointercancel", onUp);
+        refreshAllGoalUI();
+      };
+      document.addEventListener("pointermove", onMove);
+      document.addEventListener("pointerup", onUp);
+      document.addEventListener("pointercancel", onUp);
+    });
+
+    viewCoach.addEventListener("click", function (e) {
+      var objTabBtn = e.target.closest("[data-coach-obj-tab]");
+      if (objTabBtn && viewCoach.contains(objTabBtn)) {
+        var otab = objTabBtn.getAttribute("data-coach-obj-tab");
+        viewCoach.querySelectorAll(".coach-obj-subnav [data-coach-obj-tab]").forEach(function (b) {
+          var on = b.getAttribute("data-coach-obj-tab") === otab;
+          b.classList.toggle("on", on);
+          b.setAttribute("aria-selected", on ? "true" : "false");
+        });
+        viewCoach.querySelectorAll(".coach-obj-subpanel").forEach(function (p) {
+          p.classList.toggle("is-on", p.getAttribute("data-coach-obj-panel") === otab);
+        });
+        return;
+      }
+      var tabBtn = e.target.closest("[data-coach-tab]");
+      if (tabBtn && viewCoach.contains(tabBtn)) {
+        var tab = tabBtn.getAttribute("data-coach-tab");
+        viewCoach.querySelectorAll(".coach-subnav button").forEach(function (b) {
+          b.classList.toggle("on", b.getAttribute("data-coach-tab") === tab);
+        });
+        viewCoach.querySelectorAll(".coach-panel").forEach(function (p) {
+          p.classList.toggle("is-on", p.getAttribute("data-coach-panel") === tab);
+        });
+        return;
+      }
+      var mirrorBtn = e.target.closest("[data-coach-goal-action]");
+      if (mirrorBtn && mirrorBtn.closest("#coachPanelObjetivos")) {
+        handleCoachMirrorGoalClick(mirrorBtn);
+        return;
+      }
+      var btn = e.target.closest("[data-coach-act]");
+      if (!btn) return;
+      var id = btn.getAttribute("data-id");
+      var act = btn.getAttribute("data-coach-act");
+      if (!id) return;
+      var goals = loadGoals();
+      var g = goals.find(function (x) { return String(x.id) === String(id); });
+      if (!g) return;
+      normalizeGoal(g);
+      if (act === "completar") {
+        g.estado = "completado";
+        g.completado = true;
+        g.fechaCompletado = new Date().toISOString().slice(0, 10);
+        g.enPlanAccion = false;
+        g.progreso = 100;
+        g.jugadorSubioVideoTrasRevision = true;
+        saveGoals(goals);
+        refreshAllGoalUI();
+        return;
+      }
+      if (act === "reactivar") {
+        var rng = viewCoach.querySelector('input[data-coach-rng="' + id + '"]');
+        var pct = rng ? parseInt(rng.value, 10) : Math.round(Math.min(100, Math.max(0, Number(g.progreso) || 0)));
+        if (isNaN(pct)) pct = 0;
+        g.estado = "activo";
+        g.completado = false;
+        g.fechaCompletado = null;
+        g.progreso = pct;
+        g.practicasUmbralOffset = countPracticasGoalInMatches(g.id);
+        g.jugadorSubioVideoTrasRevision = true;
+        saveGoals(goals);
+        refreshAllGoalUI();
+      }
+    });
+    viewCoach.addEventListener("input", function (e) {
+      var rngG = e.target.closest("input[data-coach-goal-rng]");
+      if (rngG) {
+        var gid = rngG.getAttribute("data-coach-goal-rng");
+        var spanG = viewCoach.querySelector('[data-coach-goal-pct="' + gid + '"]');
+        if (spanG) spanG.textContent = rngG.value + "%";
+        return;
+      }
+      var rng = e.target.closest("input[data-coach-rng]");
+      if (!rng) return;
+      var id = rng.getAttribute("data-coach-rng");
+      var span = viewCoach.querySelector('[data-coach-pct="' + id + '"]');
+      if (span) span.textContent = rng.value + "%";
+    });
+  }
+
+  document.body.addEventListener("click", function (e) {
+    if (e.target.closest(".nav-open-obj")) {
+      e.preventDefault();
+      showView("objetivos");
+    }
+  });
+
+  loadMatchesIntoMemory();
+  recalcGoalsFromMatches();
+  function initialViewFromHash() {
+    var h = (location.hash || "").replace(/^#/, "").trim();
+    var allowed = { home: 1, jugador: 1, objetivos: 1, entrenador: 1, diario: 1 };
+    if (h && allowed[h]) return h;
+    return "home";
+  }
+  showView(initialViewFromHash());
+
+})();
+  </script>
+</body>
+</html>

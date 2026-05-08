@@ -1,0 +1,144 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 1800" font-family="Inter, system-ui, sans-serif" font-size="13">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#fafafa"/>
+      <stop offset="100%" style="stop-color:#f0f4f8"/>
+    </linearGradient>
+    <filter id="sh"><feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.12"/></filter>
+  </defs>
+  <rect width="100%" height="100%" fill="url(#bg)"/>
+  <text x="700" y="36" text-anchor="middle" font-size="22" font-weight="800" fill="#111827">Gimadd Mentor  L�gica del prototipo HTML</text>
+  <text x="700" y="58" text-anchor="middle" font-size="11" fill="#6b7280">Single Page App � localStorage + JSON embebido � BroadcastChannel � un solo archivo descargable</text>
+
+  <!-- Root -->
+  <g filter="url(#sh)">
+    <rect x="520" y="85" width="360" height="52" rx="12" fill="#e8f54a" stroke="#b8d63a" stroke-width="2"/>
+    <text x="700" y="118" text-anchor="middle" font-weight="800" fill="#111827">gimadd-mentor-jugador-app.html</text>
+  </g>
+
+  <!-- Level 1 branches -->
+  <g stroke="#9ca3af" stroke-width="2" fill="none">
+    <path d="M700 137 L700 175"/>
+    <path d="M700 175 L180 175 L180 220"/><path d="M700 175 L700 220"/><path d="M700 175 L1220 175 L1220 220"/>
+    <path d="M180 290 L180 320"/><path d="M700 290 L700 320"/><path d="M1220 290 L1220 320"/>
+  </g>
+
+  <!-- Column: UI -->
+  <g filter="url(#sh)">
+    <rect x="40" y="220" width="280" height="70" rx="10" fill="#fff" stroke="#e5e7eb"/>
+    <text x="180" y="248" text-anchor="middle" font-weight="800" fill="#1d4ed8">Capa UI (vistas)</text>
+    <text x="180" y="268" text-anchor="middle" font-size="11" fill="#6b7280">data-view en &lt;section&gt;</text>
+    <text x="180" y="282" text-anchor="middle" font-size="11" fill="#6b7280">showView(name) + clase is-active</text>
+  </g>
+  <g font-size="11" fill="#374151">
+    <rect x="55" y="320" width="250" height="22" rx="4" fill="#eff6ff"/><text x="70" y="335">� home  elecci�n perfil + descarga HTML</text>
+    <rect x="55" y="348" width="250" height="22" rx="4" fill="#eff6ff"/><text x="70" y="363">� jugador  hub accesos</text>
+    <rect x="55" y="376" width="250" height="22" rx="4" fill="#eff6ff"/><text x="70" y="391">� objet/perfil  3 tabs objetivos</text>
+    <rect x="55" y="404" width="250" height="22" rx="4" fill="#eff6ff"/><text x="70" y="419">� entrenador  revisi�n / obj / partidos</text>
+    <rect x="55" y="432" width="250" height="22" rx="4" fill="#eff6ff"/><text x="70" y="447">� diario  partidos + estad�sticas</text>
+  </g>
+
+  <!-- Column: Datos -->
+  <g filter="url(#sh)">
+    <rect x="520" y="220" width="360" height="70" rx="10" fill="#fff" stroke="#e5e7eb"/>
+    <text x="700" y="248" text-anchor="middle" font-weight="800" fill="#b45309">Datos y persistencia</text>
+    <text x="700" y="268" text-anchor="middle" font-size="11" fill="#6b7280">localStorage + &lt;script type="application/json"&gt;</text>
+    <text x="700" y="282" text-anchor="middle" font-size="11" fill="#6b7280">fileId para migrar / importar copia embebida</text>
+  </g>
+  <g font-size="11" fill="#374151">
+    <rect x="535" y="320" width="330" height="22" rx="4" fill="#fffbeb"/><text x="548" y="335">Objetivos: gimadd_objetivos_v1 + gimadd_objetivos_v1_fileId</text>
+    <rect x="535" y="348" width="330" height="22" rx="4" fill="#fffbeb"/><text x="548" y="363">Partidos: gimadd_partidos_v1 + fileId diario meta</text>
+    <rect x="535" y="376" width="330" height="22" rx="4" fill="#fffbeb"/><text x="548" y="391">Seeds: store-meta, objetivos-seed, diario-meta, partidos-seed</text>
+    <rect x="535" y="404" width="330" height="22" rx="4" fill="#fffbeb"/><text x="548" y="419">saveGoals: localStorage + sync DOM embed + BC</text>
+    <rect x="535" y="432" width="330" height="22" rx="4" fill="#fffbeb"/><text x="548" y="447">persistMatches: igual patr�n para partidos</text>
+  </g>
+
+  <!-- Column: L�gica negocio -->
+  <g filter="url(#sh)">
+    <rect x="1040" y="220" width="360" height="70" rx="10" fill="#fff" stroke="#e5e7eb"/>
+    <text x="1220" y="248" text-anchor="middle" font-weight="800" fill="#15803d">L�gica de negocio</text>
+    <text x="1220" y="268" text-anchor="middle" font-size="11" fill="#6b7280">objetivos � progreso � plan de acci�n</text>
+    <text x="1220" y="282" text-anchor="middle" font-size="11" fill="#6b7280">umbral pr�cticas � pendiente revisi�n</text>
+  </g>
+  <g font-size="11" fill="#374151">
+    <rect x="1055" y="320" width="330" height="22" rx="4" fill="#ecfdf5"/><text x="1068" y="335">splitGoals � pend | plan | act | done</text>
+    <rect x="1055" y="348" width="330" height="22" rx="4" fill="#ecfdf5"/><text x="1068" y="363">normalizeGoal, tipo clase/partido, partidosMeta</text>
+    <rect x="1055" y="376" width="330" height="22" rx="4" fill="#ecfdf5"/><text x="1068" y="391">countPracticasGoalInMatches(planAccion en partidos)</text>
+    <rect x="1055" y="404" width="330" height="22" rx="4" fill="#ecfdf5"/><text x="1068" y="419">recalcGoalsFromMatches() al guardar partido</text>
+    <rect x="1055" y="432" width="330" height="22" rx="4" fill="#ecfdf5"/><text x="1068" y="447">Coach: dashboard v�deo, espejo objetivos, sliders</text>
+  </g>
+
+  <!-- Sync box -->
+  <g filter="url(#sh)">
+    <rect x="420" y="520" width="560" height="100" rx="12" fill="#f3f4f6" stroke="#d1d5db"/>
+    <text x="700" y="552" text-anchor="middle" font-weight="800" fill="#111827">Sincronizaci�n entre pesta�as / perfiles</text>
+    <text x="700" y="575" text-anchor="middle" font-size="12" fill="#4b5563">window storage (otras pesta�as) � BroadcastChannel gimadd_objetivos_channel y gimadd_partidos_channel</text>
+    <text x="700" y="598" text-anchor="middle" font-size="11" fill="#b91c1c">Importante: render() llama saveGoals(..., { broadcast: false }) para evitar bucle BC en misma pesta�a</text>
+  </g>
+
+  <!-- Flow diagram -->
+  <g filter="url(#sh)">
+    <rect x="80" y="680" width="1240" height="40" rx="8" fill="#111827"/>
+    <text x="700" y="705" text-anchor="middle" fill="#fff" font-weight="700">Flujo principal objetivo activo en plan de acci�n</text>
+  </g>
+  <g font-size="12" fill="#111827">
+    <rect x="80" y="740" width="200" height="56" rx="8" fill="#dbeafe" stroke="#3b82f6"/>
+    <text x="180" y="768" text-anchor="middle" font-weight="600">estado: activo</text>
+    <text x="180" y="786" text-anchor="middle" font-size="10" fill="#4b5563">enPlanAccion true</text>
+    <path d="M280 768 L340 768" stroke="#6b7280" stroke-width="2" marker-end="url(#ar)"/>
+    <rect x="340" y="740" width="240" height="56" rx="8" fill="#fef3c7" stroke="#d97706"/>
+    <text x="460" y="768" text-anchor="middle" font-weight="600">Jugador practica en diario</text>
+    <text x="460" y="786" text-anchor="middle" font-size="10" fill="#4b5563">marca planAccion del objetivo</text>
+    <path d="M580 768 L640 768" stroke="#6b7280" stroke-width="2"/>
+    <rect x="640" y="730" width="260" height="76" rx="8" fill="#e0e7ff" stroke="#6366f1"/>
+    <text x="770" y="758" text-anchor="middle" font-weight="600">effectivePracticas e partidosMeta</text>
+    <text x="770" y="776" text-anchor="middle" font-size="10" fill="#4b5563">� pendiente_revision</text>
+    <text x="770" y="790" text-anchor="middle" font-size="10" fill="#4b5563">jugadorSubioVideoTrasRevision = false</text>
+    <path d="M900 768 L960 768" stroke="#6b7280" stroke-width="2"/>
+    <rect x="960" y="740" width="180" height="56" rx="8" fill="#dcfce7" stroke="#16a34a"/>
+    <text x="1050" y="768" text-anchor="middle" font-weight="600">Notif + dashboard</text>
+    <text x="1050" y="786" text-anchor="middle" font-size="10" fill="#4b5563">coach revisa v�deo</text>
+    <path d="M1140 768 L1180 768" stroke="#6b7280" stroke-width="2"/>
+    <rect x="1180" y="740" width="140" height="56" rx="8" fill="#f3f4f6" stroke="#6b7280"/>
+    <text x="1250" y="775" text-anchor="middle" font-weight="600">completado</text>
+  </g>
+
+  <!-- Export -->
+  <g filter="url(#sh)">
+    <rect x="80" y="850" width="400" height="90" rx="10" fill="#fff" stroke="#e5e7eb"/>
+    <text x="280" y="882" text-anchor="middle" font-weight="800" fill="#111827">Exportaci�n downloadFullApp()</text>
+    <text x="90" y="905" font-size="11" fill="#4b5563">Serializa objetivos y partidos en los &lt;script&gt; JSON del HTML</text>
+    <text x="90" y="922" font-size="11" fill="#4b5563">Nuevos fileId para que otro archivo no pise localStorage antiguo</text>
+  </g>
+
+  <!-- refreshAllGoalUI -->
+  <g filter="url(#sh)">
+    <rect x="520" y="850" width="800" height="90" rx="10" fill="#fff7ed" stroke="#fdba74"/>
+    <text x="920" y="882" text-anchor="middle" font-weight="800" fill="#9a3412">refreshAllGoalUI()</text>
+    <text x="535" y="905" font-size="11" fill="#7c2d12">updateHomeNotifBanner � render() (jugador) � renderCoachGoalsMirror � renderEntrenadorDashboard � renderCoachMatches � plan acci�n diario si existe</text>
+    <text x="535" y="922" font-size="11" fill="#7c2d12">Tras cualquier mutaci�n relevante (form objetivo, slider, partido, acciones coach)</text>
+  </g>
+
+  <!-- Tabs player -->
+  <g filter="url(#sh)">
+    <rect x="80" y="970" width="1240" height="110" rx="10" fill="#fff" stroke="#e5e7eb"/>
+    <text x="700" y="1000" text-anchor="middle" font-weight="800" fill="#111827">Perfil jugador  pesta�as de objetivos (UI)</text>
+    <text x="100" y="1025" font-size="11" fill="#374151">1) Plan de acci�n: pendientes revisi�n + plan en proceso (contador = suma)</text>
+    <text x="100" y="1045" font-size="11" fill="#374151">2) Objetivos activos: activos fuera del plan � 3) Completados</text>
+    <text x="100" y="1068" font-size="11" fill="#6b7280">Entrenador panel �Objetivos�: misma estructura con coach-obj-subnav</text>
+  </g>
+
+  <!-- Checklist native -->
+  <g filter="url(#sh)">
+    <rect x="80" y="1110" width="1240" height="200" rx="10" fill="#f9fafb" stroke="#d1d5db"/>
+    <text x="700" y="1145" text-anchor="middle" font-weight="800" fill="#111827">Traducci�n a app nativa (checklist)</text>
+    <text x="100" y="1175" font-size="11" fill="#374151">" Reemplazar localStorage por API + BD; conservar shape JSON de objetivos y partidos</text>
+    <text x="100" y="1195" font-size="11" fill="#374151">" Sustituir BroadcastChannel por push / sockets / polling seg�n arquitectura</text>
+    <text x="100" y="1215" font-size="11" fill="#374151">" Auth real jugador vs entrenador; en demo comparten almacenamiento del dispositivo</text>
+    <text x="100" y="1235" font-size="11" fill="#374151">" Subida de v�deo: bot�n �He subido v�deo� � integrar con almacenamiento y notificaciones</text>
+    <text x="100" y="1255" font-size="11" fill="#374151">" Modal objetivos: t�tulo, fecha, tipo clase/partido, meta de sesiones, flag plan de acci�n</text>
+    <text x="100" y="1275" font-size="11" fill="#374151">" Diario: formulario partido, sets, planAccion[] ligado a ids de objetivos activos en plan</text>
+  </g>
+
+  <text x="700" y="1760" text-anchor="middle" font-size="10" fill="#9ca3af">Documento generado para equipo de desarrollo � Prototipo Gimadd Mentor</text>
+</svg>

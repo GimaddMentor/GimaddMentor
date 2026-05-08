@@ -1,0 +1,292 @@
+/**
+ * Gimadd Mentor — diseño compartido (pre-APP + APP producción)
+ * Tipografía: DM Sans. Marca: azul pista, acento amarillo Gimadd, negro/blanco.
+ */
+
+:root {
+  --brand-ink: #0f172a;
+  --brand-court: #0369a1;
+  --brand-court-deep: #0c4a6e;
+  --brand-sky: #38bdf8;
+  --brand-accent: #facc15;
+  --brand-accent-dark: #ca8a04;
+  --brand-surface: #f8fafc;
+  --brand-card: #f1f5f9;
+
+  /* Alias sobre tokens que ya usa la app inline */
+  --text: var(--brand-ink);
+  --muted: #64748b;
+  --bg: var(--brand-surface);
+  --surface: #ffffff;
+  --card: var(--brand-card);
+  --border: #e2e8f0;
+  --accent: var(--brand-accent);
+  --lime: var(--brand-accent);
+  --lime-strong: #fde047;
+  --lime-dark: var(--brand-accent-dark);
+  --win: #16a34a;
+  --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.06);
+  --shadow-md: 0 8px 24px rgba(15, 23, 42, 0.08);
+  --shadow-accent: 0 4px 0 rgba(202, 138, 4, 0.35), 0 12px 28px rgba(250, 204, 21, 0.22);
+
+  /* CTA principal — mismo amarillo plano tipo píldora en toda la app */
+  --gimadd-btn-primary-bg: #f2ec1f;
+  --gimadd-btn-primary-text: #121212;
+  --gimadd-btn-primary-radius: 999px;
+}
+
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body.app-body,
+body {
+  font-family: "DM Sans", system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  color: var(--text);
+  background: #ffffff;
+}
+
+/* -----------------------------------------------------------------------------
+   Modo producción: oculta textos largos de demo / handoff (clase .gimadd-pre-only)
+   ----------------------------------------------------------------------------- */
+.gimadd-prod .gimadd-pre-only {
+  display: none !important;
+}
+
+.gimadd-prod .coach-rev-vcard--demo {
+  display: none !important;
+}
+
+.gimadd-prod .home-player-section .profile-card .d2,
+.gimadd-prod .home-player-section .pill-mini {
+  display: none;
+}
+
+/* -----------------------------------------------------------------------------
+   Cabeceras / botones refinados (capa fina; coherente con degradado amarillo → blanco)
+   ----------------------------------------------------------------------------- */
+.app-header {
+  border-bottom: none;
+  background: linear-gradient(180deg, #f2ec1f 0%, #fffbeb 42%, #ffffff 100%);
+  border-radius: 0 0 22px 22px;
+  box-shadow: 0 4px 24px rgba(242, 236, 31, 0.12);
+}
+
+.title-page .hl {
+  color: #121212;
+  border-bottom: none;
+  background: #f2ec1f;
+}
+
+.hero {
+  background: linear-gradient(180deg, #f2ec1f 0%, #fffbeb 42%, #ffffff 100%);
+  color: var(--brand-ink);
+  border-bottom: none;
+}
+
+.hero-top h1 {
+  color: var(--brand-ink);
+}
+
+.hero-top .header-aux-btn {
+  color: var(--brand-ink);
+}
+
+.home-hero h1 {
+  color: var(--brand-ink);
+}
+
+.home-hero {
+  background: linear-gradient(180deg, #f2ec1f 0%, #fffbeb 42%, #ffffff 100%);
+  border: none;
+  border-radius: 0 0 28px 28px;
+  padding: 2rem 1.25rem 2.5rem;
+  margin-bottom: 0;
+  box-shadow: 0 4px 24px rgba(242, 236, 31, 0.1);
+}
+
+.jug-quick-actions .qa-ico.material-symbols-outlined {
+  font-size: 1.55rem;
+  color: var(--brand-court-deep);
+}
+
+.jug-quick-actions .jug-qa--plan .qa-ico {
+  color: var(--brand-accent-dark);
+}
+
+.material-symbols-outlined {
+  font-family: "Material Symbols Outlined";
+  font-weight: normal;
+  font-style: normal;
+  font-size: 1.25em;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  -webkit-font-smoothing: antialiased;
+  font-variation-settings: "FILL" 0, "wght" 500, "GRAD" 0, "opsz" 24;
+}
+
+.jug-servicios-pitch {
+  border: 1px solid rgba(56, 189, 248, 0.2);
+  background: linear-gradient(165deg, rgba(255, 255, 255, 0.98), rgba(241, 245, 249, 0.92));
+}
+
+.jug-servicios-kicker {
+  color: var(--brand-court) !important;
+}
+
+.gimadd-prod .jug-servicios-intro {
+  font-size: 0.78rem;
+  line-height: 1.45;
+}
+
+.jug-servicios-intro-short {
+  display: none;
+  font-size: 0.78rem;
+  line-height: 1.45;
+  margin: 0 0 0.85rem;
+  color: var(--muted);
+  font-weight: 500;
+}
+
+.gimadd-prod .jug-servicios-intro-short {
+  display: block;
+}
+
+.crm-intro-short {
+  display: none;
+  font-size: 0.8rem;
+  line-height: 1.45;
+  margin: 0 0 0.65rem;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.gimadd-prod .crm-intro-short {
+  display: block;
+}
+
+.agenda-intro-short {
+  display: none;
+  font-size: 0.8rem;
+  color: var(--muted);
+  margin: 0 0 0.65rem;
+  line-height: 1.45;
+  font-weight: 600;
+}
+
+.gimadd-prod .agenda-intro-short {
+  display: block;
+}
+
+.chat-intro-short {
+  display: none;
+  font-size: 0.8rem;
+  color: var(--muted);
+  margin: 0 0 0.65rem;
+  line-height: 1.45;
+  font-weight: 600;
+}
+
+.gimadd-prod .chat-intro-short {
+  display: block;
+}
+
+.home-lead-short {
+  margin: 0.5rem 0 0;
+  font-size: 0.88rem;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--brand-court-deep);
+  max-width: 36rem;
+}
+
+/* Botones CTA — amarillo plano, alto radio (píldora), sin sombra 3D; el texto sigue viniendo del HTML */
+.jug-srv-actions button.primary,
+.coach-catalog-toolbar-coach .btn-add-srv,
+.btn-nuevo-video,
+button.primary,
+.chat-compose button[type="submit"],
+.chat-coach-layout .chat-compose button[type="submit"],
+.modal-actions button.submit,
+.pres-actions button.primary,
+.presencial-diary-nudge .pres-nudge-actions button.primary,
+.crm-cta-row button.primary,
+.coach-actions button.primary,
+.goal-actions button.primary,
+.jug-srv-modal .modal-actions .primary,
+.jug-srv-modal .modal-actions button.primary,
+#jugSrvCheckoutForm .submit,
+#jugSrvCheckoutSubmit,
+.btn-save,
+.btn-add,
+.jug-grabar-qa--primary,
+.jug-hub-cta,
+.fab,
+.fab-crm {
+  background: var(--gimadd-btn-primary-bg) !important;
+  color: var(--gimadd-btn-primary-text) !important;
+  border: none !important;
+  border-radius: var(--gimadd-btn-primary-radius) !important;
+  box-shadow: none !important;
+  font-weight: 600 !important;
+  font-family: "DM Sans", system-ui, sans-serif !important;
+}
+
+.jug-srv-actions button.primary,
+.coach-catalog-toolbar-coach .btn-add-srv,
+.btn-nuevo-video {
+  padding: 0.62rem 1.2rem !important;
+}
+
+.chat-compose button[type="submit"],
+.modal-actions button.submit {
+  padding: 0.62rem 1.35rem !important;
+}
+
+.fab,
+.fab-crm {
+  box-shadow: 0 2px 10px rgba(18, 18, 18, 0.12) !important;
+}
+
+.jug-srv-actions button.primary:hover,
+.coach-catalog-toolbar-coach .btn-add-srv:hover,
+.btn-nuevo-video:hover,
+button.primary:hover,
+.chat-compose button[type="submit"]:hover,
+.modal-actions button.submit:hover,
+.pres-actions button.primary:hover,
+.crm-cta-row button.primary:hover,
+.coach-actions button.primary:hover,
+.goal-actions button.primary:hover,
+.jug-srv-modal .modal-actions .primary:hover,
+#jugSrvCheckoutForm .submit:hover,
+#jugSrvCheckoutSubmit:hover,
+.btn-save:hover,
+.btn-add:hover,
+.jug-grabar-qa--primary:hover,
+.jug-hub-cta:hover,
+.presencial-diary-nudge .pres-nudge-actions button.primary:hover,
+.fab:hover,
+.fab-crm:hover {
+  filter: brightness(0.96);
+}
+
+.jug-srv-actions button.primary:active,
+.coach-catalog-toolbar-coach .btn-add-srv:active,
+.btn-nuevo-video:active,
+.btn-save:active,
+.btn-add:active,
+.jug-grabar-qa--primary:active,
+.jug-hub-cta:active {
+  transform: scale(0.98);
+}
+
+.coach-catalog-save-coach {
+  background: linear-gradient(180deg, var(--brand-ink), #1e293b) !important;
+}
