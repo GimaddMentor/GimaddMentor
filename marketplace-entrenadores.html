@@ -232,100 +232,217 @@
       .mp-list {
         padding: 0.9rem;
         display: grid;
-        gap: 0.85rem;
+        gap: 0.9rem;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
       }
-      .coach-card {
+      @media (max-width: 860px) {
+        .mp-list {
+          grid-template-columns: 1fr;
+        }
+      }
+      .coach-tile {
         border: 1px solid var(--border);
-        border-radius: 16px;
+        border-radius: 18px;
         background: #ffffff;
         overflow: hidden;
+        box-shadow: 0 2px 12px rgba(15, 23, 42, 0.04);
       }
-      .coach-card-top {
-        padding: 0.85rem 0.9rem;
-        display: flex;
+      .coach-tile-inner {
+        padding: 0.9rem;
+        display: grid;
+        grid-template-columns: 96px 1fr;
         gap: 0.85rem;
         align-items: center;
-        background: linear-gradient(180deg, rgba(241, 245, 249, 0.6), #ffffff);
-        border-bottom: 1px solid var(--border);
       }
-      .coach-avatar {
-        width: 58px;
-        height: 58px;
-        border-radius: 18px;
-        border: 1px solid rgba(15, 23, 42, 0.1);
-        background: #ffffff;
+      .coach-tile-photo {
+        width: 96px;
+        height: 96px;
+        border-radius: 16px;
         object-fit: cover;
+        border: 1px solid rgba(15, 23, 42, 0.08);
+        background: rgba(241, 245, 249, 0.6);
       }
-      .coach-main {
-        flex: 1;
-        min-width: 14rem;
-      }
-      .coach-name {
+      .coach-tile-name {
         margin: 0;
-        font-size: 1rem;
+        font-size: 1.05rem;
         font-weight: 1000;
         letter-spacing: -0.02em;
+        line-height: 1.15;
+      }
+      .coach-tile-line {
+        margin: 0.2rem 0 0;
+        color: var(--muted);
+        font-weight: 700;
+        font-size: 0.86rem;
+        line-height: 1.35;
+      }
+      .coach-tile-price {
+        margin: 0.55rem 0 0;
+        font-weight: 1000;
+        color: var(--brand-accent-dark);
+        font-size: 0.98rem;
+      }
+      .coach-tile-cta {
+        margin-top: 0.7rem;
         display: flex;
+        justify-content: flex-end;
+      }
+      .coach-tile-cta .mp-btn.primary {
+        width: 100%;
+        max-width: 15rem;
+        border-radius: 12px;
+        padding: 0.7rem 0.9rem;
+        font-size: 0.9rem;
+        font-weight: 1000;
+      }
+      .mp-tiny {
+        display: inline-flex;
         align-items: center;
         gap: 0.35rem;
-        flex-wrap: wrap;
+        font-weight: 900;
       }
-      .coach-badges {
-        display: flex;
-        gap: 0.35rem;
-        flex-wrap: wrap;
-        margin-top: 0.2rem;
+      .mp-tiny .material-symbols-outlined {
+        font-size: 1.05rem;
+        color: #ca8a04;
       }
-      .badge {
+      .mp-verified {
         display: inline-flex;
         align-items: center;
         gap: 0.25rem;
-        padding: 0.28rem 0.55rem;
-        border-radius: 999px;
-        font-size: 0.74rem;
-        font-weight: 900;
-        border: 1px solid rgba(15, 23, 42, 0.1);
-        background: rgba(241, 245, 249, 0.65);
-        color: var(--brand-ink);
-      }
-      .badge.ok {
-        background: rgba(22, 163, 74, 0.09);
-        border-color: rgba(22, 163, 74, 0.24);
+        font-weight: 1000;
         color: #166534;
       }
-      .badge.star {
-        background: rgba(250, 204, 21, 0.18);
-        border-color: rgba(202, 138, 4, 0.24);
-        color: #854d0e;
+      .mp-verified .material-symbols-outlined {
+        font-size: 1.05rem;
+        color: #16a34a;
       }
-      .coach-cta {
+
+      .mp-modal {
+        position: fixed;
+        inset: 0;
+        z-index: 60;
+        display: none;
+      }
+      .mp-modal.on {
+        display: block;
+      }
+      .mp-modal-backdrop {
+        position: absolute;
+        inset: 0;
+        background: rgba(15, 23, 42, 0.55);
+      }
+      .mp-modal-sheet {
+        position: relative;
+        max-width: 980px;
+        margin: 4vh auto;
+        background: #ffffff;
+        border: 1px solid rgba(226, 232, 240, 0.9);
+        border-radius: 18px;
+        box-shadow: 0 24px 80px rgba(15, 23, 42, 0.22);
+        overflow: hidden;
+      }
+      @media (max-width: 980px) {
+        .mp-modal-sheet {
+          margin: 0;
+          border-radius: 0;
+          max-width: none;
+          min-height: 100%;
+        }
+      }
+      .mp-modal-head {
+        padding: 0.9rem 1rem;
         display: flex;
-        gap: 0.45rem;
-        flex-wrap: wrap;
-        justify-content: flex-end;
-      }
-      .coach-cta .mp-btn {
-        padding: 0.48rem 0.72rem;
-        font-size: 0.82rem;
-      }
-      .coach-card-body {
-        padding: 0.85rem 0.9rem;
-        display: grid;
+        justify-content: space-between;
+        align-items: center;
         gap: 0.75rem;
+        border-bottom: 1px solid var(--border);
+        background: linear-gradient(180deg, rgba(241, 245, 249, 0.6), #ffffff);
       }
-      .coach-bio {
+      .mp-modal-head strong {
+        font-size: 0.95rem;
+        letter-spacing: -0.01em;
+      }
+      .mp-iconbtn {
+        border: 1px solid var(--border);
+        background: #ffffff;
+        width: 40px;
+        height: 40px;
+        border-radius: 12px;
+        display: grid;
+        place-items: center;
+        cursor: pointer;
+      }
+      .mp-modal-body {
+        padding: 1rem;
+      }
+      .profile-grid {
+        display: grid;
+        grid-template-columns: 240px 1fr;
+        gap: 1rem;
+        align-items: start;
+      }
+      @media (max-width: 860px) {
+        .profile-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+      .profile-card {
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        background: rgba(241, 245, 249, 0.4);
+        padding: 0.85rem;
+      }
+      .profile-photo {
+        width: 100%;
+        aspect-ratio: 1 / 1;
+        border-radius: 16px;
+        object-fit: cover;
+        border: 1px solid rgba(15, 23, 42, 0.08);
+        background: rgba(255, 255, 255, 0.7);
+      }
+      .profile-name {
+        margin: 0.75rem 0 0.2rem;
+        font-size: 1.2rem;
+        font-weight: 1100;
+        letter-spacing: -0.02em;
+      }
+      .profile-sub {
+        margin: 0.15rem 0 0;
+        color: var(--muted);
+        font-weight: 700;
+      }
+      .profile-actions {
+        display: grid;
+        gap: 0.5rem;
+        margin-top: 0.75rem;
+      }
+      .codebox {
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        background: #ffffff;
+        padding: 0.65rem 0.7rem;
+        font-weight: 1000;
+        letter-spacing: 0.02em;
+      }
+      .profile-content h3 {
+        margin: 0.2rem 0 0.45rem;
+        font-size: 0.9rem;
+        letter-spacing: -0.01em;
+      }
+      .profile-content p {
         margin: 0;
         color: var(--muted);
-        line-height: 1.55;
-        font-weight: 600;
+        font-weight: 650;
+        line-height: 1.6;
       }
-      .coach-meta {
+      .profile-meta {
         display: grid;
-        grid-template-columns: 1.1fr 0.9fr;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
         gap: 0.75rem;
+        margin-top: 0.9rem;
       }
-      @media (max-width: 720px) {
-        .coach-meta {
+      @media (max-width: 860px) {
+        .profile-meta {
           grid-template-columns: 1fr;
         }
       }
@@ -345,9 +462,9 @@
       }
       .meta-v {
         margin: 0;
-        font-weight: 800;
+        font-weight: 900;
         color: var(--brand-ink);
-        font-size: 0.9rem;
+        font-size: 0.92rem;
         line-height: 1.35;
       }
       .svc-list {
@@ -355,23 +472,23 @@
         padding: 0;
         list-style: none;
         display: grid;
-        gap: 0.3rem;
+        gap: 0.35rem;
       }
       .svc-item {
         display: flex;
         align-items: baseline;
         justify-content: space-between;
         gap: 0.75rem;
-        padding: 0.35rem 0.45rem;
+        padding: 0.45rem 0.55rem;
         border-radius: 12px;
-        background: rgba(255, 255, 255, 0.65);
+        background: rgba(255, 255, 255, 0.7);
         border: 1px solid rgba(226, 232, 240, 0.95);
       }
       .svc-item strong {
-        font-size: 0.86rem;
+        font-size: 0.88rem;
       }
       .svc-item span {
-        font-weight: 900;
+        font-weight: 1000;
         color: var(--brand-court-deep);
         white-space: nowrap;
       }
@@ -517,6 +634,64 @@
         </section>
       </div>
     </main>
+
+    <section class="mp-modal" id="profileModal" aria-hidden="true" aria-label="Perfil del entrenador">
+      <div class="mp-modal-backdrop" data-modal-close="1"></div>
+      <div class="mp-modal-sheet" role="dialog" aria-modal="true" aria-labelledby="profileTitle">
+        <div class="mp-modal-head">
+          <strong id="profileTitle">Perfil del entrenador</strong>
+          <button class="mp-iconbtn" type="button" aria-label="Cerrar" data-modal-close="1">
+            <span class="material-symbols-outlined" aria-hidden="true">close</span>
+          </button>
+        </div>
+        <div class="mp-modal-body">
+          <div class="profile-grid">
+            <div class="profile-card">
+              <img class="profile-photo" id="pPhoto" alt="" />
+              <h2 class="profile-name" id="pName">—</h2>
+              <p class="profile-sub" id="pLine1">—</p>
+              <p class="profile-sub" id="pLine2">—</p>
+              <div class="profile-actions">
+                <div>
+                  <p class="meta-k">Código para añadir en tu app (jugador)</p>
+                  <div class="codebox" id="pCode">—</div>
+                </div>
+                <button class="mp-btn primary" type="button" id="btnCopyCode">Copiar código</button>
+                <button class="mp-btn" type="button" id="btnCopyInvite">Copiar invitación (código + enlace)</button>
+                <button class="mp-btn" type="button" id="btnCopyProfile">Copiar enlace del perfil</button>
+              </div>
+            </div>
+            <div class="profile-content">
+              <h3>Biografía</h3>
+              <p id="pBio">—</p>
+
+              <div class="profile-meta">
+                <div class="meta-box">
+                  <p class="meta-k">Enfoque</p>
+                  <p class="meta-v" id="pFocus">—</p>
+                  <p class="meta-k" style="margin-top:0.6rem">Idiomas</p>
+                  <p class="meta-v" id="pLangs">—</p>
+                </div>
+                <div class="meta-box">
+                  <p class="meta-k">Ubicación</p>
+                  <p class="meta-v" id="pLoc">—</p>
+                  <p class="meta-k" style="margin-top:0.6rem">Formato</p>
+                  <p class="meta-v" id="pFormats">—</p>
+                </div>
+                <div class="meta-box">
+                  <p class="meta-k">Servicios y precios</p>
+                  <ul class="svc-list" id="pServices"></ul>
+                </div>
+              </div>
+
+              <p class="mp-foot" style="margin-top:0.85rem">
+                Para enlazar en producción con <strong>www.gimaddmentor.com</strong>, este perfil usará un enlace personalizado y el código se validará en la app.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
 
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
@@ -674,88 +849,53 @@
           var rating = Number(coach.rating) || 0;
           var rev = Number(coach.reviewsCount) || 0;
           var priceMin = minServicePrice(coach);
-          var bio = coach.bio || "";
-          var focus = Array.isArray(coach.focus) ? coach.focus : [];
+          var verified = !!coach.verified;
+          var city = coach.city ? String(coach.city) : "";
           var langs = Array.isArray(coach.languages) ? coach.languages : [];
           var formats = Array.isArray(coach.formats) ? coach.formats : [];
-          var verified = !!coach.verified;
 
-          var badges = "";
-          if (verified) badges += '<span class="badge ok"><span class="material-symbols-outlined" aria-hidden="true">verified</span>Verificado</span>';
-          badges +=
-            '<span class="badge star"><span class="material-symbols-outlined" aria-hidden="true">star</span>' +
+          var line1 =
+            '<span class="mp-tiny"><span class="material-symbols-outlined" aria-hidden="true">star</span>' +
             rating.toFixed(1) +
             " (" +
             rev +
-            ")</span>";
-          if (coach.city) badges += '<span class="badge"><span class="material-symbols-outlined" aria-hidden="true">pin_drop</span>' + escapeHtml(coach.city) + "</span>";
-          if (priceMin != null) badges += '<span class="badge"><span class="material-symbols-outlined" aria-hidden="true">sell</span>desde ' + fmtEur(priceMin) + "</span>";
+            " reviews)</span>";
+          if (verified) {
+            line1 =
+              '<span class="mp-verified"><span class="material-symbols-outlined" aria-hidden="true">verified</span>Verificado</span> · ' +
+              line1;
+          }
 
-          var metaLeft =
-            '<p class="meta-k">Enfoque</p><p class="meta-v">' +
-            (focus.length ? focus.map(focusLabel).join(" · ") : "—") +
-            "</p>" +
-            '<p class="meta-k" style="margin-top:0.6rem">Idiomas</p><p class="meta-v">' +
-            (langs.length ? langs.map(langLabel).join(" · ") : "—") +
-            "</p>";
+          var line2 =
+            escapeHtml(city || "—") +
+            (langs.length ? " · " + escapeHtml(langs.map(langLabel).join(", ")) : "") +
+            (coach.experienceYears ? "<br />" + escapeHtml(String(coach.experienceYears)) + " años experiencia" : "") +
+            (formats.length ? "<br />" + escapeHtml(formats.map(function (x) { return (x === \"online\" ? \"Virtual\" : \"In-person\"); }).join(\", \")) : "");
 
-          var sv = Array.isArray(coach.services) ? coach.services : [];
-          var svHtml = sv.length
-            ? '<ul class="svc-list">' +
-              sv
-                .slice(0, 4)
-                .map(function (s) {
-                  return (
-                    '<li class="svc-item"><strong>' +
-                    escapeHtml(s.title) +
-                    "</strong><span>" +
-                    fmtEur(s.priceEur) +
-                    "</span></li>"
-                  );
-                })
-                .join("") +
-              "</ul>"
-            : '<p class="meta-v" style="margin:0">—</p>';
-
-          var metaRight =
-            '<p class="meta-k">Servicios</p>' +
-            svHtml +
-            '<p class="meta-k" style="margin-top:0.65rem">Formato</p><p class="meta-v">' +
-            (formats.length ? formats.map(function (x) { return (x === "online" ? "Online" : "Presencial"); }).join(" · ") : "—") +
-            "</p>";
+          var price = priceMin != null ? "From " + fmtEur(priceMin) : "Consultar";
 
           return (
-            '<article class="coach-card" data-coach-id="' +
+            '<article class="coach-tile" data-coach-id="' +
             escapeHtml(coach.id) +
             '">' +
-            '<div class="coach-card-top">' +
-            '<img class="coach-avatar" src="' +
+            '<div class="coach-tile-inner">' +
+            '<img class="coach-tile-photo" src="' +
             escapeHtml(coach.avatarUrl || "https://i.pravatar.cc/120?img=68") +
             '" alt="" loading="lazy" />' +
-            '<div class="coach-main">' +
-            '<h2 class="coach-name">' +
+            '<div>' +
+            '<h2 class="coach-tile-name">' +
             escapeHtml(coach.name || "Entrenador") +
             "</h2>" +
-            '<div class="coach-badges">' +
-            badges +
-            "</div>" +
-            "</div>" +
-            '<div class="coach-cta">' +
-            '<button class="mp-btn primary" type="button" data-act="invite">Invitar</button>' +
-            '<button class="mp-btn" type="button" data-act="copy">Copiar perfil</button>' +
-            "</div>" +
-            "</div>" +
-            '<div class="coach-card-body">' +
-            '<p class="coach-bio">' +
-            escapeHtml(bio) +
+            '<p class="coach-tile-line">' +
+            line1 +
             "</p>" +
-            '<div class="coach-meta">' +
-            '<div class="meta-box">' +
-            metaLeft +
-            "</div>" +
-            '<div class="meta-box">' +
-            metaRight +
-            "</div>" +
+            '<p class="coach-tile-line">' +
+            line2 +
+            "</p>" +
+            '<p class="coach-tile-price">' +
+            escapeHtml(price) +
+            "</p>" +
+            '<div class="coach-tile-cta"><button class="mp-btn primary" type="button" data-act="view">Ver perfil <span class="material-symbols-outlined" aria-hidden="true" style="font-size:1.1rem">arrow_right_alt</span></button></div>' +
             "</div>" +
             "</div>" +
             "</article>"
@@ -891,6 +1031,86 @@
           listEl.innerHTML = filtered.map(renderCoach).join("");
         }
 
+        function setModalOpen(open) {
+          var modal = $("profileModal");
+          if (!modal) return;
+          modal.classList.toggle("on", !!open);
+          modal.setAttribute("aria-hidden", open ? "false" : "true");
+          document.body.style.overflow = open ? "hidden" : "";
+        }
+
+        function setUrlCoach(coachId) {
+          try {
+            var u = new URL(location.href);
+            if (coachId) u.searchParams.set("coach", coachId);
+            else u.searchParams.delete("coach");
+            u.searchParams.delete("invite");
+            history.replaceState({}, "", u.toString());
+          } catch (e) {}
+        }
+
+        async function openProfile(coachId) {
+          var coach = state.all.find(function (c) { return String(c.id) === String(coachId); });
+          if (!coach) return;
+
+          var rating = Number(coach.rating) || 0;
+          var rev = Number(coach.reviewsCount) || 0;
+          var verified = !!coach.verified;
+          var priceMin = minServicePrice(coach);
+          var focus = Array.isArray(coach.focus) ? coach.focus : [];
+          var langs = Array.isArray(coach.languages) ? coach.languages : [];
+          var formats = Array.isArray(coach.formats) ? coach.formats : [];
+          var city = coach.city ? String(coach.city) : "—";
+
+          var code = buildInviteCode(coachId);
+          openProfile._code = code;
+          openProfile._coachId = coachId;
+
+          var pPhoto = $("pPhoto");
+          if (pPhoto) pPhoto.src = coach.avatarUrl || "https://i.pravatar.cc/240?img=68";
+          var pName = $("pName");
+          if (pName) pName.textContent = coach.name || "Entrenador";
+          var pLine1 = $("pLine1");
+          if (pLine1) pLine1.textContent = (verified ? "Verificado · " : "") + rating.toFixed(1) + " (" + rev + " valoraciones)";
+          var pLine2 = $("pLine2");
+          if (pLine2) pLine2.textContent = city + " · " + (coach.experienceYears ? coach.experienceYears + " años" : "Experiencia —");
+
+          var pCode = $("pCode");
+          if (pCode) pCode.textContent = code;
+
+          var pBio = $("pBio");
+          if (pBio) pBio.textContent = coach.bio || "—";
+
+          var pFocus = $("pFocus");
+          if (pFocus) pFocus.textContent = focus.length ? focus.map(focusLabel).join(" · ") : "—";
+          var pLangs = $("pLangs");
+          if (pLangs) pLangs.textContent = langs.length ? langs.map(langLabel).join(" · ") : "—";
+          var pLoc = $("pLoc");
+          if (pLoc) pLoc.textContent = city;
+          var pFormats = $("pFormats");
+          if (pFormats) pFormats.textContent = formats.length ? formats.map(function (x) { return (x === "online" ? "Online" : "Presencial"); }).join(" · ") : "—";
+
+          var pServices = $("pServices");
+          if (pServices) {
+            var sv = Array.isArray(coach.services) ? coach.services : [];
+            pServices.innerHTML = sv.length
+              ? sv
+                  .map(function (s) {
+                    return '<li class="svc-item"><strong>' + escapeHtml(s.title) + "</strong><span>" + fmtEur(s.priceEur) + "</span></li>";
+                  })
+                  .join("")
+              : '<li class="svc-item"><strong>—</strong><span>—</span></li>';
+          }
+
+          setUrlCoach(coachId);
+          setModalOpen(true);
+        }
+
+        function closeProfile() {
+          setModalOpen(false);
+          setUrlCoach(null);
+        }
+
         function bind() {
           document.querySelectorAll(".mp-chip").forEach(function (b) {
             b.addEventListener("click", function () {
@@ -942,22 +1162,48 @@
           document.addEventListener("click", async function (e) {
             var btn = e.target.closest("button[data-act]");
             if (!btn) return;
-            var card = btn.closest(".coach-card");
+            var card = btn.closest(".coach-tile");
             if (!card) return;
             var coachId = card.getAttribute("data-coach-id") || "";
             var act = btn.getAttribute("data-act");
             if (!coachId) return;
 
-            if (act === "copy") {
-              var url = buildCoachUrl(coachId, null);
-              var ok = await copyText(url);
-              toast(ok ? "Perfil copiado" : "No se pudo copiar");
+            if (act === "view") {
+              openProfile(coachId);
               return;
             }
-            if (act === "invite") {
-              var code = buildInviteCode(coachId);
+          });
+
+          document.addEventListener("click", function (e) {
+            if (e.target && e.target.closest && e.target.closest("[data-modal-close]")) {
+              closeProfile();
+            }
+          });
+
+          document.addEventListener("keydown", function (e) {
+            if (e.key === "Escape") {
+              var modal = $("profileModal");
+              if (modal && modal.classList.contains("on")) closeProfile();
+            }
+          });
+
+          var btnCopyCode = $("btnCopyCode");
+          if (btnCopyCode) {
+            btnCopyCode.addEventListener("click", async function () {
+              var code = openProfile._code || "";
+              if (!code) return;
+              var ok = await copyText(code);
+              toast(ok ? "Código copiado" : "No se pudo copiar");
+            });
+          }
+          var btnCopyInvite = $("btnCopyInvite");
+          if (btnCopyInvite) {
+            btnCopyInvite.addEventListener("click", async function () {
+              var coachId = openProfile._coachId || "";
+              var code = openProfile._code || "";
+              if (!coachId || !code) return;
               var url2 = buildCoachUrl(coachId, code);
-              var msg = "Invitación " + code + " — " + url2;
+              var msg = "Código " + code + " — " + url2;
               if (navigator.share) {
                 try {
                   await navigator.share({ title: "Invitación Gimadd Mentor", text: msg, url: url2 });
@@ -967,9 +1213,18 @@
               }
               var ok2 = await copyText(msg);
               toast(ok2 ? "Invitación copiada" : "No se pudo copiar");
-              return;
-            }
-          });
+            });
+          }
+          var btnCopyProfile = $("btnCopyProfile");
+          if (btnCopyProfile) {
+            btnCopyProfile.addEventListener("click", async function () {
+              var coachId = openProfile._coachId || "";
+              if (!coachId) return;
+              var url = buildCoachUrl(coachId, null);
+              var ok = await copyText(url);
+              toast(ok ? "Enlace copiado" : "No se pudo copiar");
+            });
+          }
         }
 
         function hydrateFromUrl() {
@@ -979,8 +1234,7 @@
             if (!coachId) return;
             var coach = state.all.find(function (c) { return String(c.id) === String(coachId); });
             if (!coach) return;
-            if (qEl) qEl.value = coach.name;
-            toast("Perfil cargado: " + coach.name);
+            openProfile(coachId);
           } catch (e) {}
         }
 
