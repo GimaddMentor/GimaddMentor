@@ -1,0 +1,994 @@
+<!DOCTYPE html>
+<html lang="es" class="gimadd-prod">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Gimadd Mentor · Marketplace de entrenadores</title>
+    <meta name="description" content="Listado público de entrenadores verificados. Perfiles, servicios, valoraciones, filtros e invitación por enlace o código." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800;1,9..40,400&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,500,0,0&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="gimadd-mentor-shared.css" />
+    <style>
+      :root {
+        --maxw: 1100px;
+      }
+      body {
+        margin: 0;
+        background: #ffffff;
+      }
+      .mp-shell {
+        max-width: var(--maxw);
+        margin: 0 auto;
+        padding: 0 1rem 4rem;
+      }
+      .mp-topbar {
+        position: sticky;
+        top: 0;
+        z-index: 20;
+        background: linear-gradient(180deg, #f2ec1f 0%, #fffbeb 42%, rgba(255, 255, 255, 0.92) 100%);
+        border-bottom: 1px solid var(--border);
+        backdrop-filter: blur(10px);
+      }
+      .mp-topbar-inner {
+        max-width: var(--maxw);
+        margin: 0 auto;
+        padding: 0.9rem 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        justify-content: space-between;
+      }
+      .mp-brand {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        min-width: 12rem;
+      }
+      .mp-logo {
+        width: 36px;
+        height: 36px;
+        border-radius: 12px;
+        background: #ffffff;
+        border: 1px solid rgba(12, 74, 110, 0.18);
+        display: grid;
+        place-items: center;
+        font-weight: 900;
+        color: var(--brand-court-deep);
+      }
+      .mp-title {
+        margin: 0;
+        font-size: 0.98rem;
+        font-weight: 900;
+        letter-spacing: -0.02em;
+      }
+      .mp-sub {
+        margin: 0;
+        font-size: 0.72rem;
+        color: var(--muted);
+        font-weight: 600;
+      }
+      .mp-hero {
+        padding: 1.35rem 0 0.9rem;
+      }
+      .mp-hero h1 {
+        margin: 0 0 0.35rem;
+        font-size: 1.55rem;
+        letter-spacing: -0.03em;
+      }
+      .mp-hero p {
+        margin: 0;
+        color: var(--muted);
+        max-width: 58rem;
+        line-height: 1.55;
+        font-weight: 600;
+        font-size: 0.92rem;
+      }
+      .mp-grid {
+        display: grid;
+        grid-template-columns: 320px 1fr;
+        gap: 1rem;
+        align-items: start;
+      }
+      @media (max-width: 980px) {
+        .mp-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+      .mp-panel {
+        border: 1px solid var(--border);
+        background: #ffffff;
+        border-radius: 16px;
+        box-shadow: 0 2px 12px rgba(15, 23, 42, 0.04);
+        overflow: hidden;
+      }
+      .mp-panel-h {
+        padding: 0.85rem 0.9rem;
+        border-bottom: 1px solid var(--border);
+        background: rgba(241, 245, 249, 0.55);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.75rem;
+      }
+      .mp-panel-h strong {
+        font-size: 0.86rem;
+        letter-spacing: -0.01em;
+      }
+      .mp-panel-b {
+        padding: 0.9rem;
+      }
+      .mp-field {
+        display: grid;
+        gap: 0.35rem;
+        margin: 0 0 0.7rem;
+      }
+      .mp-field label {
+        font-size: 0.74rem;
+        color: var(--muted);
+        font-weight: 800;
+      }
+      .mp-field input,
+      .mp-field select {
+        width: 100%;
+        box-sizing: border-box;
+        font: inherit;
+        font-size: 0.9rem;
+        padding: 0.65rem 0.75rem;
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        background: #ffffff;
+      }
+      .mp-field input:focus,
+      .mp-field select:focus {
+        outline: none;
+        border-color: rgba(12, 74, 110, 0.45);
+        box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.18);
+      }
+      .mp-chiprow {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin: 0.1rem 0 0.7rem;
+      }
+      .mp-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        border: 1px solid var(--border);
+        background: rgba(241, 245, 249, 0.55);
+        border-radius: 999px;
+        padding: 0.32rem 0.6rem;
+        font-size: 0.78rem;
+        font-weight: 800;
+        color: var(--brand-ink);
+        cursor: pointer;
+        user-select: none;
+      }
+      .mp-chip[aria-pressed="true"] {
+        background: rgba(12, 74, 110, 0.12);
+        border-color: rgba(12, 74, 110, 0.28);
+        color: var(--brand-court-deep);
+      }
+      .mp-actions {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+        margin-top: 0.2rem;
+      }
+      .mp-btn {
+        border: 1px solid var(--border);
+        background: #ffffff;
+        border-radius: 999px;
+        padding: 0.55rem 0.8rem;
+        font: inherit;
+        font-weight: 900;
+        cursor: pointer;
+      }
+      .mp-btn.primary {
+        background: var(--gimadd-btn-primary-bg);
+        color: var(--gimadd-btn-primary-text);
+        border-color: rgba(0, 0, 0, 0.08);
+      }
+      .mp-btn:active {
+        transform: translateY(1px);
+      }
+      .mp-results-h {
+        padding: 0.85rem 0.9rem;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+      }
+      .mp-kpis {
+        display: flex;
+        gap: 0.6rem;
+        flex-wrap: wrap;
+      }
+      .mp-kpi {
+        border: 1px solid var(--border);
+        background: rgba(241, 245, 249, 0.55);
+        border-radius: 999px;
+        padding: 0.35rem 0.65rem;
+        font-weight: 900;
+        font-size: 0.78rem;
+        color: var(--brand-ink);
+      }
+      .mp-sort {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+      .mp-sort label {
+        font-size: 0.74rem;
+        font-weight: 900;
+        color: var(--muted);
+      }
+      .mp-list {
+        padding: 0.9rem;
+        display: grid;
+        gap: 0.85rem;
+      }
+      .coach-card {
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        background: #ffffff;
+        overflow: hidden;
+      }
+      .coach-card-top {
+        padding: 0.85rem 0.9rem;
+        display: flex;
+        gap: 0.85rem;
+        align-items: center;
+        background: linear-gradient(180deg, rgba(241, 245, 249, 0.6), #ffffff);
+        border-bottom: 1px solid var(--border);
+      }
+      .coach-avatar {
+        width: 58px;
+        height: 58px;
+        border-radius: 18px;
+        border: 1px solid rgba(15, 23, 42, 0.1);
+        background: #ffffff;
+        object-fit: cover;
+      }
+      .coach-main {
+        flex: 1;
+        min-width: 14rem;
+      }
+      .coach-name {
+        margin: 0;
+        font-size: 1rem;
+        font-weight: 1000;
+        letter-spacing: -0.02em;
+        display: flex;
+        align-items: center;
+        gap: 0.35rem;
+        flex-wrap: wrap;
+      }
+      .coach-badges {
+        display: flex;
+        gap: 0.35rem;
+        flex-wrap: wrap;
+        margin-top: 0.2rem;
+      }
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+        padding: 0.28rem 0.55rem;
+        border-radius: 999px;
+        font-size: 0.74rem;
+        font-weight: 900;
+        border: 1px solid rgba(15, 23, 42, 0.1);
+        background: rgba(241, 245, 249, 0.65);
+        color: var(--brand-ink);
+      }
+      .badge.ok {
+        background: rgba(22, 163, 74, 0.09);
+        border-color: rgba(22, 163, 74, 0.24);
+        color: #166534;
+      }
+      .badge.star {
+        background: rgba(250, 204, 21, 0.18);
+        border-color: rgba(202, 138, 4, 0.24);
+        color: #854d0e;
+      }
+      .coach-cta {
+        display: flex;
+        gap: 0.45rem;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+      }
+      .coach-cta .mp-btn {
+        padding: 0.48rem 0.72rem;
+        font-size: 0.82rem;
+      }
+      .coach-card-body {
+        padding: 0.85rem 0.9rem;
+        display: grid;
+        gap: 0.75rem;
+      }
+      .coach-bio {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.55;
+        font-weight: 600;
+      }
+      .coach-meta {
+        display: grid;
+        grid-template-columns: 1.1fr 0.9fr;
+        gap: 0.75rem;
+      }
+      @media (max-width: 720px) {
+        .coach-meta {
+          grid-template-columns: 1fr;
+        }
+      }
+      .meta-box {
+        border: 1px solid var(--border);
+        background: rgba(241, 245, 249, 0.55);
+        border-radius: 14px;
+        padding: 0.65rem 0.7rem;
+      }
+      .meta-k {
+        font-size: 0.7rem;
+        font-weight: 1000;
+        letter-spacing: 0.02em;
+        text-transform: uppercase;
+        color: var(--muted);
+        margin: 0 0 0.3rem;
+      }
+      .meta-v {
+        margin: 0;
+        font-weight: 800;
+        color: var(--brand-ink);
+        font-size: 0.9rem;
+        line-height: 1.35;
+      }
+      .svc-list {
+        margin: 0.25rem 0 0;
+        padding: 0;
+        list-style: none;
+        display: grid;
+        gap: 0.3rem;
+      }
+      .svc-item {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 0.75rem;
+        padding: 0.35rem 0.45rem;
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.65);
+        border: 1px solid rgba(226, 232, 240, 0.95);
+      }
+      .svc-item strong {
+        font-size: 0.86rem;
+      }
+      .svc-item span {
+        font-weight: 900;
+        color: var(--brand-court-deep);
+        white-space: nowrap;
+      }
+      .empty {
+        padding: 1.2rem 0.9rem;
+        color: var(--muted);
+        font-weight: 700;
+      }
+      .toast {
+        position: fixed;
+        left: 50%;
+        bottom: 16px;
+        transform: translateX(-50%);
+        background: rgba(15, 23, 42, 0.92);
+        color: #ffffff;
+        padding: 0.7rem 0.9rem;
+        border-radius: 999px;
+        font-weight: 800;
+        font-size: 0.84rem;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 160ms ease;
+        max-width: calc(100% - 1.5rem);
+        text-align: center;
+      }
+      .toast.on {
+        opacity: 1;
+      }
+      .mp-foot {
+        margin-top: 1.2rem;
+        color: var(--muted);
+        font-weight: 700;
+        font-size: 0.78rem;
+        line-height: 1.55;
+      }
+      .mp-foot a {
+        color: var(--brand-court-deep);
+        font-weight: 900;
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+  <body>
+    <header class="mp-topbar">
+      <div class="mp-topbar-inner">
+        <div class="mp-brand">
+          <div class="mp-logo" aria-hidden="true">G</div>
+          <div>
+            <p class="mp-title">Gimadd Mentor</p>
+            <p class="mp-sub">Marketplace de entrenadores</p>
+          </div>
+        </div>
+        <div class="mp-sort">
+          <label for="sortSel">Orden</label>
+          <select id="sortSel" aria-label="Ordenar entrenadores">
+            <option value="relevancia">Relevancia</option>
+            <option value="rating">Mejor valorados</option>
+            <option value="precio-asc">Precio (menor → mayor)</option>
+            <option value="precio-desc">Precio (mayor → menor)</option>
+          </select>
+        </div>
+      </div>
+    </header>
+
+    <main class="mp-shell">
+      <section class="mp-hero">
+        <h1>Encuentra tu entrenador verificado</h1>
+        <p>
+          Perfiles públicos con experiencia, valoraciones y servicios. Usa filtros para afinar por enfoque, idioma,
+          precio o formato. Invita al entrenador por enlace/código cuando quieras empezar.
+        </p>
+      </section>
+
+      <div class="mp-grid">
+        <aside class="mp-panel" aria-label="Filtros del marketplace">
+          <div class="mp-panel-h">
+            <strong>Buscar y filtrar</strong>
+            <span class="mp-kpi" id="kpiCount">0 entrenadores</span>
+          </div>
+          <div class="mp-panel-b">
+            <div class="mp-field">
+              <label for="q">Búsqueda</label>
+              <input id="q" type="search" placeholder="Nombre, bio, especialidad…" autocomplete="off" />
+            </div>
+
+            <div class="mp-field">
+              <label for="enfoque">Enfoque</label>
+              <select id="enfoque">
+                <option value="">Todos</option>
+                <option value="tecnica">Técnica</option>
+                <option value="tactica">Táctica</option>
+                <option value="mental">Mental</option>
+                <option value="fisico">Físico</option>
+                <option value="video">Videoanálisis</option>
+                <option value="pista">Pista</option>
+              </select>
+            </div>
+
+            <div class="mp-field">
+              <label>Formato</label>
+              <div class="mp-chiprow" role="group" aria-label="Formato">
+                <button class="mp-chip" type="button" data-chip="online" aria-pressed="false">Online</button>
+                <button class="mp-chip" type="button" data-chip="presencial" aria-pressed="false">Presencial</button>
+              </div>
+            </div>
+
+            <div class="mp-field">
+              <label for="idioma">Idioma</label>
+              <select id="idioma">
+                <option value="">Todos</option>
+                <option value="es">Español</option>
+                <option value="en">Inglés</option>
+                <option value="fr">Francés</option>
+              </select>
+            </div>
+
+            <div class="mp-field">
+              <label for="precioMax">Precio máx. (€/sesión)</label>
+              <input id="precioMax" type="number" min="0" step="1" placeholder="Ej. 60" inputmode="numeric" />
+            </div>
+
+            <div class="mp-actions">
+              <button class="mp-btn primary" type="button" id="btnReset">Limpiar filtros</button>
+              <button class="mp-btn" type="button" id="btnShare">Compartir página</button>
+            </div>
+
+            <p class="mp-foot">
+              Este marketplace es una web pública (fuera de la app). Para producción en <a href="https://www.gimaddmentor.com" target="_blank" rel="noopener noreferrer">www.gimaddmentor.com</a>,
+              conectará con el registro de entrenadores verificados y sus servicios.
+            </p>
+          </div>
+        </aside>
+
+        <section class="mp-panel" aria-label="Listado de entrenadores">
+          <div class="mp-results-h">
+            <div class="mp-kpis">
+              <span class="mp-kpi" id="kpiShown">0 mostrados</span>
+              <span class="mp-kpi" id="kpiVerified">0 verificados</span>
+            </div>
+          </div>
+          <div class="mp-list" id="list"></div>
+          <div class="empty" id="empty" hidden>No hay entrenadores que coincidan con los filtros.</div>
+        </section>
+      </div>
+    </main>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+    <script type="application/json" id="mp-coaches-seed">
+[
+  {
+    "id": "coach-ana",
+    "name": "Ana Martín",
+    "verified": true,
+    "rating": 4.8,
+    "reviewsCount": 132,
+    "city": "Madrid",
+    "country": "ES",
+    "languages": ["es", "en"],
+    "focus": ["tecnica", "video"],
+    "formats": ["online", "presencial"],
+    "bio": "Entrenadora nacional. Diseño de planes con foco en técnica aplicada y videoanálisis para acelerar decisiones y automatizar hábitos.",
+    "experienceYears": 9,
+    "avatarUrl": "https://i.pravatar.cc/120?img=12",
+    "services": [
+      { "id": "srv-va", "title": "Videoanálisis Pro", "priceEur": 39 },
+      { "id": "srv-pista", "title": "Mentoría en pista (60 min)", "priceEur": 55 }
+    ]
+  },
+  {
+    "id": "coach-diego",
+    "name": "Diego Sánchez",
+    "verified": true,
+    "rating": 4.6,
+    "reviewsCount": 88,
+    "city": "Valencia",
+    "country": "ES",
+    "languages": ["es"],
+    "focus": ["tactica", "mental"],
+    "formats": ["online"],
+    "bio": "Especialista en táctica y mental competitivo. Sesiones online orientadas a preparar partidos: patrones, gestión de errores y rutinas.",
+    "experienceYears": 6,
+    "avatarUrl": "https://i.pravatar.cc/120?img=45",
+    "services": [
+      { "id": "srv-plan", "title": "Plan de partido (45 min)", "priceEur": 29 },
+      { "id": "srv-mental", "title": "Mental competitivo (60 min)", "priceEur": 49 }
+    ]
+  },
+  {
+    "id": "coach-lucia",
+    "name": "Lucía Pérez",
+    "verified": true,
+    "rating": 4.9,
+    "reviewsCount": 210,
+    "city": "Barcelona",
+    "country": "ES",
+    "languages": ["es", "en", "fr"],
+    "focus": ["fisico", "tecnica", "pista"],
+    "formats": ["presencial"],
+    "bio": "Entrenamiento físico específico + técnica en pista. Muy orientada a prevención de lesiones y consistencia a largo plazo.",
+    "experienceYears": 11,
+    "avatarUrl": "https://i.pravatar.cc/120?img=32",
+    "services": [
+      { "id": "srv-pista", "title": "Sesión en pista (60 min)", "priceEur": 65 },
+      { "id": "srv-fisico", "title": "Físico específico (45 min)", "priceEur": 35 }
+    ]
+  },
+  {
+    "id": "coach-javi",
+    "name": "Javi Ortega",
+    "verified": false,
+    "rating": 4.3,
+    "reviewsCount": 21,
+    "city": "Sevilla",
+    "country": "ES",
+    "languages": ["es"],
+    "focus": ["video", "tactica"],
+    "formats": ["online", "presencial"],
+    "bio": "Coach en proceso de verificación. Trabajo con vídeo y táctica para mejorar la toma de decisiones bajo presión.",
+    "experienceYears": 3,
+    "avatarUrl": "https://i.pravatar.cc/120?img=15",
+    "services": [
+      { "id": "srv-va", "title": "Videoanálisis", "priceEur": 25 }
+    ]
+  }
+]
+    </script>
+
+    <script>
+      (function () {
+        function $(id) {
+          return document.getElementById(id);
+        }
+        function clamp(n, a, b) {
+          return Math.max(a, Math.min(b, n));
+        }
+        function fmtEur(n) {
+          var v = Number(n) || 0;
+          return v.toLocaleString("es-ES", { style: "currency", currency: "EUR", maximumFractionDigits: 0 });
+        }
+        function escapeHtml(s) {
+          return String(s || "")
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/\"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+        }
+        function toast(msg) {
+          var el = $("toast");
+          if (!el) return;
+          el.textContent = msg;
+          el.classList.add("on");
+          clearTimeout(toast._t);
+          toast._t = setTimeout(function () {
+            el.classList.remove("on");
+          }, 1400);
+        }
+
+        function loadSeed() {
+          var el = $("mp-coaches-seed");
+          if (!el) return [];
+          try {
+            var arr = JSON.parse(el.textContent.trim());
+            return Array.isArray(arr) ? arr : [];
+          } catch (e) {
+            return [];
+          }
+        }
+
+        function minServicePrice(coach) {
+          var sv = coach && Array.isArray(coach.services) ? coach.services : [];
+          if (!sv.length) return null;
+          var min = Infinity;
+          sv.forEach(function (s) {
+            var p = Number(s.priceEur);
+            if (!isNaN(p)) min = Math.min(min, p);
+          });
+          return min === Infinity ? null : min;
+        }
+
+        function focusLabel(k) {
+          if (k === "tecnica") return "Técnica";
+          if (k === "tactica") return "Táctica";
+          if (k === "mental") return "Mental";
+          if (k === "fisico") return "Físico";
+          if (k === "video") return "Video";
+          if (k === "pista") return "Pista";
+          return k;
+        }
+
+        function langLabel(k) {
+          if (k === "es") return "Español";
+          if (k === "en") return "English";
+          if (k === "fr") return "Français";
+          return k;
+        }
+
+        function renderCoach(coach) {
+          var rating = Number(coach.rating) || 0;
+          var rev = Number(coach.reviewsCount) || 0;
+          var priceMin = minServicePrice(coach);
+          var bio = coach.bio || "";
+          var focus = Array.isArray(coach.focus) ? coach.focus : [];
+          var langs = Array.isArray(coach.languages) ? coach.languages : [];
+          var formats = Array.isArray(coach.formats) ? coach.formats : [];
+          var verified = !!coach.verified;
+
+          var badges = "";
+          if (verified) badges += '<span class="badge ok"><span class="material-symbols-outlined" aria-hidden="true">verified</span>Verificado</span>';
+          badges +=
+            '<span class="badge star"><span class="material-symbols-outlined" aria-hidden="true">star</span>' +
+            rating.toFixed(1) +
+            " (" +
+            rev +
+            ")</span>";
+          if (coach.city) badges += '<span class="badge"><span class="material-symbols-outlined" aria-hidden="true">pin_drop</span>' + escapeHtml(coach.city) + "</span>";
+          if (priceMin != null) badges += '<span class="badge"><span class="material-symbols-outlined" aria-hidden="true">sell</span>desde ' + fmtEur(priceMin) + "</span>";
+
+          var metaLeft =
+            '<p class="meta-k">Enfoque</p><p class="meta-v">' +
+            (focus.length ? focus.map(focusLabel).join(" · ") : "—") +
+            "</p>" +
+            '<p class="meta-k" style="margin-top:0.6rem">Idiomas</p><p class="meta-v">' +
+            (langs.length ? langs.map(langLabel).join(" · ") : "—") +
+            "</p>";
+
+          var sv = Array.isArray(coach.services) ? coach.services : [];
+          var svHtml = sv.length
+            ? '<ul class="svc-list">' +
+              sv
+                .slice(0, 4)
+                .map(function (s) {
+                  return (
+                    '<li class="svc-item"><strong>' +
+                    escapeHtml(s.title) +
+                    "</strong><span>" +
+                    fmtEur(s.priceEur) +
+                    "</span></li>"
+                  );
+                })
+                .join("") +
+              "</ul>"
+            : '<p class="meta-v" style="margin:0">—</p>';
+
+          var metaRight =
+            '<p class="meta-k">Servicios</p>' +
+            svHtml +
+            '<p class="meta-k" style="margin-top:0.65rem">Formato</p><p class="meta-v">' +
+            (formats.length ? formats.map(function (x) { return (x === "online" ? "Online" : "Presencial"); }).join(" · ") : "—") +
+            "</p>";
+
+          return (
+            '<article class="coach-card" data-coach-id="' +
+            escapeHtml(coach.id) +
+            '">' +
+            '<div class="coach-card-top">' +
+            '<img class="coach-avatar" src="' +
+            escapeHtml(coach.avatarUrl || "https://i.pravatar.cc/120?img=68") +
+            '" alt="" loading="lazy" />' +
+            '<div class="coach-main">' +
+            '<h2 class="coach-name">' +
+            escapeHtml(coach.name || "Entrenador") +
+            "</h2>" +
+            '<div class="coach-badges">' +
+            badges +
+            "</div>" +
+            "</div>" +
+            '<div class="coach-cta">' +
+            '<button class="mp-btn primary" type="button" data-act="invite">Invitar</button>' +
+            '<button class="mp-btn" type="button" data-act="copy">Copiar perfil</button>' +
+            "</div>" +
+            "</div>" +
+            '<div class="coach-card-body">' +
+            '<p class="coach-bio">' +
+            escapeHtml(bio) +
+            "</p>" +
+            '<div class="coach-meta">' +
+            '<div class="meta-box">' +
+            metaLeft +
+            "</div>" +
+            '<div class="meta-box">' +
+            metaRight +
+            "</div>" +
+            "</div>" +
+            "</div>" +
+            "</article>"
+          );
+        }
+
+        function buildInviteCode(coachId) {
+          var base = coachId.replace(/[^a-z0-9]/gi, "").slice(0, 8).toUpperCase();
+          var rnd = Math.random().toString(36).slice(2, 6).toUpperCase();
+          return (base || "GIMADD") + "-" + rnd;
+        }
+
+        function buildCoachUrl(coachId, inviteCode) {
+          var u = new URL(location.href);
+          u.hash = "";
+          u.searchParams.set("coach", coachId);
+          if (inviteCode) u.searchParams.set("invite", inviteCode);
+          return u.toString();
+        }
+
+        async function copyText(txt) {
+          try {
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+              await navigator.clipboard.writeText(txt);
+              return true;
+            }
+          } catch (e) {}
+          try {
+            var ta = document.createElement("textarea");
+            ta.value = txt;
+            ta.setAttribute("readonly", "");
+            ta.style.position = "fixed";
+            ta.style.left = "-9999px";
+            document.body.appendChild(ta);
+            ta.select();
+            var ok = document.execCommand("copy");
+            document.body.removeChild(ta);
+            return !!ok;
+          } catch (e2) {
+            return false;
+          }
+        }
+
+        var state = {
+          all: loadSeed(),
+          chips: { online: false, presencial: false },
+        };
+
+        var qEl = $("q");
+        var enfoqueEl = $("enfoque");
+        var idiomaEl = $("idioma");
+        var precioEl = $("precioMax");
+        var sortEl = $("sortSel");
+        var listEl = $("list");
+        var emptyEl = $("empty");
+        var kpiCount = $("kpiCount");
+        var kpiShown = $("kpiShown");
+        var kpiVerified = $("kpiVerified");
+
+        function matches(coach) {
+          var q = qEl ? qEl.value.trim().toLowerCase() : "";
+          var enfoque = enfoqueEl ? enfoqueEl.value : "";
+          var idioma = idiomaEl ? idiomaEl.value : "";
+          var priceMax = precioEl && precioEl.value ? Number(precioEl.value) : null;
+          var cText = (coach.name + " " + (coach.bio || "")).toLowerCase();
+          if (q && cText.indexOf(q) === -1) return false;
+          if (enfoque) {
+            var focus = Array.isArray(coach.focus) ? coach.focus : [];
+            if (focus.indexOf(enfoque) === -1) return false;
+          }
+          if (idioma) {
+            var langs = Array.isArray(coach.languages) ? coach.languages : [];
+            if (langs.indexOf(idioma) === -1) return false;
+          }
+          if (state.chips.online || state.chips.presencial) {
+            var fm = Array.isArray(coach.formats) ? coach.formats : [];
+            if (state.chips.online && fm.indexOf("online") === -1) return false;
+            if (state.chips.presencial && fm.indexOf("presencial") === -1) return false;
+          }
+          if (priceMax != null && !isNaN(priceMax)) {
+            var minP = minServicePrice(coach);
+            if (minP != null && minP > priceMax) return false;
+          }
+          return true;
+        }
+
+        function sortArr(arr) {
+          var mode = sortEl ? sortEl.value : "relevancia";
+          var out = arr.slice();
+          if (mode === "rating") {
+            out.sort(function (a, b) {
+              return (Number(b.rating) || 0) - (Number(a.rating) || 0);
+            });
+            return out;
+          }
+          if (mode === "precio-asc" || mode === "precio-desc") {
+            out.sort(function (a, b) {
+              var ap = minServicePrice(a);
+              var bp = minServicePrice(b);
+              if (ap == null) ap = 1e9;
+              if (bp == null) bp = 1e9;
+              return mode === "precio-asc" ? ap - bp : bp - ap;
+            });
+            return out;
+          }
+          out.sort(function (a, b) {
+            var av = (a.verified ? 1 : 0) - (b.verified ? 1 : 0);
+            if (av !== 0) return -av;
+            return (Number(b.rating) || 0) - (Number(a.rating) || 0);
+          });
+          return out;
+        }
+
+        function render() {
+          if (!listEl) return;
+          var filtered = state.all.filter(matches);
+          filtered = sortArr(filtered);
+
+          var nAll = state.all.length;
+          var nShown = filtered.length;
+          var nVer = state.all.filter(function (x) { return !!x.verified; }).length;
+
+          if (kpiCount) kpiCount.textContent = nAll + " entrenadores";
+          if (kpiShown) kpiShown.textContent = nShown + " mostrados";
+          if (kpiVerified) kpiVerified.textContent = nVer + " verificados";
+
+          if (!nShown) {
+            listEl.innerHTML = "";
+            if (emptyEl) emptyEl.hidden = false;
+            return;
+          }
+          if (emptyEl) emptyEl.hidden = true;
+          listEl.innerHTML = filtered.map(renderCoach).join("");
+        }
+
+        function bind() {
+          document.querySelectorAll(".mp-chip").forEach(function (b) {
+            b.addEventListener("click", function () {
+              var key = b.getAttribute("data-chip");
+              if (!key) return;
+              state.chips[key] = !state.chips[key];
+              b.setAttribute("aria-pressed", state.chips[key] ? "true" : "false");
+              render();
+            });
+          });
+          if (qEl) qEl.addEventListener("input", render);
+          if (enfoqueEl) enfoqueEl.addEventListener("change", render);
+          if (idiomaEl) idiomaEl.addEventListener("change", render);
+          if (precioEl) precioEl.addEventListener("input", render);
+          if (sortEl) sortEl.addEventListener("change", render);
+
+          var btnReset = $("btnReset");
+          if (btnReset) {
+            btnReset.addEventListener("click", function () {
+              if (qEl) qEl.value = "";
+              if (enfoqueEl) enfoqueEl.value = "";
+              if (idiomaEl) idiomaEl.value = "";
+              if (precioEl) precioEl.value = "";
+              state.chips.online = false;
+              state.chips.presencial = false;
+              document.querySelectorAll(".mp-chip").forEach(function (b) {
+                b.setAttribute("aria-pressed", "false");
+              });
+              render();
+              toast("Filtros limpiados");
+            });
+          }
+
+          var btnShare = $("btnShare");
+          if (btnShare) {
+            btnShare.addEventListener("click", async function () {
+              var url = location.href;
+              if (navigator.share) {
+                try {
+                  await navigator.share({ title: document.title, url: url });
+                  return;
+                } catch (e) {}
+              }
+              var ok = await copyText(url);
+              toast(ok ? "Enlace copiado" : "No se pudo copiar");
+            });
+          }
+
+          document.addEventListener("click", async function (e) {
+            var btn = e.target.closest("button[data-act]");
+            if (!btn) return;
+            var card = btn.closest(".coach-card");
+            if (!card) return;
+            var coachId = card.getAttribute("data-coach-id") || "";
+            var act = btn.getAttribute("data-act");
+            if (!coachId) return;
+
+            if (act === "copy") {
+              var url = buildCoachUrl(coachId, null);
+              var ok = await copyText(url);
+              toast(ok ? "Perfil copiado" : "No se pudo copiar");
+              return;
+            }
+            if (act === "invite") {
+              var code = buildInviteCode(coachId);
+              var url2 = buildCoachUrl(coachId, code);
+              var msg = "Invitación " + code + " — " + url2;
+              if (navigator.share) {
+                try {
+                  await navigator.share({ title: "Invitación Gimadd Mentor", text: msg, url: url2 });
+                  toast("Invitación lista");
+                  return;
+                } catch (e2) {}
+              }
+              var ok2 = await copyText(msg);
+              toast(ok2 ? "Invitación copiada" : "No se pudo copiar");
+              return;
+            }
+          });
+        }
+
+        function hydrateFromUrl() {
+          try {
+            var u = new URL(location.href);
+            var coachId = (u.searchParams.get("coach") || "").trim();
+            if (!coachId) return;
+            var coach = state.all.find(function (c) { return String(c.id) === String(coachId); });
+            if (!coach) return;
+            if (qEl) qEl.value = coach.name;
+            toast("Perfil cargado: " + coach.name);
+          } catch (e) {}
+        }
+
+        bind();
+        hydrateFromUrl();
+        render();
+      })();
+    </script>
+  </body>
+</html>
+
