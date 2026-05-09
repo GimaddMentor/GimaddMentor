@@ -870,7 +870,9 @@
             escapeHtml(city || "—") +
             (langs.length ? " · " + escapeHtml(langs.map(langLabel).join(", ")) : "") +
             (coach.experienceYears ? "<br />" + escapeHtml(String(coach.experienceYears)) + " años experiencia" : "") +
-            (formats.length ? "<br />" + escapeHtml(formats.map(function (x) { return (x === \"online\" ? \"Virtual\" : \"In-person\"); }).join(\", \")) : "");
+            (formats.length
+              ? "<br />" + escapeHtml(formats.map(function (x) { return (x === "online" ? "Virtual" : "In-person"); }).join(", "))
+              : "");
 
           var price = priceMin != null ? "From " + fmtEur(priceMin) : "Consultar";
 
