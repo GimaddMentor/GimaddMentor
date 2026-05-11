@@ -3379,16 +3379,8 @@
     .jug-coach-bottom {
       padding: 0 0.95rem 0.95rem;
     }
-    .jug-coach-subhead {
-      margin: 0.15rem 0 0.55rem;
-      font-size: 0.72rem;
-      font-weight: 1000;
-      letter-spacing: 0.03em;
-      text-transform: uppercase;
-      color: var(--muted);
-    }
     .jug-coach-cta {
-      margin-top: 0.7rem;
+      margin-top: 0;
       width: 100%;
       border-radius: 999px;
       padding: 0.75rem 0.9rem;
@@ -3400,18 +3392,11 @@
       cursor: pointer;
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      gap: 0.75rem;
+      justify-content: center;
+      gap: 0.5rem;
       box-shadow: 0 14px 34px rgba(242, 236, 31, 0.22);
     }
     .jug-coach-cta:active { transform: translateY(1px); }
-    .jug-coach-cta .sub {
-      margin: 0.25rem 0 0;
-      font-weight: 750;
-      font-size: 0.78rem;
-      color: rgba(17, 24, 39, 0.75);
-      line-height: 1.35;
-    }
     .jug-coach-cta .arr {
       font-weight: 1100;
       font-size: 1.2rem;
@@ -12532,31 +12517,6 @@
     }
   }
 
-  function coachCatalogChipsHtml() {
-    var cat = loadCoachCatalog().filter(function (x) {
-      return x && x.visible !== false;
-    });
-    cat.sort(function (a, b) {
-      return (a.sort || 0) - (b.sort || 0);
-    });
-    if (!cat.length) return "";
-    return (
-      '<p style="font-size:0.72rem;color:var(--muted);margin:0.65rem 0 0.25rem;font-weight:600">Servicios que ofrece</p><div class="coach-srv-chips">' +
-      cat
-        .map(function (c) {
-          return (
-            '<span class="pill-mini" title="' +
-            escapeHtml(c.desc || c.meta || "") +
-            '">' +
-            escapeHtml(c.title || "Servicio") +
-            "</span>"
-          );
-        })
-        .join("") +
-      "</div>"
-    );
-  }
-
   function crmAvatarInitials(nombre) {
     var parts = String(nombre || "")
       .trim()
@@ -13559,7 +13519,6 @@
     };
     el.innerHTML = list
       .map(function (t) {
-        var chips = coachCatalogChipsHtml();
         var d = demoMap[t.id] || demoMap["t-vinculado-codigo"];
         var verified = t.principal ? true : !!(d && d.verified);
         var rating = d && d.rating ? Number(d.rating) : 0;
@@ -13607,10 +13566,8 @@
           "</div>" +
           "</div>" +
           '<div class="jug-coach-bottom">' +
-          '<p class="jug-coach-subhead">Servicios que ofrece</p>' +
-          chips +
           '<button type="button" class="jug-coach-cta" data-action="jug-servicios">' +
-          '<span><span style="display:block;font-weight:1000">📦 Ver servicios</span><span class="sub">Catálogo completo: packs, mensualidad y programas de acompañamiento.</span></span>' +
+          "Ver servicios" +
           '<span class="arr" aria-hidden="true">→</span>' +
           "</button>" +
           "</div>" +
