@@ -1,0 +1,1341 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Gimadd Mentor — Alcance y flujos (presupuesto)</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.7.0/github-markdown.min.css" />
+  <style>
+    html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    body {
+      margin: 0;
+      padding: 0;
+      background: #f6f8fa;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    }
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: #0c4a6e;
+      color: #fff;
+      padding: 0.65rem 1rem;
+      font-size: 0.9rem;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.75rem 1.25rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+    }
+    .topbar a { color: #e0f2fe; font-weight: 600; text-decoration: none; }
+    .topbar a:hover { text-decoration: underline; color: #fff; }
+    .topbar-sep { opacity: 0.65; }
+    .topbar-muted { opacity: 0.9; font-size: 0.82rem; }
+    .page-wrap {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 1.25rem 1rem 3rem;
+    }
+    .page {
+      box-sizing: border-box;
+      background: #fff;
+      border: 1px solid #d0d7de;
+      border-radius: 12px;
+      padding: 1.5rem 1.35rem 2.5rem;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+    }
+    @media (min-width: 768px) {
+      .page { padding: 2rem 2.25rem 3rem; }
+    }
+    .markdown-body { font-size: 1rem; line-height: 1.55; }
+    .markdown-body h1 { font-size: 1.75rem; border-bottom: 1px solid #d0d7de; padding-bottom: 0.3em; }
+    .markdown-body h2 { font-size: 1.35rem; margin-top: 1.5em; border-bottom: 1px solid #eee; padding-bottom: 0.2em; }
+    .markdown-body h3 { font-size: 1.12rem; margin-top: 1.15em; }
+    .markdown-body table { display: table; width: 100%; overflow-x: auto; }
+    .markdown-body table th, .markdown-body table td { padding: 8px 10px; }
+    .markdown-body pre:not(.mermaid) {
+      background: #f6f8fa;
+      border-radius: 8px;
+      font-size: 0.86rem;
+      padding: 12px 14px;
+      overflow-x: auto;
+    }
+    .markdown-body code { font-size: 0.9em; }
+    .mermaid-figure {
+      margin: 1.25rem 0;
+      padding: 12px 10px;
+      background: #fafbfc;
+      border: 1px solid #e1e4e8;
+      border-radius: 10px;
+    }
+    .mermaid { text-align: center; }
+    .mermaid svg { max-width: 100% !important; height: auto !important; }
+    .markdown-body blockquote { font-size: 0.95em; color: #57606a; }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <a href="../../index.html">← Inicio · GitHub Pages</a>
+    <span style="opacity:0.95;font-weight:700">Alcance (presupuesto)</span>
+    <span class="topbar-sep" aria-hidden="true">·</span>
+    <a href="gimadd-mentor-vision-ceo.html">Visión CEO</a>
+  </header>
+  <div class="page-wrap">
+    <article class="page markdown-body" id="doc">
+<h1>Gimadd Mentor — Alcance funcional, flujos y criterios técnicos para presupuesto</h1>
+<p><strong>Versión del documento:</strong> 1.1 (Mayo 2026)<br><strong>Producto:</strong> Gimadd Mentor — plataforma de entrenamiento y acompañamiento en <strong>pádel</strong> (jugadores ↔ entrenadores).<br><strong>Audiencia:</strong> empresas de desarrollo, integradores, arquitectos y responsables de producto que deban <strong>presupuestar</strong> implementación nativa, backend, seguridad y operación.</p>
+<hr>
+<h2>0. Cómo leer este documento</h2>
+<ol>
+<li><strong>Demo actual (HTML único):</strong> en el repositorio existe una <strong>plantilla funcional</strong> (<code>Gimadd_Mentor_APP.html</code>) que simula flujos con <code>localStorage</code>, seeds JSON embebidos y navegación tipo SPA. Sirve como <strong>especificación de comportamiento deseado</strong> a nivel UX y reglas de negocio <em>a alto nivel</em>.</li>
+<li><strong>Producto objetivo:</strong> aplicaciones <strong>nativas Android e iOS</strong>, <strong>cliente web o escritorio para el entrenador</strong> (prioridad: <strong>videoanálisis con vídeo grande</strong> y gestión masiva de clientes), backend multi-tenant, pagos con <strong>Stripe</strong>, calendario con <strong>Google Calendar</strong>, notificaciones, analítica y escalado a <strong>millones de usuarios</strong>.</li>
+<li>Donde diga <em>«en la demo»</em> se refiere al HTML; donde diga <em>«en producción»</em> se refiere al objetivo contractual.</li>
+</ol>
+<hr>
+<h2>1. Resumen ejecutivo</h2>
+<p>Gimadd Mentor conecta <strong>jugadores</strong> con <strong>entrenadores verificados</strong> para:</p>
+<ul>
+<li>Definir y seguir <strong>objetivos</strong> vinculados a un <strong>plan de acción</strong> (prácticas en <strong>diario de partidos</strong> y/o <strong>diario de clases en pista</strong>).</li>
+<li>Enviar y revisar <strong>vídeos</strong> con <strong>videoanálisis</strong> (marcas temporales, feedback textual y adjuntos).</li>
+<li>Contratar <strong>servicios</strong> del catálogo del entrenador (sesión, pack, suscripción, programas de acompañamiento).</li>
+<li>Gestionar <strong>agenda</strong> (clases presenciales), <strong>mensajería</strong>, <strong>CRM de clientes</strong>, <strong>finanzas</strong> (con integración de pagos) y <strong>marketplace público</strong> de entrenadores.</li>
+</ul>
+<p>La base actual debe ser <strong>modular y extensible</strong>: hoy pádel y flujo coach–jugador; mañana más deportes, automatizaciones, IA sobre vídeo, informes federativos, etc.</p>
+<h3>1.1 Plataformas objetivo</h3>
+<table>
+<thead>
+<tr>
+<th>Plataforma</th>
+<th>Rol principal</th>
+<th>Requisitos destacados</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Android (nativa)</strong></td>
+<td>Jugador y entrenador (o apps separadas por flavor)</td>
+<td>Offline-first parcial, cámara, subida de vídeo, push</td>
+</tr>
+<tr>
+<td><strong>iOS (nativa)</strong></td>
+<td>Igual</td>
+<td>AVFoundation, background upload, push (APNs)</td>
+</tr>
+<tr>
+<td><strong>Escritorio entrenador</strong></td>
+<td>Panel cómodo multi-cliente</td>
+<td><strong>Vídeo grande</strong>, teclado/ratío, multitarea, exportaciones</td>
+</tr>
+<tr>
+<td><strong>Web jugador (opcional)</strong></td>
+<td>Paridad con móvil</td>
+<td>Responsive, PWA opcional</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p><strong>Decisión de producto recomendada:</strong> misma cuenta puede iniciar sesión en móvil y escritorio; el <strong>workspace de videoanálisis</strong> en escritorio es una <strong>vista optimizada</strong> (timeline ancha, teclas rápidas, lista de marcas lateral).</p>
+</blockquote>
+<hr>
+<h2>2. Arquitectura lógica (visión objetivo)</h2>
+
+<figure class="mermaid-figure"><div id="mmd-0" class="mermaid"></div></figure>
+<p><strong>Nota de presupuesto:</strong> el diagrama es <strong>agnóstico de proveedor</strong>; equipos pueden mapear a Firebase, AWS, GCP o Azure siempre que cumplan requisitos de seguridad, RGPD y coste predecible a escala.</p>
+<hr>
+<h2>3. Actores, espacios de datos y permisos (RBAC)</h2>
+<h3>3.1 Actores</h3>
+<table>
+<thead>
+<tr>
+<th>Actor</th>
+<th>Descripción</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Jugador</strong></td>
+<td>Consume servicios, registra diario, objetivos, sube vídeos, chatea con su(s) entrenador(es).</td>
+</tr>
+<tr>
+<td><strong>Entrenador</strong></td>
+<td>Gestiona catálogo, CRM, seguimiento, videoanálisis, agenda, finanzas; puede crear/editar objetivos del jugador según permisos.</td>
+</tr>
+<tr>
+<td><strong>Admin plataforma</strong> (futuro)</td>
+<td>Verificación KYC entrenadores, moderación, soporte, métricas globales.</td>
+</tr>
+<tr>
+<td><strong>Visitante</strong></td>
+<td>Solo marketplace público y enlaces de invitación.</td>
+</tr>
+</tbody></table>
+<h3>3.2 Principio de multi-tenancy</h3>
+<ul>
+<li><strong>Tenant principal:</strong> <em>organización del entrenador</em> o <em>entrenador individual</em> (según modelo de negocio).</li>
+<li>Un <strong>jugador</strong> puede tener <strong>varios entrenadores</strong> (códigos de invitación distintos); cada relación tiene <strong>servicios contratados</strong>, <strong>hilos de chat</strong> y <strong>objetivos</strong> acotados a esa relación.</li>
+</ul>
+<h3>3.3 Matriz de permisos (resumen)</h3>
+<table>
+<thead>
+<tr>
+<th>Recurso</th>
+<th>Jugador</th>
+<th>Entrenador</th>
+<th>Notas producción</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Perfil propio</td>
+<td>CRUD</td>
+<td>CRUD</td>
+<td>Campos verificados solo por admin</td>
+</tr>
+<tr>
+<td>Objetivos del jugador</td>
+<td>Crear limitado; editar progreso según política</td>
+<td>CRUD completo; ajuste %</td>
+<td>En demo, coach ajusta % en más estados</td>
+</tr>
+<tr>
+<td>Diario (partidos/clases)</td>
+<td>CRUD propio</td>
+<td>Lectura + anotaciones opcionales</td>
+<td>Versionado de filas</td>
+</tr>
+<tr>
+<td>Vídeo / análisis publicado</td>
+<td>Ver, descargar según plan</td>
+<td>Crear borrador, publicar</td>
+<td>ACL por <code>playerId</code> + <code>coachId</code></td>
+</tr>
+<tr>
+<td>Catálogo servicios</td>
+<td>Ver activos</td>
+<td>CRUD + visibilidad</td>
+<td>Versiones de precio</td>
+</tr>
+<tr>
+<td>Contratación / pagos</td>
+<td>Iniciar checkout</td>
+<td>Ver estado, disputas</td>
+<td>Stripe customer / Connect</td>
+</tr>
+<tr>
+<td>CRM</td>
+<td>—</td>
+<td>CRUD clientes</td>
+<td>Datos personales — RGPD</td>
+</tr>
+<tr>
+<td>Finanzas</td>
+<td>Ver propios recibos (futuro)</td>
+<td>Wallet, payouts</td>
+<td>Stripe Connect</td>
+</tr>
+<tr>
+<td>Marketplace público</td>
+<td>Ver</td>
+<td>Perfil verificado</td>
+<td>Indexación SEO</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>4. Marketplace público (<code>marketplace-entrenadores.html</code>)</h2>
+<p><strong>Propósito:</strong> listado <strong>fuera de la app nativa</strong> (web estática o SSR futuro) de entrenadores verificados con búsqueda, filtros y <strong>perfil público</strong> (bio, servicios, valoraciones, código de invitación).</p>
+<h3>4.1 Flujo visitante → app</h3>
+
+<figure class="mermaid-figure"><div id="mmd-1" class="mermaid"></div></figure>
+<p><strong>En la demo:</strong> el código puede coincidir con el del CRM del entrenador; en producción debe ser <strong>código único rotativo</strong> o <strong>enlace firmado</strong> con caducidad.</p>
+<p><strong>Presupuesto:</strong> SEO, rate limiting en API de búsqueda, CDN, moderación de perfiles, imágenes optimizadas (WebP/AVIF), indexación multidioma si aplica.</p>
+<hr>
+<h2>5. Alta de entrenador y alta de jugador</h2>
+<h3>5.1 Nuevo entrenador (producción)</h3>
+<ol>
+<li>Registro (email/teléfono + verificación).</li>
+<li><strong>KYC / verificación</strong> (documento, titulación, seguro RC profesional según país).</li>
+<li>Creación de <strong>tenant</strong> y <strong>catálogo</strong> por defecto (seed de servicios predefinidos, todos desactivables).</li>
+<li>Generación de <strong>código de invitación</strong> y <strong>plantillas</strong> de mensajes (CRM).</li>
+</ol>
+
+<figure class="mermaid-figure"><div id="mmd-2" class="mermaid"></div></figure>
+<h3>5.2 Nuevo jugador</h3>
+<ol>
+<li>Registro jugador.</li>
+<li><strong>Vinculación</strong> con entrenador: código, QR o enlace invitación.</li>
+<li>Importación opcional de datos demo → en producción, <strong>lista vacía</strong> de objetivos y diario.</li>
+</ol>
+<h3>5.3 En la demo HTML</h3>
+<ul>
+<li><strong>Jugador:</strong> selector en home (<code>demo-juan</code>, etc.); lista de entrenadores en <code>localStorage</code> (<code>gimadd_jug_trainers_v1</code>).</li>
+<li><strong>Entrenador:</strong> flujo “hub” separado; CRM con clientes seed.</li>
+</ul>
+<p><strong>Presupuesto:</strong> flujos de <strong>invitación por club</strong> (varios jugadores), <strong>menores</strong> (consentimiento parental), <strong>borrado de cuenta</strong>.</p>
+<hr>
+<h2>6. Servicios: catálogo, contratación y desglose por tipo</h2>
+<h3>6.1 Modelo conceptual de un ítem de catálogo</h3>
+<p>Campos conceptuales (alineados con la demo y <code>gimadd-coach-servicios-seed</code>):</p>
+<table>
+<thead>
+<tr>
+<th>Campo</th>
+<th>Uso</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>id</code></td>
+<td>Identificador estable</td>
+</tr>
+<tr>
+<td><code>kind</code></td>
+<td><code>individual</code></td>
+</tr>
+<tr>
+<td><code>tag</code></td>
+<td>Etiqueta corta UI</td>
+</tr>
+<tr>
+<td><code>title</code> / <code>desc</code> / <code>meta</code></td>
+<td>Copy comercial; <code>meta</code> suele llevar <strong>precio individual / pareja</strong> y condiciones</td>
+</tr>
+<tr>
+<td><code>visible</code></td>
+<td>Si aparece al jugador</td>
+</tr>
+<tr>
+<td><code>sort</code></td>
+<td>Orden en UI</td>
+</tr>
+</tbody></table>
+<p><strong>Agrupación en UI jugador (demo):</strong> “Sesiones y análisis”, “Packs”, “Suscripciones”, “Programas”.</p>
+<h3>6.2 Servicios predefinidos (semilla actual)</h3>
+<blockquote>
+<p>En producción son <strong>plantillas editables</strong>; el entrenador puede renombrar, ocultar o duplicar.</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Tipo (<code>kind</code>)</th>
+<th>Título (resumen)</th>
+<th>Precio / condiciones en <code>meta</code> (demo)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>cat-video</code></td>
+<td>individual</td>
+<td>Videoanálisis</td>
+<td>individual 45 € · parejas 72 € · entrega ~48 h</td>
+</tr>
+<tr>
+<td><code>cat-pista</code></td>
+<td>individual</td>
+<td>Mentoría en pista</td>
+<td>individual 55 € · parejas 90 € · 60 min</td>
+</tr>
+<tr>
+<td><code>cat-pack</code></td>
+<td>pack</td>
+<td>Pack intensivo — pista + videoanálisis</td>
+<td>individual 420 € · parejas 360 € · validez 3 meses</td>
+</tr>
+<tr>
+<td><code>cat-mensual</code></td>
+<td>mensual</td>
+<td>Plan Pro mensual</td>
+<td>individual 149 €/mes · parejas 199 €/mes</td>
+</tr>
+<tr>
+<td><code>cat-acomp-3</code></td>
+<td>acompañamiento</td>
+<td>Impulso Momentum — 90 días</td>
+<td>individual 429 € (3 meses) · parejas 589 €</td>
+</tr>
+<tr>
+<td><code>cat-acomp-6</code></td>
+<td>acompañamiento</td>
+<td>Progresión Semestral</td>
+<td>individual 789 € (6 meses) · parejas 1.099 €</td>
+</tr>
+<tr>
+<td><code>cat-acomp-12</code></td>
+<td>acompañamiento</td>
+<td>Legado Anual — 12 meses</td>
+<td>individual 1.349 € · parejas 1.849 €</td>
+</tr>
+</tbody></table>
+<p><strong>Características a presupuestar por tipo:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Tipo</th>
+<th>Qué implica contratarlo (negocio + sistema)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>individual</strong></td>
+<td>Compra o reserva puntual; puede abrir flujo <strong>clase presencial</strong> (solicitud sin fecha → coach programa). Videoanálisis: <strong>cupos de entrega</strong>, SLA, cola de revisión.</td>
+</tr>
+<tr>
+<td><strong>pack</strong></td>
+<td>Pago único; <strong>bolsa de cupos</strong> (pista + vídeo) con <strong>caducidad</strong>; decremento atómico al consumir; informes de uso.</td>
+</tr>
+<tr>
+<td><strong>mensual</strong></td>
+<td><strong>Suscripción</strong> recurrente; renovación mensual; cancelación prorrateada según política; límites de uso; webhooks Stripe <code>invoice.paid</code> / <code>customer.subscription.deleted</code>.</td>
+</tr>
+<tr>
+<td><strong>acompanamiento</strong></td>
+<td>Proyecto largo; hitos; sin “cupos rígidos” en copy — en sistema igualmente requieren <strong>medición de uso</strong> y límites fair-use para abuso.</td>
+</tr>
+</tbody></table>
+<h3>6.3 Cómo lo ve el jugador vs el entrenador</h3>
+
+<figure class="mermaid-figure"><div id="mmd-3" class="mermaid"></div></figure>
+<p><strong>En la demo:</strong> checkout simulado; en producción <strong>Stripe Checkout + Customer Portal</strong> y tabla <code>entitlements</code>.</p>
+<h3>6.4 Desglose operativo por ítem de catálogo (presupuesto funcional)</h3>
+<p>Cada fila describe <strong>qué debe ocurrir en sistema</strong> desde el clic de “Contratar” hasta el <strong>entitlement</strong> activo y los <strong>jobs</strong> posteriores (recordatorios, consumo de cupos, renovaciones).</p>
+<table>
+<thead>
+<tr>
+<th>ID catálogo</th>
+<th>Pasos jugador</th>
+<th>Pasos sistema tras pago OK</th>
+<th>Entitlement / consumo</th>
+<th>Entregables a estimar</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>cat-video</strong></td>
+<td>Elegir individual o pareja → checkout → confirmación</td>
+<td>Crear <code>purchase</code> + <code>entitlement</code> tipo análisis; cola “pendiente de material”; SLA countdown</td>
+<td>Cupo de <strong>1 entrega</strong> de análisis (o N si el coach vende packs de vídeos en otro ítem)</td>
+<td>Notificación coach, cola videoanálisis, plantilla email al jugador con instrucciones de grabación</td>
+</tr>
+<tr>
+<td><strong>cat-pista</strong></td>
+<td>Igual</td>
+<td>Crear reserva en estado <strong>pendiente de fecha</strong> o con slot si ya existe; vincular a agenda</td>
+<td>1 sesión presencial “consumible” al marcar <code>completada</code> o según política</td>
+<td>Estados de reserva, sync calendario, mensajería automática si sin fecha</td>
+</tr>
+<tr>
+<td><strong>cat-pack</strong></td>
+<td>Checkout único</td>
+<td>Bolsa de cupos (pista + vídeo según copy); <code>expires_at</code></td>
+<td>Decremento atómico por consumo; aviso antes de caducidad</td>
+<td>Informe uso, bloqueo si caducado</td>
+</tr>
+<tr>
+<td><strong>cat-mensual</strong></td>
+<td>Suscripción</td>
+<td><code>Subscription</code> Stripe; webhook <code>invoice.paid</code> renueva cupos mensuales</td>
+<td>Activo mientras sub activa; límites en ledger</td>
+<td>Portal cliente, dunning, proration</td>
+</tr>
+<tr>
+<td><strong>cat-acomp-3/6/12</strong></td>
+<td>Pago programa</td>
+<td>Proyecto largo; hitos opcionales; mismo motor de objetivos/plan</td>
+<td>Fair-use + límites de vídeo/pista según contrato</td>
+<td>Informes de progreso, renovación al final</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>7. Objetivos y plan de acción</h2>
+<h3>7.1 Estados del objetivo</h3>
+<table>
+<thead>
+<tr>
+<th><code>estado</code></th>
+<th>Significado</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>activo</code></td>
+<td>En curso.</td>
+</tr>
+<tr>
+<td><code>pendiente_revision</code></td>
+<td>Cerró prácticas requeridas en diario (u otra regla); espera <strong>videoanálisis</strong> / decisión del coach.</td>
+</tr>
+<tr>
+<td><code>completado</code></td>
+<td>Cerrado por coach o por flujo automático según reglas.</td>
+</tr>
+</tbody></table>
+<p><strong>Bandera <code>enPlanAccion</code>:</strong> si es <code>true</code> y está <code>activo</code>, el objetivo cuenta en sub-pestañas “Plan para partidos / Plan para clase”. Si <strong>todos</strong> los del plan cumplen prácticas → pasan a revisión según reglas de la demo (<code>recalcGoalsFromMatches</code>).</p>
+<h3>7.2 Objetivos dentro del plan (agrupación UI)</h3>
+
+<figure class="mermaid-figure"><div id="mmd-4" class="mermaid"></div></figure>
+<h3>7.3 Progreso %</h3>
+<ul>
+<li>En producción: <strong>fuente de verdad</strong> puede ser coach-only o mixta; la demo permite ajuste por coach en varios estados para UX.</li>
+<li>Auditar cada cambio de % (quién, cuándo, objetivo, valor anterior).</li>
+</ul>
+<h3>7.4 Máquina de estados (objetivo)</h3>
+
+<figure class="mermaid-figure"><div id="mmd-5" class="mermaid"></div></figure>
+<p><strong>Regla crítica (alineada con demo):</strong> el paso colectivo a <code>pendiente_revision</code> es cuando <strong>todos</strong> los objetivos con <code>enPlanAccion</code> y <code>estado === activo</code> cumplen sus prácticas en diario; hasta entonces, un objetivo puede mostrar prácticas completas (✅) pero <strong>no</strong> dispara revisión en solitario.</p>
+<hr>
+<h2>8. Diario de partidos y diario de clases</h2>
+<h3>8.1 Partidos</h3>
+<ul>
+<li>Campos típicos: fecha, resultado, sets, sensaciones, notas.</li>
+<li><code>**planAccion</code>**: lista de vínculos a objetivos del plan con flags <code>practicado</code> y texto de sensaciones.</li>
+<li><strong>Recálculo:</strong> al guardar partido, el sistema cuenta prácticas efectivas por objetivo y puede promover a <code>pendiente_revision</code> si alcanza <code>partidosMeta</code> (con offset <code>practicasUmbralOffset</code> para reactivaciones).</li>
+</ul>
+<h3>8.2 Clases en pista</h3>
+<ul>
+<li>Registro separado del de partidos; alimenta objetivos tipo <code>**clase</code>** en plan.</li>
+<li>En producción: posible integración con <strong>wearables</strong> o importación CSV club (futuro).</li>
+</ul>
+<h3>8.3 Comentarios del plan dentro del diario y paso a “pendiente de revisión”</h3>
+
+<figure class="mermaid-figure"><div id="mmd-6" class="mermaid"></div></figure>
+<p><strong>Campos relacionados en demo:</strong> <code>pendienteRevisionDesde</code>, <code>jugadorSubioVideoTrasRevision</code>.</p>
+<hr>
+<h2>9. Video: grabación, subida y videoanálisis</h2>
+<h3>9.1 Grabación / subida (jugador)</h3>
+<p>Flujo conceptual:</p>
+<ol>
+<li>Seleccionar archivo o grabar in-app.</li>
+<li><strong>Chunked upload</strong> a storage firmado; barra de progreso; reintentos.</li>
+<li>Virus scan + transcodificación (HLS/MP4 múltiples bitrate).</li>
+<li>Notificación al entrenador.</li>
+</ol>
+<p><strong>En la demo:</strong> no hay servidor; mensaje simulado.</p>
+<h3>9.2 Videoanálisis (entrenador) — opciones a cubrir</h3>
+<table>
+<thead>
+<tr>
+<th>Funcionalidad</th>
+<th>Descripción</th>
+<th>Prioridad escritorio</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Reproductor</td>
+<td>Play/pausa, velocidad, frame-step (futuro)</td>
+<td>Alta</td>
+</tr>
+<tr>
+<td>Marcas temporales</td>
+<td>Texto por instante <code>t</code></td>
+<td>Alta</td>
+</tr>
+<tr>
+<td>Objetivos desde revisión</td>
+<td>Crear objetivo y marcar “en plan”</td>
+<td>Alta</td>
+</tr>
+<tr>
+<td>Feedback</td>
+<td>Nota global + adjuntos vídeo/audio/imagen</td>
+<td>Media</td>
+</tr>
+<tr>
+<td>Publicación</td>
+<td>Genera “Vídeo № NNN”, empaqueta marcas y notifica jugador</td>
+<td>Alta</td>
+</tr>
+<tr>
+<td>Historial</td>
+<td>Lista por jugador; jugador elige análisis</td>
+<td>Alta</td>
+</tr>
+<tr>
+<td>Vinculación plan</td>
+<td>Objetivos del plan asociados al número de vídeo publicado</td>
+<td>Media</td>
+</tr>
+</tbody></table>
+<h3>9.3 Inventario de controles UI (jugador — análisis publicado)</h3>
+<p>Inspirado en la demo (<code>view-jug-videoanalisis</code>): <strong>historial</strong> de análisis; reproductor con <strong>pantalla completa</strong>; transporte <strong>Play</strong>; saltos <strong>−5 s / +5 s</strong>; <strong>barra de seek</strong>; <strong>velocidad</strong> 0,75× / 1× / 1,25×; lista <strong>Marcas y comentarios</strong>; bloque <strong>Objetivos del plan en este vídeo</strong>; <strong>Feedback</strong> del coach (nota + rejilla de adjuntos imagen/vídeo/audio).</p>
+<h3>9.4 Inventario coach (consola de revisión)</h3>
+<p>Además de lo anterior: <strong>añadir marca</strong> en tiempo actual; <strong>texto por marca</strong>; <strong>objetivos desde revisión</strong> (crear y marcar <code>enPlanAccion</code>); <strong>nota global</strong>; <strong>adjuntos</strong>; <strong>publicar</strong> análisis; en escritorio: <strong>atajos de teclado</strong> (fase 2), <strong>vista dual</strong> (cámara + campo), timeline ancha.</p>
+<p><strong>Escritorio coach:</strong> layout tipo “three column” — vídeo central 60–70% ancho, marcas y notas laterales, lista de clientes colapsable.</p>
+
+<figure class="mermaid-figure"><div id="mmd-7" class="mermaid"></div></figure>
+<hr>
+<h2>10. Mensajería jugador ↔ entrenador</h2>
+<ul>
+<li><strong>Modelo:</strong> hilo por pareja <code>(coachId, playerId)</code>; mensajes append-only con <code>createdAt</code>.</li>
+<li><strong>Entrega:</strong> WebSocket o polling eficiente; push cuando app en background.</li>
+<li><strong>Moderación (futuro):</strong> reportar, bloqueo, retención.</li>
+</ul>
+<p><strong>En la demo:</strong> mensajes en memoria + <code>localStorage</code> / seed.</p>
+<hr>
+<h2>11. Seguimiento de un jugador (panel entrenador)</h2>
+<p>Vistas típicas (como en la demo):</p>
+<ol>
+<li><strong>Perfil</strong> — datos CRM + ficha.</li>
+<li><strong>Videoanálisis</strong> — consola de revisión + cola/historial.</li>
+<li><strong>Objetivos</strong> — espejo de las listas del jugador con acciones de coach.</li>
+<li><strong>Diario</strong> — lectura partidos/clases.</li>
+<li><strong>Agenda del jugador</strong> — reservas presenciales ligadas.</li>
+</ol>
+<p><strong>Objetivo de UX:</strong> cero “saltos” innecesarios; deep links desde alertas.</p>
+<hr>
+<h2>12. CRM de clientes (entrenador)</h2>
+<h3>12.1 Propósito y leyenda (como en la demo)</h3>
+<ul>
+<li><strong>Copy:</strong> priorizar a quién atender: urgentes, clientes nuevos, seguimiento activo; leads sin servicio y reactivación en un solo listado.</li>
+<li><strong>Leyenda visual:</strong> 🔴 Necesita acción · 🟡 Nuevo / reciente · 🟢 Seguimiento activo (la prioridad real se calcula en servidor; en demo es heurística local).</li>
+</ul>
+<h3>12.2 Entidades y campos (concepto)</h3>
+<ul>
+<li><strong>Cliente:</strong> <code>nombre</code>, teléfono, email, notas, <strong>tipo de servicio</strong> (<code>tipoServicio</code> / CRM), flag <strong>servicio activo</strong> vs pausa, <strong>objetivo principal</strong> (texto resumen), <strong>progreso plan</strong> (texto o agregado live si hay <code>linkedProfile</code>), <strong>última actividad</strong> (texto), <strong>alta CRM</strong> (<code>creadoEn</code>), <code>**linkedProfile</code>** opcional (id jugador en app), <code>**esNuevo**</code>.</li>
+<li><strong>Futuro:</strong> timeline de interacciones (llamada, email, WhatsApp, tarea), etiquetas, valor estimado, riesgo de churn.</li>
+</ul>
+<h3>12.3 Barra de búsqueda y filtros (presupuesto explícito)</h3>
+<table>
+<thead>
+<tr>
+<th>Control</th>
+<th>Valores / comportamiento</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Buscar</strong> (<code>crmSearchInput</code>)</td>
+<td>Texto libre sobre: nombre, teléfono, email, notas, objetivo principal, campos visibles en preview</td>
+</tr>
+<tr>
+<td><strong>Prioridad</strong></td>
+<td>Todas · Necesita acción (0) · Nuevo/reciente (1) · Seguimiento activo (2)</td>
+</tr>
+<tr>
+<td><strong>Tipo servicio</strong></td>
+<td>Desplegable poblado dinámicamente con los tipos presentes en clientes</td>
+</tr>
+<tr>
+<td><strong>Estado servicio</strong></td>
+<td>Cualquiera · Activo (contratado) · Inactivo/pausa · Lead (sin servicio)</td>
+</tr>
+<tr>
+<td><strong>App jugador</strong></td>
+<td>Cualquiera · Con perfil en app · Sin perfil en app</td>
+</tr>
+<tr>
+<td><strong>Alta</strong></td>
+<td>Todas · Marcado como nuevo · No nuevo</td>
+</tr>
+<tr>
+<td><strong>Contador resultados</strong></td>
+<td>“N clientes” o “Mostrando X de N” si hay filtro activo</td>
+</tr>
+</tbody></table>
+<h3>12.4 Alta de cliente (modal “Añadir cliente”)</h3>
+<p>Tres pestañas (tablist):</p>
+<ol>
+<li><strong>Manual:</strong> formulario nombre (obligatorio), teléfono, email, <strong>tipo de servicio inicial</strong> (opciones: sin servicio/lead, mentoría individual, mentoría grupal, videoanálisis, pack, mensual, programas 3/6/12 meses) → guardar en CRM.</li>
+<li><strong>Link genérico:</strong> URL tipo <code>https://gimadd.app/unirse?entrenador={id}</code> + botón copiar (en producción: token firmado o código de un solo uso).</li>
+<li><strong>Tu código:</strong> código corto para flujo jugador “Añadir con código” + copiar.</li>
+</ol>
+<h3>12.5 Tarjeta de cliente (acordeón)</h3>
+<ul>
+<li><strong>Cabecera:</strong> avatar (foto o iniciales), nombre, <strong>badge</strong> de prioridad, <strong>preview</strong> una línea: texto servicio + actividad reciente.</li>
+<li><strong>Cuerpo expandido:</strong> filas <strong>Servicio</strong>, <strong>Actividad reciente</strong>, <strong>Objetivo principal (plan)</strong>, <strong>Progreso plan</strong>, <strong>Alta (CRM)</strong> si existe.</li>
+<li><strong>Fila de CTAs (<code>crm-cta-row</code>):</strong><ul>
+<li>Ver perfil</li>
+<li><strong>Analizar vídeo</strong> (primario)</li>
+<li>Enviar mensaje</li>
+<li>Ver servicios activos</li>
+<li><strong>Seguimiento completo</strong> (solo si el cliente está vinculado al perfil demo con datos live; en producción: si existe <code>playerId</code> vinculado)</li>
+</ul>
+</li>
+</ul>
+<h3>12.6 Ordenación</h3>
+<p>Lista ordenada por <strong>tier de prioridad</strong> (ascendente: rojo primero) y luego <strong>nombre</strong> (locale), de modo que el coach ve arriba lo que quema.</p>
+<hr>
+<h2>13. Finanzas (entrenador) y Stripe</h2>
+<p><strong>En la demo:</strong> billetera con tabs Resumen / Pagos / Facturas / Estadísticas; acciones “enviar email” y “automatizar” simuladas.</p>
+<p><strong>En producción (Stripe):</strong></p>
+<table>
+<thead>
+<tr>
+<th>Componente</th>
+<th>Uso</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Stripe Connect</strong></td>
+<td>Payouts a entrenadores; split opcional plataforma</td>
+</tr>
+<tr>
+<td><strong>Checkout / Elements</strong></td>
+<td>Cobro servicios y suscripciones</td>
+</tr>
+<tr>
+<td><strong>Billing Portal</strong></td>
+<td>Gestión método pago y cancelaciones</td>
+</tr>
+<tr>
+<td><strong>Invoices + Tax</strong></td>
+<td>IVA/VAT según país entrenador</td>
+</tr>
+<tr>
+<td><strong>Webhooks</strong></td>
+<td>Idempotencia obligatoria; tabla ledger interna</td>
+</tr>
+</tbody></table>
+
+<figure class="mermaid-figure"><div id="mmd-8" class="mermaid"></div></figure>
+<h3>13.1 Secuencia recomendada — webhooks Stripe (idempotencia)</h3>
+
+<figure class="mermaid-figure"><div id="mmd-9" class="mermaid"></div></figure>
+<p><strong>Requisito de presupuesto:</strong> tabla <code>stripe_events_processed</code>, workers asíncronos, reintentos con exponential backoff, alerta si el mismo <code>invoice</code> falla N veces.</p>
+<h3>13.2 Tabs “Mi billetera” (demo como checklist UI)</h3>
+<table>
+<thead>
+<tr>
+<th>Tab</th>
+<th>Contenido esperado en producción</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Resumen</strong></td>
+<td>Saldo disponible, retenciones, próximo payout</td>
+</tr>
+<tr>
+<td><strong>Pagos</strong></td>
+<td>Lista cobros, estado, jugador, servicio</td>
+</tr>
+<tr>
+<td><strong>Facturas</strong></td>
+<td>PDF generados / descarga</td>
+</tr>
+<tr>
+<td><strong>Estadísticas</strong></td>
+<td>Serie temporal, ARPU, mix servicios</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>14. Agenda y Google Calendar</h2>
+<p><strong>Flujo deseado:</strong></p>
+<ol>
+<li>Jugador solicita clase (sin fecha) o coach propone slot.</li>
+<li>Al confirmar fecha → evento <strong>Google Calendar</strong> en calendario del coach (y opcionalmente jugador).</li>
+<li>Cambios (reprogramación) propagados vía API; conflictos detectados.</li>
+</ol>
+<p><strong>En la demo:</strong> mock “embed” y estado en <code>presencialBookings</code>.</p>
+<p><strong>Presupuesto:</strong> OAuth Google por entrenador, refresh tokens cifrados, sync bidireccional (opcional fase 2), manejo de zonas horarias.</p>
+<h3>14.1 Secuencia — crear / actualizar / cancelar evento</h3>
+
+<figure class="mermaid-figure"><div id="mmd-10" class="mermaid"></div></figure>
+<p><strong>Errores a presupuestar:</strong> token revocado (re-auth UX), conflicto de slot, rate limit Google, divergencia si el coach edita el evento a mano en Google (sync inbound fase 2).</p>
+<hr>
+<h2>15. Alertas y acciones urgentes</h2>
+<p><strong>Fuentes típicas:</strong></p>
+<ul>
+<li>Objetivo en <code>pendiente_revision</code> sin vídeo tras X días (demo: 7 días).</li>
+<li>Reserva pendiente de pago / confirmación.</li>
+<li>Mensaje no leído prioritario (coach).</li>
+<li>Suscripción próxima a expirar / fallo de pago.</li>
+</ul>
+<p><strong>Entrega:</strong> push + inbox in-app + digest email configurable.</p>
+
+<figure class="mermaid-figure"><div id="mmd-11" class="mermaid"></div></figure>
+<h3>15.1 Tipos de tarjeta “urgente” en la demo (referencia de implementación)</h3>
+<table>
+<thead>
+<tr>
+<th>Rol</th>
+<th><code>kind</code> / origen</th>
+<th>Cuándo aparece</th>
+<th>Acción al pulsar</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Jugador</strong></td>
+<td><code>video-plan</code></td>
+<td>Plan en <code>pendiente_revision</code></td>
+<td>Sin vídeo → <strong>Grabar</strong>; con vídeo → <strong>Objetivos / revisión</strong></td>
+</tr>
+<tr>
+<td><strong>Jugador</strong></td>
+<td><code>repro</code></td>
+<td>Reserva <code>solicitud_reprogramacion</code></td>
+<td><strong>Mensajes</strong></td>
+</tr>
+<tr>
+<td><strong>Jugador</strong></td>
+<td><code>fecha</code></td>
+<td>Sin fecha de sesión</td>
+<td><strong>Mensajes</strong></td>
+</tr>
+<tr>
+<td><strong>Jugador</strong></td>
+<td><code>diary</code> / <code>diary-group</code></td>
+<td>Clases a anotar en diario</td>
+<td><strong>Diario</strong></td>
+</tr>
+<tr>
+<td><strong>Entrenador</strong></td>
+<td><code>crm</code></td>
+<td>Cliente con prioridad tier 0 (necesita acción)</td>
+<td><strong>Seguimiento</strong> perfil o abrir <strong>CRM</strong></td>
+</tr>
+<tr>
+<td><strong>Entrenador</strong></td>
+<td><code>repro</code></td>
+<td>Misma reserva que jugador pero copy orientada a coach</td>
+<td><strong>Seguimiento</strong></td>
+</tr>
+<tr>
+<td><strong>Entrenador</strong></td>
+<td><code>fecha</code></td>
+<td>Reserva sin fecha (nombre jugador)</td>
+<td><strong>Seguimiento</strong></td>
+</tr>
+</tbody></table>
+<p>En producción, estas mismas categorías deben mapearse a <strong>eventos de dominio</strong> y <strong>plantillas de notificación</strong> reutilizables.</p>
+<hr>
+<h2>16. Pantalla de inicio — jugador</h2>
+<p>La home del jugador (<code>renderJugadorHubDashboard</code>) se compone de <strong>tres tarjetas principales</strong> más cabecera y <strong>acciones rápidas</strong> del shell inferior (navegación global).</p>
+<h3>16.1 Cabecera</h3>
+<table>
+<thead>
+<tr>
+<th>Elemento</th>
+<th>Contenido</th>
+<th>Por qué</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Atrás / contexto</strong></td>
+<td>Vuelve al selector de app</td>
+<td>Multi-demo; en prod puede ocultarse</td>
+</tr>
+<tr>
+<td><strong>Avatar + saludo + sub</strong></td>
+<td>Nombre jugador, línea secundaria (club / coach)</td>
+<td>Identidad y contexto emocional</td>
+</tr>
+<tr>
+<td><strong>Ajustes → Perfil</strong></td>
+<td>Acceso a ficha</td>
+<td>Autogestión datos y preferencias</td>
+</tr>
+</tbody></table>
+<h3>16.2 Tarjeta “Tu progreso” (<code>jugHubProgresoBody</code>)</h3>
+<table>
+<thead>
+<tr>
+<th>Estado UI</th>
+<th>Qué muestra</th>
+<th>Por qué</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Sin objetivos en plan activo</strong> y <strong>sin</strong> pendientes de revisión</td>
+<td>Empty “Sin foco activo en el plan” + chip sesiones demo + CTA <strong>Ir a objetivos</strong></td>
+<td>Evita pantalla vacía; guía al plan</td>
+</tr>
+<tr>
+<td><strong>Sin activos pero con</strong> <code>pendiente_revision</code></td>
+<td>Bloque “Completado — pendiente de revisión” + CTA <strong>Abrir bloque en revisión</strong></td>
+<td>Cierra el loop prácticas → vídeo</td>
+</tr>
+<tr>
+<td><strong>Con plan activo</strong></td>
+<td>“Tu foco ahora”: título objetivo, <strong>%</strong> barra, texto motivacional (según si cumplió prácticas, si todo el plan cumplió, etc.), ratio <strong>prácticas / meta</strong>, chip sesiones, CTA <strong>Abrir plan de acción</strong></td>
+<td>Foco único reduce ansiedad; el % es señal visual rápida</td>
+</tr>
+</tbody></table>
+<h3>16.3 Tarjeta “Acciones urgentes” (<code>jugHubUrgentesBody</code>)</h3>
+<p>Generación dinámica (sin duplicar claves):</p>
+<table>
+<thead>
+<tr>
+<th>Tipo (<code>kind</code>)</th>
+<th>Dispara</th>
+<th>CTA navegación</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>video-plan</strong> (sin vídeo)</td>
+<td>Plan en revisión y <code>jugadorSubioVideoTrasRevision</code> false</td>
+<td>Ir a <strong>Grabar/subir</strong></td>
+</tr>
+<tr>
+<td><strong>video-plan</strong> (vídeo OK)</td>
+<td>Mismo plan pero vídeo confirmado</td>
+<td><strong>Objetivos → plan → revisión</strong></td>
+</tr>
+<tr>
+<td><strong>repro</strong></td>
+<td>Reserva en <code>solicitud_reprogramacion</code></td>
+<td><strong>Mensajes</strong></td>
+</tr>
+<tr>
+<td><strong>fecha</strong></td>
+<td>Reserva sin fecha cerrada</td>
+<td><strong>Mensajes</strong></td>
+</tr>
+<tr>
+<td><strong>diary</strong> / <strong>diary-group</strong></td>
+<td>Clases completadas sin nota en diario</td>
+<td><strong>Diario</strong></td>
+</tr>
+<tr>
+<td><strong>Ninguna</strong></td>
+<td>Empty “Todo al día”</td>
+<td>Refuerzo positivo</td>
+</tr>
+</tbody></table>
+<h3>16.4 Tarjeta “Clases y mentorías” (<code>jugHubClasesBody</code>)</h3>
+<ul>
+<li>Hasta <strong>4</strong> próximas reservas no canceladas ni completadas: fecha/hora, <strong>estado</strong> (píldora coloreada), <strong>pago</strong>.</li>
+<li>Footer: <strong>Reservar clase</strong> (servicios) + <strong>Ver toda la agenda</strong>.</li>
+<li>Empty: “Sin clases a la vista” + CTA servicios.</li>
+</ul>
+<h3>16.5 Acciones rápidas (footer jugador)</h3>
+<p>Incluyen al menos: <strong>Objetivos</strong>, <strong>Diario</strong>, <strong>Grabar vídeo</strong>, <strong>Servicios</strong> / entrenadores — objetivo: <strong>cuatro taps máximo</strong> a la acción diaria más frecuente.</p>
+<hr>
+<h2>17. Pantalla de inicio — entrenador (hub)</h2>
+<h3>17.1 Cabecera hub</h3>
+<table>
+<thead>
+<tr>
+<th>Elemento</th>
+<th>Contenido</th>
+<th>Por qué</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Avatar + saludo</strong></td>
+<td>Nombre coach, ubicación / marca</td>
+<td>Contexto operativo</td>
+</tr>
+<tr>
+<td><strong>Perfil</strong></td>
+<td>Acceso a perfil entrenador</td>
+<td>Editar oferta y datos públicos</td>
+</tr>
+</tbody></table>
+<h3>17.2 Acciones rápidas (fila iconos)</h3>
+<table>
+<thead>
+<tr>
+<th>Botón</th>
+<th>Destino</th>
+<th>Por qué</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Clientes</strong></td>
+<td>CRM</td>
+<td>Núcleo del día: lista priorizada</td>
+</tr>
+<tr>
+<td><strong>Finanzas</strong></td>
+<td>Billetera</td>
+<td>Cash-flow visible</td>
+</tr>
+<tr>
+<td><strong>Cupones</strong></td>
+<td>(placeholder demo)</td>
+<td>Promociones adquisición</td>
+</tr>
+</tbody></table>
+<h3>17.3 Tarjeta “Agenda de hoy” (<code>coachHubAgendaHoy</code>)</h3>
+<ul>
+<li>Lista de <strong>clases presenciales del día</strong> (hora, jugador, estado).</li>
+<li>Empty: copy + <strong>Ver agenda completa</strong>.</li>
+<li>Clic fila: resuelve <code>playerId</code> y abre <strong>Seguimiento → agenda del jugador</strong> o agenda global.</li>
+</ul>
+<h3>17.4 Tarjeta “Acciones urgentes” (<code>coachHubUrgentes</code>)</h3>
+<p>Heurística demo (producción: misma taxonomía con datos servidor): revisiones de plan sin vídeo del jugador, solicitudes reprogramación, cobros pendientes simulados, etc. Footer <strong>Abrir clientes</strong>.</p>
+<h3>17.5 Tarjeta “Resumen financiero” (<code>coachHubFinanzas</code>)</h3>
+<ul>
+<li>Mini KPIs (pendiente de cobro, mes, etc. según seed).</li>
+<li>Footer <strong>Abrir finanzas</strong>.</li>
+</ul>
+<hr>
+<h2>18. Permisos detallados y límites</h2>
+<h3>18.1 Jugador — puede / no puede (producción recomendada)</h3>
+<table>
+<thead>
+<tr>
+<th>Puede</th>
+<th>No puede (por defecto)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Ver y crear registros de diario propios</td>
+<td>Ver diarios de otros jugadores</td>
+</tr>
+<tr>
+<td>Ver análisis publicados de su coach</td>
+<td>Ver borradores de análisis</td>
+</tr>
+<tr>
+<td>Iniciar checkout de servicios visibles</td>
+<td>Editar catálogo coach</td>
+</tr>
+<tr>
+<td>Enviar mensajes en su hilo</td>
+<td>Enviar mensajes masivos</td>
+</tr>
+<tr>
+<td>Proponer objetivos (si política)</td>
+<td>Aprobar videoanálisis publicado</td>
+</tr>
+</tbody></table>
+<h3>18.2 Entrenador — puede / no puede</h3>
+<table>
+<thead>
+<tr>
+<th>Puede</th>
+<th>No puede (por defecto)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Gestionar clientes vinculados</td>
+<td>Acceder a jugadores sin relación</td>
+</tr>
+<tr>
+<td>Publicar videoanálisis</td>
+<td>Borrar historial legal de facturación sin trazabilidad</td>
+</tr>
+<tr>
+<td>Ajustar objetivos según política</td>
+<td>Suplantar identidad jugador</td>
+</tr>
+</tbody></table>
+<h3>18.3 Auditoría</h3>
+<p>Registrar: logins, publicaciones, cambios de dinero, exportaciones CRM, descargas de vídeo.</p>
+<hr>
+<h2>19. Seguridad (mínimos para una app de estas características)</h2>
+<h3>19.1 Autenticación y sesiones</h3>
+<ul>
+<li>MFA opcional para coaches; detección de dispositivos nuevos.</li>
+<li>Refresh tokens rotativos; revocación remota.</li>
+</ul>
+<h3>19.2 Datos personales y RGPD</h3>
+<ul>
+<li>Base legal (contrato, consentimiento marketing aparte).</li>
+<li>Derecho acceso/portabilidad/borrado con <strong>ventanas legales</strong> para facturación.</li>
+<li>Minimización: CRM no duplica datos innecesarios.</li>
+</ul>
+<h3>19.3 Vídeo y contenido sensible</h3>
+<ul>
+<li>URLs firmadas con TTL corto.</li>
+<li>Cifrado en reposo en bucket (SSE-KMS o equivalente).</li>
+<li>Política de retención (borrado automático tras N meses si contrato lo permite).</li>
+<li><strong>Moderación CSAM:</strong> integración con APIs de reporting del proveedor cloud (obligatorio en muchas jurisdicciones).</li>
+</ul>
+<h3>19.4 API</h3>
+<ul>
+<li>OAuth2 / JWT; scopes por rol.</li>
+<li>Rate limiting, idempotency keys en POST críticos.</li>
+<li>Validación estricta de <code>coachId</code>/<code>playerId</code> en cada query.</li>
+</ul>
+<h3>19.5 Infra</h3>
+<ul>
+<li>WAF, CSP headers en web, cert pinning opcional móvil.</li>
+<li>Pen-tests anuales + dependabot.</li>
+</ul>
+<h3>19.6 Amenazas adicionales (checklist breve)</h3>
+<ul>
+<li><strong>Abuso de registro / SMS / email:</strong> CAPTCHA, límites por IP, proveedor anti-fraude en checkout.</li>
+<li><strong>Robo de cuenta:</strong> alerta login nuevo dispositivo, lista sesiones activas, cerrar sesión remota.</li>
+<li><strong>Insider:</strong> mínimo privilegio en consola admin; logs inmutables (WORM o SIEM).</li>
+<li><strong>Backup:</strong> cifrado en tránsito y reposo; pruebas de restauración trimestrales.</li>
+<li><strong>Dependencias:</strong> SBOM y política de actualización críticos en 24–72 h.</li>
+</ul>
+<hr>
+<h2>20. Escalabilidad a millones de usuarios</h2>
+<table>
+<thead>
+<tr>
+<th>Capa</th>
+<th>Estrategia</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Lectura</td>
+<td>Réplicas BD, cache Redis, CDN para assets</td>
+</tr>
+<tr>
+<td>Escritura</td>
+<td>Particionado por <code>coach_id</code> o shard geográfico</td>
+</tr>
+<tr>
+<td>Vídeo</td>
+<td>Transcoding asíncrono; CDN origin shield</td>
+</tr>
+<tr>
+<td>Búsqueda</td>
+<td>Índice dedicado (OpenSearch / Algolia) para marketplace</td>
+</tr>
+<tr>
+<td>Mensajería</td>
+<td>Servicio elástico separado del API monolítico inicial</td>
+</tr>
+<tr>
+<td>Observabilidad</td>
+<td>OpenTelemetry, SLOs, alertas on-call</td>
+</tr>
+</tbody></table>
+<p><strong>Principio:</strong> separar <strong>hot path</strong> (feed jugador) de <strong>cold path</strong> (reporting financiero).</p>
+<hr>
+<h2>21. Extensiones futuras (sobre la misma base)</h2>
+<ul>
+<li>IA asistida en videoanálisis (detección de patrones).</li>
+<li>Integración federaciones / rankings.</li>
+<li>Wearables y carga interna.</li>
+<li>Multi-deporte (tenant configurable por deporte).</li>
+<li>Marketplace con <strong>pago in-app</strong> y comisión plataforma.</li>
+</ul>
+<hr>
+<h2>Anexo A — Detalle de producto para estimación (perfiles, catálogo, captación)</h2>
+<h3>A.1 Perfil del entrenador (datos y flujo de edición)</h3>
+<table>
+<thead>
+<tr>
+<th>Bloque</th>
+<th>Campos / acciones típicas</th>
+<th>Notas producción</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Identidad</strong></td>
+<td>Nombre público, foto, ubicación, idiomas</td>
+<td>Sincronizar con marketplace SEO</td>
+</tr>
+<tr>
+<td><strong>Credenciales negocio</strong></td>
+<td>NIF/IVA, dirección fiscal, titular cuenta</td>
+<td>Solo entrenador + admin; cifrado en reposo</td>
+</tr>
+<tr>
+<td><strong>Stripe Connect</strong></td>
+<td>Estado onboarding, payouts, última verificación</td>
+<td>Webhooks actualizan badge “cobros OK”</td>
+</tr>
+<tr>
+<td><strong>Invitación</strong></td>
+<td>Código corto, URL genérica, QR (futuro)</td>
+<td>Rate limit; regenerar código</td>
+</tr>
+<tr>
+<td><strong>Catálogo</strong></td>
+<td>Lista servicios con visibilidad, orden, precios</td>
+<td>Versionado: cambio precio no afecta contratos vigentes salvo política</td>
+</tr>
+<tr>
+<td><strong>Preferencias</strong></td>
+<td>Zona horaria, buffer entre clases, plantillas mensaje</td>
+<td>Afecta agenda y Google Calendar</td>
+</tr>
+</tbody></table>
+<h3>A.2 Perfil del jugador</h3>
+<table>
+<thead>
+<tr>
+<th>Bloque</th>
+<th>Campos / acciones</th>
+<th>Por qué</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Datos personales</strong></td>
+<td>Nombre, contacto, foto</td>
+<td>CRM puede espejar parte con consentimiento</td>
+</tr>
+<tr>
+<td><strong>Deportivos</strong></td>
+<td>Mano dominante, posición, nivel, club</td>
+<td>Personaliza objetivos y copy</td>
+</tr>
+<tr>
+<td><strong>Salud / lesiones</strong> (opcional)</td>
+<td>Flags, notas</td>
+<td>Sensibles — consentimiento explícito y retención corta</td>
+</tr>
+<tr>
+<td><strong>Cuenta vinculada</strong></td>
+<td>Lista entrenadores, relación activa</td>
+<td>Multi-coach sin mezclar datos</td>
+</tr>
+</tbody></table>
+<h3>A.3 Catálogo del entrenador: crear, modificar, activar y desactivar</h3>
+<p><strong>Crear (“Añadir servicio al catálogo” en demo):</strong></p>
+<ol>
+<li><strong>Tipo (<code>kind</code>)</strong> — selector obligatorio: <strong>Individual</strong> (vídeo, pista u otra sesión suelta), <strong>Pack</strong> (pago único, cupos/validez), <strong>Mensualidad</strong> (recurrente), <strong>Programa de acompañamiento</strong> (3 / 6 / 12 meses).</li>
+<li><strong>Textos</strong> — título, descripción (Markdown ligero: <code>**negritas</code>** en demo), etiqueta corta.</li>
+<li><strong>Precio</strong> — la UI compone la “línea de precios” según el tipo (importes individual/pareja, periodicidad, meses).</li>
+<li><strong>Visibilidad</strong> — <code>visible</code> + <code>sort</code> para orden en la app jugador.</li>
+</ol>
+<p><strong>Modificar / desactivar:</strong> en producción, conviene <strong>entidad <code>catalog_item</code> con <code>status: draft|active|archived</code></strong> y <strong>histórico de precios</strong>; desactivar no borra contratos existentes.</p>
+<h3>A.4 Cómo ve el jugador “qué servicio tiene” vs cómo lo ve el entrenador</h3>
+<table>
+<thead>
+<tr>
+<th>Vista</th>
+<th>Jugador</th>
+<th>Entrenador</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Hub / perfil</strong></td>
+<td>Resumen del plan activo, próximas clases, CTAs de renovación</td>
+<td>CRM + seguimiento: tipo servicio, activo/pausa, lead</td>
+</tr>
+<tr>
+<td><strong>Servicios</strong></td>
+<td>Solo ítems <code>visible</code>; CTA contratación</td>
+<td>Editor completo + preview</td>
+</tr>
+<tr>
+<td><strong>Mensajes</strong> (demo)</td>
+<td>Línea CRM debajo del hilo si aplica</td>
+<td>Estado cliente en cabecera chat</td>
+</tr>
+</tbody></table>
+<h3>A.5 Grabación y envío de vídeo (demo como checklist de pantallas)</h3>
+<p>Pantalla <strong>Grabaciones</strong> (<code>view-jug-grabar</code>):</p>
+<ul>
+<li>Acciones: <strong>Grabar nuevo vídeo</strong> (input <code>capture=environment</code>), <strong>Subir vídeo</strong> (galería).</li>
+<li><strong>KPIs locales:</strong> contadores grabaciones / análisis / subidas.</li>
+<li><strong>Contexto</strong> dinámico si el plan está en revisión (montaje <code>jugGrabarContextMount</code>).</li>
+<li>Instrucciones: horizontal, duración orientativa, luz, nombre de archivo.</li>
+<li>Listas: <strong>Videos grabados</strong> y <strong>Videos subidos</strong> (metadatos locales).</li>
+<li><strong>Comentario opcional</strong> (textarea 500 caracteres) + <strong>Confirmar envío al entrenador</strong> (en prod dispara upload + notificación; en demo marca flags de estado).</li>
+</ul>
+<h3>A.6 Seguimiento de jugador (panel entrenador) — pestañas y permisos de navegación</h3>
+<table>
+<thead>
+<tr>
+<th>Pestaña</th>
+<th>Contenido</th>
+<th>Deep link desde</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Perfil</strong></td>
+<td>Ficha + datos CRM</td>
+<td>CRM “Ver perfil”</td>
+</tr>
+<tr>
+<td><strong>Videoanálisis</strong></td>
+<td>Cola / reproductor / publicación</td>
+<td>CRM “Analizar vídeo”, alertas</td>
+</tr>
+<tr>
+<td><strong>Objetivos</strong></td>
+<td>Misma taxonomía plan/activos/completados que el jugador</td>
+<td>Hub urgencias</td>
+</tr>
+<tr>
+<td><strong>Diario</strong></td>
+<td>Partidos y clases solo lectura coach</td>
+<td>Urgencias “diario”</td>
+</tr>
+<tr>
+<td><strong>Agenda de este jugador</strong></td>
+<td>Reservas filtradas</td>
+<td>Hub agenda hoy</td>
+</tr>
+</tbody></table>
+<p>La función <code>openCoachSeguimientoForPlayer</code> en demo restringe pestañas válidas: <code>perfil</code>, <code>revision</code>, <code>objetivos</code>, <code>diario</code>, <code>agenda-jugador</code>.</p>
+<h3>A.7 Requisitos no funcionales (añadir al presupuesto)</h3>
+<table>
+<thead>
+<tr>
+<th>Área</th>
+<th>Objetivo orientativo</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Disponibilidad API</strong></td>
+<td>99,9 % mensual MVP; 99,95 % con clientes enterprise</td>
+</tr>
+<tr>
+<td><strong>Latencia p95</strong> lectura feed</td>
+<td>&lt; 300 ms región principal</td>
+</tr>
+<tr>
+<td><strong>Subida vídeo</strong></td>
+<td>Reanudación chunk; timeout de red no corrompe blob</td>
+</tr>
+<tr>
+<td><strong>RPO / RTO</strong></td>
+<td>Backup diario; RTO documentado (ej. 4 h críticos)</td>
+</tr>
+<tr>
+<td><strong>Cumplimiento</strong></td>
+<td>RGPD + DPA con cloud; registro de tratamientos</td>
+</tr>
+</tbody></table>
+<h3>A.8 Cliente escritorio entrenador (requisitos UX explícitos)</h3>
+<ul>
+<li><strong>Resolución mínima</strong> pensada 1440px ancho; vídeo <strong>≥ 60 %</strong> del ancho útil en workspace de análisis.</li>
+<li><strong>Multiventana:</strong> lista de clientes undocked (futuro) o segundo monitor.</li>
+<li><strong>Atajos:</strong> play/pausa, marca, publicar (fase 2).</li>
+<li><strong>Paridad:</strong> mismas reglas de negocio que app móvil coach; una sola fuente de verdad API.</li>
+</ul>
+<hr>
+<h2>22. Entregables sugeridos a solicitar en la propuesta comercial</h2>
+<ol>
+<li><strong>Documento de arquitectura</strong> (C4 L1–L3).</li>
+<li><strong>Modelo de datos</strong> (ER + migraciones).</li>
+<li><strong>Matriz de pruebas</strong> por flujo crítico (objetivos, vídeo, pagos).</li>
+<li><strong>Plan de ciberseguridad</strong> y DPIA.</li>
+<li><strong>Runbook operación</strong> (Stripe webhooks, fallos de transcodificación).</li>
+<li><strong>Roadmap por fases</strong> (MVP → escala).</li>
+</ol>
+<hr>
+<h2>23. Glosario breve</h2>
+<table>
+<thead>
+<tr>
+<th>Término</th>
+<th>Definición</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Plan de acción</strong></td>
+<td>Conjunto de objetivos <code>enPlanAccion</code> con prácticas ligadas al diario.</td>
+</tr>
+<tr>
+<td><strong>Pendiente de revisión</strong></td>
+<td>Estado <code>pendiente_revision</code>; en UI a menudo ligado a <strong>videoanálisis</strong>.</td>
+</tr>
+<tr>
+<td><strong>Entitlement</strong></td>
+<td>Derecho de uso derivado de una compra/suscripción activa.</td>
+</tr>
+<tr>
+<td><strong>Tenant</strong></td>
+<td>Contenedor de datos del entrenador o academia.</td>
+</tr>
+</tbody></table>
+<hr>
+<p><strong>Fin del documento (v1.1).</strong> Para dudas de implementación alineadas con el código demo, cruzar con <code>CONTEXTO-GIMADD-PARA-CHATGPT.md</code>, <code>dev-handoff/especificacion-desarrolladores.html</code> y el propio <code>Gimadd_Mentor_APP.html</code>.</p>
+
+    </article>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.3/dist/mermaid.min.js"></script>
+  <script>
+    (async function () {
+      const diagrams = ["flowchart TB\n  subgraph clients[\"Clientes\"]\n    A[App Android / iOS — Jugador]\n    B[App Android / iOS — Entrenador]\n    C[Escritorio / Web — Entrenador]\n    D[Web pública — Marketplace]\n  end\n\n  subgraph edge[\"Edge\"]\n    CDN[CDN estático + edge cache]\n    WAF[WAF / DDoS]\n  end\n\n  subgraph backend[\"Backend servicio\"]\n    API[API REST / GraphQL + BFF]\n    AUTH[Auth / OIDC — proveedor IdP]\n    PAY[Stripe Billing / Connect / Webhooks]\n    CAL[Google Calendar API + webhooks]\n    MSG[Mensajería en tiempo real — WS / SSE]\n    VA[Transcodificación vídeo — cola jobs]\n    NOTIF[Push + email + SMS opcional]\n    AUD[Auditoría y logs estructurados]\n  end\n\n  subgraph data[\"Datos\"]\n    DB[(BD transaccional — Postgres / equivalente)]\n    OBJ[(Objetivos / planes — particionado por coach)]\n    FS[(Object storage vídeo / adjuntos)]\n    CACHE[(Redis / cache sesiones)]\n    SEARCH[(Búsqueda entrenadores — índice dedicado)]\n  end\n\n  A --> edge --> API\n  B --> edge --> API\n  C --> edge --> API\n  D --> edge --> API\n  API --> AUTH\n  API --> PAY\n  API --> CAL\n  API --> MSG\n  API --> VA\n  API --> NOTIF\n  API --> DB\n  API --> OBJ\n  API --> FS\n  API --> CACHE\n  API --> SEARCH","sequenceDiagram\n  participant V as Visitante\n  participant W as Web Marketplace\n  participant S as App jugador\n\n  V->>W: Busca / filtra entrenadores\n  V->>W: Abre perfil\n  W->>V: Muestra código + enlace invitación\n  V->>S: Instala app / abre deep link\n  S->>S: Pantalla \"Añadir entrenador con código\"\n  S->>API: Valida código + crea vínculo\n  API-->>S: Relación jugador–entrenador activa","flowchart LR\n  A[Registro] --> B[Verificación identidad]\n  B --> C[Config perfil + servicios]\n  C --> D[Stripe Connect onboarding]\n  D --> E[Primer cliente / marketplace]","flowchart TB\n  subgraph coach[\"Entrenador\"]\n    C1[Editor catálogo Servicios]\n    C2[Activa / desactiva ítems]\n    C3[Precios y textos]\n  end\n\n  subgraph sys[\"Sistema\"]\n    S1[Publica versión catálogo]\n    S2[Checkout Stripe según kind]\n    S3[Entitlement en jugador]\n  end\n\n  subgraph player[\"Jugador\"]\n    P1[Ve solo visible=true]\n    P2[CTA Contratar / Reservar / Suscribir]\n    P3[Estado contratación en perfil / hub]\n  end\n\n  C1 --> C2 --> C3 --> S1 --> S2 --> S3 --> P1 --> P2 --> P3","flowchart TB\n  subgraph tabs[\"Pestaña Plan de acción\"]\n    A1[Plan pendiente de revisión / videoanálisis]\n    A2[Plan para partidos]\n    A3[Plan para clase en pista]\n  end\n\n  A2 --> B1[Objetivos activos + enPlan + tipo partido]\n  A3 --> B2[Objetivos activos + enPlan + tipo clase]\n  A1 --> B3[Objetivos pendiente_revision + enPlan]","stateDiagram-v2\n  [*] --> activo: Coach/jugador crea objetivo\n  activo --> pendiente_revision: Todas las prácticas del plan cumplen umbral (diario)\n  pendiente_revision --> activo: Coach reabre / redefine prácticas (demo: reactivación)\n  pendiente_revision --> completado: Tras videoanálisis / decisión coach\n  activo --> completado: Cierre directo coach (política)\n  completado --> [*]","sequenceDiagram\n  participant J as Jugador\n  participant D as Diario partido\n  participant G as Motor objetivos\n  participant C as Entrenador\n\n  J->>D: Registra partido + marca prácticas en planAccion\n  D->>G: recalcGoalsFromMatches()\n  alt Cada objetivo del plan alcanza umbral\n    G->>G: estado = pendiente_revision\n    G->>G: jugadorSubioVideoTrasRevision = false\n    G->>C: Notificación / tarjeta urgente\n  end\n  J->>J: Sube o confirma vídeo (flujo demo)\n  J->>G: jugadorSubioVideoTrasRevision = true\n  C->>C: Videoanálisis / decisión coach","flowchart LR\n  subgraph desk[\"Escritorio entrenador\"]\n    V[Vídeo grande]\n    M[Lista marcas]\n    F[Form objetivos + feedback]\n  end\n  V <--> M\n  V <--> F","flowchart TB\n  subgraph stripe[\"Stripe\"]\n    CH[Checkout / Invoices]\n    WH[Webhooks firmados]\n  end\n\n  subgraph app[\"Gimadd backend\"]\n    LED[Ledger interno]\n    ENT[Entitlements jugador]\n    PDF[Factura PDF almacenada]\n  end\n\n  CH --> WH --> LED --> ENT\n  WH --> PDF","sequenceDiagram\n  participant S as Stripe\n  participant W as Webhook endpoint (API)\n  participant L as Ledger DB\n  participant E as Entitlements\n  participant N as Notificaciones\n\n  S->>W: POST event (signed)\n  W->>W: Verificar firma + deduplicar por event.id\n  alt checkout.session.completed\n    W->>L: Insertar línea ingreso + external_id\n    W->>E: Activar producto contratado (jugador, coach)\n    W->>N: Push/email confirmación\n  else invoice.paid (suscripción)\n    W->>L: Asiento renovación\n    W->>E: Recargar cupos mensuales\n  else charge.dispute / refund\n    W->>L: Asiento contrario + motivo\n    W->>E: Ajustar o revocar según política\n  end\n  W-->>S: 200 OK (rápido; trabajo pesado en cola)","sequenceDiagram\n  participant C as Coach app\n  participant API as Gimadd API\n  participant DB as BD reservas\n  participant G as Google Calendar API\n\n  C->>API: Confirmar slot clase (fecha, hora, tz)\n  API->>DB: Upsert booking + estado programada\n  API->>G: insert event (calendarId coach)\n  G-->>API: eventId + htmlLink\n  API->>DB: Guardar googleEventId\n  Note over API,G: Reprogramación: patch event; Cancelación: delete o update transparency","flowchart LR\n  E[Eventos dominio] --> R[Reglas SLA]\n  R --> N[Notificaciones multi-canal]\n  R --> U[Cola urgentes UI coach]"];
+      mermaid.initialize({
+        startOnLoad: false,
+        theme: "default",
+        securityLevel: "strict",
+        flowchart: { htmlLabels: true, useMaxWidth: true },
+        sequence: { useMaxWidth: true },
+        state: { useMaxWidth: true }
+      });
+      diagrams.forEach(function (text, i) {
+        var el = document.getElementById("mmd-" + i);
+        if (el) el.textContent = text;
+      });
+      try {
+        await mermaid.run({ querySelector: ".mermaid" });
+      } catch (e) {
+        console.error(e);
+      }
+    })();
+  </script>
+</body>
+</html>

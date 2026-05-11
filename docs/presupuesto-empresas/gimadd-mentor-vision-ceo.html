@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Gimadd Mentor — Visión para dirección (CEO)</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.7.0/github-markdown.min.css" />
+  <style>
+    html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    body {
+      margin: 0;
+      padding: 0;
+      background: #f6f8fa;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    }
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: #0c4a6e;
+      color: #fff;
+      padding: 0.65rem 1rem;
+      font-size: 0.9rem;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.75rem 1.25rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+    }
+    .topbar a { color: #e0f2fe; font-weight: 600; text-decoration: none; }
+    .topbar a:hover { text-decoration: underline; color: #fff; }
+    .topbar-sep { opacity: 0.65; }
+    .topbar-muted { opacity: 0.9; font-size: 0.82rem; }
+    .page-wrap {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 1.25rem 1rem 3rem;
+    }
+    .page {
+      box-sizing: border-box;
+      background: #fff;
+      border: 1px solid #d0d7de;
+      border-radius: 12px;
+      padding: 1.5rem 1.35rem 2.5rem;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+    }
+    @media (min-width: 768px) {
+      .page { padding: 2rem 2.25rem 3rem; }
+    }
+    .markdown-body { font-size: 1rem; line-height: 1.55; }
+    .markdown-body h1 { font-size: 1.75rem; border-bottom: 1px solid #d0d7de; padding-bottom: 0.3em; }
+    .markdown-body h2 { font-size: 1.35rem; margin-top: 1.5em; border-bottom: 1px solid #eee; padding-bottom: 0.2em; }
+    .markdown-body h3 { font-size: 1.12rem; margin-top: 1.15em; }
+    .markdown-body table { display: table; width: 100%; overflow-x: auto; }
+    .markdown-body table th, .markdown-body table td { padding: 8px 10px; }
+    .markdown-body pre:not(.mermaid) {
+      background: #f6f8fa;
+      border-radius: 8px;
+      font-size: 0.86rem;
+      padding: 12px 14px;
+      overflow-x: auto;
+    }
+    .markdown-body code { font-size: 0.9em; }
+    .mermaid-figure {
+      margin: 1.25rem 0;
+      padding: 12px 10px;
+      background: #fafbfc;
+      border: 1px solid #e1e4e8;
+      border-radius: 10px;
+    }
+    .mermaid { text-align: center; }
+    .mermaid svg { max-width: 100% !important; height: auto !important; }
+    .markdown-body blockquote { font-size: 0.95em; color: #57606a; }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <a href="../../index.html">← Inicio · GitHub Pages</a>
+    <a href="gimadd-mentor-alcance-y-flujos-presupuesto.html">Alcance (presupuesto)</a>
+    <span class="topbar-sep" aria-hidden="true">·</span>
+    <span style="opacity:0.95;font-weight:700">Visión CEO</span>
+  </header>
+  <div class="page-wrap">
+    <article class="page markdown-body" id="doc">
+<h1>Gimadd Mentor — Visión de producto para dirección</h1>
+<p><strong>Para:</strong> Consejo / CEO / inversores<br><strong>Fecha:</strong> Mayo 2026<br><strong>Enfoque:</strong> qué construimos, para quién y qué valor aporta — <strong>sin detalle de implementación técnica</strong>.</p>
+<hr>
+<h2>1. En una frase</h2>
+<p><strong>Gimadd Mentor</strong> es la plataforma que une a jugadores de <strong>pádel</strong> con sus entrenadores para entrenar con método: objetivos claros, seguimiento entre sesiones, vídeo con feedback profesional, reserva de pista y relación comercial ordenada — todo en <strong>móvil</strong> y, para el entrenador, también en <strong>escritorio</strong> cuando el trabajo es analizar vídeo o gestionar muchos clientes a la vez.</p>
+<hr>
+<h2>2. El ecosistema (quién entra en juego)</h2>
+
+<figure class="mermaid-figure"><div id="mmd-0" class="mermaid"></div></figure>
+<ul>
+<li><strong>Jugador:</strong> contrata, entrena, registra partidos y clases, sube vídeos, ve feedback, habla con su coach y sigue su plan.</li>
+<li><strong>Entrenador:</strong> vende servicios, organiza agenda, da seguimiento, analiza vídeos, cobra con trazabilidad y gestiona su cartera de clientes como un negocio.</li>
+<li><strong>Visitante:</strong> descubre entrenadores en un <strong>marketplace</strong> público y da el salto a la app con una invitación clara (código o enlace).</li>
+</ul>
+<hr>
+<h2>3. Dónde vive el producto (sin especificar tecnología)</h2>
+<table>
+<thead>
+<tr>
+<th>Canal</th>
+<th>Para quién</th>
+<th>Por qué importa al negocio</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>App nativa Android</strong></td>
+<td>Jugador y/o entrenador</td>
+<td>Donde está el día a día: notificaciones, cámara, agenda en el bolsillo.</td>
+</tr>
+<tr>
+<td><strong>App nativa iOS</strong></td>
+<td>Igual</td>
+<td>Paridad de experiencia en el mercado español y europeo de pádel.</td>
+</tr>
+<tr>
+<td><strong>Aplicación de escritorio para el entrenador</strong></td>
+<td>Entrenador profesional</td>
+<td>Pantalla grande y flujo cómodo para <strong>videoanálisis</strong> y para <strong>gestionar a muchos clientes</strong> sin fricción.</td>
+</tr>
+<tr>
+<td><strong>Web pública</strong></td>
+<td>Captación</td>
+<td>El <strong>marketplace</strong> da visibilidad y confianza antes de instalar la app.</td>
+</tr>
+</tbody></table>
+<p>La misma persona puede usar móvil en pista y escritorio en casa; el valor es <strong>continuidad</strong>, no el dispositivo.</p>
+<hr>
+<h2>4. Marketplace público</h2>
+<p><strong>Qué es:</strong> un escaparate de entrenadores verificados con su propuesta de valor, servicios y forma de contacto.</p>
+<p><strong>Qué resuelve:</strong> que un jugador nuevo <strong>encuentre</strong> a su entrenador sin depender solo del boca a boca, y que el entrenador <strong>capture demanda</strong> fuera de la app.</p>
+<p><strong>Flujo humano:</strong> buscar → ver perfil → obtener invitación (código o enlace) → entrar en la app y vincularse. En producción, la invitación debe ser <strong>segura y controlada</strong> (caducidad, anti-abuso), sin entrar en cómo se programa.</p>
+<hr>
+<h2>5. Alta de un entrenador</h2>
+<p><strong>Qué implica en negocio:</strong></p>
+<ol>
+<li><strong>Registro</strong> y verificación de identidad profesional (quién es, que puede cobrar y asesorar).</li>
+<li><strong>Perfil comercial</strong> listo para el marketplace: foto, zona, especialidad, mensaje de confianza.</li>
+<li><strong>Catálogo de servicios</strong> (precios, packs, mensualidades, programas largos) activable o pausable.</li>
+<li><strong>Cuenta de cobros</strong> alineada con normativa y facturación (el detalle operativo lo lleva el equipo financiero y legal; la app debe reflejar estados claros: cobrado, pendiente, factura disponible).</li>
+</ol>
+<p><strong>Resultado para el CEO:</strong> el entrenador puede empezar a <strong>vender y operar</strong> con una sola herramienta, con menos fricción que gestionar WhatsApp + Excel + Bizum sueltos.</p>
+<hr>
+<h2>6. Alta de un jugador</h2>
+<p><strong>Qué implica:</strong></p>
+<ol>
+<li>Crear cuenta de jugador.</li>
+<li><strong>Vincularse</strong> a un entrenador mediante código, enlace de invitación o flujo del marketplace.</li>
+<li>Ver su espacio personal: servicios contratados, objetivos, diario, vídeos y mensajes <strong>solo</strong> con ese entrenador (y con otros si en el futuro contrata más de uno).</li>
+</ol>
+<p><strong>Resultado:</strong> el jugador entiende <strong>con quién entrena</strong> y <strong>qué ha comprado</strong>; la plataforma evita mezclar conversaciones ni planes entre entrenadores.</p>
+<hr>
+<h2>7. Contratación de servicios — qué supone cada tipo (lenguaje de negocio)</h2>
+<table>
+<thead>
+<tr>
+<th>Tipo de servicio</th>
+<th>Qué compra el jugador</th>
+<th>Qué debe cumplir la experiencia</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Sesión suelta de videoanálisis</strong></td>
+<td>Una revisión profesional de un vídeo suyo.</td>
+<td>Plazos de entrega claros, cola visible para el jugador, notificación al coach.</td>
+</tr>
+<tr>
+<td><strong>Sesión en pista (mentoría)</strong></td>
+<td>Tiempo real con el entrenador.</td>
+<td>Solicitud, confirmación de fecha, recordatorios, posibilidad de reprogramar con trazabilidad.</td>
+</tr>
+<tr>
+<td><strong>Pack</strong></td>
+<td>Varios usos (por ejemplo pista + vídeo) con una <strong>caducidad</strong> razonable.</td>
+<td>Saldo de “sesiones restantes”, avisos antes de perder valor, transparencia en el consumo.</td>
+</tr>
+<tr>
+<td><strong>Mensualidad</strong></td>
+<td>Acceso recurrente (cupos que se renuevan cada mes).</td>
+<td>Alta, cobro periódico, pausa o baja con reglas claras, sin sorpresas en la tarjeta.</td>
+</tr>
+<tr>
+<td><strong>Programa de acompañamiento (3 / 6 / 12 meses)</strong></td>
+<td>Un <strong>camino</strong> de mejora con ritmo y seguimiento.</td>
+<td>Hitos de valor, combinación de pista, vídeo y objetivos, sensación de “proyecto”, no de ticket suelto.</td>
+</tr>
+</tbody></table>
+<p><strong>Mensaje para dirección:</strong> el catálogo no es solo “precios”: es la <strong>política comercial</strong> del entrenador empaquetada de forma que el jugador entienda qué recibe y qué debe hacer él (vídeo, asistencia, diario).</p>
+<hr>
+<h2>8. Objetivos y plan de acción</h2>
+<p><strong>Objetivo:</strong> una mejora concreta (técnica, táctica o mental) con seguimiento en el tiempo.</p>
+<p><strong>Plan de acción:</strong> el conjunto de objetivos en los que el entrenador quiere que el jugador <strong>se enfoque ahora</strong>, ligados a la vida real: partidos y/o clases en pista.</p>
+<p><strong>Regla de oro (producto):</strong> el jugador registra prácticas en el <strong>diario</strong>; cuando el plan completo ha cumplido su ciclo de prácticas, el sistema pasa a una fase de <strong>“pendiente de revisión”</strong>: ahí el jugador sabe que debe <strong>aportar un vídeo</strong> para que el entrenador valore si ha mejorado. El <strong>cierre</strong> de objetivos lo confirma el entrenador tras ese feedback — refuerzo de valor percibido y control de calidad del servicio.</p>
+<p><strong>Por qué importa al negocio:</strong> aumenta <strong>adherencia</strong> (el jugador hace deberes entre clase y clase) y justifica <strong>precio</strong> (no es solo “una hora en pista”, es un proceso).</p>
+<hr>
+<h2>9. Diario de partidos y diario de clases</h2>
+<ul>
+<li><strong>Diario de partidos:</strong> qué jugó, cómo se sintió, resultados y notas. Sirve para memoria, para conversación con el coach y para alimentar el plan de acción.</li>
+<li><strong>Diario de clases en pista:</strong> qué trabajó en mentoría presencial, sensaciones y vínculo con los objetivos del plan.</li>
+</ul>
+<p><strong>Valor:</strong> convierte la app en el <strong>cuaderno digital</strong> del deportista y da al entrenador contexto sin depender de mensajes sueltos.</p>
+<hr>
+<h2>10. Comentarios, revisión y “pendiente de análisis”</h2>
+<p>Cuando el plan pide revisión, el jugador ve <strong>acciones claras</strong> (subir vídeo, confirmar envío). El entrenador ve <strong>urgencias</strong> y puede priorizar quién está esperando feedback.</p>
+<p>Si pasan demasiados días sin vídeo, el sistema <strong>avisa al entrenador</strong> para que contacte: reduce abandono y protege ingresos recurrentes.</p>
+<hr>
+<h2>11. Videoanálisis (qué ofrece el producto al usuario final)</h2>
+<p><strong>Lado jugador:</strong> sube o graba vídeo, opcionalmente añade un comentario de contexto, y recibe un análisis <strong>publicado</strong>: mismo vídeo (o copia estable), marcas en el tiempo con explicaciones, nota global y, si aplica, material de apoyo (imagen, audio o clip corto).</p>
+<p><strong>Lado entrenador:</strong> reproductor cómodo, lista de marcas, redacción del feedback, posibilidad de <strong>crear nuevos objetivos</strong> a partir de lo visto, y publicación que deja constancia en el historial del jugador.</p>
+<p><strong>Escritorio:</strong> misma lógica con <strong>vídeo grande</strong> y flujo multitarea — diferencial para entrenadores de élite y academias con volumen.</p>
+<hr>
+<h2>12. Agenda y calendario</h2>
+<p><strong>Promesa de producto:</strong> cuando una clase tiene fecha acordada, <strong>aparece en la agenda</strong> del jugador y del entrenador; lo ideal es que también se refleje en el <strong>calendario personal</strong> del entrenador (el que ya usa en su día a día), para reducir solapes y olvidos.</p>
+<p><strong>Valor CEO:</strong> menos cancelaciones “por despiste”, mejor uso de la pista, más sesiones facturadas y mejor reputación.</p>
+<hr>
+<h2>13. Finanzas y cobros</h2>
+<p><strong>Qué ve el entrenador:</strong> resumen de lo cobrado, lo pendiente y la actividad reciente; acceso a <strong>pagos</strong> y <strong>facturas</strong> como espacio de confianza profesional.</p>
+<p><strong>Qué ve el jugador (evolución natural):</strong> recibos y estado de sus compras.</p>
+<p><strong>Principio:</strong> los cobros online deben ser <strong>transparentes, reclamables y alineados con facturación</strong> (IVA según país, datos fiscales del coach). La elección de pasarela y banco es decisión de implementación; a nivel negocio es “<strong>pagos digitales serios</strong>”, no Bizum informal suelto.</p>
+<hr>
+<h2>14. Alertas y acciones urgentes</h2>
+<p><strong>Tipos de situación que el producto debe destacar:</strong></p>
+<ul>
+<li>Plan listo para revisión y <strong>falta vídeo</strong> del jugador.</li>
+<li>Vídeo enviado y <strong>coach pendiente</strong> de publicar feedback (carga de trabajo visible).</li>
+<li>Clase sin fecha cerrada o <strong>reprogramación</strong> en curso.</li>
+<li>Recordatorio de <strong>anotar en el diario</strong> tras una sesión.</li>
+<li>(Futuro cercano) <strong>pago fallido</strong> o suscripción en riesgo.</li>
+</ul>
+<p><strong>Valor:</strong> la app <strong>dirige la atención</strong> hacia lo que genera ingreso o fidelización, no es solo un archivo estático.</p>
+<hr>
+<h2>15. Mensajería entre jugador y entrenador</h2>
+<p><strong>Qué es:</strong> un hilo <strong>por relación</strong> jugador–entrenador, con historial y notificaciones.</p>
+<p><strong>Por qué:</strong> centraliza la coordinación (fechas, dudas, vídeos) y reduce dependencia de canales no controlados; además deja trazabilidad útil en reclamaciones o calidad del servicio.</p>
+<hr>
+<h2>16. CRM — gestión de clientes del entrenador</h2>
+<p><strong>Qué es:</strong> la lista de <strong>personas</strong> (clientes activos, en pausa o leads sin servicio) con prioridad visual: quién necesita acción, quién es nuevo y quién lleva ritmo estable.</p>
+<p><strong>Qué puede hacer el entrenador desde ahí:</strong> buscar y filtrar, abrir ficha, ir a videoanálisis, enviar mensaje, ver servicios contratados y abrir el <strong>seguimiento completo</strong> del jugador cuando ya está en la app.</p>
+<p><strong>Captación de clientes:</strong> alta manual, enlace de invitación o código corto — tres caminos para el mismo objetivo: <strong>meter al jugador en el sistema</strong>.</p>
+<p><strong>Mensaje CEO:</strong> el CRM convierte la app en <strong>herramienta de negocio</strong>, no solo de contenido deportivo.</p>
+<hr>
+<h2>17. Seguimiento de un jugador (vista entrenador)</h2>
+<p>Una vez abierto un jugador, el entrenador navega por <strong>perfil</strong>, <strong>videoanálisis</strong>, <strong>objetivos</strong>, <strong>diario</strong> y <strong>agenda de ese jugador</strong>. Es el equivalente a “abrir el expediente” en una sola interfaz.</p>
+<p><strong>Resultado:</strong> menos tiempo administrativo, más tiempo de coaching; mejor NPS y más renovaciones.</p>
+<hr>
+<h2>18. Perfiles</h2>
+<p><strong>Entrenador:</strong> quién es, qué ofrece, cómo contactar, cómo cobrar y cómo se ve en el marketplace.</p>
+<p><strong>Jugador:</strong> quién es, su contexto deportivo y cómo quiere ser entrenado; datos sensibles solo si aportan valor y con <strong>consentimiento</strong> claro.</p>
+<hr>
+<h2>19. Catálogo de servicios del entrenador</h2>
+<p>El entrenador <strong>crea</strong>, <strong>edita</strong>, <strong>activa</strong> o <strong>desactiva</strong> ofertas (sesión, pack, mensualidad, programa). Los textos son su <strong>argumentario de venta</strong> dentro de la app.</p>
+<p><strong>Regla de negocio deseable:</strong> desactivar un servicio <strong>no debe romper</strong> lo ya contratado; los clientes actuales siguen con las condiciones que aceptaron.</p>
+<hr>
+<h2>20. Servicios predefinidos (plantilla de partida)</h2>
+<p>Son <strong>plantillas</strong> que aceleran el arranque del entrenador; puede renombrarlas, ocultarlas o adaptarlas.</p>
+<table>
+<thead>
+<tr>
+<th>Plantilla (resumen)</th>
+<th>Propuesta de valor</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Videoanálisis</td>
+<td>Feedback asincrónico de calidad con plazo de entrega claro.</td>
+</tr>
+<tr>
+<td>Mentoría en pista</td>
+<td>Hora de trabajo técnico o táctico presencial.</td>
+</tr>
+<tr>
+<td>Pack intensivo</td>
+<td>Compromiso medio: combina pista y vídeo con caducidad.</td>
+</tr>
+<tr>
+<td>Plan mensual</td>
+<td>Relación continua: cupos que se renuevan cada mes.</td>
+</tr>
+<tr>
+<td>Programas 3 / 6 / 12 meses</td>
+<td>Acompañamiento profundo: proyecto, hábito y recurrencia de ingresos.</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>21. Pantalla de inicio del jugador</h2>
+<p><strong>Qué debe mostrar y por qué:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Bloque</th>
+<th>Información</th>
+<th>Por qué</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Progreso / foco</strong></td>
+<td>Objetivo principal del plan o estado “listo para revisión”</td>
+<td>Da sentido inmediato a abrir la app cada semana.</td>
+</tr>
+<tr>
+<td><strong>Acciones urgentes</strong></td>
+<td>Vídeo pendiente, reprogramación, diario sin rellenar</td>
+<td>Reduce abandono y incidencias.</td>
+</tr>
+<tr>
+<td><strong>Próximas clases</strong></td>
+<td>Fecha, estado y forma de pago entendible</td>
+<td>Conecta lo digital con lo que pasará en el club.</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>22. Pantalla de inicio del entrenador</h2>
+<table>
+<thead>
+<tr>
+<th>Bloque</th>
+<th>Información</th>
+<th>Por qué</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Agenda de hoy</strong></td>
+<td>Quién entrena y a qué hora</td>
+<td>Operativa del día.</td>
+</tr>
+<tr>
+<td><strong>Urgencias</strong></td>
+<td>Clientes que requieren acción, fechas abiertas, revisiones</td>
+<td>Prioriza el tiempo del coach.</td>
+</tr>
+<tr>
+<td><strong>Finanzas rápidas</strong></td>
+<td>Cobrado / pendiente en ventana corta</td>
+<td>Salud del negocio de un vistazo.</td>
+</tr>
+<tr>
+<td><strong>Accesos</strong></td>
+<td>Clientes, finanzas, promociones</td>
+<td>Navegación rápida a “donde duele” el negocio.</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>23. Qué puede hacer cada rol (sin matriz técnica)</h2>
+<p><strong>Jugador:</strong> gestiona su experiencia (diario, vídeos, objetivos visibles, mensajes, contratación de lo ofertado, agenda propia). No gestiona el negocio de otros ni ve borradores internos del entrenador.</p>
+<p><strong>Entrenador:</strong> gestiona su cartera, su catálogo, su calendario operativo, sus análisis y sus cobros asociados a su actividad. No accede a jugadores con los que no tiene relación.</p>
+<p><strong>Plataforma (futuro):</strong> verificación, moderación y soporte para escalar con confianza de marca.</p>
+<hr>
+<h2>24. Confianza, privacidad y riesgos (visión ejecutiva)</h2>
+<ul>
+<li><strong>Datos personales:</strong> cumplir normativa europea (RGPD) como requisito de mercado, no como anexo.</li>
+<li><strong>Vídeos:</strong> contenido sensible; control de acceso, retención acordada con el usuario y políticas claras de uso.</li>
+<li><strong>Pagos y facturas:</strong> trazabilidad y disputas resolubles.</li>
+<li><strong>Abuso y fraude:</strong> límites razonables en invitaciones, pagos y mensajes a medida que crezca la base.</li>
+</ul>
+<p><strong>Mensaje:</strong> sin este pilar, el crecimiento a <strong>millones de usuarios</strong> no es sostenible reputacional ni legalmente.</p>
+<hr>
+<h2>25. Escalabilidad y siguiente capítulo</h2>
+<p><strong>Hoy:</strong> pádel, relación jugador–entrenador, operativa de academia o coach independiente.</p>
+<p><strong>Mañana (sobre la misma base):</strong> más deportes, automatizaciones, inteligencia asistida sobre vídeo, informes para clubes, integraciones federativas, B2B con escuelas.</p>
+<p><strong>Implicación para dirección:</strong> la primera versión debe ser <strong>modular en producto</strong> (servicios, roles, notificaciones, medios) aunque el lanzamiento sea acotado — evita reescrituras caras cuando el negocio demuestre tracción.</p>
+<hr>
+<h2>26. Cierre</h2>
+<p>Gimadd Mentor no es “una app más de pádel”: es el <strong>sistema operativo</strong> del entrenamiento personalizado entre sesiones — donde el jugador <strong>siente progreso</strong> y el entrenador <strong>escala su negocio</strong> con herramientas dignas de un servicio premium.</p>
+<hr>
+<p><em>Documento orientado a dirección. Para detalle funcional y técnico para proveedores de desarrollo, ver el brief complementario en la misma carpeta del proyecto.</em></p>
+
+    </article>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.3/dist/mermaid.min.js"></script>
+  <script>
+    (async function () {
+      const diagrams = ["flowchart LR\n  J[Jugador] <--> P[Gimadd Mentor] <--> E[Entrenador]\n  V[Visitante / marketplace] --> P"];
+      mermaid.initialize({
+        startOnLoad: false,
+        theme: "default",
+        securityLevel: "strict",
+        flowchart: { htmlLabels: true, useMaxWidth: true },
+        sequence: { useMaxWidth: true },
+        state: { useMaxWidth: true }
+      });
+      diagrams.forEach(function (text, i) {
+        var el = document.getElementById("mmd-" + i);
+        if (el) el.textContent = text;
+      });
+      try {
+        await mermaid.run({ querySelector: ".mermaid" });
+      } catch (e) {
+        console.error(e);
+      }
+    })();
+  </script>
+</body>
+</html>

@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "pdf": "node build-presupuesto-pdf.mjs",
-    "pdf:ceo": "node build-presupuesto-pdf.mjs --input GIMADD-MENTOR-VISION-CEO.md --output GIMADD-MENTOR-VISION-CEO.pdf --title \"Gimadd Mentor — Visión CEO\""
+    "pdf:ceo": "node build-presupuesto-pdf.mjs --input GIMADD-MENTOR-VISION-CEO.md --output GIMADD-MENTOR-VISION-CEO.pdf --title \"Gimadd Mentor — Visión CEO\"",
+    "html": "node build-presupuesto-html.mjs"
   },
   "dependencies": {
     "marked": "^15.0.12",
