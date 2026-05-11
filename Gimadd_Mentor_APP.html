@@ -5521,6 +5521,51 @@
               <strong>mantener en el plan</strong>, <strong>fuera del plan</strong> o <strong>marcar como completado</strong>.
             </p>
             <div id="coachListPend"></div>
+            <div id="coachVaEmbedMount" style="margin-top:1rem">
+              <div id="coachPlanVaEmpty" class="sub" style="padding:0.75rem;border:1px dashed var(--border);border-radius:12px;text-align:center;line-height:1.5">
+                Aún no hay <strong>análisis publicados</strong> para este jugador. Cuando publiques uno desde la pestaña <strong>Videoanálisis</strong>, aparecerá aquí para asociarlo al ciclo de revisión del plan.
+              </div>
+              <div class="va-workspace va-workspace--jugador" id="coachPlanVaContent" hidden>
+                <div class="va-sec" id="coachPlanVaHistorySec" hidden>
+                  <h3 style="margin:0 0 0.45rem">Historial de videoanálisis</h3>
+                  <div id="coachPlanVaHistoryList" class="va-mark-list" aria-label="Historial de análisis publicados"></div>
+                </div>
+                <p class="va-ws-kicker" id="coachPlanVaKicker">Análisis publicado</p>
+                <h2 class="va-ws-title" id="coachPlanVaTitle">Revisión del jugador</h2>
+                <p class="sub" id="coachPlanVaMeta" style="margin:-0.35rem 0 0.5rem;font-size:0.74rem"></p>
+                <div class="va-video-wrap" id="coachPlanVaVideoWrap">
+                  <video id="coachPlanVaVideo" playsinline preload="metadata"
+                    poster="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.jpg"></video>
+                  <button type="button" class="va-fs-btn" id="coachPlanVaFs" aria-label="Pantalla completa">Pantalla completa</button>
+                </div>
+                <div class="va-transport">
+                  <button type="button" class="va-play-toggle" id="coachPlanVaPlay" aria-pressed="false">Play</button>
+                  <button type="button" id="coachPlanVaBack5" aria-label="Retroceder 5 segundos">−5s</button>
+                  <button type="button" id="coachPlanVaFwd5" aria-label="Avanzar 5 segundos">+5s</button>
+                  <input type="range" class="va-seek" id="coachPlanVaSeek" min="0" max="1000" value="0" aria-label="Línea de tiempo" />
+                  <span class="va-timecode" id="coachPlanVaTime" aria-live="polite">0:00 / 0:00</span>
+                  <label class="sr-only" for="coachPlanVaRate">Velocidad</label>
+                  <select class="va-rate" id="coachPlanVaRate" aria-label="Velocidad de reproducción">
+                    <option value="0.75">0,75×</option>
+                    <option value="1" selected>1×</option>
+                    <option value="1.25">1,25×</option>
+                  </select>
+                </div>
+                <div class="va-sec">
+                  <h3>Marcas y comentarios</h3>
+                  <ul class="va-mark-list" id="coachPlanVaMarkList"></ul>
+                </div>
+                <div class="va-sec" id="coachPlanVaPlanLinksSec" hidden>
+                  <h3>Objetivos del plan en este vídeo</h3>
+                  <ul class="va-mark-list" id="coachPlanVaPlanLinks"></ul>
+                </div>
+                <div class="va-sec" id="coachPlanVaFeedbackSec" hidden>
+                  <h3>Feedback al jugador</h3>
+                  <p class="sub" id="coachPlanVaFbNoteOut" style="margin:0 0 0.65rem;line-height:1.45"></p>
+                  <div id="coachPlanVaFbMedia" class="va-fb-grid"></div>
+                </div>
+              </div>
+            </div>
           </div>
 
           <div class="jugador-plan-subpanel" data-coach-plan-subpanel="partido">
@@ -10077,6 +10122,273 @@
     var head = document.querySelector("#view-jug-videoanalisis header");
     if (head) head.style.display = "none";
     mount.dataset.vaEmbedDone = "1";
+  }
+
+  var coachPlanVaBound = false;
+
+  function bindCoachPlanVideoAnalysisUiOnce() {
+    if (coachPlanVaBound) return;
+    var video = document.getElementById("coachPlanVaVideo");
+    var playBtn = document.getElementById("coachPlanVaPlay");
+    var back5 = document.getElementById("coachPlanVaBack5");
+    var fwd5 = document.getElementById("coachPlanVaFwd5");
+    var seek = document.getElementById("coachPlanVaSeek");
+    var timeEl = document.getElementById("coachPlanVaTime");
+    var rate = document.getElementById("coachPlanVaRate");
+    var fsBtn = document.getElementById("coachPlanVaFs");
+    var wrap = document.getElementById("coachPlanVaVideoWrap");
+    if (!video || !playBtn) return;
+    coachPlanVaBound = true;
+    var seekDragging = false;
+    function tick() {
+      coachVaUpdateTransport(video, playBtn, seek, timeEl, seekDragging);
+    }
+    playBtn.onclick = function () {
+      if (video.paused) video.play();
+      else video.pause();
+      tick();
+    };
+    if (back5) {
+      back5.onclick = function () {
+        video.currentTime = Math.max(0, (video.currentTime || 0) - 5);
+        tick();
+      };
+    }
+    if (fwd5) {
+      fwd5.onclick = function () {
+        var d = video.duration;
+        var t = (video.currentTime || 0) + 5;
+        if (isFinite(d) && d > 0) t = Math.min(d, t);
+        video.currentTime = t;
+        tick();
+      };
+    }
+    if (rate) {
+      rate.onchange = function () {
+        var v = parseFloat(rate.value, 10);
+        video.playbackRate = isFinite(v) ? v : 1;
+      };
+    }
+    if (seek) {
+      seek.oninput = function () {
+        seekDragging = true;
+        var d = video.duration;
+        if (!isFinite(d) || d <= 0) return;
+        var pct = parseInt(seek.value, 10) / 1000;
+        video.currentTime = pct * d;
+        tick();
+      };
+      seek.onchange = function () {
+        seekDragging = false;
+        tick();
+      };
+    }
+    video.addEventListener("timeupdate", tick);
+    video.addEventListener("play", tick);
+    video.addEventListener("pause", tick);
+    video.addEventListener("loadedmetadata", tick);
+    coachVaBindFullscreen(wrap, fsBtn, video);
+  }
+
+  function renderCoachPlanVideoAnalysisEmbedded() {
+    var mount = document.getElementById("coachVaEmbedMount");
+    if (!mount) return;
+    var empty = document.getElementById("coachPlanVaEmpty");
+    var content = document.getElementById("coachPlanVaContent");
+    var pid = getActivePlayerId();
+    var bucket = vaGetPublishBucket(pid);
+    var entries = bucket && Array.isArray(bucket.entries) ? bucket.entries.slice() : [];
+    if (!entries.length) {
+      if (empty) empty.hidden = false;
+      if (content) content.hidden = true;
+      return;
+    }
+    var selectedCode = "";
+    try {
+      selectedCode = sessionStorage.getItem("gimadd_coach_plan_va_sel_code:" + pid) || "";
+    } catch (eSelC) {}
+    var pkg = null;
+    if (selectedCode) {
+      pkg = entries.find(function (x) {
+        return x && String(x.videoCodigo || "").trim() === String(selectedCode).trim();
+      });
+    }
+    if (!pkg) pkg = entries[entries.length - 1];
+
+    if (empty) empty.hidden = true;
+    if (content) content.hidden = false;
+
+    var histSec = document.getElementById("coachPlanVaHistorySec");
+    var histList = document.getElementById("coachPlanVaHistoryList");
+    if (histSec) histSec.hidden = entries.length < 2;
+    if (histList) {
+      var rows = entries
+        .slice()
+        .reverse()
+        .map(function (x) {
+          var code = x && x.videoCodigo ? String(x.videoCodigo).trim() : "";
+          var when = "";
+          try {
+            when = x && x.publishedAt ? new Date(x.publishedAt).toLocaleDateString("es-ES", { day: "numeric", month: "short", year: "numeric" }) : "";
+          } catch (eWc) {}
+          var on = pkg && code && String(pkg.videoCodigo || "").trim() === code;
+          return (
+            '<div class="va-mark-item" style="display:flex;align-items:center;justify-content:space-between;gap:0.5rem">' +
+            '<div><strong style="font-weight:900">Vídeo № ' +
+            escapeHtml(code || "—") +
+            "</strong>" +
+            (when ? '<span class="sub" style="margin-left:0.45rem;font-size:0.72rem;color:var(--muted)">' + escapeHtml(when) + "</span>" : "") +
+            "</div>" +
+            '<span class="va-mark-actions"><button type="button" class="va-btn-secondary ' +
+            (on ? "primary" : "") +
+            '" data-coach-plan-va-pick="' +
+            escapeHtml(code) +
+            '">' +
+            (on ? "Viendo" : "Abrir") +
+            "</button></span></div>"
+          );
+        })
+        .join("");
+      histList.innerHTML = rows;
+      histList.querySelectorAll("[data-coach-plan-va-pick]").forEach(function (btn) {
+        btn.onclick = function () {
+          var code = btn.getAttribute("data-coach-plan-va-pick") || "";
+          try {
+            sessionStorage.setItem("gimadd_coach_plan_va_sel_code:" + pid, code);
+          } catch (eSetC) {}
+          renderCoachPlanVideoAnalysisEmbedded();
+        };
+      });
+    }
+
+    var meta = document.getElementById("coachPlanVaMeta");
+    if (meta) {
+      try {
+        var d = new Date(pkg.publishedAt);
+        var line =
+          "Publicado el " +
+          d.toLocaleString("es-ES", {
+            day: "numeric",
+            month: "short",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+          });
+        var vc = pkg.videoCodigo ? String(pkg.videoCodigo).trim() : "";
+        if (vc) line += " · Vídeo № " + vc;
+        meta.textContent = line;
+      } catch (eMc2) {
+        meta.textContent = "";
+      }
+    }
+
+    var ul = document.getElementById("coachPlanVaMarkList");
+    var markers = Array.isArray(pkg.markers) ? pkg.markers.slice().sort(function (a, b) { return a.t - b.t; }) : [];
+    if (ul) {
+      ul.innerHTML = markers
+        .map(function (m) {
+          return (
+            '<li class="va-mark-item"><div><span class="va-mark-ts">' +
+            vaFmtTime(m.t || 0) +
+            "</span> · " +
+            escapeHtml(m.text || "") +
+            '</div><span class="va-mark-actions"><button type="button" class="va-btn-secondary va-coach-plan-goto" data-t="' +
+            String(m.t || 0) +
+            '">Ir</button></span></li>'
+          );
+        })
+        .join("");
+    }
+
+    var vid = document.getElementById("coachPlanVaVideo");
+    if (vid) {
+      var src = pkg.videoSrc || VA_DEMO_VIDEO_SRC;
+      if (vid.src !== src) {
+        vid.src = src;
+        vid.load();
+      }
+    }
+
+    var planSec = document.getElementById("coachPlanVaPlanLinksSec");
+    var planUl = document.getElementById("coachPlanVaPlanLinks");
+    var planTit = Array.isArray(pkg.planObjetivoTitulos) ? pkg.planObjetivoTitulos.filter(Boolean) : [];
+    if (planSec) planSec.hidden = !planTit.length;
+    if (planUl) {
+      planUl.innerHTML = planTit
+        .map(function (t) {
+          return '<li class="va-mark-item"><div><strong>' + escapeHtml(t) + "</strong></div></li>";
+        })
+        .join("");
+    }
+
+    var noteOut = document.getElementById("coachPlanVaFbNoteOut");
+    var fbSec = document.getElementById("coachPlanVaFeedbackSec");
+    var fbMount = document.getElementById("coachPlanVaFbMedia");
+    var hasNote = !!(pkg.note && String(pkg.note).trim());
+    var fb = pkg.feedback || {};
+    var hasFb =
+      hasNote ||
+      (fb.video && fb.video.dataUrl) ||
+      (fb.audio && fb.audio.dataUrl) ||
+      (fb.images && fb.images.length);
+    if (fbSec) fbSec.hidden = !hasFb;
+    if (noteOut) {
+      noteOut.textContent = hasNote ? pkg.note : "";
+      noteOut.style.display = hasNote ? "" : "none";
+    }
+    if (fbMount) {
+      var h = "";
+      if (fb.video && fb.video.dataUrl) {
+        h +=
+          '<div><span class="sub" style="display:block;margin-bottom:0.35rem">Vídeo</span><video src="' +
+          escapeHtml(fb.video.dataUrl) +
+          '" controls playsinline style="width:100%;max-height:220px;border-radius:10px"></video></div>';
+      }
+      if (fb.audio && fb.audio.dataUrl) {
+        h +=
+          '<div><span class="sub" style="display:block;margin-bottom:0.35rem">Audio</span><audio src="' +
+          escapeHtml(fb.audio.dataUrl) +
+          '" controls style="width:100%"></audio></div>';
+      }
+      if (fb.images && fb.images.length) {
+        h += '<div class="va-fb-imgrow">';
+        fb.images.forEach(function (im) {
+          if (im && im.dataUrl) {
+            h +=
+              '<figure style="margin:0"><img src="' +
+              escapeHtml(im.dataUrl) +
+              '" alt="" style="width:100%;height:120px;object-fit:cover;border-radius:10px" /></figure>';
+          }
+        });
+        h += "</div>";
+      }
+      fbMount.innerHTML = h;
+    }
+
+    if (ul && vid) {
+      ul.querySelectorAll(".va-coach-plan-goto").forEach(function (btn) {
+        btn.onclick = function () {
+          var t = parseFloat(btn.getAttribute("data-t"), 10);
+          if (isFinite(t)) {
+            vid.currentTime = t;
+            try {
+              vid.play();
+            } catch (ePlayC) {}
+          }
+        };
+      });
+    }
+
+    bindCoachPlanVideoAnalysisUiOnce();
+    try {
+      coachVaUpdateTransport(
+        vid,
+        document.getElementById("coachPlanVaPlay"),
+        document.getElementById("coachPlanVaSeek"),
+        document.getElementById("coachPlanVaTime"),
+        false
+      );
+    } catch (eTrC) {}
   }
 
   function bindJugadorVideoAnalysisUiOnce() {
@@ -18039,6 +18351,11 @@
         coachPlanRoot.querySelectorAll(".jugador-plan-subpanel[data-coach-plan-subpanel]").forEach(function (p) {
           p.classList.toggle("is-on", p.getAttribute("data-coach-plan-subpanel") === subnm);
         });
+        if (subnm === "revision") {
+          try {
+            renderCoachPlanVideoAnalysisEmbedded();
+          } catch (eCoachPlanVa) {}
+        }
         return;
       }
       var revGoto = e.target.closest("[data-coach-rev-goto-obj]");
@@ -18065,6 +18382,7 @@
           try {
             loadGoals();
             renderCoachGoalsMirror();
+            renderCoachPlanVideoAnalysisEmbedded();
           } catch (eCoachObjTab) {}
         }
         return;
