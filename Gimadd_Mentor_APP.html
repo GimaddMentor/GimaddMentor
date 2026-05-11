@@ -8493,6 +8493,11 @@
         viewObjetivosEl.querySelectorAll(".jugador-plan-subpanel").forEach(function (p) {
           p.classList.toggle("is-on", p.getAttribute("data-jugador-plan-subpanel") === subname);
         });
+        if (subname === "revision") {
+          try {
+            renderJugadorVideoAnalysisView();
+          } catch (eJugVaTab) {}
+        }
         return;
       }
       var btn = e.target.closest("button[data-action]");
@@ -16073,6 +16078,10 @@
       var ps = pendingJugadorPlanSubtab;
       pendingJugadorPlanSubtab = null;
       if (ps) activateJugadorPlanSubtab(ps);
+      // Si estamos en el bloque de revisión (videoanálisis), pintar el contenido embebido.
+      try {
+        renderJugadorVideoAnalysisView();
+      } catch (eJugVa) {}
     }
     if (name === "jug-perfil") {
       loadCrmIntoMemory();
