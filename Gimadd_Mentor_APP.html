@@ -4875,6 +4875,10 @@
         Tu entrenador aún no ha <strong>publicado</strong> un análisis en esta demo. Cuando lo haga desde su pestaña Videoanálisis, aquí verás el mismo vídeo, las marcas y el feedback.
       </div>
       <div class="va-workspace va-workspace--jugador" id="jugVaContent" hidden>
+        <div class="va-sec" id="jugVaHistorySec" hidden>
+          <h3 style="margin:0 0 0.45rem">Historial de videoanálisis</h3>
+          <div id="jugVaHistoryList" class="va-mark-list" aria-label="Historial de análisis publicados"></div>
+        </div>
         <p class="va-ws-kicker" id="jugVaKicker">Análisis publicado</p>
         <h2 class="va-ws-title" id="jugVaTitle">Revisión de tu entrenador</h2>
         <p class="sub" id="jugVaMeta" style="margin:-0.35rem 0 0.5rem;font-size:0.74rem"></p>
@@ -4899,6 +4903,10 @@
         <div class="va-sec">
           <h3>Marcas y comentarios</h3>
           <ul class="va-mark-list" id="jugVaMarkList"></ul>
+        </div>
+        <div class="va-sec" id="jugVaPlanLinksSec" hidden>
+          <h3>Objetivos del plan en este vídeo</h3>
+          <ul class="va-mark-list" id="jugVaPlanLinks"></ul>
         </div>
         <div class="va-sec" id="jugVaFeedbackSec" hidden>
           <h3>Feedback de tu entrenador</h3>
@@ -4956,6 +4964,7 @@
         <div class="jugador-plan-subpanel is-on" data-jugador-plan-subpanel="revision">
           <p class="jug-plan-subdesc">Cuando <strong>todos</strong> los objetivos del plan han cumplido sus prácticas, el plan queda <strong>completo</strong> y verás aquí el bloque en revisión: el entrenador recibe aviso y tú debes <strong>enviar un nuevo vídeo</strong> para que compruebe la mejora. Confirma el envío con el botón inferior cuando corresponda; si pasan <strong>7 días</strong> sin vídeo, se avisará al entrenador para que te contacte.</p>
           <div id="listPend"></div>
+          <div id="jugVaEmbedMount" style="margin-top:1rem"></div>
         </div>
 
         <div class="jugador-plan-subpanel" data-jugador-plan-subpanel="partido">
@@ -9376,14 +9385,77 @@
   function renderJugadorVideoAnalysisView() {
     var empty = document.getElementById("jugVaEmpty");
     var content = document.getElementById("jugVaContent");
-    var pkg = vaGetPublished(getActivePlayerId());
-    if (!pkg || !pkg.publishedAt) {
+    var pid = getActivePlayerId();
+    var bucket = vaGetPublishBucket(pid);
+    var entries = bucket && Array.isArray(bucket.entries) ? bucket.entries.slice() : [];
+    if (!entries.length) {
       if (empty) empty.hidden = false;
       if (content) content.hidden = true;
       return;
     }
+    var selectedCode = "";
+    try {
+      selectedCode = sessionStorage.getItem("gimadd_jug_va_sel_code:" + pid) || "";
+    } catch (eSel) {}
+    var pkg = null;
+    if (selectedCode) {
+      pkg = entries.find(function (x) {
+        return x && String(x.videoCodigo || "").trim() === String(selectedCode).trim();
+      });
+    }
+    if (!pkg) pkg = entries[entries.length - 1];
+
     if (empty) empty.hidden = true;
     if (content) content.hidden = false;
+
+    // Embed inside Objetivos → Plan → Revisión
+    try {
+      ensureJugadorVaEmbedded();
+    } catch (eEmb) {}
+
+    var histSec = document.getElementById("jugVaHistorySec");
+    var histList = document.getElementById("jugVaHistoryList");
+    if (histSec) histSec.hidden = entries.length < 2;
+    if (histList) {
+      var rows = entries
+        .slice()
+        .reverse()
+        .map(function (x) {
+          var code = x && x.videoCodigo ? String(x.videoCodigo).trim() : "";
+          var when = "";
+          try {
+            when = x && x.publishedAt ? new Date(x.publishedAt).toLocaleDateString("es-ES", { day: "numeric", month: "short", year: "numeric" }) : "";
+          } catch (eW) {}
+          var on = pkg && code && String(pkg.videoCodigo || "").trim() === code;
+          return (
+            '<div class="va-mark-item" style="display:flex;align-items:center;justify-content:space-between;gap:0.5rem">' +
+            '<div><strong style="font-weight:900">Vídeo № ' +
+            escapeHtml(code || "—") +
+            "</strong>" +
+            (when ? '<span class="sub" style="margin-left:0.45rem;font-size:0.72rem;color:var(--muted)">' + escapeHtml(when) + "</span>" : "") +
+            "</div>" +
+            '<span class="va-mark-actions"><button type="button" class="va-btn-secondary ' +
+            (on ? "primary" : "") +
+            '" data-jug-va-pick="' +
+            escapeHtml(code) +
+            '">' +
+            (on ? "Viendo" : "Abrir") +
+            "</button></span></div>"
+          );
+        })
+        .join("");
+      histList.innerHTML = rows;
+      histList.querySelectorAll("[data-jug-va-pick]").forEach(function (btn) {
+        btn.onclick = function () {
+          var code = btn.getAttribute("data-jug-va-pick") || "";
+          try {
+            sessionStorage.setItem("gimadd_jug_va_sel_code:" + pid, code);
+          } catch (eSet) {}
+          renderJugadorVideoAnalysisView();
+        };
+      });
+    }
+
     var meta = document.getElementById("jugVaMeta");
     if (meta) {
       try {
@@ -9474,6 +9546,21 @@
       }
       fbMount.innerHTML = h;
     }
+
+    var planSec = document.getElementById("jugVaPlanLinksSec");
+    var planUl = document.getElementById("jugVaPlanLinks");
+    var planTitles = Array.isArray(pkg.planObjetivoTitulos) ? pkg.planObjetivoTitulos.filter(Boolean) : [];
+    if (planSec) planSec.hidden = !planTitles.length;
+    if (planUl) {
+      planUl.innerHTML = planTitles.length
+        ? planTitles
+            .map(function (t) {
+              return '<li class="va-mark-item"><div>' + escapeHtml(String(t)) + "</div></li>";
+            })
+            .join("")
+        : "";
+    }
+
     if (ul && vid) {
       ul.querySelectorAll(".va-jug-goto").forEach(function (btn) {
         btn.onclick = function () {
@@ -9497,6 +9584,21 @@
         false
       );
     } catch (eTr) {}
+  }
+
+  function ensureJugadorVaEmbedded() {
+    var mount = document.getElementById("jugVaEmbedMount");
+    if (!mount) return;
+    if (mount.dataset.vaEmbedDone === "1") return;
+    var sheet = document.querySelector("#view-jug-videoanalisis .jug-grabar-sheet");
+    if (!sheet) return;
+    // Move only the content blocks (empty + workspace) into the Objetivos revision panel.
+    if (document.getElementById("jugVaEmpty")) mount.appendChild(document.getElementById("jugVaEmpty"));
+    if (document.getElementById("jugVaContent")) mount.appendChild(document.getElementById("jugVaContent"));
+    // Hide the standalone header (we keep the node in DOM but it won't be navigated to).
+    var head = document.querySelector("#view-jug-videoanalisis header");
+    if (head) head.style.display = "none";
+    mount.dataset.vaEmbedDone = "1";
   }
 
   function bindJugadorVideoAnalysisUiOnce() {
