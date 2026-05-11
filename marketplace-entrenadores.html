@@ -276,17 +276,49 @@
         font-size: 0.86rem;
         line-height: 1.35;
       }
-      .coach-tile-price {
+      .coach-tile-code {
         margin: 0.55rem 0 0;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.6rem;
+        padding: 0.55rem 0.6rem;
+        border-radius: 14px;
+        border: 1px solid rgba(226, 232, 240, 0.95);
+        background: rgba(255, 255, 255, 0.7);
+      }
+      .coach-tile-code strong {
+        font-size: 0.9rem;
         font-weight: 1000;
-        color: var(--brand-accent-dark);
-        font-size: 0.98rem;
+        letter-spacing: 0.02em;
+        color: var(--brand-ink);
+      }
+      .coach-tile-copy {
+        appearance: none;
+        border: 1px solid rgba(226, 232, 240, 0.95);
+        background: #ffffff;
+        width: 38px;
+        height: 38px;
+        border-radius: 12px;
+        display: grid;
+        place-items: center;
+        cursor: pointer;
+        box-shadow: 0 1px 10px rgba(15, 23, 42, 0.04);
+        flex-shrink: 0;
+      }
+      .coach-tile-copy:hover {
+        border-color: rgba(242, 236, 31, 0.85);
+      }
+      .coach-tile-copy .material-symbols-outlined {
+        font-size: 1.1rem;
+        color: var(--brand-court-deep);
       }
       .coach-tile-cta {
         margin-top: 0.7rem;
         display: flex;
         justify-content: flex-end;
       }
+      /* old price style kept for compatibility; cards now show code instead */
       .coach-tile-cta .mp-btn.primary {
         width: 100%;
         max-width: 15rem;
@@ -622,8 +654,6 @@
           <select id="sortSel" aria-label="Ordenar entrenadores">
             <option value="relevancia">Relevancia</option>
             <option value="rating">Mejor valorados</option>
-            <option value="precio-asc">Precio (menor → mayor)</option>
-            <option value="precio-desc">Precio (mayor → menor)</option>
           </select>
         </div>
       </div>
@@ -679,11 +709,6 @@
                 <option value="en">Inglés</option>
                 <option value="fr">Francés</option>
               </select>
-            </div>
-
-            <div class="mp-field">
-              <label for="precioMax">Precio máx. (€/sesión)</label>
-              <input id="precioMax" type="number" min="0" step="1" placeholder="Ej. 60" inputmode="numeric" />
             </div>
 
             <div class="mp-actions">
@@ -953,6 +978,34 @@
             .join("");
         }
 
+        function loadCoachCodes() {
+          try {
+            var raw = localStorage.getItem("mpCoachCodes") || "{}";
+            var m = JSON.parse(raw);
+            return m && typeof m === "object" ? m : {};
+          } catch (e) {
+            return {};
+          }
+        }
+
+        function saveCoachCodes(m) {
+          try {
+            localStorage.setItem("mpCoachCodes", JSON.stringify(m || {}));
+          } catch (e2) {}
+        }
+
+        function coachCodeFor(coach) {
+          if (coach && coach.coachCode) return String(coach.coachCode);
+          var id = coach && coach.id ? String(coach.id) : "";
+          if (!id) return buildInviteCode("GIMADD");
+          if (!state._codes) state._codes = loadCoachCodes();
+          if (!state._codes[id]) {
+            state._codes[id] = buildInviteCode(id);
+            saveCoachCodes(state._codes);
+          }
+          return String(state._codes[id]);
+        }
+
         function loadSeed() {
           var el = $("mp-coaches-seed");
           if (!el) return [];
@@ -995,7 +1048,6 @@
         function renderCoach(coach) {
           var rating = Number(coach.rating) || 0;
           var rev = Number(coach.reviewsCount) || 0;
-          var priceMin = minServicePrice(coach);
           var verified = !!coach.verified;
           var city = coach.city ? String(coach.city) : "";
           var langs = Array.isArray(coach.languages) ? coach.languages : [];
@@ -1024,7 +1076,7 @@
               ? "<br />" + escapeHtml(formats.map(function (x) { return (x === "online" ? "Virtual" : "In-person"); }).join(", "))
               : "");
 
-          var price = priceMin != null ? "From " + fmtEur(priceMin) : "Consultar";
+          var code = coachCodeFor(coach);
 
           return (
             '<article class="coach-tile" data-coach-id="' +
@@ -1044,9 +1096,15 @@
             '<p class="coach-tile-line">' +
             line2 +
             "</p>" +
-            '<p class="coach-tile-price">' +
-            escapeHtml(price) +
-            "</p>" +
+            '<div class="coach-tile-code">' +
+            "<div>" +
+            '<span class="meta-k" style="margin:0 0 0.15rem">Código</span>' +
+            "<strong>" +
+            escapeHtml(code) +
+            "</strong></div>" +
+            '<button class="coach-tile-copy" type="button" data-act="copycode" aria-label="Copiar código">' +
+            '<span class="material-symbols-outlined" aria-hidden="true">content_copy</span>' +
+            "</button></div>" +
             '<div class="coach-tile-cta"><button class="mp-btn primary" type="button" data-act="view">Ver perfil <span class="material-symbols-outlined" aria-hidden="true" style="font-size:1.1rem">arrow_right_alt</span></button></div>' +
             "</div>" +
             "</div>" +
@@ -1094,12 +1152,12 @@
         var state = {
           all: loadSeed(),
           chips: { online: false, presencial: false },
+          _codes: null,
         };
 
         var qEl = $("q");
         var enfoqueEl = $("enfoque");
         var idiomaEl = $("idioma");
-        var precioEl = $("precioMax");
         var sortEl = $("sortSel");
         var listEl = $("list");
         var emptyEl = $("empty");
@@ -1111,7 +1169,6 @@
           var q = qEl ? qEl.value.trim().toLowerCase() : "";
           var enfoque = enfoqueEl ? enfoqueEl.value : "";
           var idioma = idiomaEl ? idiomaEl.value : "";
-          var priceMax = precioEl && precioEl.value ? Number(precioEl.value) : null;
           var cText = (coach.name + " " + (coach.bio || "")).toLowerCase();
           if (q && cText.indexOf(q) === -1) return false;
           if (enfoque) {
@@ -1127,10 +1184,6 @@
             if (state.chips.online && fm.indexOf("online") === -1) return false;
             if (state.chips.presencial && fm.indexOf("presencial") === -1) return false;
           }
-          if (priceMax != null && !isNaN(priceMax)) {
-            var minP = minServicePrice(coach);
-            if (minP != null && minP > priceMax) return false;
-          }
           return true;
         }
 
@@ -1140,16 +1193,6 @@
           if (mode === "rating") {
             out.sort(function (a, b) {
               return (Number(b.rating) || 0) - (Number(a.rating) || 0);
-            });
-            return out;
-          }
-          if (mode === "precio-asc" || mode === "precio-desc") {
-            out.sort(function (a, b) {
-              var ap = minServicePrice(a);
-              var bp = minServicePrice(b);
-              if (ap == null) ap = 1e9;
-              if (bp == null) bp = 1e9;
-              return mode === "precio-asc" ? ap - bp : bp - ap;
             });
             return out;
           }
@@ -1208,14 +1251,12 @@
           var rating = Number(coach.rating) || 0;
           var rev = Number(coach.reviewsCount) || 0;
           var verified = !!coach.verified;
-          var priceMin = minServicePrice(coach);
           var focus = Array.isArray(coach.focus) ? coach.focus : [];
           var langs = Array.isArray(coach.languages) ? coach.languages : [];
           var formats = Array.isArray(coach.formats) ? coach.formats : [];
           var city = coach.city ? String(coach.city) : "—";
 
-          var code = buildInviteCode(coachId);
-          if (coach && coach.coachCode) code = String(coach.coachCode);
+          var code = coachCodeFor(coach);
           openProfile._code = code;
           openProfile._coachId = coachId;
 
@@ -1321,7 +1362,6 @@
           if (qEl) qEl.addEventListener("input", render);
           if (enfoqueEl) enfoqueEl.addEventListener("change", render);
           if (idiomaEl) idiomaEl.addEventListener("change", render);
-          if (precioEl) precioEl.addEventListener("input", render);
           if (sortEl) sortEl.addEventListener("change", render);
 
           var btnReset = $("btnReset");
@@ -1330,7 +1370,6 @@
               if (qEl) qEl.value = "";
               if (enfoqueEl) enfoqueEl.value = "";
               if (idiomaEl) idiomaEl.value = "";
-              if (precioEl) precioEl.value = "";
               state.chips.online = false;
               state.chips.presencial = false;
               document.querySelectorAll(".mp-chip").forEach(function (b) {
@@ -1367,6 +1406,16 @@
 
             if (act === "view") {
               openProfile(coachId);
+              return;
+            }
+            if (act === "copycode") {
+              e.preventDefault();
+              e.stopPropagation();
+              var coach = state.all.find(function (c) { return String(c.id) === String(coachId); });
+              if (!coach) return;
+              var code = coachCodeFor(coach);
+              var ok = await copyText(code);
+              toast(ok ? "Código copiado" : "No se pudo copiar");
               return;
             }
           });
