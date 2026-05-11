@@ -1522,6 +1522,31 @@
       height: 132px;
       display: block;
     }
+    .chart-legend {
+      display: flex;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+      align-items: center;
+      margin-top: 0.5rem;
+    }
+    .chart-legend .lg {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      padding: 0.32rem 0.55rem;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(241, 245, 249, 0.55);
+      font-size: 0.72rem;
+      color: var(--muted);
+      font-weight: 800;
+    }
+    .chart-legend .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      display: inline-block;
+    }
     .stats-chart .chart-note {
       margin: 0.35rem 0 0;
       font-size: 0.72rem;
@@ -5622,6 +5647,11 @@
           <div class="stats-chart" id="statsChart">
             <svg viewBox="0 0 640 132" preserveAspectRatio="none" aria-label="Gráfica de evolución"></svg>
             <p class="chart-note" id="statsChartNote">Evolución de % de victorias por mes (según el rango seleccionado).</p>
+            <div class="chart-legend" aria-label="Leyenda de la gráfica">
+              <span class="lg"><span class="dot" style="background:rgba(22,163,74,0.65)"></span>Ganados</span>
+              <span class="lg"><span class="dot" style="background:rgba(220,38,38,0.65)"></span>Perdidos</span>
+              <span class="lg"><span class="dot" style="background:#0c4a6e"></span>Total</span>
+            </div>
           </div>
           <div class="stats-grid" id="statsGrid">
             <div class="stat-box"><div class="l">Partidos</div><div class="n" id="stTotal">0</div></div>
@@ -15369,14 +15399,56 @@
     const maxTotal = series.reduce((mx, s) => Math.max(mx, s.total), 0) || 1;
     const w = 640;
     const h = 132;
-    const padX = 20;
-    const padY = 18;
+    const padX = 36; // espacio para eje Y
+    const padY = 14;
     const innerW = w - padX * 2;
     const innerH = h - padY * 2;
     const n = series.length || 1;
     const step = innerW / Math.max(1, n - 1);
 
-    // Modern look: stacked bars (wins/loss) + total line (blue)
+    function yCount(v) {
+      return padY + innerH - (v / maxTotal) * innerH;
+    }
+    function shortMonth(ym) {
+      try {
+        const y = parseInt(ym.slice(0, 4), 10);
+        const m = parseInt(ym.slice(5, 7), 10);
+        const d = new Date(y, (m || 1) - 1, 1);
+        return d.toLocaleDateString("es", { month: "short" });
+      } catch (e) {
+        return ym.slice(5, 7);
+      }
+    }
+    const yAxisTicks = (function () {
+      const t = [];
+      const top = maxTotal;
+      const steps = top <= 6 ? top : 4;
+      const den = Math.max(1, steps);
+      for (let i = 0; i <= den; i++) t.push(Math.round((top * i) / den));
+      return Array.from(new Set(t));
+    })();
+    const grid = yAxisTicks
+      .map((v) => {
+        const y = yCount(v);
+        return `<line x1="${padX}" y1="${y.toFixed(1)}" x2="${(padX + innerW).toFixed(
+          1
+        )}" y2="${y.toFixed(1)}" stroke="rgba(100,116,139,0.18)" />`;
+      })
+      .join("");
+    const yAxis =
+      `<line x1="${padX}" y1="${padY}" x2="${padX}" y2="${(padY + innerH).toFixed(
+        1
+      )}" stroke="rgba(100,116,139,0.28)" />` +
+      yAxisTicks
+        .map((v) => {
+          const y = yCount(v);
+          return `<text x="${padX - 8}" y="${(y + 3.5).toFixed(
+            1
+          )}" text-anchor="end" font-size="10" font-weight="700" fill="rgba(100,116,139,0.95)">${v}</text>`;
+        })
+        .join("");
+
+    // Modern look: stacked bars (wins/loss) + total line (blue), with labels
     const bw = Math.max(10, step * 0.62);
     const bars = series
       .map((s, i) => {
@@ -15387,6 +15459,14 @@
         const yBase = padY + innerH;
         const yLoss = yBase - lossH;
         const yWin = yLoss - winH;
+        const baseRect =
+          s.total > 0
+            ? `<rect x="${x.toFixed(1)}" y="${(yBase - fullH).toFixed(1)}" width="${bw.toFixed(
+                1
+              )}" height="${fullH.toFixed(1)}" rx="7" fill="rgba(2,132,199,0.06)" stroke="rgba(12,74,110,0.10)" />`
+            : `<rect x="${x.toFixed(1)}" y="${(yBase - 2).toFixed(1)}" width="${bw.toFixed(
+                1
+              )}" height="2" rx="7" fill="rgba(100,116,139,0.16)" />`;
         const lossRect =
           lossH > 0
             ? `<rect x="${x.toFixed(1)}" y="${yLoss.toFixed(1)}" width="${bw.toFixed(
@@ -15399,22 +15479,20 @@
                 1
               )}" height="${winH.toFixed(1)}" rx="7" fill="rgba(22,163,74,0.22)" stroke="rgba(22,163,74,0.35)" />`
             : "";
-        const baseRect =
+        const totalLabel =
           s.total > 0
-            ? `<rect x="${x.toFixed(1)}" y="${(yBase - fullH).toFixed(1)}" width="${bw.toFixed(
+            ? `<text x="${(padX + i * step).toFixed(1)}" y="${(yBase - fullH - 6).toFixed(
                 1
-              )}" height="${fullH.toFixed(1)}" rx="7" fill="rgba(2,132,199,0.06)" stroke="rgba(12,74,110,0.10)" />`
-            : `<rect x="${x.toFixed(1)}" y="${(yBase - 2).toFixed(1)}" width="${bw.toFixed(
-                1
-              )}" height="2" rx="7" fill="rgba(100,116,139,0.16)" />`;
-        return baseRect + lossRect + winRect;
+              )}" text-anchor="middle" font-size="10" font-weight="800" fill="rgba(15,23,42,0.82)">${s.total}</text>`
+            : "";
+        return baseRect + lossRect + winRect + totalLabel;
       })
       .join("");
 
     const ptsTotal = series
       .map((s, i) => {
         const x = padX + i * step;
-        const y = padY + innerH - (s.total / maxTotal) * innerH;
+        const y = yCount(s.total);
         return `${x.toFixed(1)},${y.toFixed(1)}`;
       })
       .join(" ");
@@ -15422,26 +15500,47 @@
     const dotsTotal = series
       .map((s, i) => {
         const x = padX + i * step;
-        const y = padY + innerH - (s.total / maxTotal) * innerH;
-        return `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="4.1" fill="#0c4a6e" stroke="rgba(255,255,255,0.9)" stroke-width="1.5" />`;
+        const y = yCount(s.total);
+        const dot = `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(
+          1
+        )}" r="4.1" fill="#0c4a6e" stroke="rgba(255,255,255,0.92)" stroke-width="1.5" />`;
+        const txt =
+          s.total > 0
+            ? `<text x="${x.toFixed(1)}" y="${(y - 7.5).toFixed(
+                1
+              )}" text-anchor="middle" font-size="10" font-weight="800" fill="#0c4a6e">${s.total}</text>`
+            : "";
+        return dot + txt;
       })
       .join("");
 
-    const grid = [0, 0.25, 0.5, 0.75, 1]
-      .map((p) => {
-        const y = padY + innerH - p * innerH;
-        return `<line x1="${padX}" y1="${y.toFixed(1)}" x2="${(padX + innerW).toFixed(
-          1
-        )}" y2="${y.toFixed(1)}" stroke="rgba(100,116,139,0.18)" />`;
-      })
-      .join("");
+    const xAxis = (function () {
+      const y = padY + innerH + 0.5;
+      const axis = `<line x1="${padX}" y1="${y.toFixed(1)}" x2="${(padX + innerW).toFixed(
+        1
+      )}" y2="${y.toFixed(1)}" stroke="rgba(100,116,139,0.28)" />`;
+      const labels = series
+        .map((s, i) => {
+          const show = series.length <= 8 || i === 0 || i === series.length - 1 || i % 2 === 0;
+          if (!show) return "";
+          const x = padX + i * step;
+          const lab = shortMonth(s.ym);
+          return `<text x="${x.toFixed(1)}" y="${(y + 12).toFixed(
+            1
+          )}" text-anchor="middle" font-size="10" font-weight="750" fill="rgba(100,116,139,0.95)">${lab}</text>`;
+        })
+        .join("");
+      return axis + labels;
+    })();
 
     svg.innerHTML =
       `<rect x=\"0\" y=\"0\" width=\"${w}\" height=\"${h}\" fill=\"#ffffff\" />` +
       grid +
+      yAxis +
       bars +
       `<polyline points=\"${ptsTotal}\" fill=\"none\" stroke=\"#0c4a6e\" stroke-width=\"3\" stroke-linecap=\"round\" stroke-linejoin=\"round\" />` +
-      dotsTotal;
+      dotsTotal +
+      xAxis;
 
     if (note) {
       const label =
@@ -15454,7 +15553,7 @@
           : range === "12m"
           ? "1 año"
           : "Desde el inicio";
-      note.textContent = "Ganados (verde), perdidos (rojo) y total (línea azul) por mes (" + label + ").";
+      note.textContent = "Ganados (verde), perdidos (rojo) y total (azul) por mes (" + label + ").";
     }
   }
 
