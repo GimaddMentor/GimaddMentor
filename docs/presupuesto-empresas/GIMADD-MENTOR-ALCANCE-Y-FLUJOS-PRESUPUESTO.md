@@ -27,12 +27,14 @@ La base actual debe ser **modular y extensible**: hoy pádel y flujo coach–jug
 
 ### 1.1 Plataformas objetivo
 
-| Plataforma | Rol principal | Requisitos destacados |
-|------------|----------------|------------------------|
-| **Android (nativa)** | Jugador y entrenador (o apps separadas por flavor) | Offline-first parcial, cámara, subida de vídeo, push |
-| **iOS (nativa)** | Igual | AVFoundation, background upload, push (APNs) |
-| **Escritorio entrenador** | Panel cómodo multi-cliente | **Vídeo grande**, teclado/ratío, multitarea, exportaciones |
-| **Web jugador (opcional)** | Paridad con móvil | Responsive, PWA opcional |
+
+| Plataforma                 | Rol principal                                      | Requisitos destacados                                      |
+| -------------------------- | -------------------------------------------------- | ---------------------------------------------------------- |
+| **Android (nativa)**       | Jugador y entrenador (o apps separadas por flavor) | Offline-first parcial, cámara, subida de vídeo, push       |
+| **iOS (nativa)**           | Igual                                              | AVFoundation, background upload, push (APNs)               |
+| **Escritorio entrenador**  | Panel cómodo multi-cliente                         | **Vídeo grande**, teclado/ratío, multitarea, exportaciones |
+| **Web jugador (opcional)** | Paridad con móvil                                  | Responsive, PWA opcional                                   |
+
 
 > **Decisión de producto recomendada:** misma cuenta puede iniciar sesión en móvil y escritorio; el **workspace de videoanálisis** en escritorio es una **vista optimizada** (timeline ancha, teclas rápidas, lista de marcas lateral).
 
@@ -90,6 +92,8 @@ flowchart TB
   API --> SEARCH
 ```
 
+
+
 **Nota de presupuesto:** el diagrama es **agnóstico de proveedor**; equipos pueden mapear a Firebase, AWS, GCP o Azure siempre que cumplan requisitos de seguridad, RGPD y coste predecible a escala.
 
 ---
@@ -98,12 +102,14 @@ flowchart TB
 
 ### 3.1 Actores
 
-| Actor | Descripción |
-|-------|-------------|
-| **Jugador** | Consume servicios, registra diario, objetivos, sube vídeos, chatea con su(s) entrenador(es). |
-| **Entrenador** | Gestiona catálogo, CRM, seguimiento, videoanálisis, agenda, finanzas; puede crear/editar objetivos del jugador según permisos. |
-| **Admin plataforma** (futuro) | Verificación KYC entrenadores, moderación, soporte, métricas globales. |
-| **Visitante** | Solo marketplace público y enlaces de invitación. |
+
+| Actor                         | Descripción                                                                                                                    |
+| ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| **Jugador**                   | Consume servicios, registra diario, objetivos, sube vídeos, chatea con su(s) entrenador(es).                                   |
+| **Entrenador**                | Gestiona catálogo, CRM, seguimiento, videoanálisis, agenda, finanzas; puede crear/editar objetivos del jugador según permisos. |
+| **Admin plataforma** (futuro) | Verificación KYC entrenadores, moderación, soporte, métricas globales.                                                         |
+| **Visitante**                 | Solo marketplace público y enlaces de invitación.                                                                              |
+
 
 ### 3.2 Principio de multi-tenancy
 
@@ -112,17 +118,19 @@ flowchart TB
 
 ### 3.3 Matriz de permisos (resumen)
 
-| Recurso | Jugador | Entrenador | Notas producción |
-|---------|---------|------------|-------------------|
-| Perfil propio | CRUD | CRUD | Campos verificados solo por admin |
-| Objetivos del jugador | Crear limitado; editar progreso según política | CRUD completo; ajuste % | En demo, coach ajusta % en más estados |
-| Diario (partidos/clases) | CRUD propio | Lectura + anotaciones opcionales | Versionado de filas |
-| Vídeo / análisis publicado | Ver, descargar según plan | Crear borrador, publicar | ACL por `playerId` + `coachId` |
-| Catálogo servicios | Ver activos | CRUD + visibilidad | Versiones de precio |
-| Contratación / pagos | Iniciar checkout | Ver estado, disputas | Stripe customer / Connect |
-| CRM | — | CRUD clientes | Datos personales — RGPD |
-| Finanzas | Ver propios recibos (futuro) | Wallet, payouts | Stripe Connect |
-| Marketplace público | Ver | Perfil verificado | Indexación SEO |
+
+| Recurso                    | Jugador                                        | Entrenador                       | Notas producción                       |
+| -------------------------- | ---------------------------------------------- | -------------------------------- | -------------------------------------- |
+| Perfil propio              | CRUD                                           | CRUD                             | Campos verificados solo por admin      |
+| Objetivos del jugador      | Crear limitado; editar progreso según política | CRUD completo; ajuste %          | En demo, coach ajusta % en más estados |
+| Diario (partidos/clases)   | CRUD propio                                    | Lectura + anotaciones opcionales | Versionado de filas                    |
+| Vídeo / análisis publicado | Ver, descargar según plan                      | Crear borrador, publicar         | ACL por `playerId` + `coachId`         |
+| Catálogo servicios         | Ver activos                                    | CRUD + visibilidad               | Versiones de precio                    |
+| Contratación / pagos       | Iniciar checkout                               | Ver estado, disputas             | Stripe customer / Connect              |
+| CRM                        | —                                              | CRUD clientes                    | Datos personales — RGPD                |
+| Finanzas                   | Ver propios recibos (futuro)                   | Wallet, payouts                  | Stripe Connect                         |
+| Marketplace público        | Ver                                            | Perfil verificado                | Indexación SEO                         |
+
 
 ---
 
@@ -147,6 +155,8 @@ sequenceDiagram
   API-->>S: Relación jugador–entrenador activa
 ```
 
+
+
 **En la demo:** el código puede coincidir con el del CRM del entrenador; en producción debe ser **código único rotativo** o **enlace firmado** con caducidad.
 
 **Presupuesto:** SEO, rate limiting en API de búsqueda, CDN, moderación de perfiles, imágenes optimizadas (WebP/AVIF), indexación multidioma si aplica.
@@ -170,6 +180,8 @@ flowchart LR
   D --> E[Primer cliente / marketplace]
 ```
 
+
+
 ### 5.2 Nuevo jugador
 
 1. Registro jugador.
@@ -191,14 +203,16 @@ flowchart LR
 
 Campos conceptuales (alineados con la demo y `gimadd-coach-servicios-seed`):
 
-| Campo | Uso |
-|-------|-----|
-| `id` | Identificador estable |
-| `kind` | `individual` \| `pack` \| `mensual` \| `acompanamiento` |
-| `tag` | Etiqueta corta UI |
+
+| Campo                     | Uso                                                                              |
+| ------------------------- | -------------------------------------------------------------------------------- |
+| `id`                      | Identificador estable                                                            |
+| `kind`                    | `individual` | `pack` | `mensual` | `acompanamiento`                             |
+| `tag`                     | Etiqueta corta UI                                                                |
 | `title` / `desc` / `meta` | Copy comercial; `meta` suele llevar **precio individual / pareja** y condiciones |
-| `visible` | Si aparece al jugador |
-| `sort` | Orden en UI |
+| `visible`                 | Si aparece al jugador                                                            |
+| `sort`                    | Orden en UI                                                                      |
+
 
 **Agrupación en UI jugador (demo):** “Sesiones y análisis”, “Packs”, “Suscripciones”, “Programas”.
 
@@ -206,24 +220,28 @@ Campos conceptuales (alineados con la demo y `gimadd-coach-servicios-seed`):
 
 > En producción son **plantillas editables**; el entrenador puede renombrar, ocultar o duplicar.
 
-| ID | Tipo (`kind`) | Título (resumen) | Precio / condiciones en `meta` (demo) |
-|----|---------------|------------------|----------------------------------------|
-| `cat-video` | individual | Videoanálisis | individual 45 € · parejas 72 € · entrega ~48 h |
-| `cat-pista` | individual | Mentoría en pista | individual 55 € · parejas 90 € · 60 min |
-| `cat-pack` | pack | Pack intensivo — pista + videoanálisis | individual 420 € · parejas 360 € · validez 3 meses |
-| `cat-mensual` | mensual | Plan Pro mensual | individual 149 €/mes · parejas 199 €/mes |
-| `cat-acomp-3` | acompañamiento | Impulso Momentum — 90 días | individual 429 € (3 meses) · parejas 589 € |
-| `cat-acomp-6` | acompañamiento | Progresión Semestral | individual 789 € (6 meses) · parejas 1.099 € |
-| `cat-acomp-12` | acompañamiento | Legado Anual — 12 meses | individual 1.349 € · parejas 1.849 € |
+
+| ID             | Tipo (`kind`)  | Título (resumen)                       | Precio / condiciones en `meta` (demo)              |
+| -------------- | -------------- | -------------------------------------- | -------------------------------------------------- |
+| `cat-video`    | individual     | Videoanálisis                          | individual 45 € · parejas 72 € · entrega ~48 h     |
+| `cat-pista`    | individual     | Mentoría en pista                      | individual 55 € · parejas 90 € · 60 min            |
+| `cat-pack`     | pack           | Pack intensivo — pista + videoanálisis | individual 420 € · parejas 360 € · validez 3 meses |
+| `cat-mensual`  | mensual        | Plan Pro mensual                       | individual 149 €/mes · parejas 199 €/mes           |
+| `cat-acomp-3`  | acompañamiento | Impulso Momentum — 90 días             | individual 429 € (3 meses) · parejas 589 €         |
+| `cat-acomp-6`  | acompañamiento | Progresión Semestral                   | individual 789 € (6 meses) · parejas 1.099 €       |
+| `cat-acomp-12` | acompañamiento | Legado Anual — 12 meses                | individual 1.349 € · parejas 1.849 €               |
+
 
 **Características a presupuestar por tipo:**
 
-| Tipo | Qué implica contratarlo (negocio + sistema) |
-|------|-----------------------------------------------|
-| **individual** | Compra o reserva puntual; puede abrir flujo **clase presencial** (solicitud sin fecha → coach programa). Videoanálisis: **cupos de entrega**, SLA, cola de revisión. |
-| **pack** | Pago único; **bolsa de cupos** (pista + vídeo) con **caducidad**; decremento atómico al consumir; informes de uso. |
-| **mensual** | **Suscripción** recurrente; renovación mensual; cancelación prorrateada según política; límites de uso; webhooks Stripe `invoice.paid` / `customer.subscription.deleted`. |
-| **acompanamiento** | Proyecto largo; hitos; sin “cupos rígidos” en copy — en sistema igualmente requieren **medición de uso** y límites fair-use para abuso. |
+
+| Tipo               | Qué implica contratarlo (negocio + sistema)                                                                                                                               |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **individual**     | Compra o reserva puntual; puede abrir flujo **clase presencial** (solicitud sin fecha → coach programa). Videoanálisis: **cupos de entrega**, SLA, cola de revisión.      |
+| **pack**           | Pago único; **bolsa de cupos** (pista + vídeo) con **caducidad**; decremento atómico al consumir; informes de uso.                                                        |
+| **mensual**        | **Suscripción** recurrente; renovación mensual; cancelación prorrateada según política; límites de uso; webhooks Stripe `invoice.paid` / `customer.subscription.deleted`. |
+| **acompanamiento** | Proyecto largo; hitos; sin “cupos rígidos” en copy — en sistema igualmente requieren **medición de uso** y límites fair-use para abuso.                                   |
+
 
 ### 6.3 Cómo lo ve el jugador vs el entrenador
 
@@ -250,19 +268,23 @@ flowchart TB
   C1 --> C2 --> C3 --> S1 --> S2 --> S3 --> P1 --> P2 --> P3
 ```
 
+
+
 **En la demo:** checkout simulado; en producción **Stripe Checkout + Customer Portal** y tabla `entitlements`.
 
 ### 6.4 Desglose operativo por ítem de catálogo (presupuesto funcional)
 
 Cada fila describe **qué debe ocurrir en sistema** desde el clic de “Contratar” hasta el **entitlement** activo y los **jobs** posteriores (recordatorios, consumo de cupos, renovaciones).
 
-| ID catálogo | Pasos jugador | Pasos sistema tras pago OK | Entitlement / consumo | Entregables a estimar |
-|-------------|---------------|----------------------------|-------------------------|------------------------|
-| **cat-video** | Elegir individual o pareja → checkout → confirmación | Crear `purchase` + `entitlement` tipo análisis; cola “pendiente de material”; SLA countdown | Cupo de **1 entrega** de análisis (o N si el coach vende packs de vídeos en otro ítem) | Notificación coach, cola videoanálisis, plantilla email al jugador con instrucciones de grabación |
-| **cat-pista** | Igual | Crear reserva en estado **pendiente de fecha** o con slot si ya existe; vincular a agenda | 1 sesión presencial “consumible” al marcar `completada` o según política | Estados de reserva, sync calendario, mensajería automática si sin fecha |
-| **cat-pack** | Checkout único | Bolsa de cupos (pista + vídeo según copy); `expires_at` | Decremento atómico por consumo; aviso antes de caducidad | Informe uso, bloqueo si caducado |
-| **cat-mensual** | Suscripción | `Subscription` Stripe; webhook `invoice.paid` renueva cupos mensuales | Activo mientras sub activa; límites en ledger | Portal cliente, dunning, proration |
-| **cat-acomp-3/6/12** | Pago programa | Proyecto largo; hitos opcionales; mismo motor de objetivos/plan | Fair-use + límites de vídeo/pista según contrato | Informes de progreso, renovación al final |
+
+| ID catálogo          | Pasos jugador                                        | Pasos sistema tras pago OK                                                                  | Entitlement / consumo                                                                  | Entregables a estimar                                                                             |
+| -------------------- | ---------------------------------------------------- | ------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| **cat-video**        | Elegir individual o pareja → checkout → confirmación | Crear `purchase` + `entitlement` tipo análisis; cola “pendiente de material”; SLA countdown | Cupo de **1 entrega** de análisis (o N si el coach vende packs de vídeos en otro ítem) | Notificación coach, cola videoanálisis, plantilla email al jugador con instrucciones de grabación |
+| **cat-pista**        | Igual                                                | Crear reserva en estado **pendiente de fecha** o con slot si ya existe; vincular a agenda   | 1 sesión presencial “consumible” al marcar `completada` o según política               | Estados de reserva, sync calendario, mensajería automática si sin fecha                           |
+| **cat-pack**         | Checkout único                                       | Bolsa de cupos (pista + vídeo según copy); `expires_at`                                     | Decremento atómico por consumo; aviso antes de caducidad                               | Informe uso, bloqueo si caducado                                                                  |
+| **cat-mensual**      | Suscripción                                          | `Subscription` Stripe; webhook `invoice.paid` renueva cupos mensuales                       | Activo mientras sub activa; límites en ledger                                          | Portal cliente, dunning, proration                                                                |
+| **cat-acomp-3/6/12** | Pago programa                                        | Proyecto largo; hitos opcionales; mismo motor de objetivos/plan                             | Fair-use + límites de vídeo/pista según contrato                                       | Informes de progreso, renovación al final                                                         |
+
 
 ---
 
@@ -270,11 +292,13 @@ Cada fila describe **qué debe ocurrir en sistema** desde el clic de “Contrata
 
 ### 7.1 Estados del objetivo
 
-| `estado` | Significado |
-|----------|-------------|
-| `activo` | En curso. |
+
+| `estado`             | Significado                                                                                         |
+| -------------------- | --------------------------------------------------------------------------------------------------- |
+| `activo`             | En curso.                                                                                           |
 | `pendiente_revision` | Cerró prácticas requeridas en diario (u otra regla); espera **videoanálisis** / decisión del coach. |
-| `completado` | Cerrado por coach o por flujo automático según reglas. |
+| `completado`         | Cerrado por coach o por flujo automático según reglas.                                              |
+
 
 **Bandera `enPlanAccion`:** si es `true` y está `activo`, el objetivo cuenta en sub-pestañas “Plan para partidos / Plan para clase”. Si **todos** los del plan cumplen prácticas → pasan a revisión según reglas de la demo (`recalcGoalsFromMatches`).
 
@@ -293,6 +317,8 @@ flowchart TB
   A1 --> B3[Objetivos pendiente_revision + enPlan]
 ```
 
+
+
 ### 7.3 Progreso %
 
 - En producción: **fuente de verdad** puede ser coach-only o mixta; la demo permite ajuste por coach en varios estados para UX.
@@ -302,13 +328,15 @@ flowchart TB
 
 ```mermaid
 stateDiagram-v2
-  [*] --> activo: Coach/jugador crea objetivo
-  activo --> pendiente_revision: Todas las prácticas del plan cumplen umbral (diario)
-  pendiente_revision --> activo: Coach reabre / redefine prácticas (demo: reactivación)
-  pendiente_revision --> completado: Tras videoanálisis / decisión coach
-  activo --> completado: Cierre directo coach (política)
+  [*] --> activo: Crea objetivo coach o jugador
+  activo --> pendiente_revision: Plan cumple umbral en diario
+  pendiente_revision --> activo: Coach reabre practicas demo
+  pendiente_revision --> completado: Tras videoanalisis o decision coach
+  activo --> completado: Cierre directo por coach
   completado --> [*]
 ```
+
+
 
 **Regla crítica (alineada con demo):** el paso colectivo a `pendiente_revision` es cuando **todos** los objetivos con `enPlanAccion` y `estado === activo` cumplen sus prácticas en diario; hasta entonces, un objetivo puede mostrar prácticas completas (✅) pero **no** dispara revisión en solitario.
 
@@ -319,12 +347,12 @@ stateDiagram-v2
 ### 8.1 Partidos
 
 - Campos típicos: fecha, resultado, sets, sensaciones, notas.
-- **`planAccion`**: lista de vínculos a objetivos del plan con flags `practicado` y texto de sensaciones.
+- `**planAccion`**: lista de vínculos a objetivos del plan con flags `practicado` y texto de sensaciones.
 - **Recálculo:** al guardar partido, el sistema cuenta prácticas efectivas por objetivo y puede promover a `pendiente_revision` si alcanza `partidosMeta` (con offset `practicasUmbralOffset` para reactivaciones).
 
 ### 8.2 Clases en pista
 
-- Registro separado del de partidos; alimenta objetivos tipo **`clase`** en plan.
+- Registro separado del de partidos; alimenta objetivos tipo `**clase`** en plan.
 - En producción: posible integración con **wearables** o importación CSV club (futuro).
 
 ### 8.3 Comentarios del plan dentro del diario y paso a “pendiente de revisión”
@@ -348,6 +376,8 @@ sequenceDiagram
   C->>C: Videoanálisis / decisión coach
 ```
 
+
+
 **Campos relacionados en demo:** `pendienteRevisionDesde`, `jugadorSubioVideoTrasRevision`.
 
 ---
@@ -367,15 +397,17 @@ Flujo conceptual:
 
 ### 9.2 Videoanálisis (entrenador) — opciones a cubrir
 
-| Funcionalidad | Descripción | Prioridad escritorio |
-|----------------|-------------|------------------------|
-| Reproductor | Play/pausa, velocidad, frame-step (futuro) | Alta |
-| Marcas temporales | Texto por instante `t` | Alta |
-| Objetivos desde revisión | Crear objetivo y marcar “en plan” | Alta |
-| Feedback | Nota global + adjuntos vídeo/audio/imagen | Media |
-| Publicación | Genera “Vídeo № NNN”, empaqueta marcas y notifica jugador | Alta |
-| Historial | Lista por jugador; jugador elige análisis | Alta |
-| Vinculación plan | Objetivos del plan asociados al número de vídeo publicado | Media |
+
+| Funcionalidad            | Descripción                                               | Prioridad escritorio |
+| ------------------------ | --------------------------------------------------------- | -------------------- |
+| Reproductor              | Play/pausa, velocidad, frame-step (futuro)                | Alta                 |
+| Marcas temporales        | Texto por instante `t`                                    | Alta                 |
+| Objetivos desde revisión | Crear objetivo y marcar “en plan”                         | Alta                 |
+| Feedback                 | Nota global + adjuntos vídeo/audio/imagen                 | Media                |
+| Publicación              | Genera “Vídeo № NNN”, empaqueta marcas y notifica jugador | Alta                 |
+| Historial                | Lista por jugador; jugador elige análisis                 | Alta                 |
+| Vinculación plan         | Objetivos del plan asociados al número de vídeo publicado | Media                |
+
 
 ### 9.3 Inventario de controles UI (jugador — análisis publicado)
 
@@ -397,6 +429,8 @@ flowchart LR
   V <--> M
   V <--> F
 ```
+
+
 
 ---
 
@@ -433,20 +467,22 @@ Vistas típicas (como en la demo):
 
 ### 12.2 Entidades y campos (concepto)
 
-- **Cliente:** `nombre`, teléfono, email, notas, **tipo de servicio** (`tipoServicio` / CRM), flag **servicio activo** vs pausa, **objetivo principal** (texto resumen), **progreso plan** (texto o agregado live si hay `linkedProfile`), **última actividad** (texto), **alta CRM** (`creadoEn`), **`linkedProfile`** opcional (id jugador en app), **`esNuevo`**.
+- **Cliente:** `nombre`, teléfono, email, notas, **tipo de servicio** (`tipoServicio` / CRM), flag **servicio activo** vs pausa, **objetivo principal** (texto resumen), **progreso plan** (texto o agregado live si hay `linkedProfile`), **última actividad** (texto), **alta CRM** (`creadoEn`), `**linkedProfile`** opcional (id jugador en app), `**esNuevo**`.
 - **Futuro:** timeline de interacciones (llamada, email, WhatsApp, tarea), etiquetas, valor estimado, riesgo de churn.
 
 ### 12.3 Barra de búsqueda y filtros (presupuesto explícito)
 
-| Control | Valores / comportamiento |
-|---------|---------------------------|
+
+| Control                       | Valores / comportamiento                                                                          |
+| ----------------------------- | ------------------------------------------------------------------------------------------------- |
 | **Buscar** (`crmSearchInput`) | Texto libre sobre: nombre, teléfono, email, notas, objetivo principal, campos visibles en preview |
-| **Prioridad** | Todas · Necesita acción (0) · Nuevo/reciente (1) · Seguimiento activo (2) |
-| **Tipo servicio** | Desplegable poblado dinámicamente con los tipos presentes en clientes |
-| **Estado servicio** | Cualquiera · Activo (contratado) · Inactivo/pausa · Lead (sin servicio) |
-| **App jugador** | Cualquiera · Con perfil en app · Sin perfil en app |
-| **Alta** | Todas · Marcado como nuevo · No nuevo |
-| **Contador resultados** | “N clientes” o “Mostrando X de N” si hay filtro activo |
+| **Prioridad**                 | Todas · Necesita acción (0) · Nuevo/reciente (1) · Seguimiento activo (2)                         |
+| **Tipo servicio**             | Desplegable poblado dinámicamente con los tipos presentes en clientes                             |
+| **Estado servicio**           | Cualquiera · Activo (contratado) · Inactivo/pausa · Lead (sin servicio)                           |
+| **App jugador**               | Cualquiera · Con perfil en app · Sin perfil en app                                                |
+| **Alta**                      | Todas · Marcado como nuevo · No nuevo                                                             |
+| **Contador resultados**       | “N clientes” o “Mostrando X de N” si hay filtro activo                                            |
+
 
 ### 12.4 Alta de cliente (modal “Añadir cliente”)
 
@@ -479,13 +515,15 @@ Lista ordenada por **tier de prioridad** (ascendente: rojo primero) y luego **no
 
 **En producción (Stripe):**
 
-| Componente | Uso |
-|------------|-----|
-| **Stripe Connect** | Payouts a entrenadores; split opcional plataforma |
-| **Checkout / Elements** | Cobro servicios y suscripciones |
-| **Billing Portal** | Gestión método pago y cancelaciones |
-| **Invoices + Tax** | IVA/VAT según país entrenador |
-| **Webhooks** | Idempotencia obligatoria; tabla ledger interna |
+
+| Componente              | Uso                                               |
+| ----------------------- | ------------------------------------------------- |
+| **Stripe Connect**      | Payouts a entrenadores; split opcional plataforma |
+| **Checkout / Elements** | Cobro servicios y suscripciones                   |
+| **Billing Portal**      | Gestión método pago y cancelaciones               |
+| **Invoices + Tax**      | IVA/VAT según país entrenador                     |
+| **Webhooks**            | Idempotencia obligatoria; tabla ledger interna    |
+
 
 ```mermaid
 flowchart TB
@@ -504,42 +542,48 @@ flowchart TB
   WH --> PDF
 ```
 
+
+
 ### 13.1 Secuencia recomendada — webhooks Stripe (idempotencia)
 
 ```mermaid
 sequenceDiagram
   participant S as Stripe
-  participant W as Webhook endpoint (API)
+  participant W as Webhook API
   participant L as Ledger DB
   participant E as Entitlements
   participant N as Notificaciones
 
-  S->>W: POST event (signed)
-  W->>W: Verificar firma + deduplicar por event.id
-  alt checkout.session.completed
-    W->>L: Insertar línea ingreso + external_id
-    W->>E: Activar producto contratado (jugador, coach)
-    W->>N: Push/email confirmación
-  else invoice.paid (suscripción)
-    W->>L: Asiento renovación
+  S->>W: POST event firmado
+  W->>W: Verificar firma y deduplicar event id
+  alt Checkout completado
+    W->>L: Insertar ingreso y external id
+    W->>E: Activar producto jugador coach
+    W->>N: Push y email confirmacion
+  else Factura suscripcion pagada
+    W->>L: Asiento renovacion
     W->>E: Recargar cupos mensuales
-  else charge.dispute / refund
-    W->>L: Asiento contrario + motivo
-    W->>E: Ajustar o revocar según política
+  else Disputa o reembolso
+    W->>L: Asiento contrario y motivo
+    W->>E: Ajustar o revocar segun politica
   end
-  W-->>S: 200 OK (rápido; trabajo pesado en cola)
+  W-->>S: 200 OK cola async
 ```
+
+
 
 **Requisito de presupuesto:** tabla `stripe_events_processed`, workers asíncronos, reintentos con exponential backoff, alerta si el mismo `invoice` falla N veces.
 
 ### 13.2 Tabs “Mi billetera” (demo como checklist UI)
 
-| Tab | Contenido esperado en producción |
-|-----|----------------------------------|
-| **Resumen** | Saldo disponible, retenciones, próximo payout |
-| **Pagos** | Lista cobros, estado, jugador, servicio |
-| **Facturas** | PDF generados / descarga |
-| **Estadísticas** | Serie temporal, ARPU, mix servicios |
+
+| Tab              | Contenido esperado en producción              |
+| ---------------- | --------------------------------------------- |
+| **Resumen**      | Saldo disponible, retenciones, próximo payout |
+| **Pagos**        | Lista cobros, estado, jugador, servicio       |
+| **Facturas**     | PDF generados / descarga                      |
+| **Estadísticas** | Serie temporal, ARPU, mix servicios           |
+
 
 ---
 
@@ -564,13 +608,16 @@ sequenceDiagram
   participant DB as BD reservas
   participant G as Google Calendar API
 
-  C->>API: Confirmar slot clase (fecha, hora, tz)
-  API->>DB: Upsert booking + estado programada
-  API->>G: insert event (calendarId coach)
-  G-->>API: eventId + htmlLink
+  C->>API: Confirmar slot fecha hora tz
+  API->>DB: Upsert booking estado programada
+  API->>G: Insertar evento calendario coach
+  G-->>API: eventId y htmlLink
   API->>DB: Guardar googleEventId
-  Note over API,G: Reprogramación: patch event; Cancelación: delete o update transparency
+  Note over API,G: Reprogramacion patch evento
+  Note over API,G: Cancelacion delete o transparencia
 ```
+
+
 
 **Errores a presupuestar:** token revocado (re-auth UX), conflicto de slot, rate limit Google, divergencia si el coach edita el evento a mano en Google (sync inbound fase 2).
 
@@ -594,17 +641,21 @@ flowchart LR
   R --> U[Cola urgentes UI coach]
 ```
 
+
+
 ### 15.1 Tipos de tarjeta “urgente” en la demo (referencia de implementación)
 
-| Rol | `kind` / origen | Cuándo aparece | Acción al pulsar |
-|-----|-----------------|----------------|------------------|
-| **Jugador** | `video-plan` | Plan en `pendiente_revision` | Sin vídeo → **Grabar**; con vídeo → **Objetivos / revisión** |
-| **Jugador** | `repro` | Reserva `solicitud_reprogramacion` | **Mensajes** |
-| **Jugador** | `fecha` | Sin fecha de sesión | **Mensajes** |
-| **Jugador** | `diary` / `diary-group` | Clases a anotar en diario | **Diario** |
-| **Entrenador** | `crm` | Cliente con prioridad tier 0 (necesita acción) | **Seguimiento** perfil o abrir **CRM** |
-| **Entrenador** | `repro` | Misma reserva que jugador pero copy orientada a coach | **Seguimiento** |
-| **Entrenador** | `fecha` | Reserva sin fecha (nombre jugador) | **Seguimiento** |
+
+| Rol            | `kind` / origen         | Cuándo aparece                                        | Acción al pulsar                                             |
+| -------------- | ----------------------- | ----------------------------------------------------- | ------------------------------------------------------------ |
+| **Jugador**    | `video-plan`            | Plan en `pendiente_revision`                          | Sin vídeo → **Grabar**; con vídeo → **Objetivos / revisión** |
+| **Jugador**    | `repro`                 | Reserva `solicitud_reprogramacion`                    | **Mensajes**                                                 |
+| **Jugador**    | `fecha`                 | Sin fecha de sesión                                   | **Mensajes**                                                 |
+| **Jugador**    | `diary` / `diary-group` | Clases a anotar en diario                             | **Diario**                                                   |
+| **Entrenador** | `crm`                   | Cliente con prioridad tier 0 (necesita acción)        | **Seguimiento** perfil o abrir **CRM**                       |
+| **Entrenador** | `repro`                 | Misma reserva que jugador pero copy orientada a coach | **Seguimiento**                                              |
+| **Entrenador** | `fecha`                 | Reserva sin fecha (nombre jugador)                    | **Seguimiento**                                              |
+
 
 En producción, estas mismas categorías deben mapearse a **eventos de dominio** y **plantillas de notificación** reutilizables.
 
@@ -616,32 +667,38 @@ La home del jugador (`renderJugadorHubDashboard`) se compone de **tres tarjetas 
 
 ### 16.1 Cabecera
 
-| Elemento | Contenido | Por qué |
-|----------|-----------|--------|
-| **Atrás / contexto** | Vuelve al selector de app | Multi-demo; en prod puede ocultarse |
-| **Avatar + saludo + sub** | Nombre jugador, línea secundaria (club / coach) | Identidad y contexto emocional |
-| **Ajustes → Perfil** | Acceso a ficha | Autogestión datos y preferencias |
+
+| Elemento                  | Contenido                                       | Por qué                             |
+| ------------------------- | ----------------------------------------------- | ----------------------------------- |
+| **Atrás / contexto**      | Vuelve al selector de app                       | Multi-demo; en prod puede ocultarse |
+| **Avatar + saludo + sub** | Nombre jugador, línea secundaria (club / coach) | Identidad y contexto emocional      |
+| **Ajustes → Perfil**      | Acceso a ficha                                  | Autogestión datos y preferencias    |
+
 
 ### 16.2 Tarjeta “Tu progreso” (`jugHubProgresoBody`)
 
-| Estado UI | Qué muestra | Por qué |
-|-----------|-------------|--------|
-| **Sin objetivos en plan activo** y **sin** pendientes de revisión | Empty “Sin foco activo en el plan” + chip sesiones demo + CTA **Ir a objetivos** | Evita pantalla vacía; guía al plan |
-| **Sin activos pero con** `pendiente_revision` | Bloque “Completado — pendiente de revisión” + CTA **Abrir bloque en revisión** | Cierra el loop prácticas → vídeo |
-| **Con plan activo** | “Tu foco ahora”: título objetivo, **%** barra, texto motivacional (según si cumplió prácticas, si todo el plan cumplió, etc.), ratio **prácticas / meta**, chip sesiones, CTA **Abrir plan de acción** | Foco único reduce ansiedad; el % es señal visual rápida |
+
+| Estado UI                                                         | Qué muestra                                                                                                                                                                                            | Por qué                                                 |
+| ----------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------- |
+| **Sin objetivos en plan activo** y **sin** pendientes de revisión | Empty “Sin foco activo en el plan” + chip sesiones demo + CTA **Ir a objetivos**                                                                                                                       | Evita pantalla vacía; guía al plan                      |
+| **Sin activos pero con** `pendiente_revision`                     | Bloque “Completado — pendiente de revisión” + CTA **Abrir bloque en revisión**                                                                                                                         | Cierra el loop prácticas → vídeo                        |
+| **Con plan activo**                                               | “Tu foco ahora”: título objetivo, **%** barra, texto motivacional (según si cumplió prácticas, si todo el plan cumplió, etc.), ratio **prácticas / meta**, chip sesiones, CTA **Abrir plan de acción** | Foco único reduce ansiedad; el % es señal visual rápida |
+
 
 ### 16.3 Tarjeta “Acciones urgentes” (`jugHubUrgentesBody`)
 
 Generación dinámica (sin duplicar claves):
 
-| Tipo (`kind`) | Dispara | CTA navegación |
-|----------------|---------|----------------|
-| **video-plan** (sin vídeo) | Plan en revisión y `jugadorSubioVideoTrasRevision` false | Ir a **Grabar/subir** |
-| **video-plan** (vídeo OK) | Mismo plan pero vídeo confirmado | **Objetivos → plan → revisión** |
-| **repro** | Reserva en `solicitud_reprogramacion` | **Mensajes** |
-| **fecha** | Reserva sin fecha cerrada | **Mensajes** |
-| **diary** / **diary-group** | Clases completadas sin nota en diario | **Diario** |
-| **Ninguna** | Empty “Todo al día” | Refuerzo positivo |
+
+| Tipo (`kind`)               | Dispara                                                  | CTA navegación                  |
+| --------------------------- | -------------------------------------------------------- | ------------------------------- |
+| **video-plan** (sin vídeo)  | Plan en revisión y `jugadorSubioVideoTrasRevision` false | Ir a **Grabar/subir**           |
+| **video-plan** (vídeo OK)   | Mismo plan pero vídeo confirmado                         | **Objetivos → plan → revisión** |
+| **repro**                   | Reserva en `solicitud_reprogramacion`                    | **Mensajes**                    |
+| **fecha**                   | Reserva sin fecha cerrada                                | **Mensajes**                    |
+| **diary** / **diary-group** | Clases completadas sin nota en diario                    | **Diario**                      |
+| **Ninguna**                 | Empty “Todo al día”                                      | Refuerzo positivo               |
+
 
 ### 16.4 Tarjeta “Clases y mentorías” (`jugHubClasesBody`)
 
@@ -659,18 +716,22 @@ Incluyen al menos: **Objetivos**, **Diario**, **Grabar vídeo**, **Servicios** /
 
 ### 17.1 Cabecera hub
 
-| Elemento | Contenido | Por qué |
-|----------|-----------|--------|
-| **Avatar + saludo** | Nombre coach, ubicación / marca | Contexto operativo |
-| **Perfil** | Acceso a perfil entrenador | Editar oferta y datos públicos |
+
+| Elemento            | Contenido                       | Por qué                        |
+| ------------------- | ------------------------------- | ------------------------------ |
+| **Avatar + saludo** | Nombre coach, ubicación / marca | Contexto operativo             |
+| **Perfil**          | Acceso a perfil entrenador      | Editar oferta y datos públicos |
+
 
 ### 17.2 Acciones rápidas (fila iconos)
 
-| Botón | Destino | Por qué |
-|-------|---------|--------|
-| **Clientes** | CRM | Núcleo del día: lista priorizada |
-| **Finanzas** | Billetera | Cash-flow visible |
-| **Cupones** | (placeholder demo) | Promociones adquisición |
+
+| Botón        | Destino            | Por qué                          |
+| ------------ | ------------------ | -------------------------------- |
+| **Clientes** | CRM                | Núcleo del día: lista priorizada |
+| **Finanzas** | Billetera          | Cash-flow visible                |
+| **Cupones**  | (placeholder demo) | Promociones adquisición          |
+
 
 ### 17.3 Tarjeta “Agenda de hoy” (`coachHubAgendaHoy`)
 
@@ -693,21 +754,25 @@ Heurística demo (producción: misma taxonomía con datos servidor): revisiones 
 
 ### 18.1 Jugador — puede / no puede (producción recomendada)
 
-| Puede | No puede (por defecto) |
-|-------|-------------------------|
-| Ver y crear registros de diario propios | Ver diarios de otros jugadores |
-| Ver análisis publicados de su coach | Ver borradores de análisis |
-| Iniciar checkout de servicios visibles | Editar catálogo coach |
-| Enviar mensajes en su hilo | Enviar mensajes masivos |
-| Proponer objetivos (si política) | Aprobar videoanálisis publicado |
+
+| Puede                                   | No puede (por defecto)          |
+| --------------------------------------- | ------------------------------- |
+| Ver y crear registros de diario propios | Ver diarios de otros jugadores  |
+| Ver análisis publicados de su coach     | Ver borradores de análisis      |
+| Iniciar checkout de servicios visibles  | Editar catálogo coach           |
+| Enviar mensajes en su hilo              | Enviar mensajes masivos         |
+| Proponer objetivos (si política)        | Aprobar videoanálisis publicado |
+
 
 ### 18.2 Entrenador — puede / no puede
 
-| Puede | No puede (por defecto) |
-|-------|-------------------------|
-| Gestionar clientes vinculados | Acceder a jugadores sin relación |
-| Publicar videoanálisis | Borrar historial legal de facturación sin trazabilidad |
-| Ajustar objetivos según política | Suplantar identidad jugador |
+
+| Puede                            | No puede (por defecto)                                 |
+| -------------------------------- | ------------------------------------------------------ |
+| Gestionar clientes vinculados    | Acceder a jugadores sin relación                       |
+| Publicar videoanálisis           | Borrar historial legal de facturación sin trazabilidad |
+| Ajustar objetivos según política | Suplantar identidad jugador                            |
+
 
 ### 18.3 Auditoría
 
@@ -758,14 +823,16 @@ Registrar: logins, publicaciones, cambios de dinero, exportaciones CRM, descarga
 
 ## 20. Escalabilidad a millones de usuarios
 
-| Capa | Estrategia |
-|------|------------|
-| Lectura | Réplicas BD, cache Redis, CDN para assets |
-| Escritura | Particionado por `coach_id` o shard geográfico |
-| Vídeo | Transcoding asíncrono; CDN origin shield |
-| Búsqueda | Índice dedicado (OpenSearch / Algolia) para marketplace |
-| Mensajería | Servicio elástico separado del API monolítico inicial |
-| Observabilidad | OpenTelemetry, SLOs, alertas on-call |
+
+| Capa           | Estrategia                                              |
+| -------------- | ------------------------------------------------------- |
+| Lectura        | Réplicas BD, cache Redis, CDN para assets               |
+| Escritura      | Particionado por `coach_id` o shard geográfico          |
+| Vídeo          | Transcoding asíncrono; CDN origin shield                |
+| Búsqueda       | Índice dedicado (OpenSearch / Algolia) para marketplace |
+| Mensajería     | Servicio elástico separado del API monolítico inicial   |
+| Observabilidad | OpenTelemetry, SLOs, alertas on-call                    |
+
 
 **Principio:** separar **hot path** (feed jugador) de **cold path** (reporting financiero).
 
@@ -785,30 +852,34 @@ Registrar: logins, publicaciones, cambios de dinero, exportaciones CRM, descarga
 
 ### A.1 Perfil del entrenador (datos y flujo de edición)
 
-| Bloque | Campos / acciones típicas | Notas producción |
-|--------|---------------------------|------------------|
-| **Identidad** | Nombre público, foto, ubicación, idiomas | Sincronizar con marketplace SEO |
-| **Credenciales negocio** | NIF/IVA, dirección fiscal, titular cuenta | Solo entrenador + admin; cifrado en reposo |
-| **Stripe Connect** | Estado onboarding, payouts, última verificación | Webhooks actualizan badge “cobros OK” |
-| **Invitación** | Código corto, URL genérica, QR (futuro) | Rate limit; regenerar código |
-| **Catálogo** | Lista servicios con visibilidad, orden, precios | Versionado: cambio precio no afecta contratos vigentes salvo política |
-| **Preferencias** | Zona horaria, buffer entre clases, plantillas mensaje | Afecta agenda y Google Calendar |
+
+| Bloque                   | Campos / acciones típicas                             | Notas producción                                                      |
+| ------------------------ | ----------------------------------------------------- | --------------------------------------------------------------------- |
+| **Identidad**            | Nombre público, foto, ubicación, idiomas              | Sincronizar con marketplace SEO                                       |
+| **Credenciales negocio** | NIF/IVA, dirección fiscal, titular cuenta             | Solo entrenador + admin; cifrado en reposo                            |
+| **Stripe Connect**       | Estado onboarding, payouts, última verificación       | Webhooks actualizan badge “cobros OK”                                 |
+| **Invitación**           | Código corto, URL genérica, QR (futuro)               | Rate limit; regenerar código                                          |
+| **Catálogo**             | Lista servicios con visibilidad, orden, precios       | Versionado: cambio precio no afecta contratos vigentes salvo política |
+| **Preferencias**         | Zona horaria, buffer entre clases, plantillas mensaje | Afecta agenda y Google Calendar                                       |
+
 
 ### A.2 Perfil del jugador
 
-| Bloque | Campos / acciones | Por qué |
-|--------|-------------------|--------|
-| **Datos personales** | Nombre, contacto, foto | CRM puede espejar parte con consentimiento |
-| **Deportivos** | Mano dominante, posición, nivel, club | Personaliza objetivos y copy |
-| **Salud / lesiones** (opcional) | Flags, notas | Sensibles — consentimiento explícito y retención corta |
-| **Cuenta vinculada** | Lista entrenadores, relación activa | Multi-coach sin mezclar datos |
+
+| Bloque                          | Campos / acciones                     | Por qué                                                |
+| ------------------------------- | ------------------------------------- | ------------------------------------------------------ |
+| **Datos personales**            | Nombre, contacto, foto                | CRM puede espejar parte con consentimiento             |
+| **Deportivos**                  | Mano dominante, posición, nivel, club | Personaliza objetivos y copy                           |
+| **Salud / lesiones** (opcional) | Flags, notas                          | Sensibles — consentimiento explícito y retención corta |
+| **Cuenta vinculada**            | Lista entrenadores, relación activa   | Multi-coach sin mezclar datos                          |
+
 
 ### A.3 Catálogo del entrenador: crear, modificar, activar y desactivar
 
 **Crear (“Añadir servicio al catálogo” en demo):**
 
 1. **Tipo (`kind`)** — selector obligatorio: **Individual** (vídeo, pista u otra sesión suelta), **Pack** (pago único, cupos/validez), **Mensualidad** (recurrente), **Programa de acompañamiento** (3 / 6 / 12 meses).
-2. **Textos** — título, descripción (Markdown ligero: `**negritas**` en demo), etiqueta corta.
+2. **Textos** — título, descripción (Markdown ligero: `**negritas`** en demo), etiqueta corta.
 3. **Precio** — la UI compone la “línea de precios” según el tipo (importes individual/pareja, periodicidad, meses).
 4. **Visibilidad** — `visible` + `sort` para orden en la app jugador.
 
@@ -816,11 +887,13 @@ Registrar: logins, publicaciones, cambios de dinero, exportaciones CRM, descarga
 
 ### A.4 Cómo ve el jugador “qué servicio tiene” vs cómo lo ve el entrenador
 
-| Vista | Jugador | Entrenador |
-|-------|---------|--------------|
-| **Hub / perfil** | Resumen del plan activo, próximas clases, CTAs de renovación | CRM + seguimiento: tipo servicio, activo/pausa, lead |
-| **Servicios** | Solo ítems `visible`; CTA contratación | Editor completo + preview |
-| **Mensajes** (demo) | Línea CRM debajo del hilo si aplica | Estado cliente en cabecera chat |
+
+| Vista               | Jugador                                                      | Entrenador                                           |
+| ------------------- | ------------------------------------------------------------ | ---------------------------------------------------- |
+| **Hub / perfil**    | Resumen del plan activo, próximas clases, CTAs de renovación | CRM + seguimiento: tipo servicio, activo/pausa, lead |
+| **Servicios**       | Solo ítems `visible`; CTA contratación                       | Editor completo + preview                            |
+| **Mensajes** (demo) | Línea CRM debajo del hilo si aplica                          | Estado cliente en cabecera chat                      |
+
 
 ### A.5 Grabación y envío de vídeo (demo como checklist de pantallas)
 
@@ -835,25 +908,29 @@ Pantalla **Grabaciones** (`view-jug-grabar`):
 
 ### A.6 Seguimiento de jugador (panel entrenador) — pestañas y permisos de navegación
 
-| Pestaña | Contenido | Deep link desde |
-|---------|-------------|-----------------|
-| **Perfil** | Ficha + datos CRM | CRM “Ver perfil” |
-| **Videoanálisis** | Cola / reproductor / publicación | CRM “Analizar vídeo”, alertas |
-| **Objetivos** | Misma taxonomía plan/activos/completados que el jugador | Hub urgencias |
-| **Diario** | Partidos y clases solo lectura coach | Urgencias “diario” |
-| **Agenda de este jugador** | Reservas filtradas | Hub agenda hoy |
+
+| Pestaña                    | Contenido                                               | Deep link desde               |
+| -------------------------- | ------------------------------------------------------- | ----------------------------- |
+| **Perfil**                 | Ficha + datos CRM                                       | CRM “Ver perfil”              |
+| **Videoanálisis**          | Cola / reproductor / publicación                        | CRM “Analizar vídeo”, alertas |
+| **Objetivos**              | Misma taxonomía plan/activos/completados que el jugador | Hub urgencias                 |
+| **Diario**                 | Partidos y clases solo lectura coach                    | Urgencias “diario”            |
+| **Agenda de este jugador** | Reservas filtradas                                      | Hub agenda hoy                |
+
 
 La función `openCoachSeguimientoForPlayer` en demo restringe pestañas válidas: `perfil`, `revision`, `objetivos`, `diario`, `agenda-jugador`.
 
 ### A.7 Requisitos no funcionales (añadir al presupuesto)
 
-| Área | Objetivo orientativo |
-|------|----------------------|
-| **Disponibilidad API** | 99,9 % mensual MVP; 99,95 % con clientes enterprise |
-| **Latencia p95** lectura feed | &lt; 300 ms región principal |
-| **Subida vídeo** | Reanudación chunk; timeout de red no corrompe blob |
-| **RPO / RTO** | Backup diario; RTO documentado (ej. 4 h críticos) |
-| **Cumplimiento** | RGPD + DPA con cloud; registro de tratamientos |
+
+| Área                          | Objetivo orientativo                                |
+| ----------------------------- | --------------------------------------------------- |
+| **Disponibilidad API**        | 99,9 % mensual MVP; 99,95 % con clientes enterprise |
+| **Latencia p95** lectura feed | < 300 ms región principal                           |
+| **Subida vídeo**              | Reanudación chunk; timeout de red no corrompe blob  |
+| **RPO / RTO**                 | Backup diario; RTO documentado (ej. 4 h críticos)   |
+| **Cumplimiento**              | RGPD + DPA con cloud; registro de tratamientos      |
+
 
 ### A.8 Cliente escritorio entrenador (requisitos UX explícitos)
 
@@ -877,12 +954,14 @@ La función `openCoachSeguimientoForPlayer` en demo restringe pestañas válidas
 
 ## 23. Glosario breve
 
-| Término | Definición |
-|---------|------------|
-| **Plan de acción** | Conjunto de objetivos `enPlanAccion` con prácticas ligadas al diario. |
+
+| Término                   | Definición                                                              |
+| ------------------------- | ----------------------------------------------------------------------- |
+| **Plan de acción**        | Conjunto de objetivos `enPlanAccion` con prácticas ligadas al diario.   |
 | **Pendiente de revisión** | Estado `pendiente_revision`; en UI a menudo ligado a **videoanálisis**. |
-| **Entitlement** | Derecho de uso derivado de una compra/suscripción activa. |
-| **Tenant** | Contenedor de datos del entrenador o academia. |
+| **Entitlement**           | Derecho de uso derivado de una compra/suscripción activa.               |
+| **Tenant**                | Contenedor de datos del entrenador o academia.                          |
+
 
 ---
 
