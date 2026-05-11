@@ -1,0 +1,13 @@
+{
+  "name": "gimadd-presupuesto-pdf-tools",
+  "private": true,
+  "description": "Genera PDF del alcance con Markdown + Mermaid (Puppeteer)",
+  "type": "module",
+  "scripts": {
+    "pdf": "node build-presupuesto-pdf.mjs"
+  },
+  "dependencies": {
+    "marked": "^15.0.12",
+    "puppeteer": "^24.2.0"
+  }
+}
