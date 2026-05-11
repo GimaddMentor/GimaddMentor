@@ -4,7 +4,8 @@
   "description": "Genera PDF del alcance con Markdown + Mermaid (Puppeteer)",
   "type": "module",
   "scripts": {
-    "pdf": "node build-presupuesto-pdf.mjs"
+    "pdf": "node build-presupuesto-pdf.mjs",
+    "pdf:ceo": "node build-presupuesto-pdf.mjs --input GIMADD-MENTOR-VISION-CEO.md --output GIMADD-MENTOR-VISION-CEO.pdf --title \"Gimadd Mentor — Visión CEO\""
   },
   "dependencies": {
     "marked": "^15.0.12",

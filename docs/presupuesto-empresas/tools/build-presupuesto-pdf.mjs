@@ -1,17 +1,44 @@
 /**
- * Genera PDF del documento de alcance: Markdown (GFM) + diagramas Mermaid.
- * Salida: ../GIMADD-MENTOR-ALCANCE-Y-FLUJOS-PRESUPUESTO.pdf
+ * Genera PDF desde Markdown (GFM) + diagramas Mermaid.
+ *
+ * Por defecto: alcance técnico → ../GIMADD-MENTOR-ALCANCE-Y-FLUJOS-PRESUPUESTO.pdf
+ *
+ * Uso:
+ *   node build-presupuesto-pdf.mjs
+ *   node build-presupuesto-pdf.mjs --input GIMADD-MENTOR-VISION-CEO.md --output GIMADD-MENTOR-VISION-CEO.pdf --title "Gimadd Mentor — Visión CEO"
+ *
+ * Rutas de --input y --output son relativas a docs/presupuesto-empresas/ salvo que sean absolutas.
  */
-import { readFileSync, writeFileSync } from "node:fs";
-import { dirname, join } from "node:path";
+import { readFileSync } from "node:fs";
+import { dirname, isAbsolute, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { marked } from "marked";
 import puppeteer from "puppeteer";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, "..");
-const MD_PATH = join(ROOT, "GIMADD-MENTOR-ALCANCE-Y-FLUJOS-PRESUPUESTO.md");
-const OUT_PDF = join(ROOT, "GIMADD-MENTOR-ALCANCE-Y-FLUJOS-PRESUPUESTO.pdf");
+
+function resolveDocPath(p) {
+  if (!p) return null;
+  return isAbsolute(p) ? p : join(ROOT, p.replace(/^\.\//, ""));
+}
+
+function parseCli() {
+  const argv = process.argv.slice(2);
+  let mdPath = join(ROOT, "GIMADD-MENTOR-ALCANCE-Y-FLUJOS-PRESUPUESTO.md");
+  let outPdf = join(ROOT, "GIMADD-MENTOR-ALCANCE-Y-FLUJOS-PRESUPUESTO.pdf");
+  let docTitle = "Gimadd Mentor";
+  for (let i = 0; i < argv.length; i++) {
+    if (argv[i] === "--input" && argv[i + 1]) {
+      mdPath = resolveDocPath(argv[++i]);
+    } else if (argv[i] === "--output" && argv[i + 1]) {
+      outPdf = resolveDocPath(argv[++i]);
+    } else if (argv[i] === "--title" && argv[i + 1]) {
+      docTitle = argv[++i];
+    }
+  }
+  return { mdPath, outPdf, docTitle };
+}
 
 marked.use({ gfm: true, breaks: false });
 
@@ -50,14 +77,15 @@ function markdownToHtml(md) {
   return { bodyInner: chunks.join("\n"), diagrams };
 }
 
-function buildDocument(bodyInner, diagrams) {
+function buildDocument(docTitle, bodyInner, diagrams) {
   const diagramJson = JSON.stringify(diagrams);
+  const safeTitle = String(docTitle).replace(/</g, "");
   return `<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Gimadd Mentor — Alcance y flujos</title>
+  <title>${safeTitle}</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.7.0/github-markdown.min.css" />
   <style>
     @page { size: A4; margin: 14mm 12mm 16mm 12mm; }
@@ -136,9 +164,10 @@ ${bodyInner}
 }
 
 async function main() {
-  const md = readFileSync(MD_PATH, "utf8");
+  const { mdPath, outPdf, docTitle } = parseCli();
+  const md = readFileSync(mdPath, "utf8");
   const { bodyInner, diagrams } = markdownToHtml(md);
-  const html = buildDocument(bodyInner, diagrams);
+  const html = buildDocument(docTitle, bodyInner, diagrams);
 
   const browser = await puppeteer.launch({ headless: true });
   try {
@@ -147,7 +176,7 @@ async function main() {
     await page.waitForFunction(() => window.__PDF_READY__ === true, { timeout: 120000 });
     await page.emulateMediaType("print");
     await page.pdf({
-      path: OUT_PDF,
+      path: outPdf,
       format: "A4",
       printBackground: true,
       margin: { top: "12mm", right: "10mm", bottom: "14mm", left: "10mm" },
@@ -160,7 +189,7 @@ async function main() {
     await browser.close();
   }
 
-  console.log("PDF generado:", OUT_PDF);
+  console.log("PDF generado:", outPdf);
 }
 
 main().catch((err) => {
