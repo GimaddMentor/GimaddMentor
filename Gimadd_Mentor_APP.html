@@ -8476,10 +8476,6 @@
       var planSub = e.target.closest("[data-jugador-plan-subtab]");
       if (planSub && viewObjetivosEl.contains(planSub)) {
         var subname = planSub.getAttribute("data-jugador-plan-subtab");
-        if (subname === "revision") {
-          showView("jug-videoanalisis");
-          return;
-        }
         viewObjetivosEl.querySelectorAll(".jugador-plan-subtabs [data-jugador-plan-subtab]").forEach(function (b) {
           var on = b.getAttribute("data-jugador-plan-subtab") === subname;
           b.classList.toggle("on", on);
@@ -15927,15 +15923,18 @@
     if (!subName) return;
     var root = document.getElementById("view-objetivos");
     if (!root || root.classList.contains("crm-seguimiento-mode")) return;
-    if (subName === "revision") {
-      showView("jug-videoanalisis");
-      return;
-    }
     var btn = root.querySelector('[data-jugador-plan-subtab="' + subName + '"]');
     if (btn) btn.click();
   }
 
   function showView(name) {
+    // Jugador: "Videoanálisis" no es una vista aparte; abre Objetivos → Plan → Pendiente revisión (videoanálisis).
+    if (name === "jug-videoanalisis") {
+      pendingJugadorObjTab = "plan";
+      pendingJugadorPlanSubtab = "revision";
+      showView("objetivos");
+      return;
+    }
     if (crmSeguimientoReturn && name !== "entrenador") {
       var prevId = crmSeguimientoReturn.prevPlayerId;
       crmSeguimientoReturn = null;
@@ -15980,9 +15979,7 @@
     if (name === "jug-grabar") {
       renderJugGrabarScreen();
     }
-    if (name === "jug-videoanalisis") {
-      renderJugadorVideoAnalysisView();
-    }
+    // jug-videoanalisis se resuelve arriba (alias a Objetivos → Plan → Revisión)
     if (name === "diario") {
       loadMatchesIntoMemory();
       loadClasesIntoMemory();
