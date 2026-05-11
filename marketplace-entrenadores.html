@@ -569,6 +569,95 @@
         color: var(--brand-court-deep);
         white-space: nowrap;
       }
+      .mp-srv-sec {
+        margin-top: 1rem;
+      }
+      .mp-srv-head {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 0.75rem;
+        margin: 0 0 0.55rem;
+      }
+      .mp-srv-head h3 {
+        margin: 0;
+      }
+      .mp-srv-kicker {
+        font-size: 0.68rem;
+        font-weight: 1000;
+        letter-spacing: 0.03em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+      .mp-srv-card {
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        background: rgba(255, 255, 255, 0.7);
+        display: grid;
+        grid-template-columns: 84px 1fr;
+        gap: 0.8rem;
+        padding: 0.75rem;
+        margin: 0 0 0.75rem;
+        box-shadow: 0 8px 30px rgba(15, 23, 42, 0.06);
+      }
+      .mp-srv-media {
+        width: 84px;
+        height: 84px;
+        border-radius: 14px;
+        overflow: hidden;
+        border: 1px solid rgba(15, 23, 42, 0.08);
+        background: rgba(241, 245, 249, 0.8);
+      }
+      .mp-srv-media img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+      .mp-srv-cat {
+        margin: 0;
+        font-size: 0.7rem;
+        font-weight: 1000;
+        letter-spacing: 0.03em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+      .mp-srv-title {
+        margin: 0.15rem 0 0.25rem;
+        font-size: 1rem;
+        font-weight: 1100;
+        letter-spacing: -0.02em;
+        color: var(--brand-ink);
+        line-height: 1.25;
+      }
+      .mp-srv-desc {
+        margin: 0;
+        color: var(--muted);
+        font-weight: 650;
+        line-height: 1.5;
+        font-size: 0.86rem;
+      }
+      .mp-srv-desc strong {
+        color: var(--brand-ink);
+        font-weight: 950;
+      }
+      .mp-srv-pricing {
+        margin-top: 0.45rem;
+        font-weight: 900;
+        color: var(--brand-ink);
+        font-size: 0.86rem;
+      }
+      .mp-srv-actions {
+        margin-top: 0.55rem;
+        display: flex;
+        gap: 0.6rem;
+        flex-wrap: wrap;
+      }
+      .mp-srv-actions .mp-btn {
+        padding: 0.55rem 0.75rem;
+        border-radius: 999px;
+        font-size: 0.85rem;
+      }
       .rev-card {
         border: 1px solid rgba(226, 232, 240, 0.95);
         background: rgba(255, 255, 255, 0.8);
@@ -789,6 +878,10 @@
                 Para enlazar en producción con <strong>www.gimaddmentor.com</strong>, este perfil usará un enlace personalizado y el código se validará en la app.
               </p>
 
+              <section class="mp-srv-sec" id="pSrvCatalogSec" style="margin-top:1rem" hidden>
+                <div id="pSrvCatalogMount"></div>
+              </section>
+
               <section id="pReviewsSec" style="margin-top:1rem">
                 <h3 style="display:flex;align-items:center;justify-content:space-between;gap:0.75rem;margin:0 0 0.55rem">
                   <span>Valoraciones</span>
@@ -916,6 +1009,15 @@
       { "name": "Laura Sánchez", "stars": 5, "date": "2026-03-02", "text": "Me ayudó a dejar de bloquearme en puntos importantes. Rutinas simples y seguimiento realista." },
       { "name": "Carlos Medina", "stars": 5, "date": "2026-02-10", "text": "La combinación pista + vídeo es top. Lo mejor: no te satura, te da 2-3 ajustes y los clavas." },
       { "name": "Marta Ruiz", "stars": 4, "date": "2026-01-22", "text": "Muy buen enfoque mental y táctico. Me faltó alguna sesión extra de pista, pero el plan online funcionó." }
+    ],
+    "catalog": [
+      { "id": "cat-video", "kind": "individual", "tag": "Videoanálisis", "title": "Videoanálisis", "desc": "El jugador **sube vídeo**; recibes **análisis** con marcas temporales y foco en **técnica y táctica**.", "meta": "individual 45 € · parejas 72 € · entrega ~48 h" },
+      { "id": "cat-pista", "kind": "individual", "tag": "Mentoría en pista", "title": "Mentoría en pista", "desc": "**Sesión presencial**: trabajo **técnico**, **táctico** o **mixto** según planificación compartida.", "meta": "individual 55 € · parejas 90 € · 60 min" },
+      { "id": "cat-pack", "kind": "pack", "tag": "Pack", "title": "Pack intensivo — pista + videoanálisis", "desc": "**Pago único** con cupos combinados en un periodo. Ideal para una **temporada corta** de trabajo concentrado.", "meta": "individual 420 € · parejas 360 € · validez 3 meses" },
+      { "id": "cat-mensual", "kind": "mensual", "tag": "Mensualidad", "title": "Plan Pro mensual", "desc": "Cupos de **pista y vídeo** que se renuevan **cada mes** hasta cancelación. **Seguimiento continuo** con ritmo fijo.", "meta": "individual 149 €/mes · parejas 199 €/mes" },
+      { "id": "cat-acomp-3", "kind": "acompanamiento", "tag": "Acompañamiento", "title": "Impulso Momentum — 90 días contigo", "desc": "Plan **90 días** a tu medida: dudas al vuelo y **asesoramiento integral** en técnica, táctica, físico y mental. **Sin clases cerradas** en contrato.", "meta": "individual 429 € (programa 3 meses) · parejas 589 €" },
+      { "id": "cat-acomp-6", "kind": "acompanamiento", "tag": "Acompañamiento", "title": "Progresión Semestral — media temporada Pro", "desc": "**Seis meses** de coach a tu lado: **hábitos**, **táctica** y **mentalidad**. **100 % adaptable** — sin cupos rígidos de pista en papel.", "meta": "individual 789 € (programa 6 meses) · parejas 1.099 €" },
+      { "id": "cat-acomp-12", "kind": "acompanamiento", "tag": "Acompañamiento", "title": "Legado Anual — el año de tu salto", "desc": "**Un año** para transformar tu juego: **acompañamiento continuo** (vídeo, pista, cuerpo, mente). Sin cupos rígidos; foco en **12 meses** de mejora.", "meta": "individual 1.349 € (programa 12 meses) · parejas 1.849 €" }
     ]
   }
 ]
@@ -974,6 +1076,124 @@
             .map(function (p) {
               p = p.replace(/\n/g, "<br />");
               return "<p>" + p + "</p>";
+            })
+            .join("");
+        }
+
+        function fmtRichInline(raw) {
+          var s = String(raw || "");
+          s = escapeHtml(s);
+          s = s.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
+          return s;
+        }
+
+        var MP_SRV_COVER_POOL = [
+          "https://images.unsplash.com/photo-1521412644187-c49fa049e84d?auto=format&fit=crop&w=320&h=320&q=70",
+          "https://images.unsplash.com/photo-1534158727986-3f7763b4b1c3?auto=format&fit=crop&w=320&h=320&q=70",
+          "https://images.unsplash.com/photo-1521412644187-c49fa049e84d?auto=format&fit=crop&w=320&h=320&q=70",
+          "https://images.unsplash.com/photo-1534158727986-3f7763b4b1c3?auto=format&fit=crop&w=320&h=320&q=70",
+          "https://images.unsplash.com/photo-1521412644187-c49fa049e84d?auto=format&fit=crop&w=320&h=320&q=70",
+        ];
+
+        function mpHashId(sid) {
+          var h = 0;
+          var s = String(sid || "x");
+          for (var i = 0; i < s.length; i++) {
+            h = (h * 31 + s.charCodeAt(i)) >>> 0;
+          }
+          return h;
+        }
+
+        function mpSrvCoverUrlForItem(it) {
+          if (!MP_SRV_COVER_POOL.length) return "";
+          var id = it && it.id ? String(it.id) : "x";
+          var h = mpHashId(id);
+          return MP_SRV_COVER_POOL[h % MP_SRV_COVER_POOL.length];
+        }
+
+        function mpSrvSectionDefs() {
+          return [
+            { kinds: ["individual"], title: "Sesiones y análisis", kicker: "" },
+            { kinds: ["pack"], title: "Packs", kicker: "Pago único" },
+            { kinds: ["mensual"], title: "Suscripciones", kicker: "Mensual" },
+            { kinds: ["acompanamiento"], title: "Programas", kicker: "Acompañamiento" },
+          ];
+        }
+
+        function mpPrimaryCtaLabel(it) {
+          var id = it && it.id ? String(it.id) : "";
+          if (id === "cat-pista") return "Reservar";
+          if (id === "cat-pack") return "Comprar pack";
+          if (id === "cat-mensual") return "Suscribirme";
+          if (String(it.kind || "") === "acompanamiento") return "Contratar programa";
+          return "Contratar";
+        }
+
+        function mpRenderServiceCard(it) {
+          var tag = String(it.tag || it.kind || "").toUpperCase();
+          var cta = mpPrimaryCtaLabel(it);
+          return (
+            '<article class="mp-srv-card" data-mp-srv="' +
+            escapeHtml(it.id || "") +
+            '">' +
+            '<div class="mp-srv-media" aria-hidden="true"><img src="' +
+            escapeHtml(mpSrvCoverUrlForItem(it)) +
+            '" alt="" loading="lazy" /></div>' +
+            '<div class="mp-srv-body">' +
+            '<p class="mp-srv-cat">' +
+            escapeHtml(tag) +
+            "</p>" +
+            '<h4 class="mp-srv-title">' +
+            escapeHtml(it.title || "") +
+            "</h4>" +
+            '<p class="mp-srv-desc">' +
+            fmtRichInline(it.desc || "") +
+            "</p>" +
+            (it.meta ? '<div class="mp-srv-pricing">' + escapeHtml(it.meta) + "</div>" : "") +
+            '<div class="mp-srv-actions">' +
+            '<button class="mp-btn primary" type="button" data-mp-srv-act="primary" data-mp-srv-id="' +
+            escapeHtml(it.id || "") +
+            '">' +
+            escapeHtml(cta) +
+            "</button>" +
+            '<button class="mp-btn" type="button" data-mp-srv-act="detail" data-mp-srv-id="' +
+            escapeHtml(it.id || "") +
+            '">Detalle</button>' +
+            "</div></div></article>"
+          );
+        }
+
+        function mpRenderCatalogSections(items) {
+          items = Array.isArray(items) ? items.slice() : [];
+          if (!items.length) return "";
+          var defs = mpSrvSectionDefs();
+          var used = {};
+          var secs = [];
+          defs.forEach(function (d) {
+            var row = items.filter(function (it) {
+              return d.kinds.indexOf(String(it.kind || "")) !== -1;
+            });
+            row.forEach(function (it) {
+              if (it && it.id) used[String(it.id)] = true;
+            });
+            if (row.length) secs.push({ title: d.title, kicker: d.kicker, items: row });
+          });
+          var rest = items.filter(function (it) {
+            return it && it.id ? !used[String(it.id)] : true;
+          });
+          if (rest.length) secs.push({ title: "Otros servicios", kicker: "", items: rest });
+          return secs
+            .map(function (sec) {
+              return (
+                '<div class="mp-srv-sec-block">' +
+                '<div class="mp-srv-head"><h3>' +
+                escapeHtml(sec.title) +
+                "</h3>" +
+                (sec.kicker ? '<span class="mp-srv-kicker">' + escapeHtml(sec.kicker) + "</span>" : "") +
+                "</div>" +
+                sec.items.map(mpRenderServiceCard).join("") +
+                "</div>"
+              );
             })
             .join("");
         }
@@ -1309,6 +1529,15 @@
               : '<li class="svc-item"><strong>—</strong></li>';
           }
 
+          var pSrvSec = $("pSrvCatalogSec");
+          var pSrvMount = $("pSrvCatalogMount");
+          if (pSrvSec && pSrvMount) {
+            var cat = coach && Array.isArray(coach.catalog) ? coach.catalog : [];
+            var html = mpRenderCatalogSections(cat);
+            pSrvSec.hidden = !html;
+            pSrvMount.innerHTML = html || "";
+          }
+
           var pReviewsMeta = $("pReviewsMeta");
           if (pReviewsMeta) pReviewsMeta.textContent = rating.toFixed(1) + " · " + rev + " valoraciones";
           var pReviewsList = $("pReviewsList");
@@ -1396,6 +1625,14 @@
           }
 
           document.addEventListener("click", async function (e) {
+            var srvBtn = e.target && e.target.closest ? e.target.closest("[data-mp-srv-act]") : null;
+            if (srvBtn) {
+              e.preventDefault();
+              e.stopPropagation();
+              var act0 = srvBtn.getAttribute("data-mp-srv-act") || "";
+              toast(act0 === "detail" ? "Demo: abrir detalle del servicio" : "Demo: iniciar contratación");
+              return;
+            }
             var btn = e.target.closest("button[data-act]");
             if (!btn) return;
             var card = btn.closest(".coach-tile");
