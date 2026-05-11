@@ -15361,10 +15361,10 @@
     const months = diaryBucketMonths(startIso);
     const series = months.map((ym) => {
       const ms = filtered.filter((m) => String(m.date || "").startsWith(ym));
-      const w = ms.filter((m) => m.outcome === "win").length;
-      const t = ms.length;
-      const pct = t ? Math.round((w / t) * 100) : null;
-      return { ym, total: t, pct };
+      const wins = ms.filter((m) => m.outcome === "win").length;
+      const loss = ms.filter((m) => m.outcome === "loss").length;
+      const total = ms.length;
+      return { ym, wins, loss, total };
     });
     const maxTotal = series.reduce((mx, s) => Math.max(mx, s.total), 0) || 1;
     const w = 640;
@@ -15376,40 +15376,60 @@
     const n = series.length || 1;
     const step = innerW / Math.max(1, n - 1);
 
+    // Modern look: stacked bars (wins/loss) + total line (blue)
+    const bw = Math.max(10, step * 0.62);
     const bars = series
       .map((s, i) => {
-        const bw = Math.max(6, step * 0.55);
         const x = padX + i * step - bw / 2;
-        const bh = Math.round((s.total / maxTotal) * (innerH * 0.5));
-        const y = padY + innerH - bh;
-        return `<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${bw.toFixed(
-          1
-        )}" height="${bh.toFixed(1)}" rx="6" fill="rgba(56,189,248,0.18)" stroke="rgba(12,74,110,0.14)" />`;
+        const fullH = (s.total / maxTotal) * innerH;
+        const winH = s.total ? (s.wins / s.total) * fullH : 0;
+        const lossH = s.total ? (s.loss / s.total) * fullH : 0;
+        const yBase = padY + innerH;
+        const yLoss = yBase - lossH;
+        const yWin = yLoss - winH;
+        const lossRect =
+          lossH > 0
+            ? `<rect x="${x.toFixed(1)}" y="${yLoss.toFixed(1)}" width="${bw.toFixed(
+                1
+              )}" height="${lossH.toFixed(1)}" rx="7" fill="rgba(220,38,38,0.22)" stroke="rgba(220,38,38,0.35)" />`
+            : "";
+        const winRect =
+          winH > 0
+            ? `<rect x="${x.toFixed(1)}" y="${yWin.toFixed(1)}" width="${bw.toFixed(
+                1
+              )}" height="${winH.toFixed(1)}" rx="7" fill="rgba(22,163,74,0.22)" stroke="rgba(22,163,74,0.35)" />`
+            : "";
+        const baseRect =
+          s.total > 0
+            ? `<rect x="${x.toFixed(1)}" y="${(yBase - fullH).toFixed(1)}" width="${bw.toFixed(
+                1
+              )}" height="${fullH.toFixed(1)}" rx="7" fill="rgba(2,132,199,0.06)" stroke="rgba(12,74,110,0.10)" />`
+            : `<rect x="${x.toFixed(1)}" y="${(yBase - 2).toFixed(1)}" width="${bw.toFixed(
+                1
+              )}" height="2" rx="7" fill="rgba(100,116,139,0.16)" />`;
+        return baseRect + lossRect + winRect;
       })
       .join("");
 
-    const pts = series
+    const ptsTotal = series
       .map((s, i) => {
-        const pct = s.pct == null ? 0 : s.pct;
         const x = padX + i * step;
-        const y = padY + innerH - (pct / 100) * innerH;
-        return { x, y, has: s.pct != null };
+        const y = padY + innerH - (s.total / maxTotal) * innerH;
+        return `${x.toFixed(1)},${y.toFixed(1)}`;
       })
-      .map((p) => `${p.x.toFixed(1)},${p.y.toFixed(1)}`)
       .join(" ");
 
-    const dots = series
+    const dotsTotal = series
       .map((s, i) => {
-        if (s.pct == null) return "";
         const x = padX + i * step;
-        const y = padY + innerH - (s.pct / 100) * innerH;
-        return `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="4.2" fill="#0c4a6e" />`;
+        const y = padY + innerH - (s.total / maxTotal) * innerH;
+        return `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="4.1" fill="#0c4a6e" stroke="rgba(255,255,255,0.9)" stroke-width="1.5" />`;
       })
       .join("");
 
-    const grid = [0, 25, 50, 75, 100]
+    const grid = [0, 0.25, 0.5, 0.75, 1]
       .map((p) => {
-        const y = padY + innerH - (p / 100) * innerH;
+        const y = padY + innerH - p * innerH;
         return `<line x1="${padX}" y1="${y.toFixed(1)}" x2="${(padX + innerW).toFixed(
           1
         )}" y2="${y.toFixed(1)}" stroke="rgba(100,116,139,0.18)" />`;
@@ -15420,8 +15440,8 @@
       `<rect x=\"0\" y=\"0\" width=\"${w}\" height=\"${h}\" fill=\"#ffffff\" />` +
       grid +
       bars +
-      `<polyline points=\"${pts}\" fill=\"none\" stroke=\"#0c4a6e\" stroke-width=\"3\" stroke-linecap=\"round\" stroke-linejoin=\"round\" />` +
-      dots;
+      `<polyline points=\"${ptsTotal}\" fill=\"none\" stroke=\"#0c4a6e\" stroke-width=\"3\" stroke-linecap=\"round\" stroke-linejoin=\"round\" />` +
+      dotsTotal;
 
     if (note) {
       const label =
@@ -15434,10 +15454,7 @@
           : range === "12m"
           ? "1 año"
           : "Desde el inicio";
-      note.textContent =
-        "Evolución de % de victorias por mes (" +
-        label +
-        "). Barras: volumen de partidos.";
+      note.textContent = "Ganados (verde), perdidos (rojo) y total (línea azul) por mes (" + label + ").";
     }
   }
 
