@@ -83,7 +83,7 @@
   <div class="page-wrap">
     <article class="page markdown-body" id="doc">
 <h1>Gimadd Mentor — Alcance funcional, flujos y criterios técnicos para presupuesto</h1>
-<p><strong>Versión del documento:</strong> 1.1 (Mayo 2026)<br><strong>Producto:</strong> Gimadd Mentor — plataforma de entrenamiento y acompañamiento en <strong>pádel</strong> (jugadores ↔ entrenadores).<br><strong>Audiencia:</strong> empresas de desarrollo, integradores, arquitectos y responsables de producto que deban <strong>presupuestar</strong> implementación nativa, backend, seguridad y operación.</p>
+<p><strong>Versión del documento:</strong> 1.2 (Mayo 2026)<br><strong>Producto:</strong> Gimadd Mentor — plataforma de entrenamiento y acompañamiento en <strong>pádel</strong> (jugadores ↔ entrenadores).<br><strong>Audiencia:</strong> empresas de desarrollo, integradores, arquitectos y responsables de producto que deban <strong>presupuestar</strong> implementación nativa, backend, seguridad y operación.</p>
 <hr>
 <h2>0. Cómo leer este documento</h2>
 <ol>
@@ -100,6 +100,7 @@
 <li>Contratar <strong>servicios</strong> del catálogo del entrenador (sesión, pack, suscripción, programas de acompañamiento).</li>
 <li>Gestionar <strong>agenda</strong> (clases presenciales), <strong>mensajería</strong>, <strong>CRM de clientes</strong>, <strong>finanzas</strong> (con integración de pagos) y <strong>marketplace público</strong> de entrenadores.</li>
 </ul>
+<p><strong>Modelo económico de la plataforma (presupuesto y producto):</strong> Gimadd cobra a los entrenadores (1) una <strong>mensualidad por uso de la plataforma</strong> y (2) una <strong>comisión del 5 %</strong> sobre las reservas / cobros de <strong>servicios</strong> jugador–entrenador, con <strong>mínimo 1,50 €</strong> por operación sujeta a comisión. Debe contemplarse en <strong>pasarela (p. ej. Stripe Connect application fee)</strong>, <strong>ledger</strong>, <strong>UI de finanzas del coach</strong> y <strong>facturación B2B</strong> de la cuota SaaS.</p>
 <p>La base actual debe ser <strong>modular y extensible</strong>: hoy pádel y flujo coach–jugador; mañana más deportes, automatizaciones, IA sobre vídeo, informes federativos, etc.</p>
 <h3>1.1 Plataformas objetivo</h3>
 <table>
@@ -646,6 +647,32 @@
 <hr>
 <h2>13. Finanzas (entrenador) y Stripe</h2>
 <p><strong>En la demo:</strong> billetera con tabs Resumen / Pagos / Facturas / Estadísticas; acciones “enviar email” y “automatizar” simuladas.</p>
+<h3>13.0 Ingresos Gimadd (plataforma) — reglas de negocio fijas</h3>
+<table>
+<thead>
+<tr>
+<th>Concepto</th>
+<th>Regla</th>
+<th>Implicaciones para desarrollo / presupuesto</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Cuota SaaS al entrenador</strong></td>
+<td><strong>Mensualidad</strong> por utilizar la plataforma (importe a definir en producto; recurrente).</td>
+<td>Producto Stripe <strong>B2B</strong> separado del cobro jugador→coach; estados <em>activo / impago / suspendido</em>; bloqueo o degradación de funciones si falla el pago; <strong>factura/recibo</strong> al entrenador; recordatorios y dunning.</td>
+</tr>
+<tr>
+<td><strong>Comisión sobre servicios</strong></td>
+<td><strong>5 %</strong> del importe de las <strong>reservas / cobros de servicios</strong> (ventas del catálogo que pasen por la plataforma), con <strong>mínimo 1,50 €</strong> por transacción comisionable.</td>
+<td>Cálculo idempotente en el momento del cobro: <code>comisión = max(importe × 0,05, 1,50)</code> en <strong>EUR</strong> (definir equivalencia si hay multi-moneda); trazabilidad en <strong>ledger</strong> por línea; en <strong>Connect</strong>, típicamente <code>application_fee_amount</code> (o destino alternativo validado con Stripe); el coach debe <strong>ver desglose</strong> (bruto, comisión Gimadd, neto) en Pagos/Resumen; informes y conciliación contable.</td>
+</tr>
+<tr>
+<td><strong>Ámbito</strong></td>
+<td>Aplica a cobros de <strong>servicios</strong> reservados/contratados vía plataforma (no mezclar con otros flujos salvo criterio explícito posterior).</td>
+<td>Matizar en contrato qué líneas generan comisión (p. ej. solo checkout in-app, también efectivo declarado, etc.).</td>
+</tr>
+</tbody></table>
+<p><strong>Presupuesto técnico:</strong> pruebas de redondeo y mínimo en importes pequeños; webhooks que no dupliquen comisión; reembolsos que <strong>reviertan o ajusten</strong> la comisión según política; panel admin para auditoría; posible <strong>IVA sobre la comisión</strong> según sede de Gimadd (consultoría fiscal fuera de alcance del código pero sí del informe).</p>
 <p><strong>En producción (Stripe):</strong></p>
 <table>
 <thead>
@@ -656,7 +683,7 @@
 </thead>
 <tbody><tr>
 <td><strong>Stripe Connect</strong></td>
-<td>Payouts a entrenadores; split opcional plataforma</td>
+<td>Payouts a entrenadores; <strong>application fee</strong> (comisión %) y/o cuota SaaS vía <strong>Customer + Subscription</strong> separada</td>
 </tr>
 <tr>
 <td><strong>Checkout / Elements</strong></td>
@@ -691,11 +718,11 @@
 </thead>
 <tbody><tr>
 <td><strong>Resumen</strong></td>
-<td>Saldo disponible, retenciones, próximo payout</td>
+<td>Saldo disponible, retenciones, próximo payout, <strong>comisiones Gimadd acumuladas</strong>, estado <strong>cuota plataforma</strong></td>
 </tr>
 <tr>
 <td><strong>Pagos</strong></td>
-<td>Lista cobros, estado, jugador, servicio</td>
+<td>Lista cobros, estado, jugador, servicio, <strong>línea comisión 5 % (mín. 1,50 €)</strong> y neto</td>
 </tr>
 <tr>
 <td><strong>Facturas</strong></td>
@@ -1083,7 +1110,7 @@
 <li>Integración federaciones / rankings.</li>
 <li>Wearables y carga interna.</li>
 <li>Multi-deporte (tenant configurable por deporte).</li>
-<li>Marketplace con <strong>pago in-app</strong> y comisión plataforma.</li>
+<li>Marketplace con <strong>pago in-app</strong>; comisión de plataforma <strong>5 % mín. 1,50 €</strong> ya definida para servicios (ver §13.0).</li>
 </ul>
 <hr>
 <h2>Anexo A — Detalle de producto para estimación (perfiles, catálogo, captación)</h2>
@@ -1108,8 +1135,8 @@
 </tr>
 <tr>
 <td><strong>Stripe Connect</strong></td>
-<td>Estado onboarding, payouts, última verificación</td>
-<td>Webhooks actualizan badge “cobros OK”</td>
+<td>Estado onboarding, payouts, <strong>comisión plataforma por cobro</strong>, cuota mensual SaaS</td>
+<td>Webhooks + UI finanzas coherentes con §13.0</td>
 </tr>
 <tr>
 <td><strong>Invitación</strong></td>
@@ -1282,6 +1309,7 @@
 <li><strong>Plan de ciberseguridad</strong> y DPIA.</li>
 <li><strong>Runbook operación</strong> (Stripe webhooks, fallos de transcodificación).</li>
 <li><strong>Roadmap por fases</strong> (MVP → escala).</li>
+<li><strong>Casos de prueba financieros:</strong> comisión 5 % con <strong>mínimo 1,50 €</strong>, reembolsos, multi-moneda si aplica; <strong>suscripción mensual</strong> coach y suspensión por impago.</li>
 </ol>
 <hr>
 <h2>23. Glosario breve</h2>
@@ -1308,9 +1336,17 @@
 <td><strong>Tenant</strong></td>
 <td>Contenedor de datos del entrenador o academia.</td>
 </tr>
+<tr>
+<td><strong>Comisión plataforma</strong></td>
+<td>Porcentaje (5 %) y mínimo (1,50 €) sobre cobros de servicios; ver §13.0.</td>
+</tr>
+<tr>
+<td><strong>Cuota SaaS coach</strong></td>
+<td>Mensualidad B2B al entrenador por uso de la plataforma; ver §13.0.</td>
+</tr>
 </tbody></table>
 <hr>
-<p><strong>Fin del documento (v1.1).</strong> Para dudas de implementación alineadas con el código demo, cruzar con <code>CONTEXTO-GIMADD-PARA-CHATGPT.md</code>, <code>dev-handoff/especificacion-desarrolladores.html</code> y el propio <code>Gimadd_Mentor_APP.html</code>.</p>
+<p><strong>Fin del documento (v1.2).</strong> Para dudas de implementación alineadas con el código demo, cruzar con <code>CONTEXTO-GIMADD-PARA-CHATGPT.md</code>, <code>dev-handoff/especificacion-desarrolladores.html</code> y el propio <code>Gimadd_Mentor_APP.html</code>.</p>
 
     </article>
   </div>

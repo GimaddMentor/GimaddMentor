@@ -143,6 +143,15 @@ Si pasan demasiados días sin vídeo, el sistema **avisa al entrenador** para qu
 
 **Principio:** los cobros online deben ser **transparentes, reclamables y alineados con facturación** (IVA según país, datos fiscales del coach). La elección de pasarela y banco es decisión de implementación; a nivel negocio es “**pagos digitales serios**”, no Bizum informal suelto.
 
+### 13.1 Cómo gana Gimadd (modelo recurrente + variable)
+
+Para alinear incentivos y sostener el producto, la plataforma combina dos ingresos del lado **entrenador**:
+
+1. **Mensualidad por uso de la plataforma** — cuota fija recurrente (SaaS) por tener activa la herramienta (CRM, agenda, videoanálisis, cobros, etc.). Es predecible para Gimadd y debe ser **entendible** para el coach (“sé lo que pago cada mes”).
+2. **Comisión del 5 %** sobre las **reservas / cobros de servicios** que pasan por la plataforma, con un **mínimo de 1,50 €** por operación sujeta a comisión. Así Gimadd participa del volumen cuando el entrenador factura más, sin cargar de más las ventas muy pequeñas de forma desproporcionada más allá del suelo de 1,50 €.
+
+**Por qué importa a dirección:** el mix **fijo + variable** financia operación y mejora continua; exige **transparencia en pantalla** (desglose por cobro) y **procesos legales/fiscales** claros para la comisión y la cuota.
+
 ---
 
 ## 14. Alertas y acciones urgentes
@@ -153,7 +162,7 @@ Si pasan demasiados días sin vídeo, el sistema **avisa al entrenador** para qu
 - Vídeo enviado y **coach pendiente** de publicar feedback (carga de trabajo visible).
 - Clase sin fecha cerrada o **reprogramación** en curso.
 - Recordatorio de **anotar en el diario** tras una sesión.
-- (Futuro cercano) **pago fallido** o suscripción en riesgo.
+- (Futuro cercano) **pago fallido** o suscripción en riesgo (también del **jugador** o de la **cuota mensual de plataforma** del entrenador).
 
 **Valor:** la app **dirige la atención** hacia lo que genera ingreso o fidelización, no es solo un archivo estático.
 

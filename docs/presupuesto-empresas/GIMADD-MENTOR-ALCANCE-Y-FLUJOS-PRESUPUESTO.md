@@ -1,6 +1,6 @@
 # Gimadd Mentor — Alcance funcional, flujos y criterios técnicos para presupuesto
 
-**Versión del documento:** 1.1 (Mayo 2026)  
+**Versión del documento:** 1.2 (Mayo 2026)  
 **Producto:** Gimadd Mentor — plataforma de entrenamiento y acompañamiento en **pádel** (jugadores ↔ entrenadores).  
 **Audiencia:** empresas de desarrollo, integradores, arquitectos y responsables de producto que deban **presupuestar** implementación nativa, backend, seguridad y operación.
 
@@ -22,6 +22,8 @@ Gimadd Mentor conecta **jugadores** con **entrenadores verificados** para:
 - Enviar y revisar **vídeos** con **videoanálisis** (marcas temporales, feedback textual y adjuntos).
 - Contratar **servicios** del catálogo del entrenador (sesión, pack, suscripción, programas de acompañamiento).
 - Gestionar **agenda** (clases presenciales), **mensajería**, **CRM de clientes**, **finanzas** (con integración de pagos) y **marketplace público** de entrenadores.
+
+**Modelo económico de la plataforma (presupuesto y producto):** Gimadd cobra a los entrenadores (1) una **mensualidad por uso de la plataforma** y (2) una **comisión del 5 %** sobre las reservas / cobros de **servicios** jugador–entrenador, con **mínimo 1,50 €** por operación sujeta a comisión. Debe contemplarse en **pasarela (p. ej. Stripe Connect application fee)**, **ledger**, **UI de finanzas del coach** y **facturación B2B** de la cuota SaaS.
 
 La base actual debe ser **modular y extensible**: hoy pádel y flujo coach–jugador; mañana más deportes, automatizaciones, IA sobre vídeo, informes federativos, etc.
 
@@ -513,12 +515,22 @@ Lista ordenada por **tier de prioridad** (ascendente: rojo primero) y luego **no
 
 **En la demo:** billetera con tabs Resumen / Pagos / Facturas / Estadísticas; acciones “enviar email” y “automatizar” simuladas.
 
+### 13.0 Ingresos Gimadd (plataforma) — reglas de negocio fijas
+
+| Concepto | Regla | Implicaciones para desarrollo / presupuesto |
+|----------|--------|-----------------------------------------------|
+| **Cuota SaaS al entrenador** | **Mensualidad** por utilizar la plataforma (importe a definir en producto; recurrente). | Producto Stripe **B2B** separado del cobro jugador→coach; estados *activo / impago / suspendido*; bloqueo o degradación de funciones si falla el pago; **factura/recibo** al entrenador; recordatorios y dunning. |
+| **Comisión sobre servicios** | **5 %** del importe de las **reservas / cobros de servicios** (ventas del catálogo que pasen por la plataforma), con **mínimo 1,50 €** por transacción comisionable. | Cálculo idempotente en el momento del cobro: `comisión = max(importe × 0,05, 1,50)` en **EUR** (definir equivalencia si hay multi-moneda); trazabilidad en **ledger** por línea; en **Connect**, típicamente `application_fee_amount` (o destino alternativo validado con Stripe); el coach debe **ver desglose** (bruto, comisión Gimadd, neto) en Pagos/Resumen; informes y conciliación contable. |
+| **Ámbito** | Aplica a cobros de **servicios** reservados/contratados vía plataforma (no mezclar con otros flujos salvo criterio explícito posterior). | Matizar en contrato qué líneas generan comisión (p. ej. solo checkout in-app, también efectivo declarado, etc.). |
+
+**Presupuesto técnico:** pruebas de redondeo y mínimo en importes pequeños; webhooks que no dupliquen comisión; reembolsos que **reviertan o ajusten** la comisión según política; panel admin para auditoría; posible **IVA sobre la comisión** según sede de Gimadd (consultoría fiscal fuera de alcance del código pero sí del informe).
+
 **En producción (Stripe):**
 
 
 | Componente              | Uso                                               |
 | ----------------------- | ------------------------------------------------- |
-| **Stripe Connect**      | Payouts a entrenadores; split opcional plataforma |
+| **Stripe Connect**      | Payouts a entrenadores; **application fee** (comisión %) y/o cuota SaaS vía **Customer + Subscription** separada |
 | **Checkout / Elements** | Cobro servicios y suscripciones                   |
 | **Billing Portal**      | Gestión método pago y cancelaciones               |
 | **Invoices + Tax**      | IVA/VAT según país entrenador                     |
@@ -579,8 +591,8 @@ sequenceDiagram
 
 | Tab              | Contenido esperado en producción              |
 | ---------------- | --------------------------------------------- |
-| **Resumen**      | Saldo disponible, retenciones, próximo payout |
-| **Pagos**        | Lista cobros, estado, jugador, servicio       |
+| **Resumen**      | Saldo disponible, retenciones, próximo payout, **comisiones Gimadd acumuladas**, estado **cuota plataforma** |
+| **Pagos**        | Lista cobros, estado, jugador, servicio, **línea comisión 5 % (mín. 1,50 €)** y neto |
 | **Facturas**     | PDF generados / descarga                      |
 | **Estadísticas** | Serie temporal, ARPU, mix servicios           |
 
@@ -844,7 +856,7 @@ Registrar: logins, publicaciones, cambios de dinero, exportaciones CRM, descarga
 - Integración federaciones / rankings.
 - Wearables y carga interna.
 - Multi-deporte (tenant configurable por deporte).
-- Marketplace con **pago in-app** y comisión plataforma.
+- Marketplace con **pago in-app**; comisión de plataforma **5 % mín. 1,50 €** ya definida para servicios (ver §13.0).
 
 ---
 
@@ -857,7 +869,7 @@ Registrar: logins, publicaciones, cambios de dinero, exportaciones CRM, descarga
 | ------------------------ | ----------------------------------------------------- | --------------------------------------------------------------------- |
 | **Identidad**            | Nombre público, foto, ubicación, idiomas              | Sincronizar con marketplace SEO                                       |
 | **Credenciales negocio** | NIF/IVA, dirección fiscal, titular cuenta             | Solo entrenador + admin; cifrado en reposo                            |
-| **Stripe Connect**       | Estado onboarding, payouts, última verificación       | Webhooks actualizan badge “cobros OK”                                 |
+| **Stripe Connect**       | Estado onboarding, payouts, **comisión plataforma por cobro**, cuota mensual SaaS | Webhooks + UI finanzas coherentes con §13.0                         |
 | **Invitación**           | Código corto, URL genérica, QR (futuro)               | Rate limit; regenerar código                                          |
 | **Catálogo**             | Lista servicios con visibilidad, orden, precios       | Versionado: cambio precio no afecta contratos vigentes salvo política |
 | **Preferencias**         | Zona horaria, buffer entre clases, plantillas mensaje | Afecta agenda y Google Calendar                                       |
@@ -949,6 +961,7 @@ La función `openCoachSeguimientoForPlayer` en demo restringe pestañas válidas
 4. **Plan de ciberseguridad** y DPIA.
 5. **Runbook operación** (Stripe webhooks, fallos de transcodificación).
 6. **Roadmap por fases** (MVP → escala).
+7. **Casos de prueba financieros:** comisión 5 % con **mínimo 1,50 €**, reembolsos, multi-moneda si aplica; **suscripción mensual** coach y suspensión por impago.
 
 ---
 
@@ -961,8 +974,10 @@ La función `openCoachSeguimientoForPlayer` en demo restringe pestañas válidas
 | **Pendiente de revisión** | Estado `pendiente_revision`; en UI a menudo ligado a **videoanálisis**. |
 | **Entitlement**           | Derecho de uso derivado de una compra/suscripción activa.               |
 | **Tenant**                | Contenedor de datos del entrenador o academia.                          |
+| **Comisión plataforma**   | Porcentaje (5 %) y mínimo (1,50 €) sobre cobros de servicios; ver §13.0. |
+| **Cuota SaaS coach**      | Mensualidad B2B al entrenador por uso de la plataforma; ver §13.0.      |
 
 
 ---
 
-**Fin del documento (v1.1).** Para dudas de implementación alineadas con el código demo, cruzar con `CONTEXTO-GIMADD-PARA-CHATGPT.md`, `dev-handoff/especificacion-desarrolladores.html` y el propio `Gimadd_Mentor_APP.html`.
+**Fin del documento (v1.2).** Para dudas de implementación alineadas con el código demo, cruzar con `CONTEXTO-GIMADD-PARA-CHATGPT.md`, `dev-handoff/especificacion-desarrolladores.html` y el propio `Gimadd_Mentor_APP.html`.
