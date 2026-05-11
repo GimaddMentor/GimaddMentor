@@ -3307,17 +3307,116 @@
     .coach-list-demo {
       display: flex;
       flex-direction: column;
-      gap: 0.75rem;
+      gap: 0.85rem;
     }
     .coach-list-demo article {
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 1rem;
-      background: var(--surface);
-      box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+      border: 1px solid rgba(226, 232, 240, 0.95);
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.75);
+      box-shadow: 0 10px 36px rgba(15, 23, 42, 0.06);
+      overflow: hidden;
     }
-    .coach-list-demo h3 { margin: 0 0 0.35rem; font-size: 0.95rem; }
-    .coach-list-demo p { margin: 0 0 0.75rem; font-size: 0.78rem; color: var(--muted); line-height: 1.4; }
+    .jug-coach-tile-inner {
+      padding: 0.95rem;
+      display: grid;
+      grid-template-columns: 86px 1fr;
+      gap: 0.85rem;
+      align-items: center;
+    }
+    .jug-coach-photo {
+      width: 86px;
+      height: 86px;
+      border-radius: 16px;
+      object-fit: cover;
+      border: 1px solid rgba(15, 23, 42, 0.08);
+      background: rgba(241, 245, 249, 0.8);
+    }
+    .jug-coach-name {
+      margin: 0;
+      font-size: 1.05rem;
+      font-weight: 1000;
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+      color: var(--brand-ink);
+    }
+    .jug-coach-line {
+      margin: 0.2rem 0 0;
+      font-size: 0.82rem;
+      font-weight: 750;
+      color: var(--muted);
+      line-height: 1.35;
+    }
+    .jug-coach-badges {
+      display: flex;
+      align-items: center;
+      gap: 0.55rem;
+      margin-top: 0.45rem;
+      flex-wrap: wrap;
+    }
+    .jug-coach-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      border: 1px solid rgba(226, 232, 240, 0.95);
+      background: rgba(241, 245, 249, 0.5);
+      border-radius: 999px;
+      padding: 0.35rem 0.55rem;
+      font-size: 0.72rem;
+      font-weight: 900;
+      color: var(--brand-ink);
+      white-space: nowrap;
+    }
+    .jug-coach-badge--verified {
+      border-color: rgba(34, 197, 94, 0.25);
+      background: rgba(34, 197, 94, 0.08);
+      color: #166534;
+    }
+    .jug-coach-stars {
+      letter-spacing: 0.08em;
+      color: #b45309;
+      font-variant-numeric: tabular-nums;
+    }
+    .jug-coach-bottom {
+      padding: 0 0.95rem 0.95rem;
+    }
+    .jug-coach-subhead {
+      margin: 0.15rem 0 0.55rem;
+      font-size: 0.72rem;
+      font-weight: 1000;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .jug-coach-cta {
+      margin-top: 0.7rem;
+      width: 100%;
+      border-radius: 999px;
+      padding: 0.75rem 0.9rem;
+      border: 1px solid rgba(242, 236, 31, 0.85);
+      background: var(--brand-court);
+      color: #111827;
+      font-weight: 1000;
+      font-size: 0.9rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      box-shadow: 0 14px 34px rgba(242, 236, 31, 0.22);
+    }
+    .jug-coach-cta:active { transform: translateY(1px); }
+    .jug-coach-cta .sub {
+      margin: 0.25rem 0 0;
+      font-weight: 750;
+      font-size: 0.78rem;
+      color: rgba(17, 24, 39, 0.75);
+      line-height: 1.35;
+    }
+    .jug-coach-cta .arr {
+      font-weight: 1100;
+      font-size: 1.2rem;
+      line-height: 1;
+    }
 
     .crm-wrap {
       max-width: 480px;
@@ -13440,21 +13539,82 @@
     var el = document.getElementById("jugEntrenadoresList");
     if (!el) return;
     var list = loadJugadorTrainers();
+    var demoMap = {
+      "t-juan": {
+        avatarUrl: "https://images.unsplash.com/photo-1521412644187-c49fa049e84d?auto=format&fit=crop&w=240&h=240&q=70",
+        verified: true,
+        rating: 4.9,
+        reviews: 167,
+        loc: "Pilar de la Horadada",
+        formats: "Virtual · Presencial",
+      },
+      "t-vinculado-codigo": {
+        avatarUrl: "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=240&h=240&q=70",
+        verified: true,
+        rating: 4.7,
+        reviews: 54,
+        loc: "—",
+        formats: "Online",
+      },
+    };
     el.innerHTML = list
       .map(function (t) {
         var chips = coachCatalogChipsHtml();
+        var d = demoMap[t.id] || demoMap["t-vinculado-codigo"];
+        var verified = t.principal ? true : !!(d && d.verified);
+        var rating = d && d.rating ? Number(d.rating) : 0;
+        var rev = d && d.reviews ? Number(d.reviews) : 0;
+        var stars = "";
+        var sN = Math.max(0, Math.min(5, Math.round(rating || 0)));
+        for (var i = 0; i < 5; i++) stars += i < sN ? "★" : "☆";
+        var subtitle = t.principal
+          ? "Tu entrenador principal en esta demo: objetivos y diario compartidos."
+          : "Entrenador vinculado mediante código de invitación.";
+        var loc = (d && d.loc) || "—";
+        var formats = (d && d.formats) || "—";
         return (
-          '<article><h3>' +
+          '<article class="jug-coach-tile" data-trainer-id="' +
+          escapeHtml(t.id || "") +
+          '">' +
+          '<div class="jug-coach-tile-inner">' +
+          '<img class="jug-coach-photo" src="' +
+          escapeHtml((d && d.avatarUrl) || "") +
+          '" alt="" loading="lazy" />' +
+          "<div>" +
+          '<h3 class="jug-coach-name">' +
           escapeHtml(t.nombre) +
-          "</h3><p>" +
-          (t.principal
-            ? "Tu entrenador principal en esta demo: objetivos y diario compartidos."
-            : "Entrenador vinculado mediante código de invitación.") +
+          "</h3>" +
+          '<p class="jug-coach-line">' +
+          escapeHtml(subtitle) +
           "</p>" +
+          '<div class="jug-coach-badges">' +
+          (verified ? '<span class="jug-coach-badge jug-coach-badge--verified">Verificado</span>' : "") +
+          (rating
+            ? '<span class="jug-coach-badge"><span class="jug-coach-stars" aria-hidden="true">' +
+              escapeHtml(stars) +
+              '</span> ' +
+              escapeHtml(rating.toFixed(1)) +
+              (rev ? " (" + escapeHtml(String(rev)) + ")" : "") +
+              "</span>"
+            : "") +
+          '<span class="jug-coach-badge">' +
+          escapeHtml(loc) +
+          "</span>" +
+          '<span class="jug-coach-badge">' +
+          escapeHtml(formats) +
+          "</span>" +
+          "</div>" +
+          "</div>" +
+          "</div>" +
+          '<div class="jug-coach-bottom">' +
+          '<p class="jug-coach-subhead">Servicios que ofrece</p>' +
           chips +
-          '<button type="button" class="home-btn home-btn-srv" data-action="jug-servicios" style="margin:0;width:100%;box-shadow:none">' +
-          '<span class="t" style="font-size:0.9rem">Ver servicios</span>' +
-          '<span class="d">Catálogo completo: packs, mensualidad y programas de acompañamiento.</span></button></article>'
+          '<button type="button" class="jug-coach-cta" data-action="jug-servicios">' +
+          '<span><span style="display:block;font-weight:1000">📦 Ver servicios</span><span class="sub">Catálogo completo: packs, mensualidad y programas de acompañamiento.</span></span>' +
+          '<span class="arr" aria-hidden="true">→</span>' +
+          "</button>" +
+          "</div>" +
+          "</article>"
         );
       })
       .join("");
