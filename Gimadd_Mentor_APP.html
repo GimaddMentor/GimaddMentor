@@ -1470,6 +1470,65 @@
       gap: 0.6rem;
       margin-bottom: 1.25rem;
     }
+    .diario-insights {
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      background: rgba(241, 245, 249, 0.45);
+      padding: 0.85rem 0.85rem 0.95rem;
+      margin: 0.8rem 0 1rem;
+    }
+    .diario-insights-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      margin-bottom: 0.65rem;
+    }
+    .diario-insights-head .section-label {
+      margin: 0;
+    }
+    .diario-range {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+    .diario-range label {
+      font-size: 0.72rem;
+      color: var(--muted);
+      font-weight: 700;
+    }
+    .diario-range select {
+      font: inherit;
+      font-size: 0.82rem;
+      font-weight: 700;
+      padding: 0.45rem 0.6rem;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: #ffffff;
+    }
+    .stats-chart {
+      width: 100%;
+      border: 1px solid var(--border);
+      background: #ffffff;
+      border-radius: 14px;
+      padding: 0.6rem 0.65rem;
+      box-sizing: border-box;
+      margin: 0 0 0.85rem;
+    }
+    .stats-chart svg {
+      width: 100%;
+      height: 132px;
+      display: block;
+    }
+    .stats-chart .chart-note {
+      margin: 0.35rem 0 0;
+      font-size: 0.72rem;
+      color: var(--muted);
+      font-weight: 650;
+      line-height: 1.35;
+    }
     .stat-box {
       background: var(--card-bg);
       border-radius: var(--radius-sm);
@@ -5546,6 +5605,34 @@
         </button>
         <div id="hostAfterClase" class="diario-form-host" hidden></div>
 
+        <section class="diario-insights" aria-label="Progreso y estadísticas">
+          <div class="diario-insights-head">
+            <p class="section-label">Tu progreso</p>
+            <div class="diario-range">
+              <label for="statsRange">Rango</label>
+              <select id="statsRange" aria-label="Rango de estadísticas">
+                <option value="1m">Mes</option>
+                <option value="3m">3 meses</option>
+                <option value="6m">6 meses</option>
+                <option value="12m">1 año</option>
+                <option value="all">Desde el inicio</option>
+              </select>
+            </div>
+          </div>
+          <div class="stats-chart" id="statsChart">
+            <svg viewBox="0 0 640 132" preserveAspectRatio="none" aria-label="Gráfica de evolución"></svg>
+            <p class="chart-note" id="statsChartNote">Evolución de % de victorias por mes (según el rango seleccionado).</p>
+          </div>
+          <div class="stats-grid" id="statsGrid">
+            <div class="stat-box"><div class="l">Partidos</div><div class="n" id="stTotal">0</div></div>
+            <div class="stat-box"><div class="l">Ganados</div><div class="n" id="stWins">0</div></div>
+            <div class="stat-box"><div class="l">Perdidos</div><div class="n" id="stLoss">0</div></div>
+            <div class="stat-box"><div class="l">Victorias</div><div class="n" id="stPct">—</div></div>
+          </div>
+          <p class="section-label" style="margin:0.15rem 0 0.55rem">Sensaciones (media)</p>
+          <div class="emoji-row" id="summaryEmojis" aria-live="polite"></div>
+        </section>
+
         <div class="diario-placeholder" id="placeholderRight">
         Pulsa <strong>Agregar resultado partido</strong> o <strong>Agregar clase en pista</strong> para registrar una sesión y tu <strong>plan de acción</strong> (objetivos con el mismo enfoque, en <button type="button" class="header-link-btn nav-open-obj">Objetivos</button>).
         </div>
@@ -5679,17 +5766,6 @@
 
       <p class="section-label" style="margin-top:1.25rem">Clases en pista recientes</p>
       <div id="listClases"></div>
-
-      <p class="section-label" style="margin-top:1.25rem">Estadísticas mensuales</p>
-      <div class="stats-grid" id="statsGrid">
-        <div class="stat-box"><div class="l">Partidos</div><div class="n" id="stTotal">0</div></div>
-        <div class="stat-box"><div class="l">Ganados</div><div class="n" id="stWins">0</div></div>
-        <div class="stat-box"><div class="l">Perdidos</div><div class="n" id="stLoss">0</div></div>
-        <div class="stat-box"><div class="l">Victorias</div><div class="n" id="stPct">—</div></div>
-      </div>
-
-      <p class="section-label">Resumen sensaciones de partidos</p>
-      <div class="emoji-row" id="summaryEmojis" aria-live="polite"></div>
   </div>
   </section>
 
@@ -15121,8 +15197,7 @@
     if (!matches.length) {
       listEl.innerHTML =
         '<p style="color:var(--muted);font-size:0.88rem">Aún no hay partidos. Añade el primero.</p>';
-      updateStats();
-      updateSummaryEmojis();
+      updateDiaryInsights();
       return;
     }
     const sorted = [...matches].sort((a, b) => (a.date < b.date ? 1 : -1));
@@ -15166,8 +15241,7 @@
           </article>`;
       })
       .join("");
-    updateStats();
-    updateSummaryEmojis();
+    updateDiaryInsights();
   }
 
   function renderListClases() {
@@ -15227,42 +15301,189 @@
     });
   }
 
-  function updateStats() {
+  function diaryRangeStartIso(range) {
     const now = new Date();
-    const ym = now.getFullYear() + "-" + String(now.getMonth() + 1).padStart(2, "0");
-    const monthMatches = matches.filter((m) => m.date.startsWith(ym));
-    const wins = monthMatches.filter((m) => m.outcome === "win").length;
-    const loss = monthMatches.filter((m) => m.outcome === "loss").length;
-    const total = monthMatches.length;
-    const pct = total ? Math.round((wins / total) * 100) + "%" : "—";
-    document.getElementById("stTotal").textContent = String(total);
-    document.getElementById("stWins").textContent = String(wins);
-    document.getElementById("stLoss").textContent = String(loss);
-    document.getElementById("stPct").textContent = pct;
+    const yr = now.getFullYear();
+    const mo = now.getMonth(); // 0-based
+    function iso(y, m, d) {
+      return y + "-" + String(m).padStart(2, "0") + "-" + String(d).padStart(2, "0");
+    }
+    if (range === "all") return null;
+    if (range === "1m") {
+      return iso(yr, mo + 1, 1);
+    }
+    const monthsBack = range === "3m" ? 2 : range === "6m" ? 5 : range === "12m" ? 11 : 0;
+    const d = new Date(yr, mo - monthsBack, 1);
+    return iso(d.getFullYear(), d.getMonth() + 1, 1);
   }
 
-  function updateSummaryEmojis() {
-    const el = document.getElementById("summaryEmojis");
-    if (!matches.length) {
-      el.innerHTML =
-        '<span style="font-size:0.85rem;color:var(--muted)">Sin datos aún.</span>';
-      return;
+  function diaryFilteredMatches() {
+    const sel = document.getElementById("statsRange");
+    const range = sel ? sel.value : "1m";
+    const startIso = diaryRangeStartIso(range);
+    if (!startIso) return matches.slice();
+    return matches.filter((m) => m.date >= startIso);
+  }
+
+  function diaryBucketMonths(startIso) {
+    const now = new Date();
+    const end = new Date(now.getFullYear(), now.getMonth(), 1);
+    let d;
+    if (startIso) {
+      const [y, m] = startIso.split("-").map((x) => parseInt(x, 10));
+      d = new Date(y, (m || 1) - 1, 1);
+    } else if (matches.length) {
+      const first = matches
+        .slice()
+        .sort((a, b) => (a.date < b.date ? -1 : 1))[0].date;
+      const [y, m] = String(first).split("-").map((x) => parseInt(x, 10));
+      d = new Date(y, (m || 1) - 1, 1);
+    } else {
+      d = new Date(now.getFullYear(), now.getMonth(), 1);
     }
-    const avg =
-      matches.reduce((s, m) => s + (m.feel || 3), 0) / matches.length;
-    const rounded = Math.min(4, Math.max(1, Math.round(avg)));
-    const chips = [
-      { v: 1, e: "😠" },
-      { v: 2, e: "😢" },
-      { v: 3, e: "😐" },
-      { v: 4, e: "😊" },
-    ];
-    el.innerHTML = chips
-      .map(
-        (c) =>
-          `<div class="emoji-chip${c.v === rounded ? " on" : ""}">${c.e}<small>${c.v}</small></div>`
-      )
+    const out = [];
+    while (d <= end) {
+      const y = d.getFullYear();
+      const m = d.getMonth() + 1;
+      out.push(y + "-" + String(m).padStart(2, "0"));
+      d = new Date(y, m, 1);
+    }
+    return out.slice(-18); // tope visual
+  }
+
+  function diaryRenderChart(filtered, range) {
+    const wrap = document.getElementById("statsChart");
+    if (!wrap) return;
+    const svg = wrap.querySelector("svg");
+    if (!svg) return;
+    const note = document.getElementById("statsChartNote");
+    const startIso = diaryRangeStartIso(range);
+    const months = diaryBucketMonths(startIso);
+    const series = months.map((ym) => {
+      const ms = filtered.filter((m) => String(m.date || "").startsWith(ym));
+      const w = ms.filter((m) => m.outcome === "win").length;
+      const t = ms.length;
+      const pct = t ? Math.round((w / t) * 100) : null;
+      return { ym, total: t, pct };
+    });
+    const maxTotal = series.reduce((mx, s) => Math.max(mx, s.total), 0) || 1;
+    const w = 640;
+    const h = 132;
+    const padX = 20;
+    const padY = 18;
+    const innerW = w - padX * 2;
+    const innerH = h - padY * 2;
+    const n = series.length || 1;
+    const step = innerW / Math.max(1, n - 1);
+
+    const bars = series
+      .map((s, i) => {
+        const bw = Math.max(6, step * 0.55);
+        const x = padX + i * step - bw / 2;
+        const bh = Math.round((s.total / maxTotal) * (innerH * 0.5));
+        const y = padY + innerH - bh;
+        return `<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${bw.toFixed(
+          1
+        )}" height="${bh.toFixed(1)}" rx="6" fill="rgba(56,189,248,0.18)" stroke="rgba(12,74,110,0.14)" />`;
+      })
       .join("");
+
+    const pts = series
+      .map((s, i) => {
+        const pct = s.pct == null ? 0 : s.pct;
+        const x = padX + i * step;
+        const y = padY + innerH - (pct / 100) * innerH;
+        return { x, y, has: s.pct != null };
+      })
+      .map((p) => `${p.x.toFixed(1)},${p.y.toFixed(1)}`)
+      .join(" ");
+
+    const dots = series
+      .map((s, i) => {
+        if (s.pct == null) return "";
+        const x = padX + i * step;
+        const y = padY + innerH - (s.pct / 100) * innerH;
+        return `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="4.2" fill="#0c4a6e" />`;
+      })
+      .join("");
+
+    const grid = [0, 25, 50, 75, 100]
+      .map((p) => {
+        const y = padY + innerH - (p / 100) * innerH;
+        return `<line x1="${padX}" y1="${y.toFixed(1)}" x2="${(padX + innerW).toFixed(
+          1
+        )}" y2="${y.toFixed(1)}" stroke="rgba(100,116,139,0.18)" />`;
+      })
+      .join("");
+
+    svg.innerHTML =
+      `<rect x=\"0\" y=\"0\" width=\"${w}\" height=\"${h}\" fill=\"#ffffff\" />` +
+      grid +
+      bars +
+      `<polyline points=\"${pts}\" fill=\"none\" stroke=\"#0c4a6e\" stroke-width=\"3\" stroke-linecap=\"round\" stroke-linejoin=\"round\" />` +
+      dots;
+
+    if (note) {
+      const label =
+        range === "1m"
+          ? "Mes"
+          : range === "3m"
+          ? "3 meses"
+          : range === "6m"
+          ? "6 meses"
+          : range === "12m"
+          ? "1 año"
+          : "Desde el inicio";
+      note.textContent =
+        "Evolución de % de victorias por mes (" +
+        label +
+        "). Barras: volumen de partidos.";
+    }
+  }
+
+  function updateDiaryInsights() {
+    const sel = document.getElementById("statsRange");
+    const range = sel ? sel.value : "1m";
+    const filtered = diaryFilteredMatches();
+    const wins = filtered.filter((m) => m.outcome === "win").length;
+    const loss = filtered.filter((m) => m.outcome === "loss").length;
+    const total = filtered.length;
+    const pct = total ? Math.round((wins / total) * 100) + "%" : "—";
+    const stTotal = document.getElementById("stTotal");
+    const stWins = document.getElementById("stWins");
+    const stLoss = document.getElementById("stLoss");
+    const stPct = document.getElementById("stPct");
+    if (stTotal) stTotal.textContent = String(total);
+    if (stWins) stWins.textContent = String(wins);
+    if (stLoss) stLoss.textContent = String(loss);
+    if (stPct) stPct.textContent = pct;
+
+    const el = document.getElementById("summaryEmojis");
+    if (el) {
+      if (!filtered.length) {
+        el.innerHTML = '<span style="font-size:0.85rem;color:var(--muted)">Sin datos en este rango.</span>';
+      } else {
+        const avg = filtered.reduce((s, m) => s + (m.feel || 3), 0) / filtered.length;
+        const rounded = Math.min(4, Math.max(1, Math.round(avg)));
+        const chips = [
+          { v: 1, e: "😠" },
+          { v: 2, e: "😢" },
+          { v: 3, e: "😐" },
+          { v: 4, e: "😊" },
+        ];
+        el.innerHTML = chips
+          .map((c) => `<div class="emoji-chip${c.v === rounded ? " on" : ""}">${c.e}<small>${c.v}</small></div>`)
+          .join("");
+      }
+    }
+    diaryRenderChart(filtered, range);
+  }
+
+  var statsRangeSel = document.getElementById("statsRange");
+  if (statsRangeSel) {
+    statsRangeSel.addEventListener("change", function () {
+      updateDiaryInsights();
+    });
   }
 
   if (form) {
