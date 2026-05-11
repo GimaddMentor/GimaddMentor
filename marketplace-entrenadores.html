@@ -305,6 +305,33 @@
         font-size: 1.05rem;
         color: #ca8a04;
       }
+      .star-ico {
+        font-size: 1.05rem;
+        color: #ca8a04;
+        line-height: 1;
+      }
+      .mp-rating {
+        cursor: pointer;
+        user-select: none;
+      }
+      .mp-rating:focus-visible,
+      .mp-rating-link:focus-visible {
+        outline: 2px solid rgba(12, 74, 110, 0.35);
+        outline-offset: 2px;
+        border-radius: 10px;
+      }
+      .mp-rating-num {
+        color: var(--brand-ink);
+        font-weight: 1000;
+        margin-left: 0.1rem;
+      }
+      .mp-rating-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+        cursor: pointer;
+        user-select: none;
+      }
       .mp-verified {
         display: inline-flex;
         align-items: center;
@@ -340,6 +367,9 @@
         border-radius: 18px;
         box-shadow: 0 24px 80px rgba(15, 23, 42, 0.22);
         overflow: hidden;
+        max-height: 92vh;
+        display: flex;
+        flex-direction: column;
       }
       @media (max-width: 980px) {
         .mp-modal-sheet {
@@ -374,6 +404,8 @@
       }
       .mp-modal-body {
         padding: 1rem;
+        overflow: auto;
+        -webkit-overflow-scrolling: touch;
       }
       .profile-grid {
         display: grid;
@@ -435,6 +467,19 @@
         font-weight: 650;
         line-height: 1.6;
       }
+      .bio p {
+        margin: 0 0 0.7rem;
+        color: var(--muted);
+        font-weight: 650;
+        line-height: 1.6;
+      }
+      .bio p:last-child {
+        margin-bottom: 0;
+      }
+      .bio strong {
+        color: var(--brand-ink);
+        font-weight: 950;
+      }
       .profile-meta {
         display: grid;
         grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -491,6 +536,37 @@
         font-weight: 1000;
         color: var(--brand-court-deep);
         white-space: nowrap;
+      }
+      .rev-card {
+        border: 1px solid rgba(226, 232, 240, 0.95);
+        background: rgba(255, 255, 255, 0.8);
+        border-radius: 14px;
+        padding: 0.7rem 0.75rem;
+        margin: 0 0 0.55rem;
+      }
+      .rev-head {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 0.75rem;
+      }
+      .rev-date {
+        color: var(--muted);
+        font-size: 0.74rem;
+        font-weight: 700;
+        white-space: nowrap;
+      }
+      .rev-stars {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.1rem;
+        margin-top: 0.35rem;
+      }
+      .rev-txt {
+        margin: 0.45rem 0 0;
+        color: var(--muted);
+        font-weight: 650;
+        line-height: 1.55;
       }
       .empty {
         padding: 1.2rem 0.9rem;
@@ -662,9 +738,6 @@
               </div>
             </div>
             <div class="profile-content">
-              <h3>Biografía</h3>
-              <p id="pBio">—</p>
-
               <div class="profile-meta">
                 <div class="meta-box">
                   <p class="meta-k">Enfoque</p>
@@ -679,14 +752,25 @@
                   <p class="meta-v" id="pFormats">—</p>
                 </div>
                 <div class="meta-box">
-                  <p class="meta-k">Servicios y precios</p>
+                  <p class="meta-k">Servicios</p>
                   <ul class="svc-list" id="pServices"></ul>
                 </div>
               </div>
 
+              <h3 style="margin-top:1rem">Biografía</h3>
+              <div id="pBio" class="bio"></div>
+
               <p class="mp-foot" style="margin-top:0.85rem">
                 Para enlazar en producción con <strong>www.gimaddmentor.com</strong>, este perfil usará un enlace personalizado y el código se validará en la app.
               </p>
+
+              <section id="pReviewsSec" style="margin-top:1rem">
+                <h3 style="display:flex;align-items:center;justify-content:space-between;gap:0.75rem;margin:0 0 0.55rem">
+                  <span>Valoraciones</span>
+                  <span class="mp-tiny" id="pReviewsMeta" style="font-weight:800">—</span>
+                </h3>
+                <div id="pReviewsList"></div>
+              </section>
             </div>
           </div>
         </div>
@@ -771,6 +855,43 @@
     "services": [
       { "id": "srv-va", "title": "Videoanálisis", "priceEur": 25 }
     ]
+  },
+  {
+    "id": "coach-miguel-angel",
+    "name": "Miguel Ángel",
+    "verified": true,
+    "rating": 4.9,
+    "reviewsCount": 167,
+    "city": "Pilar de la Horadada",
+    "country": "ES",
+    "languages": ["es", "en"],
+    "focus": ["tecnica", "tactica", "mental", "video", "pista"],
+    "formats": ["online", "presencial"],
+    "headline": "Tu plan claro, tu progreso visible. Técnica + táctica + mental con métricas reales.",
+    "shortDesc": "Entrenador de alto rendimiento con enfoque práctico: patrones simples, hábitos medibles y feedback accionable (vídeo + pista). Ideal si quieres competir con confianza.",
+    "bio": "🎾 **Entrena para competir (sin complicarte)**\nTrabajo contigo para que tengas un plan claro y un progreso que se ve en pista: **pocas cosas, muy bien hechas**, y siempre con feedback accionable.\n\n✅ **Mi método (rápido y medible)**\n1) Diagnóstico → 2) 1–3 focos por bloque → 3) Plan de acción → 4) Seguimiento con vídeo + métricas.\n\n🧠 **Si te pasa esto, aquí mejoramos mucho**\n- Tu nivel baja en puntos importantes.\n- Te bloqueas tras un par de errores.\n- Tu técnica “se rompe” cuando aprietas.\n\n🔥 **Objetivo**\nQue compitas con confianza: patrones simples, rutinas sólidas y decisiones claras.",
+    "experienceYears": 8,
+    "avatarUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/Danny_Rensch_smiling.jpg/330px-Danny_Rensch_smiling.jpg",
+    "coachCode": "GIMADD-58TFAF",
+    "specialties": [
+      "Construcción de punto y patrones",
+      "Gestión de errores + rutinas",
+      "Saque/Restos bajo presión",
+      "Toma de decisiones en partido",
+      "Videoanálisis con plan accionable"
+    ],
+    "services": [
+      { "id": "srv-va", "title": "Videoanálisis · Plan accionable", "priceEur": 39 },
+      { "id": "srv-mentoria", "title": "Mentoría 1:1 (online)", "priceEur": 49 },
+      { "id": "srv-pista", "title": "Sesión en pista (60 min)", "priceEur": 55 },
+      { "id": "srv-plan", "title": "Plan de partido + rutinas", "priceEur": 29 }
+    ],
+    "reviews": [
+      { "name": "Juan García", "stars": 5, "date": "2026-04-18", "text": "En 3 semanas pasé de improvisar a jugar con patrones claros. El vídeo te deja muy concreto qué hacer en el siguiente partido." },
+      { "name": "Laura Sánchez", "stars": 5, "date": "2026-03-02", "text": "Me ayudó a dejar de bloquearme en puntos importantes. Rutinas simples y seguimiento realista." },
+      { "name": "Carlos Medina", "stars": 5, "date": "2026-02-10", "text": "La combinación pista + vídeo es top. Lo mejor: no te satura, te da 2-3 ajustes y los clavas." },
+      { "name": "Marta Ruiz", "stars": 4, "date": "2026-01-22", "text": "Muy buen enfoque mental y táctico. Me faltó alguna sesión extra de pista, pero el plan online funcionó." }
+    ]
   }
 ]
     </script>
@@ -804,6 +925,32 @@
           toast._t = setTimeout(function () {
             el.classList.remove("on");
           }, 1400);
+        }
+
+        function starsHtml(n) {
+          var s = clamp(Math.round(Number(n) || 0), 0, 5);
+          var out = "";
+          for (var i = 0; i < 5; i++) {
+            out +=
+              '<span class="material-symbols-outlined star-ico" aria-hidden="true">' +
+              (i < s ? "star" : "star_outline") +
+              "</span>";
+          }
+          return out;
+        }
+
+        function fmtBioHtml(raw) {
+          var s = String(raw || "").trim();
+          if (!s) return "<p>—</p>";
+          s = escapeHtml(s);
+          s = s.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
+          var parts = s.split(/\n\s*\n/);
+          return parts
+            .map(function (p) {
+              p = p.replace(/\n/g, "<br />");
+              return "<p>" + p + "</p>";
+            })
+            .join("");
         }
 
         function loadSeed() {
@@ -855,8 +1002,11 @@
           var formats = Array.isArray(coach.formats) ? coach.formats : [];
 
           var line1 =
-            '<span class="mp-tiny"><span class="material-symbols-outlined" aria-hidden="true">star</span>' +
+            '<span class="mp-tiny mp-rating" role="button" tabindex="0" data-act="view" title="Ver valoraciones">' +
+            starsHtml(rating) +
+            '<span class="mp-rating-num">' +
             rating.toFixed(1) +
+            "</span>" +
             " (" +
             rev +
             " reviews)</span>";
@@ -1065,6 +1215,7 @@
           var city = coach.city ? String(coach.city) : "—";
 
           var code = buildInviteCode(coachId);
+          if (coach && coach.coachCode) code = String(coach.coachCode);
           openProfile._code = code;
           openProfile._coachId = coachId;
 
@@ -1073,7 +1224,20 @@
           var pName = $("pName");
           if (pName) pName.textContent = coach.name || "Entrenador";
           var pLine1 = $("pLine1");
-          if (pLine1) pLine1.textContent = (verified ? "Verificado · " : "") + rating.toFixed(1) + " (" + rev + " valoraciones)";
+          if (pLine1) {
+            pLine1.innerHTML =
+              (verified
+                ? '<span class="mp-verified"><span class="material-symbols-outlined" aria-hidden="true">verified</span>Verificado</span> · '
+                : "") +
+              '<span class="mp-rating-link" role="button" tabindex="0" data-jump="reviews" title="Ver valoraciones">' +
+              starsHtml(rating) +
+              '<span class="mp-rating-num">' +
+              rating.toFixed(1) +
+              "</span>" +
+              " (" +
+              rev +
+              " valoraciones)</span>";
+          }
           var pLine2 = $("pLine2");
           if (pLine2) pLine2.textContent = city + " · " + (coach.experienceYears ? coach.experienceYears + " años" : "Experiencia —");
 
@@ -1081,7 +1245,7 @@
           if (pCode) pCode.textContent = code;
 
           var pBio = $("pBio");
-          if (pBio) pBio.textContent = coach.bio || "—";
+          if (pBio) pBio.innerHTML = fmtBioHtml(coach.bio || "");
 
           var pFocus = $("pFocus");
           if (pFocus) pFocus.textContent = focus.length ? focus.map(focusLabel).join(" · ") : "—";
@@ -1098,10 +1262,41 @@
             pServices.innerHTML = sv.length
               ? sv
                   .map(function (s) {
-                    return '<li class="svc-item"><strong>' + escapeHtml(s.title) + "</strong><span>" + fmtEur(s.priceEur) + "</span></li>";
+                    return '<li class="svc-item"><strong>' + escapeHtml(s.title) + "</strong></li>";
                   })
                   .join("")
-              : '<li class="svc-item"><strong>—</strong><span>—</span></li>';
+              : '<li class="svc-item"><strong>—</strong></li>';
+          }
+
+          var pReviewsMeta = $("pReviewsMeta");
+          if (pReviewsMeta) pReviewsMeta.textContent = rating.toFixed(1) + " · " + rev + " valoraciones";
+          var pReviewsList = $("pReviewsList");
+          if (pReviewsList) {
+            var rv = coach && Array.isArray(coach.reviews) ? coach.reviews : [];
+            pReviewsList.innerHTML = rv.length
+              ? rv
+                  .map(function (r) {
+                    var nm = escapeHtml(r.name || "Cliente");
+                    var dt = escapeHtml(String(r.date || "").slice(0, 10));
+                    var st = starsHtml(r.stars || 0);
+                    var tx = escapeHtml(r.text || "");
+                    return (
+                      '<div class="rev-card">' +
+                      '<div class="rev-head"><strong>' +
+                      nm +
+                      "</strong><span class=\"rev-date\">" +
+                      dt +
+                      "</span></div>" +
+                      '<div class="rev-stars">' +
+                      st +
+                      "</div>" +
+                      '<p class="rev-txt">' +
+                      tx +
+                      "</p></div>"
+                    );
+                  })
+                  .join("")
+              : '<p class="mp-foot" style="margin:0.25rem 0 0.65rem">Todavía no hay valoraciones.</p>';
           }
 
           setUrlCoach(coachId);
@@ -1173,6 +1368,27 @@
             if (act === "view") {
               openProfile(coachId);
               return;
+            }
+          });
+
+          document.addEventListener("click", function (e) {
+            var jump = e.target && e.target.closest ? e.target.closest("[data-jump]") : null;
+            if (!jump) return;
+            var to = jump.getAttribute("data-jump");
+            if (to === "reviews") {
+              var sec = $("pReviewsSec");
+              if (sec && sec.scrollIntoView) sec.scrollIntoView({ behavior: "smooth", block: "start" });
+            }
+          });
+
+          document.addEventListener("keydown", function (e) {
+            if (e.key !== "Enter") return;
+            var a = e.target && e.target.closest ? e.target.closest("[data-jump]") : null;
+            if (!a) return;
+            var to = a.getAttribute("data-jump");
+            if (to === "reviews") {
+              var sec = $("pReviewsSec");
+              if (sec && sec.scrollIntoView) sec.scrollIntoView({ behavior: "smooth", block: "start" });
             }
           });
 

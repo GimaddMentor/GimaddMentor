@@ -2246,6 +2246,310 @@
       letter-spacing: -0.02em;
     }
 
+    .coach-wallet {
+      --wal-yellow: #f2ec1f;
+      --wal-line: #e9de18;
+      --wal-soft: rgba(242, 236, 31, 0.18);
+      --wal-shadow: 0 2px 14px rgba(15, 23, 42, 0.06);
+    }
+    .coach-wallet-tabs {
+      position: sticky;
+      top: calc(3.25rem + env(safe-area-inset-top, 0px));
+      z-index: 2;
+      display: flex;
+      gap: 0.65rem;
+      padding: 0.65rem 0.15rem 0.55rem;
+      margin: -0.25rem 0 0.5rem;
+      background: linear-gradient(180deg, rgba(255, 252, 205, 0.9) 0%, rgba(255, 255, 255, 0.88) 70%, rgba(255, 255, 255, 0.75) 100%);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(226, 232, 240, 0.9);
+    }
+    .coach-wallet-tabs button {
+      appearance: none;
+      border: none;
+      background: transparent;
+      font: inherit;
+      padding: 0.35rem 0.2rem;
+      font-size: 0.78rem;
+      color: #64748b;
+      font-weight: 800;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+    }
+    .coach-wallet-tabs button.on {
+      color: #0f172a;
+      border-bottom-color: var(--wal-yellow);
+    }
+    .coach-wallet-panel {
+      display: none;
+      animation: walFade 0.16s ease both;
+    }
+    .coach-wallet-panel.is-on {
+      display: block;
+    }
+    @keyframes walFade {
+      from { opacity: 0; transform: translateY(2px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .coach-wallet-card {
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      background: #fff;
+      box-shadow: var(--wal-shadow);
+      padding: 0.85rem;
+      margin: 0 0 0.75rem;
+    }
+    .coach-wallet-title {
+      margin: 0 0 0.6rem;
+      font-size: 0.9rem;
+      font-weight: 900;
+      letter-spacing: -0.02em;
+    }
+    .coach-wallet-k {
+      margin: 0;
+      font-size: 0.64rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #64748b;
+    }
+    .coach-wallet-v {
+      margin: 0.2rem 0 0;
+      font-size: 1.15rem;
+      font-weight: 950;
+      letter-spacing: -0.03em;
+      color: #0f172a;
+    }
+    .coach-wallet-link {
+      border: 1px solid rgba(226, 232, 240, 0.95);
+      background: #fff;
+      border-radius: 999px;
+      padding: 0.45rem 0.7rem;
+      font: inherit;
+      font-size: 0.74rem;
+      font-weight: 900;
+      cursor: pointer;
+      box-shadow: 0 1px 10px rgba(15, 23, 42, 0.04);
+      white-space: nowrap;
+    }
+    .coach-wallet-link:hover { border-color: rgba(242, 236, 31, 0.7); }
+    .coach-wallet-btn {
+      appearance: none;
+      border: 1px solid rgba(242, 236, 31, 0.8);
+      background: var(--wal-yellow);
+      color: #171717;
+      border-radius: 12px;
+      padding: 0.55rem 0.85rem;
+      font: inherit;
+      font-size: 0.78rem;
+      font-weight: 950;
+      cursor: pointer;
+      box-shadow: 0 2px 10px rgba(242, 236, 31, 0.18);
+    }
+    .coach-wallet-btn.ghost {
+      background: #fff;
+      border-color: rgba(226, 232, 240, 0.95);
+      color: #0f172a;
+      box-shadow: 0 1px 10px rgba(15, 23, 42, 0.04);
+    }
+    .coach-wallet-balance__row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+    }
+    .coach-wallet-mini {
+      margin-top: 0.7rem;
+      padding-top: 0.7rem;
+      border-top: 1px solid rgba(226, 232, 240, 0.85);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.8rem;
+      flex-wrap: wrap;
+    }
+    .coach-wallet-mini-v {
+      margin: 0.2rem 0 0;
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      color: #0f172a;
+    }
+    .coach-wallet-mini-cta {
+      display: flex;
+      gap: 0.55rem;
+      flex-wrap: wrap;
+    }
+    .coach-wallet-grid3 {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0.55rem;
+    }
+    .coach-wallet-metrics2 {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.55rem;
+    }
+    .coach-wallet-metric {
+      border-radius: 14px;
+      border: 1px solid rgba(226, 232, 240, 0.95);
+      background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+      padding: 0.7rem 0.7rem 0.65rem;
+    }
+    .coach-wallet-metric-v {
+      margin: 0.25rem 0 0;
+      font-weight: 950;
+      letter-spacing: -0.02em;
+      color: #0f172a;
+    }
+    .coach-wallet-note {
+      margin: 0.55rem 0 0;
+      font-size: 0.72rem;
+      color: #64748b;
+      line-height: 1.45;
+    }
+    .coach-wallet-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      padding: 0.75rem 0.75rem;
+      border-radius: 14px;
+      border: 1px solid rgba(226, 232, 240, 0.95);
+      background: #fff;
+      box-shadow: 0 1px 10px rgba(15, 23, 42, 0.04);
+      margin-bottom: 0.55rem;
+    }
+    .coach-wallet-row:last-child { margin-bottom: 0; }
+    .coach-wallet-row strong {
+      font-weight: 950;
+      letter-spacing: -0.02em;
+    }
+    .coach-wallet-row .sub {
+      margin: 0.1rem 0 0;
+      font-size: 0.7rem;
+      color: #64748b;
+      line-height: 1.35;
+    }
+    .coach-wallet-pill {
+      font-size: 0.62rem;
+      font-weight: 950;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      padding: 0.22rem 0.45rem;
+      border-radius: 999px;
+      border: 1px solid transparent;
+      background: #e2e8f0;
+      color: #334155;
+      white-space: nowrap;
+    }
+    .coach-wallet-pill.ok { background: #dcfce7; color: #166534; border-color: #bbf7d0; }
+    .coach-wallet-pill.warn { background: #ffedd5; color: #9a3412; border-color: #fed7aa; }
+    .coach-wallet-settings { display: flex; flex-direction: column; gap: 0.4rem; }
+    .coach-wallet-setting {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.8rem;
+      padding: 0.75rem 0.75rem;
+      border-radius: 14px;
+      border: 1px solid rgba(226, 232, 240, 0.95);
+      background: #fff;
+      font: inherit;
+      cursor: pointer;
+      box-shadow: 0 1px 10px rgba(15, 23, 42, 0.04);
+    }
+    .coach-wallet-setting span { color: #0f172a; font-weight: 800; font-size: 0.78rem; }
+    .coach-wallet-setting strong { color: #64748b; font-weight: 950; font-size: 0.76rem; }
+    .coach-wallet-filters { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+    .coach-chip {
+      appearance: none;
+      border: 1px solid rgba(226, 232, 240, 0.95);
+      background: #f1f5f9;
+      color: #0f172a;
+      border-radius: 999px;
+      padding: 0.42rem 0.7rem;
+      font: inherit;
+      font-size: 0.74rem;
+      font-weight: 950;
+      cursor: pointer;
+    }
+    .coach-chip.on {
+      background: var(--wal-yellow);
+      border-color: rgba(242, 236, 31, 0.85);
+    }
+    .coach-wallet-tax {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 0.35rem;
+      margin-top: 0.75rem;
+    }
+    .coach-wallet-tax > div {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.8rem;
+      padding: 0.55rem 0.65rem;
+      border-radius: 12px;
+      border: 1px solid rgba(226, 232, 240, 0.95);
+      background: #fff;
+    }
+    .coach-wallet-tax span { color: #64748b; font-size: 0.74rem; font-weight: 800; }
+    .coach-wallet-tax strong { font-weight: 950; letter-spacing: -0.02em; color: #0f172a; }
+    .coach-wallet-chart {
+      padding: 0.9rem 0.9rem 0.75rem;
+      background: radial-gradient(circle at 50% 0%, rgba(242, 236, 31, 0.22) 0%, rgba(255, 255, 255, 0.85) 55%, rgba(255, 255, 255, 0.98) 100%);
+      border-color: rgba(242, 236, 31, 0.35);
+    }
+    .coach-wallet-chart__head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 0.8rem;
+      margin-bottom: 0.6rem;
+    }
+    .coach-wallet-chart__value { text-align: right; }
+    .coach-wallet-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      margin: 0.35rem 0 0;
+      padding: 0.25rem 0.5rem;
+      border-radius: 999px;
+      font-size: 0.72rem;
+      font-weight: 950;
+      background: rgba(34, 197, 94, 0.12);
+      color: #166534;
+      border: 1px solid rgba(34, 197, 94, 0.18);
+      white-space: nowrap;
+    }
+    .coach-wallet-chip.neg {
+      background: rgba(239, 68, 68, 0.1);
+      color: #991b1b;
+      border-color: rgba(239, 68, 68, 0.18);
+    }
+    .coach-wallet-spark {
+      border-radius: 14px;
+      overflow: hidden;
+      border: 1px solid rgba(226, 232, 240, 0.95);
+      background: rgba(255, 255, 255, 0.95);
+    }
+    .coach-wallet-spark svg { display: block; width: 100%; height: 170px; }
+    .coach-wallet-x {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 0;
+      padding: 0.25rem 0.55rem 0.5rem;
+      font-size: 0.68rem;
+      color: #64748b;
+    }
+    .coach-wallet-x span { text-align: center; }
+
+    @media (max-width: 520px) {
+      .coach-wallet-grid3 { grid-template-columns: 1fr; }
+    }
+
     
     .coach-agenda-stack {
       display: flex;
@@ -5022,9 +5326,9 @@
             <span class="qa-ico" aria-hidden="true">👥</span>
             <span class="qa-lbl">Clientes</span>
           </button>
-          <button type="button" class="coach-qa--msg" id="openCoachMensajes">
-            <span class="qa-ico" aria-hidden="true">💬</span>
-            <span class="qa-lbl">Mensajes</span>
+          <button type="button" id="openCoachFinanzas">
+            <span class="qa-ico" aria-hidden="true">💶</span>
+            <span class="qa-lbl">Finanzas</span>
           </button>
           <button type="button" id="openCoachCupones">
             <span class="qa-ico" aria-hidden="true">🏷️</span>
@@ -5346,6 +5650,12 @@
     <div class="placeholder-sheet">
       <h2>Clases presenciales</h2>
       <p class="agenda-intro-short">Bandeja de solicitudes, programación y cobros en pista.</p>
+      <div class="coach-wallet-filters" style="margin:0.65rem 0 0.45rem" aria-label="Filtros de agenda">
+        <button type="button" class="coach-chip on" data-coach-agenda-filter="hoy">Hoy</button>
+        <button type="button" class="coach-chip" data-coach-agenda-filter="semana">Esta semana</button>
+        <button type="button" class="coach-chip" data-coach-agenda-filter="mes">Este mes</button>
+        <button type="button" class="coach-chip" data-coach-agenda-filter="todo">Todo</button>
+      </div>
       <div class="pres-flow-box gimadd-pre-only">
         <strong>Flujo (demo)</strong>
         <ol>
@@ -5436,6 +5746,169 @@
       <h2>Cupones de descuento</h2>
       <p>Crea códigos, porcentaje o importe fijo, caducidad y límites de uso.</p>
       <div class="mock-box">Vista previa · editor de cupones</div>
+    </div>
+  </section>
+
+  <section class="app-view" data-view="coach-finanzas" id="view-coach-finanzas">
+    <header class="app-header">
+      <div class="app-header-inner">
+        <button type="button" class="back" id="btnBackCoachFinanzas" aria-label="Volver"></button>
+        <h1 class="title-page">Mi <span class="hl">billetera</span></h1>
+      </div>
+    </header>
+    <div class="placeholder-sheet coach-wallet" style="max-width: var(--maxw); margin: 0 auto; padding-bottom: max(2.75rem, calc(2rem + env(safe-area-inset-bottom, 0px)))">
+      <nav class="coach-wallet-tabs" aria-label="Secciones de finanzas">
+        <button type="button" class="on" data-coach-wallet-tab="resumen">Resumen</button>
+        <button type="button" data-coach-wallet-tab="pagos">Pagos</button>
+        <button type="button" data-coach-wallet-tab="facturas">Facturas</button>
+        <button type="button" data-coach-wallet-tab="estadisticas">Estadísticas</button>
+      </nav>
+
+      <section class="coach-wallet-panel is-on" data-coach-wallet-panel="resumen" aria-label="Resumen de saldo">
+        <div class="coach-wallet-card coach-wallet-balance">
+          <div class="coach-wallet-balance__row">
+            <div>
+              <p class="coach-wallet-k">Saldo disponible</p>
+              <p class="coach-wallet-v" id="coachWalBalance">—</p>
+            </div>
+            <button type="button" class="coach-wallet-link" id="coachWalGoPayout" aria-label="Solicitar pago">Solicitar pago →</button>
+          </div>
+          <div class="coach-wallet-mini">
+            <div>
+              <p class="coach-wallet-k">Próximo pago</p>
+              <p class="coach-wallet-mini-v" id="coachWalNextPayout">—</p>
+            </div>
+            <div class="coach-wallet-mini-cta">
+              <button type="button" class="coach-wallet-btn" id="coachWalAskPayout">Solicitar pago</button>
+              <button type="button" class="coach-wallet-btn ghost" id="coachWalSchedulePayout">Programar pago</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="coach-wallet-card">
+          <p class="coach-wallet-title">Resumen de ganancias</p>
+          <div class="coach-wallet-grid3">
+            <div class="coach-wallet-metric">
+              <p class="coach-wallet-k">Este mes</p>
+              <p class="coach-wallet-metric-v" id="coachWalEarnMonth">—</p>
+            </div>
+            <div class="coach-wallet-metric">
+              <p class="coach-wallet-k">Esta semana</p>
+              <p class="coach-wallet-metric-v" id="coachWalEarnWeek">—</p>
+            </div>
+            <div class="coach-wallet-metric">
+              <p class="coach-wallet-k">Hoy</p>
+              <p class="coach-wallet-metric-v" id="coachWalEarnToday">—</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="coach-wallet-card">
+          <p class="coach-wallet-title">Transacciones recientes</p>
+          <div id="coachWalRecentTx"></div>
+        </div>
+      </section>
+
+      <section class="coach-wallet-panel" data-coach-wallet-panel="pagos" aria-label="Pagos">
+        <div class="coach-wallet-card">
+          <p class="coach-wallet-title">Historial de pagos</p>
+          <div id="coachWalPaymentsList"></div>
+        </div>
+        <div class="coach-wallet-card">
+          <p class="coach-wallet-title">Pagos pendientes</p>
+          <div id="coachWalPendingList"></div>
+        </div>
+        <div class="coach-wallet-card">
+          <p class="coach-wallet-title">Configuración de pagos</p>
+          <div class="coach-wallet-settings">
+            <button type="button" class="coach-wallet-setting" id="coachWalSetFreq"><span>Frecuencia de pagos</span><strong id="coachWalFreq">Semanal</strong></button>
+            <button type="button" class="coach-wallet-setting" id="coachWalSetDay"><span>Día preferido</span><strong id="coachWalDay">Viernes</strong></button>
+            <button type="button" class="coach-wallet-setting" id="coachWalSetMin"><span>Monto mínimo</span><strong id="coachWalMin">€ 100,00</strong></button>
+            <button type="button" class="coach-wallet-setting" id="coachWalSetBank"><span>Cuenta de destino</span><strong id="coachWalBank">Banco — (demo)</strong></button>
+          </div>
+          <p class="coach-wallet-note">Demo UI: en producción aquí se conectaría Stripe/Adyen y la verificación KYC.</p>
+        </div>
+      </section>
+
+      <section class="coach-wallet-panel" data-coach-wallet-panel="facturas" aria-label="Facturas">
+        <div class="coach-wallet-card">
+          <p class="coach-wallet-title">Filtros de facturas</p>
+          <div class="coach-wallet-filters">
+            <button type="button" class="coach-chip on" data-coach-inv-filter="all">Todas</button>
+            <button type="button" class="coach-chip" data-coach-inv-filter="emitidas">Emitidas</button>
+            <button type="button" class="coach-chip" data-coach-inv-filter="recibidas">Recibidas</button>
+          </div>
+        </div>
+        <div class="coach-wallet-card">
+          <p class="coach-wallet-title">Facturas</p>
+          <p class="coach-wallet-note" id="coachWalInvoiceFeedback" role="status" style="margin:0 0 0.65rem"></p>
+          <div id="coachWalInvoicesList"></div>
+        </div>
+        <div class="coach-wallet-card">
+          <div class="coach-wallet-balance__row" style="align-items:flex-start">
+            <div>
+              <p class="coach-wallet-title" style="margin:0 0 0.35rem">Resumen fiscal (demo)</p>
+              <p class="coach-wallet-note" style="margin:0">Exporta el mes para gestoría (PDF/CSV).</p>
+            </div>
+            <button type="button" class="coach-wallet-btn ghost" id="coachWalExport">Exportar (PDF/CSV)</button>
+          </div>
+          <div class="coach-wallet-tax">
+            <div><span>Facturado (base)</span><strong id="coachWalTaxBase">—</strong></div>
+            <div><span>IVA repercutido</span><strong id="coachWalTaxVat">—</strong></div>
+            <div><span>Total facturado</span><strong id="coachWalTaxTotal">—</strong></div>
+            <div><span>Comisiones Gimadd</span><strong id="coachWalTaxFee">—</strong></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="coach-wallet-panel" data-coach-wallet-panel="estadisticas" aria-label="Estadísticas">
+        <div class="coach-wallet-card coach-wallet-chart">
+          <div class="coach-wallet-chart__head">
+            <div>
+              <p class="coach-wallet-title" style="margin:0 0 0.2rem">Gráfico de ingresos</p>
+              <p class="coach-wallet-note" id="coachWalChartNote" style="margin:0">Evolución de ingresos · últimos 6 meses</p>
+            </div>
+            <div class="coach-wallet-chart__value">
+              <p class="coach-wallet-k">Total</p>
+              <p class="coach-wallet-v" id="coachWalChartTotal">—</p>
+              <p class="coach-wallet-chip" id="coachWalChartDelta" aria-live="polite">—</p>
+            </div>
+          </div>
+          <div class="coach-wallet-spark">
+            <svg id="coachWalChartSvg" viewBox="0 0 640 170" preserveAspectRatio="none" aria-label="Evolución de ingresos (línea)"></svg>
+            <div class="coach-wallet-x" id="coachWalChartXAxis"></div>
+          </div>
+        </div>
+        <div class="coach-wallet-card">
+          <p class="coach-wallet-title">Métricas de rendimiento</p>
+          <div class="coach-wallet-metrics2">
+            <div class="coach-wallet-metric">
+              <p class="coach-wallet-k">Prom. ganancias/sesión</p>
+              <p class="coach-wallet-metric-v" id="coachWalAvgPerSession">—</p>
+            </div>
+            <div class="coach-wallet-metric">
+              <p class="coach-wallet-k">Total de sesiones (mes)</p>
+              <p class="coach-wallet-metric-v" id="coachWalSessionsMonth">—</p>
+            </div>
+            <div class="coach-wallet-metric">
+              <p class="coach-wallet-k">Tasa de conversión</p>
+              <p class="coach-wallet-metric-v" id="coachWalConversion">—</p>
+            </div>
+            <div class="coach-wallet-metric">
+              <p class="coach-wallet-k">Calificación prom. del cliente</p>
+              <p class="coach-wallet-metric-v" id="coachWalRatingAvg">—</p>
+            </div>
+            <div class="coach-wallet-metric">
+              <p class="coach-wallet-k">Servicio principal</p>
+              <p class="coach-wallet-metric-v" id="coachWalMainService">—</p>
+            </div>
+            <div class="coach-wallet-metric">
+              <p class="coach-wallet-k">Cliente más frecuente</p>
+              <p class="coach-wallet-metric-v" id="coachWalTopClient">—</p>
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
   </section>
 
@@ -13735,7 +14208,556 @@
       '<span class="coach-fin-pending__hint">Efectivo por cobrar antes o después de la clase</span></div>' +
       '<strong class="coach-fin-pending__amt">' +
       eurLabel(pend) +
-      "</strong></div>";
+      "</strong></div>" +
+      '<p class="coach-hub-card-foot"><button type="button" class="header-link-btn" id="coachHubOpenFinanzasFull">Abrir finanzas</button></p>';
+    var opF = document.getElementById("coachHubOpenFinanzasFull");
+    if (opF)
+      opF.onclick = function () {
+        showView("coach-finanzas");
+      };
+  }
+
+  function bindCoachWalletUiOnce() {
+    if (document.body.dataset.coachWalletBound === "1") return;
+    document.body.dataset.coachWalletBound = "1";
+    var root = document.getElementById("view-coach-finanzas");
+    if (!root) return;
+    root.addEventListener("click", function (e) {
+      var tabBtn = e.target && e.target.closest ? e.target.closest("[data-coach-wallet-tab]") : null;
+      if (tabBtn && root.contains(tabBtn)) {
+        var t = tabBtn.getAttribute("data-coach-wallet-tab") || "resumen";
+        coachWalletSetTab(t);
+        return;
+      }
+      var chip = e.target && e.target.closest ? e.target.closest("[data-coach-inv-filter]") : null;
+      if (chip && root.contains(chip)) {
+        root.querySelectorAll("[data-coach-inv-filter]").forEach(function (b) {
+          b.classList.toggle("on", b === chip);
+        });
+        var f = chip.getAttribute("data-coach-inv-filter") || "all";
+        try {
+          renderCoachWalletInvoices(f);
+        } catch (eInv) {}
+        return;
+      }
+
+      var invBtn = e.target && e.target.closest ? e.target.closest("[data-coach-inv-action]") : null;
+      if (invBtn && root.contains(invBtn)) {
+        var act = invBtn.getAttribute("data-coach-inv-action") || "";
+        var invId = invBtn.getAttribute("data-coach-inv-id") || "";
+        if (!invId) return;
+        if (act === "send_email") {
+          coachWalInvoiceFeedback(
+            "Factura " +
+              invId +
+              ": envío por email programado (demo). En producción: PDF + email automático al jugador."
+          );
+        } else if (act === "toggle_auto") {
+          var on = coachWalToggleInvoiceAuto(invId);
+          var onChip = root.querySelector("[data-coach-inv-filter].on");
+          var f2 = onChip ? onChip.getAttribute("data-coach-inv-filter") : "all";
+          try {
+            renderCoachWalletInvoices(f2);
+          } catch (eRe) {}
+          coachWalInvoiceFeedback(
+            "Factura " + invId + ": envío automático " + (on ? "activado" : "desactivado") + " (demo)."
+          );
+        }
+        return;
+      }
+    });
+  }
+
+  function coachWalletSetTab(tabName) {
+    var root = document.getElementById("view-coach-finanzas");
+    if (!root) return;
+    var t = tabName || "resumen";
+    root.querySelectorAll("[data-coach-wallet-tab]").forEach(function (b) {
+      b.classList.toggle("on", b.getAttribute("data-coach-wallet-tab") === t);
+    });
+    root.querySelectorAll("[data-coach-wallet-panel]").forEach(function (p) {
+      p.classList.toggle("is-on", p.getAttribute("data-coach-wallet-panel") === t);
+    });
+  }
+
+  function coachWalPad2(n) {
+    return n < 10 ? "0" + n : String(n);
+  }
+  function coachWalLocalYmd(d) {
+    return d.getFullYear() + "-" + coachWalPad2(d.getMonth() + 1) + "-" + coachWalPad2(d.getDate());
+  }
+  function coachWalParseYmd(s) {
+    var p = String(s).slice(0, 10).split("-");
+    if (p.length !== 3) return null;
+    var dt = new Date(Number(p[0]), Number(p[1]) - 1, Number(p[2]));
+    return isNaN(dt.getTime()) ? null : dt;
+  }
+  function coachWalMonthKey(d) {
+    return d.getFullYear() + "-" + coachWalPad2(d.getMonth() + 1);
+  }
+  function coachWalMonthLabel(key) {
+    var p = String(key).split("-");
+    var m = Number(p[1]) - 1;
+    var names = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
+    return names[m] || key;
+  }
+  function coachWalEur(n, digits) {
+    var d = digits === undefined ? 2 : digits;
+    var v = Math.round(Number(n || 0) * Math.pow(10, d)) / Math.pow(10, d);
+    return (
+      "€\u00a0" +
+      v.toLocaleString("es-ES", { minimumFractionDigits: d, maximumFractionDigits: d })
+    );
+  }
+
+  function coachWalRefDateStr(b) {
+    if (b && b.fechaSesion) return String(b.fechaSesion).slice(0, 10);
+    if (b && b.createdAt) return String(b.createdAt).slice(0, 10);
+    return coachWalLocalYmd(new Date());
+  }
+  function coachWalIsPaidBooking(b) {
+    if (!b) return false;
+    if (b.estadoClase === "cancelada") return false;
+    var p = b.pago || "";
+    return p === "online_pagado" || p === "efectivo_pagado";
+  }
+  function coachWalIsPendingCash(b) {
+    if (!b) return false;
+    if (b.estadoClase === "cancelada") return false;
+    return b.pago === "efectivo_pendiente";
+  }
+
+  function coachWalCompute() {
+    var DEMO_PRES_CLASE_EUR = 55;
+    var today = new Date();
+    var startToday = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    var endToday = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 23, 59, 59, 999);
+    var startWeek = new Date(startToday);
+    startWeek.setDate(startToday.getDate() - ((startToday.getDay() + 6) % 7));
+    var endWeek = new Date(startWeek);
+    endWeek.setDate(startWeek.getDate() + 6);
+    endWeek.setHours(23, 59, 59, 999);
+    var monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
+    var monthEnd = new Date(today.getFullYear(), today.getMonth() + 1, 0, 23, 59, 59, 999);
+
+    function dateInRange(refStr, startD, endD) {
+      var p = coachWalParseYmd(refStr);
+      if (!p) return false;
+      return p >= startD && p <= endD;
+    }
+    function sumEarned(startD, endD) {
+      var sum = 0;
+      (presencialBookings || []).forEach(function (b) {
+        if (!coachWalIsPaidBooking(b)) return;
+        if (dateInRange(coachWalRefDateStr(b), startD, endD)) sum += DEMO_PRES_CLASE_EUR;
+      });
+      return sum;
+    }
+    var eToday = sumEarned(startToday, endToday);
+    var eWeek = sumEarned(startWeek, endWeek);
+    var eMonth = sumEarned(monthStart, monthEnd);
+
+    var pendingCash = 0;
+    (presencialBookings || []).forEach(function (b) {
+      if (coachWalIsPendingCash(b)) pendingCash += DEMO_PRES_CLASE_EUR;
+    });
+
+    var allPaid = 0;
+    (presencialBookings || []).forEach(function (b) {
+      if (coachWalIsPaidBooking(b)) allPaid += DEMO_PRES_CLASE_EUR;
+    });
+
+    var platformFee = Math.round(allPaid * 0.08 * 100) / 100;
+    var available = Math.max(0, allPaid - platformFee);
+    var nextPayout = new Date(today);
+    nextPayout.setDate(today.getDate() + (5 - today.getDay() + 7) % 7);
+    var nextPayoutStr = nextPayout.toLocaleDateString("es-ES", { day: "numeric", month: "long" });
+
+    var months = [];
+    var cur = new Date(today.getFullYear(), today.getMonth(), 1);
+    for (var i = 5; i >= 0; i--) {
+      var d = new Date(cur.getFullYear(), cur.getMonth() - i, 1);
+      months.push(coachWalMonthKey(d));
+    }
+    var monthSums = {};
+    months.forEach(function (k) {
+      monthSums[k] = 0;
+    });
+    (presencialBookings || []).forEach(function (b) {
+      if (!coachWalIsPaidBooking(b)) return;
+      var dt = coachWalParseYmd(coachWalRefDateStr(b));
+      if (!dt) return;
+      var k = coachWalMonthKey(dt);
+      if (monthSums[k] !== undefined) monthSums[k] += DEMO_PRES_CLASE_EUR;
+    });
+    var series = months.map(function (k) {
+      return { key: k, label: coachWalMonthLabel(k), value: monthSums[k] || 0 };
+    });
+    var last = series[series.length - 1] ? series[series.length - 1].value : 0;
+    var prev = series[series.length - 2] ? series[series.length - 2].value : 0;
+    var deltaPct = prev <= 0 ? (last > 0 ? 100 : 0) : Math.round(((last - prev) / prev) * 100);
+
+    var paidSessionsMonth = 0;
+    (presencialBookings || []).forEach(function (b) {
+      if (!coachWalIsPaidBooking(b)) return;
+      if (dateInRange(coachWalRefDateStr(b), monthStart, monthEnd)) paidSessionsMonth += 1;
+    });
+    var avgPer = paidSessionsMonth ? eMonth / paidSessionsMonth : 0;
+
+    return {
+      available: available,
+      nextPayoutLabel: nextPayoutStr,
+      earnedToday: eToday,
+      earnedWeek: eWeek,
+      earnedMonth: eMonth,
+      pendingCash: pendingCash,
+      series: series,
+      deltaPct: deltaPct,
+      platformFee: platformFee,
+      sessionsMonth: paidSessionsMonth,
+      avgPerSession: avgPer,
+    };
+  }
+
+  function coachWalSetText(id, v) {
+    var el = document.getElementById(id);
+    if (el) el.textContent = v;
+  }
+
+  function coachWalInvoiceFeedback(msg) {
+    var el = document.getElementById("coachWalInvoiceFeedback");
+    if (!el) return;
+    el.textContent = msg || "";
+  }
+
+  function coachWalLoadInvoiceAutoMap() {
+    try {
+      var raw = localStorage.getItem("gimaddCoachInvoiceAutoMap") || "{}";
+      var m = JSON.parse(raw);
+      return m && typeof m === "object" ? m : {};
+    } catch (eA) {
+      return {};
+    }
+  }
+
+  function coachWalSaveInvoiceAutoMap(map) {
+    try {
+      localStorage.setItem("gimaddCoachInvoiceAutoMap", JSON.stringify(map || {}));
+    } catch (eS) {}
+  }
+
+  function coachWalIsInvoiceAuto(invId) {
+    var m = coachWalLoadInvoiceAutoMap();
+    return !!m[String(invId)];
+  }
+
+  function coachWalToggleInvoiceAuto(invId) {
+    var m = coachWalLoadInvoiceAutoMap();
+    var k = String(invId);
+    m[k] = !m[k];
+    coachWalSaveInvoiceAutoMap(m);
+    return !!m[k];
+  }
+
+  var coachAgendaFilter = "hoy";
+
+  function coachAgendaRangeBounds(kind) {
+    var now = new Date();
+    var start = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    var end = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999);
+    if (kind === "hoy") return { start: start, end: end };
+    if (kind === "semana") {
+      var s = new Date(start);
+      s.setDate(start.getDate() - ((start.getDay() + 6) % 7));
+      var e = new Date(s);
+      e.setDate(s.getDate() + 6);
+      e.setHours(23, 59, 59, 999);
+      return { start: s, end: e };
+    }
+    if (kind === "mes") {
+      var ms = new Date(now.getFullYear(), now.getMonth(), 1);
+      var me = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999);
+      return { start: ms, end: me };
+    }
+    return null;
+  }
+
+  function coachAgendaBookingDate(b) {
+    var d = b && b.fechaSesion ? coachWalParseYmd(b.fechaSesion) : null;
+    if (d) return d;
+    if (b && b.createdAt) {
+      var c = coachWalParseYmd(String(b.createdAt).slice(0, 10));
+      if (c) return c;
+    }
+    return null;
+  }
+
+  function coachAgendaFilteredBookings() {
+    var f = coachAgendaFilter || "hoy";
+    if (f === "todo") return presencialBookings.slice();
+    var bounds = coachAgendaRangeBounds(f);
+    if (!bounds) return presencialBookings.slice();
+    var start = bounds.start;
+    var end = bounds.end;
+    return (presencialBookings || []).filter(function (b) {
+      if (!b) return false;
+      if (b.estadoClase === "cancelada") return false;
+      if (b.estadoClase === "pendiente_fecha" || (!b.fechaSesion && b.estadoClase !== "completada")) return true;
+      var dt = coachAgendaBookingDate(b);
+      if (!dt) return false;
+      return dt >= start && dt <= end;
+    });
+  }
+
+  function renderCoachWalletChart(series, deltaPct) {
+    var svg = document.getElementById("coachWalChartSvg");
+    var xax = document.getElementById("coachWalChartXAxis");
+    if (!svg || !xax) return;
+    var w = 640;
+    var h = 170;
+    var padX = 26;
+    var padY = 22;
+    var innerW = w - padX * 2;
+    var innerH = h - padY * 2;
+    var maxV = 0.01;
+    series.forEach(function (p) {
+      if (p.value > maxV) maxV = p.value;
+    });
+    function xAt(i) {
+      if (series.length <= 1) return padX + innerW / 2;
+      return padX + (innerW * i) / (series.length - 1);
+    }
+    function yAt(v) {
+      var t = v / maxV;
+      return padY + innerH * (1 - t);
+    }
+    var pts = series.map(function (p, i) {
+      return { x: xAt(i), y: yAt(p.value) };
+    });
+    function pathFromPoints(points) {
+      if (!points.length) return "";
+      var d = "M " + points[0].x.toFixed(2) + " " + points[0].y.toFixed(2);
+      for (var i = 1; i < points.length; i++) {
+        var prev = points[i - 1];
+        var cur = points[i];
+        var cx = ((prev.x + cur.x) / 2).toFixed(2);
+        d += " Q " + cx + " " + prev.y.toFixed(2) + " " + cur.x.toFixed(2) + " " + cur.y.toFixed(2);
+      }
+      return d;
+    }
+    var line = pathFromPoints(pts);
+    var area =
+      line +
+      " L " +
+      pts[pts.length - 1].x.toFixed(2) +
+      " " +
+      (h - padY).toFixed(2) +
+      " L " +
+      pts[0].x.toFixed(2) +
+      " " +
+      (h - padY).toFixed(2) +
+      " Z";
+
+    svg.innerHTML =
+      '<defs>' +
+      '<linearGradient id="walFill" x1="0" y1="0" x2="0" y2="1">' +
+      '<stop offset="0%" stop-color="rgba(242,236,31,0.35)"/>' +
+      '<stop offset="65%" stop-color="rgba(242,236,31,0.08)"/>' +
+      '<stop offset="100%" stop-color="rgba(242,236,31,0)"/>' +
+      "</linearGradient>" +
+      "</defs>" +
+      '<path d="' +
+      area +
+      '" fill="url(#walFill)"/>' +
+      '<path d="' +
+      line +
+      '" fill="none" stroke="#e9de18" stroke-width="3.25" stroke-linecap="round" stroke-linejoin="round"/>';
+
+    xax.innerHTML = series
+      .map(function (p) {
+        return "<span>" + escapeHtml(p.label) + "</span>";
+      })
+      .join("");
+
+    var chip = document.getElementById("coachWalChartDelta");
+    if (chip) {
+      var neg = deltaPct < 0;
+      chip.classList.toggle("neg", neg);
+      chip.textContent = (neg ? "↓ " : "↑ ") + Math.abs(deltaPct) + "%";
+    }
+  }
+
+  function renderCoachWalletInvoices(filter) {
+    var mount = document.getElementById("coachWalInvoicesList");
+    if (!mount) return;
+    var demo = [
+      { id: "#12345", tipo: "emitidas", para: "Juan Pérez", fecha: "2024-07-20", estado: "pagada", amount: 121.0 },
+      { id: "#12344", tipo: "emitidas", para: "Ana García", fecha: "2024-07-15", estado: "pendiente", amount: 80.0 },
+      { id: "Plan mensual Gimadd", tipo: "recibidas", para: "Gimadd", fecha: "2024-07-10", estado: "pagada", amount: 29.99 },
+    ];
+    var f = filter || "all";
+    var items = demo.filter(function (x) {
+      if (f === "all") return true;
+      return x.tipo === f;
+    });
+    if (!items.length) {
+      mount.innerHTML = '<p class="coach-wallet-note" style="margin:0">No hay facturas para este filtro.</p>';
+      return;
+    }
+    mount.innerHTML = items
+      .map(function (x) {
+        var stCls = x.estado === "pagada" ? "ok" : "warn";
+        var st = x.estado === "pagada" ? "Pagada" : "Pendiente";
+        var auto = coachWalIsInvoiceAuto(x.id);
+        var dt = coachWalParseYmd(x.fecha);
+        var fs = dt ? dt.toLocaleDateString("es-ES", { day: "2-digit", month: "2-digit", year: "numeric" }) : x.fecha;
+        return (
+          '<div class="coach-wallet-row">' +
+          '<div style="min-width:0">' +
+          '<strong>' +
+          escapeHtml(x.id) +
+          "</strong>" +
+          '<p class="sub">Para: ' +
+          escapeHtml(x.para) +
+          " · " +
+          escapeHtml(fs) +
+          "</p>" +
+          "</div>" +
+          '<div style="text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:0.4rem">' +
+          '<div style="display:flex;gap:0.45rem;flex-wrap:wrap;justify-content:flex-end">' +
+          '<button type="button" class="coach-wallet-link" data-coach-inv-action="send_email" data-coach-inv-id="' +
+          escapeHtml(x.id) +
+          '">Enviar email</button>' +
+          '<button type="button" class="coach-wallet-link" data-coach-inv-action="toggle_auto" data-coach-inv-id="' +
+          escapeHtml(x.id) +
+          '">' +
+          (auto ? "Auto: ON" : "Auto: OFF") +
+          "</button>" +
+          "</div>" +
+          '<div class="coach-wallet-pill ' +
+          stCls +
+          '">' +
+          st +
+          "</div>" +
+          '<div style="font-weight:950">' +
+          escapeHtml(coachWalEur(x.amount, 2)) +
+          "</div>" +
+          "</div></div>"
+        );
+      })
+      .join("");
+  }
+
+  function renderCoachFinanzasView() {
+    var root = document.getElementById("view-coach-finanzas");
+    if (!root) return;
+    var data = coachWalCompute();
+    coachWalInvoiceFeedback("");
+
+    coachWalSetText("coachWalBalance", coachWalEur(data.available, 2));
+    coachWalSetText("coachWalNextPayout", data.nextPayoutLabel);
+    coachWalSetText("coachWalEarnMonth", coachWalEur(data.earnedMonth, 2));
+    coachWalSetText("coachWalEarnWeek", coachWalEur(data.earnedWeek, 2));
+    coachWalSetText("coachWalEarnToday", coachWalEur(data.earnedToday, 2));
+
+    var tx = document.getElementById("coachWalRecentTx");
+    if (tx) {
+      var rec = [];
+      (presencialBookings || [])
+        .slice()
+        .sort(function (a, b) {
+          return String(coachWalRefDateStr(b)).localeCompare(String(coachWalRefDateStr(a)));
+        })
+        .slice(0, 4)
+        .forEach(function (b) {
+          var nom = escapeHtml(b.playerNombre || getPlayerNombreFromBookingId(b.playerId) || "Sesión");
+          var paid = coachWalIsPaidBooking(b);
+          var stCls = paid ? "ok" : coachWalIsPendingCash(b) ? "warn" : "";
+          var st = paid ? "Completado" : coachWalIsPendingCash(b) ? "Pendiente" : "En curso";
+          rec.push(
+            '<div class="coach-wallet-row">' +
+              '<div style="min-width:0">' +
+                '<strong>Sesión con ' + nom + "</strong>" +
+                '<p class="sub">' + escapeHtml(coachWalRefDateStr(b)) + "</p>" +
+              "</div>" +
+              '<div style="text-align:right">' +
+                '<div class="coach-wallet-pill ' + stCls + '">' + st + "</div>" +
+                '<div style="margin-top:0.35rem;font-weight:950">' + coachWalEur(55, 2) + "</div>" +
+              "</div>" +
+            "</div>"
+          );
+        });
+      tx.innerHTML = rec.length ? rec.join("") : '<p class="coach-wallet-note" style="margin:0">Sin transacciones todavía.</p>';
+    }
+
+    var pay = document.getElementById("coachWalPaymentsList");
+    if (pay) {
+      var items = [];
+      (presencialBookings || [])
+        .filter(function (b) {
+          return coachWalIsPaidBooking(b);
+        })
+        .slice()
+        .sort(function (a, b) {
+          return String(coachWalRefDateStr(b)).localeCompare(String(coachWalRefDateStr(a)));
+        })
+        .slice(0, 6)
+        .forEach(function (b) {
+          var nom = escapeHtml(b.playerNombre || getPlayerNombreFromBookingId(b.playerId) || "Cliente");
+          items.push(
+            '<div class="coach-wallet-row">' +
+              '<div style="min-width:0">' +
+                "<strong>" + coachWalEur(55, 2) + "</strong>" +
+                '<p class="sub">Banco (demo) · ' + nom + "<br/>" + escapeHtml(coachWalRefDateStr(b)) + "</p>" +
+              "</div>" +
+              '<button type="button" class="coach-wallet-link" aria-label="Ver desglose">Ver desglose</button>' +
+            "</div>"
+          );
+        });
+      pay.innerHTML = items.length ? items.join("") : '<p class="coach-wallet-note" style="margin:0">Sin pagos todavía.</p>';
+    }
+
+    var pend = document.getElementById("coachWalPendingList");
+    if (pend) {
+      var pitems = [];
+      (presencialBookings || [])
+        .filter(function (b) {
+          return coachWalIsPendingCash(b);
+        })
+        .slice(0, 4)
+        .forEach(function (b) {
+          var nom = escapeHtml(b.playerNombre || getPlayerNombreFromBookingId(b.playerId) || "Cliente");
+          pitems.push(
+            '<div class="coach-wallet-row">' +
+              '<div style="min-width:0">' +
+                "<strong>" + coachWalEur(55, 2) + "</strong>" +
+                '<p class="sub">En proceso (demo) · ' + nom + "<br/>" + escapeHtml(coachWalRefDateStr(b)) + "</p>" +
+              "</div>" +
+              '<button type="button" class="coach-wallet-btn" style="padding:0.45rem 0.75rem;border-radius:10px;font-size:0.74rem">Rastrear</button>' +
+            "</div>"
+          );
+        });
+      pend.innerHTML = pitems.length ? pitems.join("") : '<p class="coach-wallet-note" style="margin:0">No hay pagos pendientes.</p>';
+    }
+
+    coachWalSetText("coachWalChartTotal", coachWalEur(data.series.reduce(function (a, b) { return a + (b.value || 0); }, 0), 2));
+    renderCoachWalletChart(data.series, data.deltaPct);
+
+    coachWalSetText("coachWalAvgPerSession", coachWalEur(data.avgPerSession, 0));
+    coachWalSetText("coachWalSessionsMonth", String(data.sessionsMonth || 0));
+    coachWalSetText("coachWalConversion", "20%");
+    coachWalSetText("coachWalRatingAvg", "4.8");
+    coachWalSetText("coachWalMainService", "Entrenamiento privado");
+    coachWalSetText("coachWalTopClient", "Ethan Harper");
+
+    coachWalSetText("coachWalTaxBase", coachWalEur(data.earnedMonth, 2));
+    coachWalSetText("coachWalTaxVat", coachWalEur(Math.round(data.earnedMonth * 0.21 * 100) / 100, 2));
+    coachWalSetText("coachWalTaxTotal", coachWalEur(Math.round(data.earnedMonth * 1.21 * 100) / 100, 2));
+    coachWalSetText("coachWalTaxFee", "− " + coachWalEur(data.platformFee, 2));
+
+    try {
+      renderCoachWalletInvoices("all");
+    } catch (eInvInit) {}
   }
 
   function presencialBookingsTick() {
@@ -13844,7 +14866,7 @@
   function renderPresencialBookingsCoach() {
     var mount = document.getElementById("coachPresencialBookingsMount");
     if (!mount) return;
-    var rows = presencialBookings.slice().sort(presCoachSort);
+    var rows = coachAgendaFilteredBookings().slice().sort(presCoachSort);
     if (!rows.length) {
       mount.innerHTML = '<p class="empty-hint">No hay solicitudes. Cuando un jugador envíe una, aparecerá aquí.</p>';
       return;
@@ -15958,6 +16980,7 @@
     "coach-agenda": 1,
     "coach-clientes": 1,
     "coach-cupones": 1,
+    "coach-finanzas": 1,
     "coach-perfil": 1,
   };
 
@@ -16003,6 +17026,7 @@
       "coach-mensajes": "coachFootMensajes",
       entrenador: "coachFootInicio",
       "coach-cupones": "coachFootInicio",
+      "coach-finanzas": "coachFootInicio",
       "coach-perfil": "coachFootInicio",
     };
     var activeId = map[viewName] || "coachFootInicio";
@@ -16135,6 +17159,12 @@
       bindCoachHubDeepLinksOnce();
       renderCoachHubDashboard();
     }
+    if (name === "coach-finanzas") {
+      loadBookingsIntoMemory();
+      bindCoachWalletUiOnce();
+      coachWalletSetTab("resumen");
+      renderCoachFinanzasView();
+    }
     if (name === "coach-perfil") {
       renderCoachPerfilForm();
     }
@@ -16162,6 +17192,27 @@
     if (name === "jug-reserva-pista" || name === "jug-agenda" || name === "coach-agenda") {
       loadBookingsIntoMemory();
       refreshPresencialBookingsUI();
+    }
+    if (name === "coach-agenda") {
+      var vAg = document.getElementById("view-coach-agenda");
+      if (vAg) {
+        vAg.querySelectorAll("[data-coach-agenda-filter]").forEach(function (b) {
+          b.classList.toggle("on", b.getAttribute("data-coach-agenda-filter") === coachAgendaFilter);
+        });
+        if (vAg.dataset.coachAgendaBound !== "1") {
+          vAg.dataset.coachAgendaBound = "1";
+          vAg.addEventListener("click", function (e) {
+            var btn =
+              e.target && e.target.closest ? e.target.closest("[data-coach-agenda-filter]") : null;
+            if (!btn || !vAg.contains(btn)) return;
+            vAg.querySelectorAll("[data-coach-agenda-filter]").forEach(function (x) {
+              x.classList.toggle("on", x === btn);
+            });
+            coachAgendaFilter = btn.getAttribute("data-coach-agenda-filter") || "hoy";
+            renderPresencialBookingsCoach();
+          });
+        }
+      }
     }
     if (name === "jug-mensajes") {
       bindChatUiOnce();
@@ -16841,6 +17892,7 @@
   bindHubBackTo("openCoachMensajes", "coach-mensajes");
   bindHubBackTo("openCoachAgenda", "coach-agenda");
   bindHubBackTo("openCoachClientes", "coach-clientes");
+  bindHubBackTo("openCoachFinanzas", "coach-finanzas");
   bindHubBackTo("openCoachCupones", "coach-cupones");
   var btnSegMsg = document.getElementById("btnCoachSeguimientoMensaje");
   if (btnSegMsg) {
@@ -16861,6 +17913,7 @@
   bindHubBackTo("btnBackCoachAgenda", "entrenador-hub");
   bindHubBackTo("btnBackCoachClientes", "entrenador-hub");
   bindHubBackTo("btnBackCoachCupones", "entrenador-hub");
+  bindHubBackTo("btnBackCoachFinanzas", "entrenador-hub");
   bindHubBackTo("btnBackCoachPerfil", "entrenador-hub");
 
   var jnInicio = document.getElementById("jugNavInicio");
@@ -17128,6 +18181,7 @@
       "coach-agenda": 1,
       "coach-clientes": 1,
       "coach-cupones": 1,
+      "coach-finanzas": 1,
       "coach-perfil": 1,
     };
     if (h && allowed[h]) return h;
