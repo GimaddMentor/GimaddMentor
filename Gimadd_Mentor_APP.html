@@ -15405,6 +15405,7 @@
     const innerH = h - padY * 2;
     const n = series.length || 1;
     const step = innerW / Math.max(1, n - 1);
+    const xAt = (i) => (n === 1 ? padX + innerW / 2 : padX + i * step);
 
     function yCount(v) {
       return padY + innerH - (v / maxTotal) * innerH;
@@ -15452,7 +15453,7 @@
     const bw = Math.max(10, step * 0.62);
     const bars = series
       .map((s, i) => {
-        const x = padX + i * step - bw / 2;
+        const x = xAt(i) - bw / 2;
         const fullH = (s.total / maxTotal) * innerH;
         const winH = s.total ? (s.wins / s.total) * fullH : 0;
         const lossH = s.total ? (s.loss / s.total) * fullH : 0;
@@ -15481,13 +15482,13 @@
             : "";
         const lossTxt =
           s.loss > 0 && lossH >= 14
-            ? `<text x="${(padX + i * step).toFixed(1)}" y="${(yLoss + lossH / 2 + 3.5).toFixed(
+            ? `<text x="${xAt(i).toFixed(1)}" y="${(yLoss + lossH / 2 + 3.5).toFixed(
                 1
               )}" text-anchor="middle" font-size="10" font-weight="900" fill="rgba(127,29,29,0.92)">${s.loss}</text>`
             : "";
         const winTxt =
           s.wins > 0 && winH >= 14
-            ? `<text x="${(padX + i * step).toFixed(1)}" y="${(yWin + winH / 2 + 3.5).toFixed(
+            ? `<text x="${xAt(i).toFixed(1)}" y="${(yWin + winH / 2 + 3.5).toFixed(
                 1
               )}" text-anchor="middle" font-size="10" font-weight="900" fill="rgba(20,83,45,0.92)">${s.wins}</text>`
             : "";
@@ -15497,7 +15498,7 @@
 
     const ptsTotal = series
       .map((s, i) => {
-        const x = padX + i * step;
+        const x = xAt(i);
         const y = yCount(s.total);
         return `${x.toFixed(1)},${y.toFixed(1)}`;
       })
@@ -15505,7 +15506,7 @@
 
     const dotsTotal = series
       .map((s, i) => {
-        const x = padX + i * step;
+        const x = xAt(i);
         const y = yCount(s.total);
         const dot = `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(
           1
@@ -15523,7 +15524,7 @@
         .map((s, i) => {
           const show = series.length <= 8 || i === 0 || i === series.length - 1 || i % 2 === 0;
           if (!show) return "";
-          const x = padX + i * step;
+          const x = xAt(i);
           const lab = shortMonth(s.ym);
           return `<text x="${x.toFixed(1)}" y="${(y + 12).toFixed(
             1
