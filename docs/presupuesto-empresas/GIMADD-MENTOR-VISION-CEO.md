@@ -137,20 +137,21 @@ Si pasan demasiados días sin vídeo, el sistema **avisa al entrenador** para qu
 
 ## 13. Finanzas y cobros
 
-**Qué ve el entrenador:** resumen de lo cobrado, lo pendiente y la actividad reciente; acceso a **pagos** y **facturas** como espacio de confianza profesional.
+**Qué ve el entrenador:** resumen de lo cobrado (como **importe íntegro de su tarifa** en cada venta por la plataforma), lo pendiente y la actividad reciente; acceso a **pagos** y **facturas**; aparte, el estado de su **mensualidad** como usuario de la herramienta.
 
-**Qué ve el jugador (evolución natural):** recibos y estado de sus compras.
+**Qué ve el jugador (evolución natural):** recibos con **total pagado** (servicio + recargo plataforma si aplica) y estado de sus compras.
 
 **Principio:** los cobros online deben ser **transparentes, reclamables y alineados con facturación** (IVA según país, datos fiscales del coach). La elección de pasarela y banco es decisión de implementación; a nivel negocio es “**pagos digitales serios**”, no Bizum informal suelto.
 
 ### 13.1 Cómo gana Gimadd (modelo recurrente + variable)
 
-Para alinear incentivos y sostener el producto, la plataforma combina dos ingresos del lado **entrenador**:
+La plataforma combina dos ingresos, con **papel distinto** para entrenador y jugador:
 
-1. **Mensualidad por uso de la plataforma** — cuota fija recurrente (SaaS) por tener activa la herramienta (CRM, agenda, videoanálisis, cobros, etc.). Es predecible para Gimadd y debe ser **entendible** para el coach (“sé lo que pago cada mes”).
-2. **Comisión del 5 %** sobre las **reservas / cobros de servicios** que pasan por la plataforma, con un **mínimo de 1,50 €** por operación sujeta a comisión. Así Gimadd participa del volumen cuando el entrenador factura más, sin cargar de más las ventas muy pequeñas de forma desproporcionada más allá del suelo de 1,50 €.
+1. **Mensualidad al entrenador** — Se cobra **solo al entrenador** por usar la plataforma (cuota SaaS recurrente). Es predecible para Gimadd y debe ser clara para el coach (“sé lo que pago cada mes por la herramienta”).
 
-**Por qué importa a dirección:** el mix **fijo + variable** financia operación y mejora continua; exige **transparencia en pantalla** (desglose por cobro) y **procesos legales/fiscales** claros para la comisión y la cuota.
+2. **Recargo del 5 % (mínimo 1,50 €)** sobre el **precio que el entrenador fija** para cada servicio — Ese porcentaje **no lo paga el coach**: se **añade en el checkout** al precio del servicio, lo **paga el cliente (jugador)** y el entrenador **cobra íntegro** el importe que él configuró. Gimadd retiene el recargo como ingreso variable ligado al volumen de ventas por la plataforma.
+
+**Por qué importa a dirección:** mensaje simple para el mercado (“el coach cobra lo que publica”) y transparencia en checkout para el jugador (precio del servicio + línea de plataforma); implica copy legal y fiscal claro para ambas líneas de ingreso.
 
 ---
 
