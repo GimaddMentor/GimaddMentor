@@ -83,7 +83,7 @@
   <div class="page-wrap">
     <article class="page markdown-body" id="doc">
 <h1>Gimadd Mentor — Alcance funcional, flujos y criterios técnicos para presupuesto</h1>
-<p><strong>Versión del documento:</strong> 1.2 (Mayo 2026)<br><strong>Producto:</strong> Gimadd Mentor — plataforma de entrenamiento y acompañamiento en <strong>pádel</strong> (jugadores ↔ entrenadores).<br><strong>Audiencia:</strong> empresas de desarrollo, integradores, arquitectos y responsables de producto que deban <strong>presupuestar</strong> implementación nativa, backend, seguridad y operación.</p>
+<p><strong>Versión del documento:</strong> 1.3 (Mayo 2026)<br><strong>Producto:</strong> Gimadd Mentor — plataforma de entrenamiento y acompañamiento en <strong>pádel</strong> (jugadores ↔ entrenadores).<br><strong>Audiencia:</strong> empresas de desarrollo, integradores, arquitectos y responsables de producto que deban <strong>presupuestar</strong> implementación nativa, backend, seguridad y operación.</p>
 <hr>
 <h2>0. Cómo leer este documento</h2>
 <ol>
@@ -100,7 +100,7 @@
 <li>Contratar <strong>servicios</strong> del catálogo del entrenador (sesión, pack, suscripción, programas de acompañamiento).</li>
 <li>Gestionar <strong>agenda</strong> (clases presenciales), <strong>mensajería</strong>, <strong>CRM de clientes</strong>, <strong>finanzas</strong> (con integración de pagos) y <strong>marketplace público</strong> de entrenadores.</li>
 </ul>
-<p><strong>Modelo económico de la plataforma (presupuesto y producto):</strong> Gimadd cobra a los entrenadores (1) una <strong>mensualidad por uso de la plataforma</strong> y (2) una <strong>comisión del 5 %</strong> sobre las reservas / cobros de <strong>servicios</strong> jugador–entrenador, con <strong>mínimo 1,50 €</strong> por operación sujeta a comisión. Debe contemplarse en <strong>pasarela (p. ej. Stripe Connect application fee)</strong>, <strong>ledger</strong>, <strong>UI de finanzas del coach</strong> y <strong>facturación B2B</strong> de la cuota SaaS.</p>
+<p><strong>Modelo económico de la plataforma (presupuesto y producto):</strong> (1) <strong>Mensualidad</strong> cobrada <strong>al entrenador</strong> por usar la plataforma. (2) <strong>Comisión del 5 %</strong> (con <strong>mínimo 1,50 €</strong> sobre la base indicada) <strong>no se descuenta del coach</strong>: se <strong>añade al precio</strong> que el entrenador fija para cada servicio y <strong>la paga el cliente en el checkout</strong>; el entrenador <strong>cobra íntegro</strong> el importe que él configuró. Debe contemplarse en <strong>checkout desglosado</strong>, <strong>Connect / reparto de cobro</strong>, <strong>ledger</strong> y <strong>facturación B2B</strong> de la cuota SaaS al coach.</p>
 <p>La base actual debe ser <strong>modular y extensible</strong>: hoy pádel y flujo coach–jugador; mañana más deportes, automatizaciones, IA sobre vídeo, informes federativos, etc.</p>
 <h3>1.1 Plataformas objetivo</h3>
 <table>
@@ -658,21 +658,21 @@
 </thead>
 <tbody><tr>
 <td><strong>Cuota SaaS al entrenador</strong></td>
-<td><strong>Mensualidad</strong> por utilizar la plataforma (importe a definir en producto; recurrente).</td>
+<td><strong>Mensualidad</strong> cobrada <strong>solo al entrenador</strong> por utilizar la plataforma (importe a definir en producto; recurrente).</td>
 <td>Producto Stripe <strong>B2B</strong> separado del cobro jugador→coach; estados <em>activo / impago / suspendido</em>; bloqueo o degradación de funciones si falla el pago; <strong>factura/recibo</strong> al entrenador; recordatorios y dunning.</td>
 </tr>
 <tr>
-<td><strong>Comisión sobre servicios</strong></td>
-<td><strong>5 %</strong> del importe de las <strong>reservas / cobros de servicios</strong> (ventas del catálogo que pasen por la plataforma), con <strong>mínimo 1,50 €</strong> por transacción comisionable.</td>
-<td>Cálculo idempotente en el momento del cobro: <code>comisión = max(importe × 0,05, 1,50)</code> en <strong>EUR</strong> (definir equivalencia si hay multi-moneda); trazabilidad en <strong>ledger</strong> por línea; en <strong>Connect</strong>, típicamente <code>application_fee_amount</code> (o destino alternativo validado con Stripe); el coach debe <strong>ver desglose</strong> (bruto, comisión Gimadd, neto) en Pagos/Resumen; informes y conciliación contable.</td>
+<td><strong>Comisión sobre servicios (jugador)</strong></td>
+<td>Sobre el <strong>precio listado por el entrenador</strong> (<code>P</code>), se calcula un recargo <code>C = max(P × 0,05, 1,50)</code> <strong>EUR</strong> (ajustar regla si multi-moneda). En el <strong>checkout</strong>, el cliente paga <strong><code>P + C</code></strong>. El entrenador <strong>percibe íntegramente <code>P</code></strong>; Gimadd se queda con <strong><code>C</code></strong>.</td>
+<td>UX checkout: líneas claras (“Servicio — precio coach”, “Uso de plataforma / servicio” o similar); importe total <code>P+C</code>; <strong>no</strong> mostrar al coach que “pierde” un % del precio que él fijó. Técnicamente encaja con <strong>Connect</strong> cobrando el total al cliente y usando <strong><code>application_fee_amount = C</code></strong> (o equivalente documentado) para que el connected account reciba <code>P</code>. <strong>Ledger</strong>: una fila por <code>P</code> (coach) y una por <code>C</code> (plataforma); reembolsos prorrateados según política.</td>
 </tr>
 <tr>
 <td><strong>Ámbito</strong></td>
-<td>Aplica a cobros de <strong>servicios</strong> reservados/contratados vía plataforma (no mezclar con otros flujos salvo criterio explícito posterior).</td>
-<td>Matizar en contrato qué líneas generan comisión (p. ej. solo checkout in-app, también efectivo declarado, etc.).</td>
+<td>Aplica a <strong>servicios</strong> reservados/contratados vía checkout de la plataforma.</td>
+<td>Matizar contrato si hubiera cobros fuera de pasarela (efectivo, etc.).</td>
 </tr>
 </tbody></table>
-<p><strong>Presupuesto técnico:</strong> pruebas de redondeo y mínimo en importes pequeños; webhooks que no dupliquen comisión; reembolsos que <strong>reviertan o ajusten</strong> la comisión según política; panel admin para auditoría; posible <strong>IVA sobre la comisión</strong> según sede de Gimadd (consultoría fiscal fuera de alcance del código pero sí del informe).</p>
+<p><strong>Presupuesto técnico:</strong> redondeos a céntimos; idempotencia en webhooks; reembolsos totales/parciales que devuelvan al jugador lo correcto y ajusten <code>C</code> y <code>P</code>; IVA/impuestos sobre <code>P</code> y sobre <code>C</code> según normativa (fuera de alcance código, dentro de alcance producto/legal).</p>
 <p><strong>En producción (Stripe):</strong></p>
 <table>
 <thead>
@@ -683,7 +683,7 @@
 </thead>
 <tbody><tr>
 <td><strong>Stripe Connect</strong></td>
-<td>Payouts a entrenadores; <strong>application fee</strong> (comisión %) y/o cuota SaaS vía <strong>Customer + Subscription</strong> separada</td>
+<td>Cobro jugador <code>P+C</code>; destino al coach <strong><code>P</code></strong>; <strong><code>application_fee_amount = C</code></strong> para Gimadd (o patrón equivalente); cuota SaaS coach vía <strong>Customer + Subscription</strong> aparte</td>
 </tr>
 <tr>
 <td><strong>Checkout / Elements</strong></td>
@@ -718,11 +718,11 @@
 </thead>
 <tbody><tr>
 <td><strong>Resumen</strong></td>
-<td>Saldo disponible, retenciones, próximo payout, <strong>comisiones Gimadd acumuladas</strong>, estado <strong>cuota plataforma</strong></td>
+<td>Saldo / cobros según <strong>precio fijado por el coach</strong> (<code>P</code>), estado <strong>cuota plataforma</strong> (mensualidad)</td>
 </tr>
 <tr>
 <td><strong>Pagos</strong></td>
-<td>Lista cobros, estado, jugador, servicio, <strong>línea comisión 5 % (mín. 1,50 €)</strong> y neto</td>
+<td>Por operación: <strong>importe percibido coach = <code>P</code></strong>, referencia al cobro total jugador <code>P+C</code> si aporta trazabilidad</td>
 </tr>
 <tr>
 <td><strong>Facturas</strong></td>
@@ -1110,7 +1110,7 @@
 <li>Integración federaciones / rankings.</li>
 <li>Wearables y carga interna.</li>
 <li>Multi-deporte (tenant configurable por deporte).</li>
-<li>Marketplace con <strong>pago in-app</strong>; comisión de plataforma <strong>5 % mín. 1,50 €</strong> ya definida para servicios (ver §13.0).</li>
+<li>Marketplace con <strong>pago in-app</strong>; recargo plataforma <strong>5 % mín. 1,50 €</strong> sobre <code>P</code> <strong>pagado por el cliente</strong> en checkout; coach cobra <code>P</code> íntegro (ver §13.0).</li>
 </ul>
 <hr>
 <h2>Anexo A — Detalle de producto para estimación (perfiles, catálogo, captación)</h2>

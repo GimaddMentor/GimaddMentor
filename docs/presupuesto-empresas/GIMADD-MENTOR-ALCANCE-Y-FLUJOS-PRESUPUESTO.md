@@ -1,6 +1,6 @@
 # Gimadd Mentor — Alcance funcional, flujos y criterios técnicos para presupuesto
 
-**Versión del documento:** 1.2 (Mayo 2026)  
+**Versión del documento:** 1.3 (Mayo 2026)  
 **Producto:** Gimadd Mentor — plataforma de entrenamiento y acompañamiento en **pádel** (jugadores ↔ entrenadores).  
 **Audiencia:** empresas de desarrollo, integradores, arquitectos y responsables de producto que deban **presupuestar** implementación nativa, backend, seguridad y operación.
 
@@ -23,7 +23,7 @@ Gimadd Mentor conecta **jugadores** con **entrenadores verificados** para:
 - Contratar **servicios** del catálogo del entrenador (sesión, pack, suscripción, programas de acompañamiento).
 - Gestionar **agenda** (clases presenciales), **mensajería**, **CRM de clientes**, **finanzas** (con integración de pagos) y **marketplace público** de entrenadores.
 
-**Modelo económico de la plataforma (presupuesto y producto):** Gimadd cobra a los entrenadores (1) una **mensualidad por uso de la plataforma** y (2) una **comisión del 5 %** sobre las reservas / cobros de **servicios** jugador–entrenador, con **mínimo 1,50 €** por operación sujeta a comisión. Debe contemplarse en **pasarela (p. ej. Stripe Connect application fee)**, **ledger**, **UI de finanzas del coach** y **facturación B2B** de la cuota SaaS.
+**Modelo económico de la plataforma (presupuesto y producto):** (1) **Mensualidad** cobrada **al entrenador** por usar la plataforma. (2) **Comisión del 5 %** (con **mínimo 1,50 €** sobre la base indicada) **no se descuenta del coach**: se **añade al precio** que el entrenador fija para cada servicio y **la paga el cliente en el checkout**; el entrenador **cobra íntegro** el importe que él configuró. Debe contemplarse en **checkout desglosado**, **Connect / reparto de cobro**, **ledger** y **facturación B2B** de la cuota SaaS al coach.
 
 La base actual debe ser **modular y extensible**: hoy pádel y flujo coach–jugador; mañana más deportes, automatizaciones, IA sobre vídeo, informes federativos, etc.
 
@@ -519,18 +519,18 @@ Lista ordenada por **tier de prioridad** (ascendente: rojo primero) y luego **no
 
 | Concepto | Regla | Implicaciones para desarrollo / presupuesto |
 |----------|--------|-----------------------------------------------|
-| **Cuota SaaS al entrenador** | **Mensualidad** por utilizar la plataforma (importe a definir en producto; recurrente). | Producto Stripe **B2B** separado del cobro jugador→coach; estados *activo / impago / suspendido*; bloqueo o degradación de funciones si falla el pago; **factura/recibo** al entrenador; recordatorios y dunning. |
-| **Comisión sobre servicios** | **5 %** del importe de las **reservas / cobros de servicios** (ventas del catálogo que pasen por la plataforma), con **mínimo 1,50 €** por transacción comisionable. | Cálculo idempotente en el momento del cobro: `comisión = max(importe × 0,05, 1,50)` en **EUR** (definir equivalencia si hay multi-moneda); trazabilidad en **ledger** por línea; en **Connect**, típicamente `application_fee_amount` (o destino alternativo validado con Stripe); el coach debe **ver desglose** (bruto, comisión Gimadd, neto) en Pagos/Resumen; informes y conciliación contable. |
-| **Ámbito** | Aplica a cobros de **servicios** reservados/contratados vía plataforma (no mezclar con otros flujos salvo criterio explícito posterior). | Matizar en contrato qué líneas generan comisión (p. ej. solo checkout in-app, también efectivo declarado, etc.). |
+| **Cuota SaaS al entrenador** | **Mensualidad** cobrada **solo al entrenador** por utilizar la plataforma (importe a definir en producto; recurrente). | Producto Stripe **B2B** separado del cobro jugador→coach; estados *activo / impago / suspendido*; bloqueo o degradación de funciones si falla el pago; **factura/recibo** al entrenador; recordatorios y dunning. |
+| **Comisión sobre servicios (jugador)** | Sobre el **precio listado por el entrenador** (`P`), se calcula un recargo `C = max(P × 0,05, 1,50)` **EUR** (ajustar regla si multi-moneda). En el **checkout**, el cliente paga **`P + C`**. El entrenador **percibe íntegramente `P`**; Gimadd se queda con **`C`**. | UX checkout: líneas claras (“Servicio — precio coach”, “Uso de plataforma / servicio” o similar); importe total `P+C`; **no** mostrar al coach que “pierde” un % del precio que él fijó. Técnicamente encaja con **Connect** cobrando el total al cliente y usando **`application_fee_amount = C`** (o equivalente documentado) para que el connected account reciba `P`. **Ledger**: una fila por `P` (coach) y una por `C` (plataforma); reembolsos prorrateados según política. |
+| **Ámbito** | Aplica a **servicios** reservados/contratados vía checkout de la plataforma. | Matizar contrato si hubiera cobros fuera de pasarela (efectivo, etc.). |
 
-**Presupuesto técnico:** pruebas de redondeo y mínimo en importes pequeños; webhooks que no dupliquen comisión; reembolsos que **reviertan o ajusten** la comisión según política; panel admin para auditoría; posible **IVA sobre la comisión** según sede de Gimadd (consultoría fiscal fuera de alcance del código pero sí del informe).
+**Presupuesto técnico:** redondeos a céntimos; idempotencia en webhooks; reembolsos totales/parciales que devuelvan al jugador lo correcto y ajusten `C` y `P`; IVA/impuestos sobre `P` y sobre `C` según normativa (fuera de alcance código, dentro de alcance producto/legal).
 
 **En producción (Stripe):**
 
 
 | Componente              | Uso                                               |
 | ----------------------- | ------------------------------------------------- |
-| **Stripe Connect**      | Payouts a entrenadores; **application fee** (comisión %) y/o cuota SaaS vía **Customer + Subscription** separada |
+| **Stripe Connect**      | Cobro jugador `P+C`; destino al coach **`P`**; **`application_fee_amount = C`** para Gimadd (o patrón equivalente); cuota SaaS coach vía **Customer + Subscription** aparte |
 | **Checkout / Elements** | Cobro servicios y suscripciones                   |
 | **Billing Portal**      | Gestión método pago y cancelaciones               |
 | **Invoices + Tax**      | IVA/VAT según país entrenador                     |
@@ -591,8 +591,8 @@ sequenceDiagram
 
 | Tab              | Contenido esperado en producción              |
 | ---------------- | --------------------------------------------- |
-| **Resumen**      | Saldo disponible, retenciones, próximo payout, **comisiones Gimadd acumuladas**, estado **cuota plataforma** |
-| **Pagos**        | Lista cobros, estado, jugador, servicio, **línea comisión 5 % (mín. 1,50 €)** y neto |
+| **Resumen**      | Saldo / cobros según **precio fijado por el coach** (`P`), estado **cuota plataforma** (mensualidad) |
+| **Pagos**        | Por operación: **importe percibido coach = `P`**, referencia al cobro total jugador `P+C` si aporta trazabilidad |
 | **Facturas**     | PDF generados / descarga                      |
 | **Estadísticas** | Serie temporal, ARPU, mix servicios           |
 
@@ -856,7 +856,7 @@ Registrar: logins, publicaciones, cambios de dinero, exportaciones CRM, descarga
 - Integración federaciones / rankings.
 - Wearables y carga interna.
 - Multi-deporte (tenant configurable por deporte).
-- Marketplace con **pago in-app**; comisión de plataforma **5 % mín. 1,50 €** ya definida para servicios (ver §13.0).
+- Marketplace con **pago in-app**; recargo plataforma **5 % mín. 1,50 €** sobre `P` **pagado por el cliente** en checkout; coach cobra `P` íntegro (ver §13.0).
 
 ---
 
