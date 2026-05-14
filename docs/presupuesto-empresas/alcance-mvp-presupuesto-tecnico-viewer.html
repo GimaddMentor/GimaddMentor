@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex" />
+  <title>Alcance MVP — presupuesto técnico · Gimadd Mentor</title>
+  <style>
+    * { box-sizing: border-box; }
+    html, body { margin: 0; min-height: 100%; background: #1e293b; color: #e2e8f0; font-family: system-ui, sans-serif; }
+    .bar {
+      position: sticky; top: 0; z-index: 20;
+      display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 1rem;
+      padding: 0.65rem 1rem; background: #0f172a; border-bottom: 1px solid #334155;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+    }
+    .bar a { color: #7dd3fc; font-weight: 600; text-decoration: none; }
+    .bar a:hover { text-decoration: underline; color: #bae6fd; }
+    .bar-title { font-size: 0.95rem; font-weight: 700; flex: 1; min-width: 12rem; }
+    .controls {
+      display: flex; flex-wrap: wrap; align-items: center; gap: 0.35rem;
+    }
+    .controls button {
+      padding: 0.4rem 0.65rem; border-radius: 8px; border: 1px solid #475569;
+      background: #334155; color: #f1f5f9; font: inherit; cursor: pointer;
+    }
+    .controls button:hover:not(:disabled) { background: #475569; }
+    .controls button:disabled { opacity: 0.45; cursor: not-allowed; }
+    .controls .page-label { font-size: 0.85rem; color: #94a3b8; margin-left: 0.25rem; }
+    .controls input[type="number"] {
+      width: 3.5rem; padding: 0.35rem; border-radius: 6px; border: 1px solid #475569;
+      background: #1e293b; color: #f8fafc; font: inherit; text-align: center;
+    }
+    .hint {
+      width: 100%; font-size: 0.72rem; color: #94a3b8; line-height: 1.35;
+      margin-top: 0.25rem;
+    }
+    .stage {
+      display: flex; justify-content: center; padding: 1rem 0.5rem 2.5rem;
+      overflow: auto;
+    }
+    .canvas-wrap {
+      background: #0f172a; border-radius: 12px; padding: 0.75rem;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.35); max-width: 100%;
+    }
+    canvas { display: block; max-width: 100%; height: auto; margin: 0 auto; }
+    .loading, .err { text-align: center; padding: 2rem 1rem; max-width: 28rem; margin: 0 auto; }
+    .err { color: #fca5a5; }
+  </style>
+</head>
+<body>
+  <header class="bar">
+    <a href="../../index.html">← Inicio · GitHub Pages</a>
+    <span class="bar-title">Alcance MVP (presupuesto técnico)</span>
+    <div class="controls" id="controls" hidden>
+      <button type="button" id="btnPrev" aria-label="Página anterior">←</button>
+      <button type="button" id="btnNext" aria-label="Página siguiente">→</button>
+      <span class="page-label">Página</span>
+      <input type="number" id="pageInput" min="1" value="1" aria-label="Ir a página" />
+      <span class="page-label" id="pageTotal"></span>
+      <button type="button" id="btnZoomOut" aria-label="Reducir">−</button>
+      <button type="button" id="btnZoomIn" aria-label="Ampliar">+</button>
+    </div>
+    <p class="hint">Vista solo lectura en el navegador. La consulta aquí no sustituye el acuerdo comercial ni la confidencialidad del contenido.</p>
+  </header>
+  <div class="stage">
+    <div id="status" class="loading">Cargando documento…</div>
+    <div class="canvas-wrap" id="wrap" hidden>
+      <canvas id="pdfCanvas"></canvas>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script>
+    (function () {
+      var PDF_SRC = "alcance-mvp-version-presupuesto-tecnico.pdf";
+      var pdfjsLib = window.pdfjsLib;
+      if (!pdfjsLib || !pdfjsLib.getDocument) {
+        document.getElementById("status").className = "err";
+        document.getElementById("status").textContent = "No se pudo cargar el visor PDF (pdf.js).";
+        return;
+      }
+      pdfjsLib.GlobalWorkerOptions.workerSrc =
+        "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+
+      var pdfDoc = null;
+      var pageNum = 1;
+      var pageRendering = false;
+      var pageNumPending = null;
+      var scale = 1.15;
+      var canvas = document.getElementById("pdfCanvas");
+      var ctx = canvas.getContext("2d");
+      var statusEl = document.getElementById("status");
+      var wrapEl = document.getElementById("wrap");
+      var controls = document.getElementById("controls");
+      var pageInput = document.getElementById("pageInput");
+      var pageTotal = document.getElementById("pageTotal");
+      var btnPrev = document.getElementById("btnPrev");
+      var btnNext = document.getElementById("btnNext");
+      var btnZoomIn = document.getElementById("btnZoomIn");
+      var btnZoomOut = document.getElementById("btnZoomOut");
+
+      function renderPage(num) {
+        pageRendering = true;
+        pdfDoc.getPage(num).then(function (page) {
+          var viewport = page.getViewport({ scale: scale });
+          canvas.height = Math.floor(viewport.height);
+          canvas.width = Math.floor(viewport.width);
+          var renderContext = { canvasContext: ctx, viewport: viewport };
+          var renderTask = page.render(renderContext);
+          return renderTask.promise;
+        }).then(function () {
+          pageRendering = false;
+          if (pageNumPending !== null) {
+            renderPage(pageNumPending);
+            pageNumPending = null;
+          }
+          pageInput.value = String(pageNum);
+          btnPrev.disabled = pageNum <= 1;
+          btnNext.disabled = pageNum >= pdfDoc.numPages;
+        }).catch(function (e) {
+          pageRendering = false;
+          statusEl.className = "err";
+          statusEl.textContent = "Error al renderizar: " + (e && e.message ? e.message : String(e));
+          statusEl.hidden = false;
+          wrapEl.hidden = true;
+        });
+      }
+
+      function queueRenderPage(num) {
+        if (pageRendering) {
+          pageNumPending = num;
+        } else {
+          renderPage(num);
+        }
+      }
+
+      function onPrevPage() {
+        if (pageNum <= 1) return;
+        pageNum--;
+        queueRenderPage(pageNum);
+      }
+      function onNextPage() {
+        if (pageNum >= pdfDoc.numPages) return;
+        pageNum++;
+        queueRenderPage(pageNum);
+      }
+
+      pdfjsLib.getDocument(PDF_SRC).promise.then(function (pdf) {
+        pdfDoc = pdf;
+        statusEl.hidden = true;
+        wrapEl.hidden = false;
+        controls.hidden = false;
+        pageTotal.textContent = "de " + pdf.numPages;
+        pageInput.max = String(pdf.numPages);
+        renderPage(pageNum);
+      }).catch(function (e) {
+        statusEl.className = "err";
+        statusEl.textContent =
+          "No se pudo abrir el PDF. Si estás en local, ábrelo vía servidor o GitHub Pages.";
+      });
+
+      btnPrev.addEventListener("click", onPrevPage);
+      btnNext.addEventListener("click", onNextPage);
+      btnZoomIn.addEventListener("click", function () {
+        scale = Math.min(scale + 0.1, 2.5);
+        queueRenderPage(pageNum);
+      });
+      btnZoomOut.addEventListener("click", function () {
+        scale = Math.max(scale - 0.1, 0.6);
+        queueRenderPage(pageNum);
+      });
+      pageInput.addEventListener("change", function () {
+        var n = parseInt(pageInput.value, 10);
+        if (isNaN(n) || n < 1) n = 1;
+        if (pdfDoc && n > pdfDoc.numPages) n = pdfDoc.numPages;
+        pageNum = n;
+        queueRenderPage(pageNum);
+      });
+    })();
+  </script>
+</body>
+</html>
