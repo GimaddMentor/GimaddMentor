@@ -1990,6 +1990,98 @@
       cursor: not-allowed;
     }
 
+    /* Toggle "Practicado" — sustituye al desplegable en el diario */
+    .plan-pract-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.5rem 0.85rem 0.5rem 0.5rem;
+      border-radius: 14px;
+      background: #f9fafb;
+      border: 1.5px solid #e5e7eb;
+      cursor: pointer;
+      user-select: none;
+      transition: background 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease, transform 0.12s ease;
+      margin-bottom: 0.5rem;
+      max-width: 100%;
+      box-sizing: border-box;
+      position: relative;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .plan-pract-toggle:hover {
+      border-color: #6ee7b7;
+      background: #f0fdf4;
+    }
+    .plan-pract-toggle:active {
+      transform: scale(0.98);
+    }
+    .plan-pract-toggle .plan-pract {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+      width: 0;
+      height: 0;
+      margin: 0;
+    }
+    .plan-pract-toggle__icon {
+      flex-shrink: 0;
+      width: 1.9rem;
+      height: 1.9rem;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: #fff;
+      border: 1.5px solid #d1d5db;
+      color: transparent;
+      transition: background 0.22s ease, border-color 0.22s ease, color 0.22s ease, box-shadow 0.22s ease, transform 0.18s ease;
+    }
+    .plan-pract-toggle__icon .material-symbols-rounded {
+      font-size: 1.2rem;
+      font-variation-settings: "FILL" 1, "wght" 800, "GRAD" 0, "opsz" 24;
+      transform: scale(0.3);
+      transition: transform 0.22s ease;
+    }
+    .plan-pract-toggle__lbl {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #6b7280;
+      line-height: 1.25;
+      transition: color 0.2s ease;
+    }
+    .plan-pract-toggle__lbl-on { display: none; }
+    .plan-pract-toggle__lbl-off { display: inline; }
+    .plan-pract-toggle:has(.plan-pract:checked) {
+      background: linear-gradient(160deg, #ecfdf5 0%, #d1fae5 100%);
+      border-color: #10b981;
+      box-shadow: 0 2px 12px rgba(16, 185, 129, 0.18);
+    }
+    .plan-pract-toggle:has(.plan-pract:checked) .plan-pract-toggle__icon {
+      background: linear-gradient(140deg, #10b981 0%, #059669 100%);
+      border-color: #059669;
+      color: #fff;
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+    }
+    .plan-pract-toggle:has(.plan-pract:checked) .plan-pract-toggle__icon .material-symbols-rounded {
+      transform: scale(1);
+    }
+    .plan-pract-toggle:has(.plan-pract:checked) .plan-pract-toggle__lbl {
+      color: #047857;
+    }
+    .plan-pract-toggle:has(.plan-pract:checked) .plan-pract-toggle__lbl-on { display: inline; }
+    .plan-pract-toggle:has(.plan-pract:checked) .plan-pract-toggle__lbl-off { display: none; }
+    .plan-pract-toggle:has(.plan-pract:disabled) {
+      cursor: default;
+    }
+    .plan-pract-toggle:has(.plan-pract:disabled):hover {
+      transform: none;
+    }
+    .plan-pract:focus-visible + .plan-pract-toggle__icon,
+    .plan-pract-toggle:focus-within {
+      outline: 2px solid #10b981;
+      outline-offset: 2px;
+    }
+
     .btn-save {
       width: 100%;
       padding: 0.9rem;
@@ -17337,21 +17429,24 @@
           "%)</span>" +
           planCountHtml +
           "</div>" +
-          '<label class="sr-only" for="' +
+          '<label class="plan-pract-toggle" for="' +
           idP +
           o.id +
-          '">Practicado</label>' +
-          '<select id="' +
+          '">' +
+          '<input type="checkbox" id="' +
           idP +
           o.id +
           '" class="plan-pract" data-plan-kind="' +
           kind +
           '" data-objetivo-id="' +
           o.id +
-          '">' +
-          '<option value="practicado">Practicado</option>' +
-          '<option value="no-practicado">No practicado</option>' +
-          "</select>" +
+          '" />' +
+          '<span class="plan-pract-toggle__icon" aria-hidden="true"><span class="material-symbols-rounded">check</span></span>' +
+          '<span class="plan-pract-toggle__lbl">' +
+          '<span class="plan-pract-toggle__lbl-off">Marcar como practicado</span>' +
+          '<span class="plan-pract-toggle__lbl-on">Practicado</span>' +
+          '</span>' +
+          '</label>' +
           '<label class="sr-only" for="' +
           idS +
           o.id +
@@ -17387,7 +17482,7 @@
       var block = root.querySelector('.obj-block[data-objetivo-id="' + o.id + '"]');
       if (practEl) {
         if (met) {
-          practEl.value = "practicado";
+          practEl.checked = true;
           practEl.disabled = true;
           practEl.setAttribute("aria-disabled", "true");
         } else {
@@ -17418,7 +17513,7 @@
       return {
         objetivoId: o.id,
         titulo: o.titulo,
-        practicado: locked ? true : practEl ? practEl.value === "practicado" : true,
+        practicado: locked ? true : practEl ? !!practEl.checked : false,
         sensaciones: sensEl ? sensEl.value.trim() : "",
       };
     });
@@ -17444,7 +17539,7 @@
       var sensEl = root.querySelector(
         '.plan-sens[data-plan-kind="' + kind + '"][data-objetivo-id="' + id + '"]'
       );
-      if (practEl) practEl.value = pa.practicado ? "practicado" : "no-practicado";
+      if (practEl) practEl.checked = !!pa.practicado;
       if (sensEl) sensEl.value = pa.sensaciones || "";
     });
     applyPlanPracticDiarioLocks(root, kind);
