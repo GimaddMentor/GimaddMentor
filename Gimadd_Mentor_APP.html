@@ -6,7 +6,7 @@
   <title>Gimadd Mentor — Consola profesional</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800;1,9..40,400&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,500,0,0&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800;1,9..40,400&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,500,0,0&family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,600,0..1,0&display=swap" rel="stylesheet" />
   <style>
 
     :root {
@@ -52,23 +52,41 @@
       justify-content: space-between;
       gap: 0.5rem;
     }
+    .app-header .header-aux-btn,
     .hero-top .header-aux-btn {
       flex-shrink: 0;
-      width: 2.5rem;
-      height: 2.5rem;
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      background: #fff;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
-      font-size: 1.15rem;
+      width: 2.6rem;
+      height: 2.6rem;
+      border: 1px solid rgba(15, 23, 42, 0.08);
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      box-shadow: 0 4px 14px rgba(15, 23, 42, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.85);
+      font-size: 1.25rem;
       cursor: pointer;
       padding: 0;
-      color: var(--text);
+      color: #0f172a;
       line-height: 1;
       display: inline-flex;
       align-items: center;
       justify-content: center;
       font-family: inherit;
+      transition: transform 0.14s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+    }
+    .app-header .header-aux-btn:hover,
+    .hero-top .header-aux-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 18px rgba(15, 23, 42, 0.13);
+      border-color: rgba(234, 179, 8, 0.4);
+    }
+    .app-header .header-aux-btn:active,
+    .hero-top .header-aux-btn:active {
+      transform: scale(0.97);
+    }
+    .app-header .header-aux-btn .material-symbols-rounded {
+      font-size: 1.3rem;
+      font-variation-settings: "FILL" 0, "wght" 600, "GRAD" 0, "opsz" 24;
     }
     .hero-top h1 {
       margin: 0;
@@ -606,37 +624,80 @@
       border-bottom-color: var(--lime-strong);
     }
     .jugador-plan-subtabs {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.35rem;
-      margin: 0 0 0.5rem;
-      padding-bottom: 0.45rem;
-      border-bottom: 1px solid var(--border);
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.4rem;
+      margin: 0 0 0.65rem;
     }
     .jugador-plan-subtabs button {
-      flex: 1;
-      min-width: 4.75rem;
-      padding: 0.52rem 0.45rem;
-      border-radius: 999px;
-      border: none;
-      background: rgba(242, 236, 31, 0.3);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.3rem;
+      padding: 0.65rem 0.4rem 0.55rem;
+      border-radius: 14px;
+      border: 1px solid rgba(15, 23, 42, 0.06);
+      background: var(--surface);
       font-family: "DM Sans", system-ui, inherit;
-      font-weight: 600;
-      font-size: 0.62rem;
+      font-weight: 700;
+      font-size: 0.7rem;
       cursor: pointer;
-      color: #121212;
-      line-height: 1.25;
+      color: #475569;
+      line-height: 1.2;
       text-align: center;
-      box-shadow: none;
+      box-shadow: 0 1px 4px rgba(15, 23, 42, 0.04);
+      transition: background 0.2s ease, color 0.18s ease, border-color 0.18s ease, transform 0.15s ease, box-shadow 0.18s ease;
       -webkit-tap-highlight-color: transparent;
     }
-    .jugador-plan-subtabs button.on {
-      background: #f2ec1f;
-      font-weight: 700;
+    .jugador-plan-subtabs button:hover {
+      transform: translateY(-1px);
+      border-color: rgba(234, 179, 8, 0.4);
+      color: #1f2937;
     }
-    .jugador-plan-subtabs .tab-count {
+    .jugador-plan-subtabs button .plan-sub-ico {
+      font-size: 1.25rem;
+      color: #94a3bb;
+      font-variation-settings: "FILL" 0, "wght" 500, "GRAD" 0, "opsz" 24;
+      transition: color 0.18s ease, font-variation-settings 0.2s ease;
+    }
+    .jugador-plan-subtabs button:hover .plan-sub-ico {
+      color: #eab308;
+    }
+    .jugador-plan-subtabs button .plan-sub-lbl {
+      display: block;
+    }
+    .jugador-plan-subtabs button .tab-count {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 1.35rem;
+      height: 1.15rem;
+      padding: 0 0.4rem;
+      border-radius: 999px;
+      background: #e2e8f0;
+      color: #475569;
+      font-size: 0.62rem;
       font-weight: 800;
-      margin-left: 0.1rem;
+      letter-spacing: 0;
+      margin: 0;
+      transition: background 0.18s ease, color 0.18s ease;
+    }
+    .jugador-plan-subtabs button.on {
+      background: linear-gradient(140deg, #facc15 0%, #eab308 100%);
+      border-color: #ca8a04;
+      color: #1a1a1a;
+      box-shadow: 0 6px 16px rgba(234, 179, 8, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+      transform: translateY(-1px);
+    }
+    .jugador-plan-subtabs button.on .plan-sub-ico {
+      color: #1a1a1a;
+      font-variation-settings: "FILL" 1, "wght" 600, "GRAD" 0, "opsz" 24;
+    }
+    .jugador-plan-subtabs button.on .tab-count {
+      background: rgba(15, 23, 42, 0.85);
+      color: #facc15;
     }
     .jugador-plan-subpanel {
       display: none;
@@ -664,69 +725,157 @@
     .coach-obj-subnav {
       display: flex;
       flex-wrap: wrap;
-      gap: 0.35rem;
+      gap: 0.4rem;
       margin: 1rem 0 0.75rem;
     }
     .coach-obj-subnav button {
       flex: 1;
       min-width: 5rem;
-      padding: 0.52rem 0.6rem;
+      padding: 0.6rem 0.6rem;
       border-radius: 999px;
-      border: none;
-      background: rgba(242, 236, 31, 0.3);
+      border: 1px solid rgba(15, 23, 42, 0.06);
+      background: #f8fafc;
       font-family: "DM Sans", system-ui, inherit;
-      font-weight: 600;
-      font-size: 0.72rem;
+      font-weight: 700;
+      font-size: 0.74rem;
       cursor: pointer;
-      color: #121212;
+      color: #64748b;
       box-shadow: none;
+      letter-spacing: -0.01em;
+      transition: background 0.2s ease, color 0.18s ease, transform 0.15s ease, box-shadow 0.2s ease, border-color 0.18s ease;
       -webkit-tap-highlight-color: transparent;
     }
+    .coach-obj-subnav button:hover {
+      color: #1f2937;
+      border-color: rgba(234, 179, 8, 0.35);
+    }
     .coach-obj-subnav button.on {
-      background: #f2ec1f;
-      font-weight: 700;
+      background: linear-gradient(140deg, #facc15 0%, #eab308 100%);
+      border-color: #ca8a04;
+      color: #1a1a1a;
+      font-weight: 800;
+      box-shadow: 0 6px 18px rgba(234, 179, 8, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+      transform: translateY(-1px);
     }
     .coach-obj-subnav .tab-count {
       font-weight: 800;
-      margin-left: 0.12rem;
+      margin-left: 0.2rem;
+      opacity: 0.7;
     }
+    .coach-obj-subnav button.on .tab-count { opacity: 0.85; }
     #coachPanelObjetivos .coach-obj-subnav {
       margin-bottom: 0.85rem;
-      padding-bottom: 0.65rem;
+      padding-bottom: 0.85rem;
       border-bottom: 1px solid var(--border);
     }
     
     #coachPanelObjetivos .coach-obj-subnav button {
-      background: #e8edf3;
+      background: #eef2f6;
       color: #475569;
+      border-color: rgba(15, 23, 42, 0.08);
+    }
+    #coachPanelObjetivos .coach-obj-subnav button:hover {
+      background: #e2e8f0;
+      color: #0f172a;
+      border-color: rgba(12, 74, 110, 0.3);
     }
     #coachPanelObjetivos .coach-obj-subnav button.on {
-      background: #0c4a6e;
+      background: linear-gradient(140deg, #1e3a8a 0%, #0c4a6e 100%);
       color: #ffffff;
-      font-weight: 700;
+      border-color: #0c4a6e;
+      font-weight: 800;
+      box-shadow: 0 6px 18px rgba(12, 74, 110, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+    }
+    #coachPanelObjetivos .coach-obj-subnav button.on .tab-count {
+      opacity: 0.85;
     }
     .coach-plan-nested-shell {
-      margin-top: 0.35rem;
-      padding: 0.85rem 0.75rem 0.65rem;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+      position: relative;
+      margin-top: 0.65rem;
+      padding: 1rem 1rem 0.85rem;
+      background: linear-gradient(180deg, #fffbeb 0%, var(--surface) 38%);
+      border: 1px solid #fde68a;
+      border-left: 4px solid #facc15;
+      border-radius: 16px;
+      box-shadow: 0 6px 22px rgba(234, 179, 8, 0.1);
     }
-    .coach-plan-phase-label {
+    .plan-phase-header {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      margin: 0 0 0.5rem;
+    }
+    .plan-phase-header__icon {
+      flex-shrink: 0;
+      width: 2.5rem;
+      height: 2.5rem;
+      border-radius: 12px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(140deg, #facc15 0%, #eab308 100%);
+      color: #1a1a1a;
+      font-size: 1.35rem;
+      box-shadow: 0 4px 12px rgba(234, 179, 8, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+      font-variation-settings: "FILL" 1, "wght" 600, "GRAD" 0, "opsz" 24;
+    }
+    .plan-phase-header__text {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.05rem;
+    }
+    .plan-phase-header__kicker {
+      margin: 0;
       font-size: 0.62rem;
-      font-weight: 800;
+      font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: 0.07em;
-      color: var(--muted);
-      margin: 0 0 0.55rem;
+      letter-spacing: 0.08em;
+      color: #92400e;
       line-height: 1.3;
+    }
+    .plan-phase-header__title {
+      margin: 0;
+      font-size: 1.05rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: #1a1a1a;
+      line-height: 1.2;
+    }
+    .plan-phase-header__count {
+      flex-shrink: 0;
+      min-width: 2.4rem;
+      height: 2rem;
+      padding: 0 0.65rem;
+      border-radius: 999px;
+      background: #1a1a1a;
+      color: #facc15;
+      font-size: 0.85rem;
+      font-weight: 800;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      letter-spacing: -0.01em;
+      box-shadow: 0 4px 10px rgba(15, 23, 42, 0.18);
+    }
+    .plan-phase-header__hint {
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: #78350f;
+      margin: 0 0 0.7rem;
+      line-height: 1.4;
+      opacity: 0.85;
+    }
+    .plan-phase-header--coach .plan-phase-header__kicker {
+      color: #1e3a8a;
+    }
+    .plan-phase-header--coach + .plan-phase-header__hint {
+      color: #1e3a8a;
     }
     #coachPanelObjetivos .coach-plan-nested-shell > .jugador-plan-subtabs {
       margin-top: 0;
       margin-bottom: 0.35rem;
-      padding-bottom: 0.55rem;
-      border-bottom: 1px solid var(--border);
     }
     .coach-obj-subpanel {
       display: none;
@@ -1223,34 +1372,64 @@
     }
 
     .app-header {
-      padding: 0.65rem 1rem 0.85rem;
-      padding-top: calc(0.55rem + env(safe-area-inset-top, 0px));
+      position: relative;
+      padding: 0.75rem 1rem 1rem;
+      padding-top: calc(0.65rem + env(safe-area-inset-top, 0px));
       padding-left: calc(1rem + env(safe-area-inset-left, 0px));
       padding-right: calc(1rem + env(safe-area-inset-right, 0px));
-      background: linear-gradient(180deg, #f2ec1f 0%, #fffbeb 42%, #ffffff 100%);
+      background:
+        radial-gradient(120% 100% at 50% 0%, rgba(250, 204, 21, 0.35) 0%, rgba(250, 204, 21, 0.18) 28%, rgba(255, 255, 255, 0) 62%),
+        linear-gradient(180deg, #fef9c3 0%, #fffbeb 48%, #ffffff 100%);
       border-bottom: none;
-      border-radius: 0 0 22px 22px;
-      box-shadow: 0 4px 24px rgba(242, 236, 31, 0.12);
+      border-radius: 0 0 28px 28px;
+      box-shadow: 0 8px 28px rgba(234, 179, 8, 0.1);
+      overflow: hidden;
+    }
+    .app-header::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at 12% -10%, rgba(234, 179, 8, 0.18) 0%, transparent 32%),
+        radial-gradient(circle at 88% -8%, rgba(250, 204, 21, 0.18) 0%, transparent 30%);
+    }
+    .app-header::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      bottom: 0.45rem;
+      width: 36px;
+      height: 4px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #facc15 0%, #eab308 100%);
+      transform: translateX(-50%);
+      box-shadow: 0 2px 6px rgba(234, 179, 8, 0.4);
+      opacity: 0.85;
     }
     .app-header-inner {
+      position: relative;
       max-width: var(--maxw);
       width: 100%;
       margin: 0 auto;
       box-sizing: border-box;
       display: flex;
       align-items: center;
-      gap: 0.65rem;
+      gap: 0.7rem;
+      z-index: 1;
     }
     .back,
     .jug-hub-back {
       flex-shrink: 0;
-      width: 2.5rem;
-      height: 2.5rem;
+      width: 2.6rem;
+      height: 2.6rem;
       padding: 0;
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      background: #fff;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.07);
+      border: 1px solid rgba(15, 23, 42, 0.08);
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      box-shadow: 0 4px 14px rgba(15, 23, 42, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.85);
       cursor: pointer;
       display: inline-flex;
       align-items: center;
@@ -1259,7 +1438,13 @@
       line-height: 0;
       color: transparent;
       font-family: inherit;
-      transition: transform 0.12s ease, box-shadow 0.15s ease;
+      transition: transform 0.14s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+    }
+    .back:hover,
+    .jug-hub-back:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 18px rgba(15, 23, 42, 0.13);
+      border-color: rgba(234, 179, 8, 0.4);
     }
     .back:active,
     .jug-hub-back:active {
@@ -1268,19 +1453,59 @@
     .back::after,
     .jug-hub-back::after {
       content: "";
-      width: 1.28rem;
-      height: 1.28rem;
+      width: 1.3rem;
+      height: 1.3rem;
       flex-shrink: 0;
       background: center / contain no-repeat;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23111827' stroke-width='2.25' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M15 18l-6-6 6-6'/%3E%3C/svg%3E");
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23111827' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M15 18l-6-6 6-6'/%3E%3C/svg%3E");
     }
     .title-page {
-      font-size: 1.15rem;
+      font-size: 1.18rem;
       font-weight: 800;
-      letter-spacing: -0.03em;
+      letter-spacing: -0.025em;
       margin: 0;
       flex: 1;
       text-align: center;
+      line-height: 1.15;
+      color: #0f172a;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.55rem;
+      min-width: 0;
+    }
+    .title-page__icon {
+      flex-shrink: 0;
+      width: 2.05rem;
+      height: 2.05rem;
+      border-radius: 11px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(140deg, #1a1a1a 0%, #0f172a 100%);
+      color: #facc15;
+      font-size: 1.22rem;
+      font-variation-settings: "FILL" 1, "wght" 600, "GRAD" 0, "opsz" 24;
+      box-shadow:
+        0 5px 14px rgba(15, 23, 42, 0.26),
+        inset 0 1px 0 rgba(255, 255, 255, 0.16),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.4);
+      position: relative;
+    }
+    .title-page__icon::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background: radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.18) 0%, transparent 55%);
+      pointer-events: none;
+    }
+    .title-page__text {
+      min-width: 0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      font-weight: 800;
     }
     .app-header-inner > a:last-child {
       flex-shrink: 0;
@@ -1293,11 +1518,16 @@
       text-decoration: underline;
     }
     .title-page .hl {
-      background: #f2ec1f;
-      color: #121212;
-      padding: 0.14em 0.55em;
-      border-radius: 999px;
-      font-weight: inherit;
+      background: linear-gradient(140deg, #fde047 0%, #facc15 60%, #eab308 100%);
+      color: #1a1a1a;
+      padding: 0.12em 0.5em;
+      border-radius: 9px;
+      font-weight: 900;
+      box-shadow:
+        0 3px 10px rgba(234, 179, 8, 0.32),
+        inset 0 1px 0 rgba(255, 255, 255, 0.4),
+        inset 0 -1px 0 rgba(180, 83, 9, 0.18);
+      letter-spacing: -0.02em;
     }
 
     .app-header .header-link-btn {
@@ -1941,36 +2171,77 @@
     .jug-quick-actions {
       display: grid;
       grid-template-columns: 1fr 1fr 1fr;
-      gap: 0.5rem;
+      gap: 0.55rem;
       margin: 1rem 0 0.85rem;
     }
     .jug-quick-actions button {
+      position: relative;
       border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 0.65rem 0.4rem 0.55rem;
-      min-height: 5.5rem;
+      border-radius: 18px;
+      padding: 0.85rem 0.4rem 0.7rem;
+      min-height: 6rem;
       cursor: pointer;
       font-family: inherit;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: flex-start;
-      gap: 0.35rem;
+      gap: 0.55rem;
       background: var(--surface);
-      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
-      transition: transform 0.1s, border-color 0.15s;
+      box-shadow: 0 2px 12px rgba(15, 23, 42, 0.06);
+      transition: transform 0.12s ease, border-color 0.15s ease, box-shadow 0.15s ease;
     }
-    .jug-quick-actions button:active { transform: scale(0.98); }
+    .jug-quick-actions button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(15, 23, 42, 0.1);
+    }
+    .jug-quick-actions button:active { transform: scale(0.97); }
     .jug-quick-actions button .qa-ico {
+      width: 2.6rem;
+      height: 2.6rem;
+      border-radius: 14px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
       font-size: 1.45rem;
       line-height: 1;
+      color: #fff;
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+    }
+    .jug-quick-actions button .qa-ico.material-symbols-rounded,
+    .jug-quick-actions button .qa-ico.material-symbols-outlined {
+      font-variation-settings: "FILL" 1, "wght" 600, "GRAD" 0, "opsz" 24;
+      font-size: 1.45rem;
     }
     .jug-quick-actions button .qa-lbl {
-      font-size: 0.68rem;
+      font-size: 0.7rem;
       font-weight: 800;
       text-align: center;
       line-height: 1.25;
       color: var(--text);
+      letter-spacing: -0.01em;
+    }
+    .jug-qa--plan .qa-ico {
+      background: linear-gradient(140deg, #1f2937 0%, #0f172a 100%);
+      color: #facc15;
+    }
+    .jug-qa--diario .qa-ico {
+      background: linear-gradient(140deg, #60a5fa 0%, #2563eb 100%);
+    }
+    .jug-qa--grabar .qa-ico {
+      background: linear-gradient(140deg, #fb7185 0%, #e11d48 100%);
+    }
+    .jug-qa--video .qa-ico {
+      background: linear-gradient(140deg, #34d399 0%, #059669 100%);
+    }
+    .coach-qa--clientes .qa-ico {
+      background: linear-gradient(140deg, #818cf8 0%, #4f46e5 100%);
+    }
+    .coach-qa--finanzas .qa-ico {
+      background: linear-gradient(140deg, #4ade80 0%, #16a34a 100%);
+    }
+    .coach-qa--cupones .qa-ico {
+      background: linear-gradient(140deg, #fb923c 0%, #ea580c 100%);
     }
     .jug-quick-actions button.jug-qa--plan,
     .jug-quick-actions button.coach-qa--msg {
@@ -2131,15 +2402,15 @@
       transform: scale(0.97);
     }
     .jug-bottom-nav button .jn-ico-slot {
-      width: 2.75rem;
-      height: 2.75rem;
+      width: 2.85rem;
+      height: 2.85rem;
       display: flex;
       align-items: center;
       justify-content: center;
-      border-radius: 14px;
+      border-radius: 16px;
       color: #94a3bb;
       background: transparent;
-      transition: background 0.18s ease, color 0.15s ease, box-shadow 0.18s ease;
+      transition: background 0.22s ease, color 0.18s ease, box-shadow 0.22s ease, transform 0.18s ease;
     }
     .jug-bottom-nav button .jn-ico-slot svg {
       width: 1.4rem;
@@ -2147,14 +2418,28 @@
       flex-shrink: 0;
       display: block;
     }
+    .jug-bottom-nav button .jn-ico-slot .material-symbols-rounded {
+      font-size: 1.55rem;
+      line-height: 1;
+      font-variation-settings: "FILL" 0, "wght" 500, "GRAD" 0, "opsz" 24;
+      transition: font-variation-settings 0.22s ease;
+    }
+    .jug-bottom-nav button:hover:not(.is-active) .jn-ico-slot {
+      background: rgba(15, 23, 42, 0.04);
+      color: #475569;
+    }
     .jug-bottom-nav button.is-active {
       color: #0f172a;
-      font-weight: 700;
+      font-weight: 800;
     }
     .jug-bottom-nav button.is-active .jn-ico-slot {
-      color: #121212;
-      background: #f2ec1f;
-      box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
+      color: #1a1a1a;
+      background: linear-gradient(140deg, #f2ec1f 0%, #eab308 100%);
+      box-shadow: 0 4px 14px rgba(234, 179, 8, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+      transform: translateY(-1px);
+    }
+    .jug-bottom-nav button.is-active .jn-ico-slot .material-symbols-rounded {
+      font-variation-settings: "FILL" 1, "wght" 600, "GRAD" 0, "opsz" 24;
     }
     .coach-fin-grid {
       display: grid;
@@ -2601,6 +2886,13 @@
       letter-spacing: -0.02em;
       line-height: 1.25;
     }
+    .coach-agenda-slot__tipo {
+      margin: 0.15rem 0 0.25rem;
+      font-size: 0.7rem;
+      color: var(--muted);
+      font-weight: 600;
+      line-height: 1.3;
+    }
     .coach-agenda-pill {
       align-self: flex-start;
       font-size: 0.62rem;
@@ -2696,13 +2988,47 @@
     }
     .coach-urgent-item {
       display: flex;
-      gap: 0.6rem;
-      align-items: flex-start;
-      padding: 0.65rem 0.7rem;
+      gap: 0.65rem;
+      align-items: center;
+      padding: 0.7rem 0.75rem;
       border-radius: 14px;
       border: 1px solid var(--border);
       background: var(--surface);
       box-shadow: 0 1px 8px rgba(15, 23, 42, 0.04);
+      cursor: pointer;
+      transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+    }
+    .coach-urgent-item:hover,
+    .coach-urgent-item:focus-visible {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 16px rgba(15, 23, 42, 0.08);
+      outline: none;
+    }
+    .coach-urgent-item--crm:hover,
+    .coach-urgent-item--crm:focus-visible {
+      border-color: #f87171;
+    }
+    .coach-urgent-item--repro:hover,
+    .coach-urgent-item--repro:focus-visible {
+      border-color: #fb923c;
+    }
+    .coach-urgent-item--calendar:hover,
+    .coach-urgent-item--calendar:focus-visible {
+      border-color: #818cf8;
+    }
+    .coach-urgent-item__chev {
+      flex-shrink: 0;
+      color: var(--muted);
+      font-size: 1.1rem;
+      font-weight: 700;
+      line-height: 1;
+      padding-left: 0.2rem;
+      opacity: 0.55;
+    }
+    .coach-urgent-item:hover .coach-urgent-item__chev,
+    .coach-urgent-item:focus-visible .coach-urgent-item__chev {
+      opacity: 1;
+      color: var(--text);
     }
     .coach-urgent-item--crm {
       border-color: #fecaca;
@@ -2746,17 +3072,19 @@
       min-width: 0;
     }
     .coach-urgent-item__title {
-      margin: 0 0 0.2rem;
-      font-size: 0.8rem;
-      font-weight: 700;
-      line-height: 1.35;
+      margin: 0 0 0.15rem;
+      font-size: 0.86rem;
+      font-weight: 800;
+      line-height: 1.3;
       color: var(--text);
+      letter-spacing: -0.01em;
     }
     .coach-urgent-item__meta {
       margin: 0;
-      font-size: 0.7rem;
+      font-size: 0.72rem;
       color: var(--muted);
-      line-height: 1.4;
+      line-height: 1.35;
+      font-weight: 600;
     }
     .coach-urgent-empty {
       text-align: center;
@@ -3286,6 +3614,118 @@
       max-width: 520px;
       margin: 0 auto;
       padding: 1rem 1.25rem 2rem;
+    }
+    .jug-agenda-sheet {
+      padding-top: 1.25rem;
+    }
+    .jug-agenda-cta {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      width: 100%;
+      padding: 0.9rem 1rem;
+      border-radius: 18px;
+      border: 1px solid var(--border);
+      background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+      cursor: pointer;
+      font-family: inherit;
+      text-align: left;
+      box-shadow: 0 4px 16px rgba(234, 179, 8, 0.18);
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+    .jug-agenda-cta:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 24px rgba(234, 179, 8, 0.28);
+    }
+    .jug-agenda-cta:active { transform: scale(0.99); }
+    .jug-agenda-cta__ico {
+      flex-shrink: 0;
+      width: 2.75rem;
+      height: 2.75rem;
+      border-radius: 14px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.55rem;
+      color: #1f2937;
+      background: linear-gradient(140deg, #facc15 0%, #eab308 100%);
+      font-variation-settings: "FILL" 1, "wght" 600, "GRAD" 0, "opsz" 24;
+      box-shadow: 0 4px 12px rgba(234, 179, 8, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+    }
+    .jug-agenda-cta__body {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.15rem;
+    }
+    .jug-agenda-cta__title {
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: #1f2937;
+      letter-spacing: -0.01em;
+      line-height: 1.2;
+    }
+    .jug-agenda-cta__sub {
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: #92400e;
+      line-height: 1.3;
+    }
+    .jug-agenda-cta__chev {
+      flex-shrink: 0;
+      font-size: 1.4rem;
+      color: #92400e;
+      opacity: 0.7;
+      font-variation-settings: "FILL" 0, "wght" 700, "GRAD" 0, "opsz" 24;
+    }
+    .jug-agenda-cta:hover .jug-agenda-cta__chev { opacity: 1; transform: translateX(2px); transition: transform 0.15s ease, opacity 0.15s ease; }
+    .jug-agenda-section-head {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 0.5rem;
+      margin: 1.25rem 0 0.65rem;
+    }
+    .jug-agenda-section-title {
+      font-size: 1.05rem;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+      margin: 0;
+      color: var(--text);
+    }
+    .jug-agenda-section-count {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .jug-agenda-empty {
+      border: 1px dashed var(--border);
+      border-radius: 18px;
+      padding: 1.5rem 1.25rem;
+      text-align: center;
+      background: var(--card);
+    }
+    .jug-agenda-empty__ico {
+      font-size: 2.2rem;
+      color: var(--muted);
+      display: inline-block;
+      margin-bottom: 0.4rem;
+      font-variation-settings: "FILL" 1, "wght" 500, "GRAD" 0, "opsz" 48;
+    }
+    .jug-agenda-empty__title {
+      margin: 0 0 0.3rem;
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: var(--text);
+    }
+    .jug-agenda-empty__sub {
+      margin: 0;
+      font-size: 0.78rem;
+      color: var(--muted);
+      line-height: 1.45;
     }
     .placeholder-sheet h2 {
       font-size: 1rem;
@@ -4377,8 +4817,10 @@
     @media (min-width: 380px) {
       .jug-quick-actions--4 { grid-template-columns: repeat(4, 1fr); }
     }
-    .jug-quick-actions--4 button { min-height: 4.85rem; }
+    .jug-quick-actions--4 button { min-height: 6rem; padding: 0.75rem 0.3rem 0.65rem; }
     .jug-quick-actions--4 button .qa-lbl { font-size: 0.62rem; }
+    .jug-quick-actions--4 button .qa-ico { width: 2.4rem; height: 2.4rem; font-size: 1.3rem; }
+    .jug-quick-actions--4 button .qa-ico.material-symbols-rounded { font-size: 1.3rem; }
 
     .coach-perfil-dl {
       margin: 0;
@@ -5040,28 +5482,105 @@
     }
     .pres-flow-box ol { margin: 0.35rem 0 0; padding-left: 1.2rem; }
     .pres-card {
-      border: 1px solid var(--border); border-radius: 12px; padding: 0.85rem; margin-bottom: 0.65rem;
-      background: var(--surface); text-align: left;
+      position: relative;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 1rem 1.1rem 0.9rem;
+      margin-bottom: 0.75rem;
+      background: var(--surface);
+      text-align: left;
+      box-shadow: 0 2px 14px rgba(15, 23, 42, 0.06);
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
     }
-    .pres-card h4 { margin: 0 0 0.35rem; font-size: 0.95rem; }
-    .pres-badges { display: flex; flex-wrap: wrap; gap: 0.35rem; margin: 0.4rem 0; }
+    .pres-card:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(15, 23, 42, 0.1);
+    }
+    .pres-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 1.1rem;
+      right: 1.1rem;
+      height: 3px;
+      border-radius: 0 0 4px 4px;
+      background: linear-gradient(90deg, #facc15 0%, #3b82f6 100%);
+    }
+    .pres-card__head {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      margin: 0 0 0.55rem;
+    }
+    .pres-card__head-ico {
+      flex-shrink: 0;
+      width: 2.1rem;
+      height: 2.1rem;
+      border-radius: 11px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(140deg, #facc15 0%, #eab308 100%);
+      color: #1f2937;
+      font-size: 1.15rem;
+      box-shadow: 0 2px 8px rgba(234, 179, 8, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+      font-variation-settings: "FILL" 1, "wght" 600, "GRAD" 0, "opsz" 24;
+    }
+    .pres-card h4 {
+      margin: 0;
+      font-size: 1rem;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+      color: var(--text);
+    }
+    .pres-badges { display: flex; flex-wrap: wrap; gap: 0.4rem; margin: 0 0 0.65rem; }
     .pres-badge {
-      font-size: 0.62rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.04em;
-      padding: 0.15rem 0.4rem; border-radius: 6px; background: var(--card); border: 1px solid var(--border);
+      font-size: 0.62rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 0.25rem 0.55rem;
+      border-radius: 999px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      display: inline-flex;
+      align-items: center;
     }
-    .pres-badge.est-pendiente_fecha { background: #fff7ed; border-color: #fed7aa; }
-    .pres-badge.est-programada { background: #eff6ff; border-color: #bfdbfe; }
-    .pres-badge.est-reprogramada { background: #eef2ff; border-color: #c7d2fe; }
-    .pres-badge.est-solicitud_reprogramacion { background: #fef3c7; border-color: #fcd34d; }
-    .pres-badge.est-completada { background: #ecfdf5; border-color: #6ee7b7; }
+    .pres-badge.est-pendiente_fecha { background: #fff7ed; border-color: #fed7aa; color: #9a3412; }
+    .pres-badge.est-programada { background: #eff6ff; border-color: #bfdbfe; color: #1e40af; }
+    .pres-badge.est-reprogramada { background: #eef2ff; border-color: #c7d2fe; color: #4338ca; }
+    .pres-badge.est-solicitud_reprogramacion { background: #fef3c7; border-color: #fcd34d; color: #854d0e; }
+    .pres-badge.est-completada { background: #ecfdf5; border-color: #6ee7b7; color: #065f46; }
     .pres-badge.est-cancelada { background: #f3f4f6; color: var(--muted); }
-    .pres-badge.pago-online { color: #065f46; }
-    .pres-badge.pago-efectivo { color: #92400e; }
-    .pres-badge.pago-pack { color: #1e40af; }
-    .pres-meta { font-size: 0.74rem; color: var(--muted); margin: 0.25rem 0; line-height: 1.4; }
+    .pres-badge.pago-online { background: #ecfdf5; border-color: #a7f3d0; color: #065f46; }
+    .pres-badge.pago-efectivo { background: #fef3c7; border-color: #fcd34d; color: #92400e; }
+    .pres-badge.pago-pack { background: #eff6ff; border-color: #bfdbfe; color: #1e40af; }
+    .pres-card__when {
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: var(--text);
+      letter-spacing: -0.01em;
+      margin: 0 0 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .pres-card__when-ico {
+      font-size: 1.05rem;
+      color: var(--muted);
+      font-variation-settings: "FILL" 0, "wght" 600, "GRAD" 0, "opsz" 24;
+    }
+    .pres-meta { font-size: 0.78rem; color: var(--text); margin: 0.35rem 0; line-height: 1.5; }
+    .pres-meta strong { color: var(--muted); font-weight: 700; }
     .pres-notif {
-      font-size: 0.72rem; background: rgba(217,246,74,0.25); border: 1px solid var(--lime-dark);
-      padding: 0.45rem 0.6rem; border-radius: 8px; margin: 0.5rem 0; line-height: 1.35;
+      font-size: 0.74rem;
+      background: linear-gradient(135deg, rgba(217, 246, 74, 0.2) 0%, rgba(217, 246, 74, 0.08) 100%);
+      border: 1px solid var(--lime-dark);
+      padding: 0.55rem 0.7rem;
+      border-radius: 10px;
+      margin: 0.65rem 0 0;
+      line-height: 1.4;
+      color: #4d4a1c;
     }
     .pres-form { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 1rem; margin-bottom: 1.25rem; }
     .pres-form h3 { margin: 0 0 0.65rem; font-size: 0.95rem; }
@@ -5085,34 +5604,38 @@
   <section class="app-view app-view-home is-active" data-view="home" id="view-home">
     <div class="home-hero">
       <h1>Gimadd <span style="background:var(--lime,#d9f64a);padding:0.08em 0.25em;border-radius:6px">Mentor</span></h1>
-      <p class="home-lead-short">Consola para entrenadores de alto rendimiento: objetivos, vídeo y seguimiento en un solo flujo.</p>
-        <p>Una sola app demo: elige tu perfil. Objetivos y partidos se guardan en el navegador y se comparten entre jugador y entrenador en este dispositivo (también se incrustan al exportar el HTML).</p>
-      </div>
-      <p class="home-subtitle gimadd-pre-only"><strong>Mismo dispositivo:</strong> cada jugador tiene sus objetivos y diario aparte. El entrenador cambia de jugador en el panel o aquí; el CRM lista a todos los clientes.</p>
+      <p class="home-tagline">Objetivos, vídeo y seguimiento. La app que conecta a entrenadores y jugadores de pádel.</p>
+      <p class="home-lead-short gimadd-pre-only">Consola para entrenadores de alto rendimiento: objetivos, vídeo y seguimiento en un solo flujo.</p>
+      <p class="gimadd-pre-only">Una sola app demo: elige tu perfil. Objetivos y partidos se guardan en el navegador y se comparten entre jugador y entrenador en este dispositivo (también se incrustan al exportar el HTML).</p>
     </div>
+    <p class="home-subtitle gimadd-pre-only"><strong>Mismo dispositivo:</strong> cada jugador tiene sus objetivos y diario aparte. El entrenador cambia de jugador en el panel o aquí; el CRM lista a todos los clientes.</p>
 
-    <div class="home-player-section">
-      <h2>Jugadores (demo multipérfil)</h2>
+    <div class="home-player-section home-pick-section">
+      <h2 class="home-pick-label">Jugadores<span class="pre-tag gimadd-pre-only">(demo multipérfil)</span></h2>
       <div class="home-player-grid" id="homePlayerPickList" role="list">
-        <button type="button" class="profile-card jugador profile-card--player-pick" data-pick-player="demo-juan" aria-label="Entrar como Juan García"><span class="pill-mini">App + CRM</span><p class="t2">Juan García</p><p class="d2">Plan de acción con 3 objetivos · activos paralelos · diario y videoanálisis demo.</p></button>
-        <button type="button" class="profile-card jugador profile-card--player-pick" data-pick-player="player-laura" aria-label="Entrar como Laura Sánchez"><span class="pill-mini">Lead</span><p class="t2">Laura Sánchez</p><p class="d2">Sin app todavía · encaja con lead del CRM.</p></button>
-        <button type="button" class="profile-card jugador profile-card--player-pick" data-pick-player="player-marta" aria-label="Entrar como Marta Ruiz"><span class="pill-mini">Reactivación</span><p class="t2">Marta Ruiz</p><p class="d2">Histórico mínimo en app · pausa y último partido 2025.</p></button>
-        <button type="button" class="profile-card jugador profile-card--player-pick" data-pick-player="player-carlos" aria-label="Entrar como Carlos Medina"><span class="pill-mini">Nuevo pack</span><p class="t2">Carlos Medina</p><p class="d2">Objetivos recientes + partido y clase de pista.</p></button>
-        <button type="button" class="profile-card jugador profile-card--player-pick" data-pick-player="player-ana" aria-label="Entrar como Ana Torres"><span class="pill-mini">Videoanálisis</span><p class="t2">Ana Torres</p><p class="d2">Perfil competitivo · partidos y foco en vídeo.</p></button>
+        <button type="button" class="profile-card jugador profile-card--player-pick" data-pick-player="demo-juan" aria-label="Entrar como Juan García"><img class="profile-pick-photo" src="https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=200&amp;h=200&amp;fit=crop" width="68" height="68" alt="" /><span class="pill-mini">App + CRM</span><p class="t2">Juan García</p><p class="d2">Plan de acción con 3 objetivos · activos paralelos · diario y videoanálisis demo.</p></button>
+        <button type="button" class="profile-card jugador profile-card--player-pick" data-pick-player="player-laura" aria-label="Entrar como Laura Sánchez"><img class="profile-pick-photo" src="https://images.unsplash.com/photo-1544723795-3fb6469f5b39?w=200&amp;h=200&amp;fit=crop" width="68" height="68" alt="" /><span class="pill-mini">Lead</span><p class="t2">Laura Sánchez</p><p class="d2">Sin app todavía · encaja con lead del CRM.</p></button>
+        <button type="button" class="profile-card jugador profile-card--player-pick" data-pick-player="player-marta" aria-label="Entrar como Marta Ruiz"><img class="profile-pick-photo" src="https://images.unsplash.com/photo-1580489944761-15a19d654956?w=200&amp;h=200&amp;fit=crop" width="68" height="68" alt="" /><span class="pill-mini">Reactivación</span><p class="t2">Marta Ruiz</p><p class="d2">Histórico mínimo en app · pausa y último partido 2025.</p></button>
+        <button type="button" class="profile-card jugador profile-card--player-pick" data-pick-player="player-carlos" aria-label="Entrar como Carlos Medina"><img class="profile-pick-photo" src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&amp;h=200&amp;fit=crop" width="68" height="68" alt="" /><span class="pill-mini">Nuevo pack</span><p class="t2">Carlos Medina</p><p class="d2">Objetivos recientes + partido y clase de pista.</p></button>
+        <button type="button" class="profile-card jugador profile-card--player-pick" data-pick-player="player-ana" aria-label="Entrar como Ana Torres"><img class="profile-pick-photo" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&amp;h=200&amp;fit=crop" width="68" height="68" alt="" /><span class="pill-mini">Videoanálisis</span><p class="t2">Ana Torres</p><p class="d2">Perfil competitivo · partidos y foco en vídeo.</p></button>
       </div>
     </div>
 
-    <div class="profile-pick">
+    <div class="profile-pick home-pick-section">
+      <h2 class="home-pick-label">Entrenador</h2>
       <button type="button" class="profile-card entrenador" id="pickEntrenador" aria-label="Entrar como entrenador">
-        <div class="tag ent">Perfil entrenador</div>
-        <p class="t2">Soy entrenador</p>
-        <p class="d2 gimadd-pre-only">Crear y gestionar objetivos del jugador, revisiones de videoanálisis, completar o reactivar metas, y ver el diario de partidos.</p>
+        <img class="profile-pick-photo" src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=200&amp;h=200&amp;fit=crop" width="80" height="80" alt="" />
+        <span class="profile-pick-body">
+          <span class="tag ent">Perfil entrenador</span>
+          <span class="t2">Soy entrenador</span>
+          <span class="d2 gimadd-pre-only">Crear y gestionar objetivos del jugador, revisiones de videoanálisis, completar o reactivar metas, y ver el diario de partidos.</span>
+        </span>
       </button>
     </div>
 
-    <div class="persist-app-home">
+    <div class="persist-app-home gimadd-pre-only">
       <button type="button" id="btnDownloadFullApp">Descargar aplicación completa (objetivos + partidos en este HTML)</button>
-      <p class="hint gimadd-pre-only">Guarda el archivo descargado y reemplaza este para conservar todo aunque borres datos del sitio.</p>
+      <p class="hint">Guarda el archivo descargado y reemplaza este para conservar todo aunque borres datos del sitio.</p>
     </div>
   </section>
 
@@ -5136,19 +5659,20 @@
 
         <div class="jug-quick-actions jug-quick-actions--4" role="group" aria-label="Acciones rápidas">
           <button type="button" class="jug-qa--plan" id="jugQuickPlan">
-            <span class="qa-ico material-symbols-outlined" aria-hidden="true">track_changes</span>
+            <span class="qa-ico material-symbols-rounded" aria-hidden="true">flag</span>
             <span class="qa-lbl">Plan de<br />acción</span>
           </button>
-          <button type="button" id="jugQuickDiario">
-            <span class="qa-ico material-symbols-outlined" aria-hidden="true">menu_book</span>
+          <button type="button" class="jug-qa--diario" id="jugQuickDiario">
+            <span class="qa-ico material-symbols-rounded" aria-hidden="true">auto_stories</span>
             <span class="qa-lbl">Diario</span>
           </button>
-          <button type="button" id="jugQuickGrabar">
-            <span class="qa-ico material-symbols-outlined" aria-hidden="true">videocam</span>
+          <button type="button" class="jug-qa--grabar" id="jugQuickGrabar">
+            <span class="qa-ico material-symbols-rounded" aria-hidden="true">videocam</span>
             <span class="qa-lbl">Grabar</span>
           </button>
-          <button type="button" id="openJugVideoanalisis">
-            <span class="qa-ico material-symbols-outlined" aria-hidden="true">analytics</span>
+          <button type="button" class="jug-qa--video" id="openJugVideoanalisis">
+            <span class="qa-badge" aria-label="1 análisis nuevo">1</span>
+            <span class="qa-ico material-symbols-rounded" aria-hidden="true">insights</span>
             <span class="qa-lbl">Video<br />análisis</span>
           </button>
         </div>
@@ -5195,7 +5719,7 @@
     <header class="app-header">
       <div class="app-header-inner">
         <button type="button" class="back" id="btnBackJugGrabar" aria-label="Volver"></button>
-        <h1 class="title-page">Grabaciones</h1>
+        <h1 class="title-page"><span class="title-page__icon material-symbols-rounded" aria-hidden="true">videocam</span><span class="title-page__text">Grabaciones</span></h1>
       </div>
     </header>
     <div class="jug-grabar-sheet">
@@ -5258,7 +5782,7 @@
       <button type="button" class="btn-nuevo-video" id="btnJugGrabarConfirm" style="width:100%;margin-top:0.35rem">
         Confirmar envío al entrenador
       </button>
-      <p style="margin:0.65rem 0 0;font-size:0.72rem;color:var(--muted);line-height:1.4;text-align:center">
+      <p class="gimadd-pre-only" style="margin:0.65rem 0 0;font-size:0.72rem;color:var(--muted);line-height:1.4;text-align:center">
         Demo: el archivo no se sube a ningún servidor; solo simulamos el aviso al entrenador en esta app.
       </p>
     </div>
@@ -5268,12 +5792,12 @@
     <header class="app-header">
       <div class="app-header-inner">
         <button type="button" class="back" id="btnBackJugVa" aria-label="Volver"></button>
-        <h1 class="title-page">Videoanálisis</h1>
+        <h1 class="title-page"><span class="title-page__icon material-symbols-rounded" aria-hidden="true">play_circle</span><span class="title-page__text">Videoanálisis</span></h1>
       </div>
     </header>
     <div class="jug-grabar-sheet" style="padding-top:0.25rem">
       <div id="jugVaEmpty" class="sub" style="padding:0.75rem;border:1px dashed var(--border);border-radius:12px;text-align:center;line-height:1.5">
-        Tu entrenador aún no ha <strong>publicado</strong> un análisis en esta demo. Cuando lo haga desde su pestaña Videoanálisis, aquí verás el mismo vídeo, las marcas y el feedback.
+        Tu entrenador aún no ha <strong>publicado</strong> un análisis. Cuando lo haga, aquí verás el vídeo, las marcas y su feedback.
       </div>
       <div class="va-workspace va-workspace--jugador" id="jugVaContent" hidden>
         <div class="va-sec" id="jugVaHistorySec" hidden>
@@ -5319,11 +5843,11 @@
   </section>
 
   <section class="app-view" data-view="objetivos" id="view-objetivos">
-<header class="hero">
-    <div class="hero-top">
+<header class="app-header">
+    <div class="app-header-inner">
       <button type="button" class="back" aria-label="Volver" id="btnBackObjetivos"></button>
-      <h1 id="objetivosHeroTitle">Objetivos</h1>
-      <button type="button" class="header-aux-btn" aria-label="Menú">⋮</button>
+      <h1 class="title-page" id="objetivosHeroTitle"><span class="title-page__icon material-symbols-rounded" aria-hidden="true">crisis_alert</span><span class="title-page__text"><span class="hl">Objetivos</span></span></h1>
+      <button type="button" class="header-aux-btn" aria-label="Menú"><span class="material-symbols-rounded" aria-hidden="true">more_vert</span></button>
     </div>
   </header>
 
@@ -5343,22 +5867,36 @@
     </button>
   </nav>
 
-  <p class="progress-hint jugador-objetivos-lead" id="objetivosHintPlayer">El porcentaje de progreso (0–100&nbsp;%) lo ajusta tu <strong>entrenador</strong>. Las prácticas del <strong>plan de acción</strong> se registran en el <strong>diario</strong> (partidos o clases según el enfoque del objetivo). Cuando un objetivo cumple sus prácticas aparece ✅, pero el paso a <strong>pendiente de revisión</strong> ocurre cuando <strong>todos</strong> los objetivos del plan han cumplido las prácticas; entonces debes enviar un nuevo vídeo. El <strong>completado</strong> lo marca el entrenador tras el análisis.</p>
-  <p class="progress-hint jugador-objetivos-lead" id="objetivosHintCoach" hidden>Vista entrenador CRM: misma información que el jugador en <strong>Plan de acción</strong>. El paso a <strong>pendiente de revisión</strong> ocurre cuando <strong>todos</strong> los objetivos del plan cumplen prácticas; hasta entonces verás ✅ en quien ya las cumplió, pero siguen en el plan de partidos o clase.</p>
+  <p class="progress-hint jugador-objetivos-lead gimadd-pre-only" id="objetivosHintPlayer">El porcentaje de progreso (0–100&nbsp;%) lo ajusta tu <strong>entrenador</strong>. Las prácticas del <strong>plan de acción</strong> se registran en el <strong>diario</strong> (partidos o clases según el enfoque del objetivo). Cuando un objetivo cumple sus prácticas aparece ✅, pero el paso a <strong>pendiente de revisión</strong> ocurre cuando <strong>todos</strong> los objetivos del plan han cumplido las prácticas; entonces debes enviar un nuevo vídeo. El <strong>completado</strong> lo marca el entrenador tras el análisis.</p>
+  <p class="progress-hint jugador-objetivos-lead gimadd-pre-only" id="objetivosHintCoach" hidden>Vista entrenador CRM: misma información que el jugador en <strong>Plan de acción</strong>. El paso a <strong>pendiente de revisión</strong> ocurre cuando <strong>todos</strong> los objetivos del plan cumplen prácticas; hasta entonces verás ✅ en quien ya las cumplió, pero siguen en el plan de partidos o clase.</p>
 
   <main>
     <div class="jugador-obj-panel is-on" data-jugador-obj-panel="plan">
       <div class="coach-plan-nested-shell" aria-label="Bloques dentro del plan de acción">
-        <p class="coach-plan-phase-label">Dentro de «Plan de acción» — elige el bloque</p>
+        <div class="plan-phase-header">
+          <span class="plan-phase-header__icon material-symbols-rounded" aria-hidden="true">flag</span>
+          <div class="plan-phase-header__text">
+            <p class="plan-phase-header__kicker">Estás dentro de</p>
+            <h3 class="plan-phase-header__title">Plan de acción</h3>
+          </div>
+          <span class="plan-phase-header__count" id="jugadorPlanHeaderCount">0</span>
+        </div>
+        <p class="plan-phase-header__hint">Filtra por el bloque que estás trabajando ahora</p>
         <nav class="jugador-plan-subtabs" aria-label="Fases del plan de acción">
           <button type="button" class="on" data-jugador-plan-subtab="revision" aria-selected="true">
-            Plan Pendiente de revisión · videoanálisis <span class="tab-count" id="jugadorPlanSubCntRev">(0)</span>
+            <span class="material-symbols-rounded plan-sub-ico" aria-hidden="true">videocam</span>
+            <span class="plan-sub-lbl">Pendiente de revisión</span>
+            <span class="tab-count" id="jugadorPlanSubCntRev">0</span>
           </button>
           <button type="button" data-jugador-plan-subtab="partido" aria-selected="false">
-            Plan para partidos <span class="tab-count" id="jugadorPlanSubCntPartido">(0)</span>
+            <span class="material-symbols-rounded plan-sub-ico" aria-hidden="true">sports_tennis</span>
+            <span class="plan-sub-lbl">Partidos</span>
+            <span class="tab-count" id="jugadorPlanSubCntPartido">0</span>
           </button>
           <button type="button" data-jugador-plan-subtab="clase" aria-selected="false">
-            Plan para clase en pista <span class="tab-count" id="jugadorPlanSubCntClase">(0)</span>
+            <span class="material-symbols-rounded plan-sub-ico" aria-hidden="true">school</span>
+            <span class="plan-sub-lbl">Clase en pista</span>
+            <span class="tab-count" id="jugadorPlanSubCntClase">0</span>
           </button>
         </nav>
 
@@ -5415,20 +5953,34 @@
           </div>
           <button type="button" class="jug-hub-settings jug-hub-perfil-btn" id="btnCoachHubSettings" title="Mi perfil" aria-label="Abrir perfil">Perfil</button>
         </div>
+        <div class="coach-hub-kpis" aria-label="Resumen del entrenador">
+          <div class="coach-hub-kpi">
+            <span class="coach-hub-kpi-num">23</span>
+            <span class="coach-hub-kpi-lbl">jugadores</span>
+          </div>
+          <div class="coach-hub-kpi coach-hub-kpi--alert">
+            <span class="coach-hub-kpi-num">7</span>
+            <span class="coach-hub-kpi-lbl">vídeos pendientes</span>
+          </div>
+          <div class="coach-hub-kpi">
+            <span class="coach-hub-kpi-num">1.847&nbsp;€</span>
+            <span class="coach-hub-kpi-lbl">este mes</span>
+          </div>
+        </div>
       </header>
 
       <div class="jug-hub-main-scroll">
         <div class="jug-quick-actions coach-quick-actions" role="group" aria-label="Acciones rápidas entrenador">
-          <button type="button" id="openCoachClientes">
-            <span class="qa-ico" aria-hidden="true">👥</span>
+          <button type="button" class="coach-qa--clientes" id="openCoachClientes">
+            <span class="qa-ico material-symbols-rounded" aria-hidden="true">groups</span>
             <span class="qa-lbl">Clientes</span>
           </button>
-          <button type="button" id="openCoachFinanzas">
-            <span class="qa-ico" aria-hidden="true">💶</span>
+          <button type="button" class="coach-qa--finanzas" id="openCoachFinanzas">
+            <span class="qa-ico material-symbols-rounded" aria-hidden="true">payments</span>
             <span class="qa-lbl">Finanzas</span>
           </button>
-          <button type="button" id="openCoachCupones">
-            <span class="qa-ico" aria-hidden="true">🏷️</span>
+          <button type="button" class="coach-qa--cupones" id="openCoachCupones">
+            <span class="qa-ico material-symbols-rounded" aria-hidden="true">local_offer</span>
             <span class="qa-lbl">Cupones</span>
           </button>
         </div>
@@ -5455,7 +6007,7 @@
     <header class="app-header">
       <div class="app-header-inner">
         <button type="button" class="back" aria-label="Volver" id="btnBackEntrenador"></button>
-        <h1 class="title-page">Panel <span class="hl">Entrenador</span></h1>
+        <h1 class="title-page"><span class="title-page__icon material-symbols-rounded" aria-hidden="true">dashboard</span><span class="title-page__text">Panel <span class="hl">Entrenador</span></span></h1>
       </div>
     </header>
     <div class="coach-dash">
@@ -5482,13 +6034,13 @@
 
       <div class="coach-panel is-on" id="coachPanelPerfil" data-coach-panel="perfil">
         <h1 style="font-size:1.05rem;margin:0 0 0.35rem">Ficha del jugador</h1>
-        <p class="sub">Datos personales y contexto del servicio. Lo marcado con <strong>CRM</strong> proviene de la ficha de clientes; el resto del perfil demo es local a esta plantilla.</p>
+        <p class="sub gimadd-pre-only">Datos personales y contexto del servicio. Lo marcado con <strong>CRM</strong> proviene de la ficha de clientes; el resto del perfil demo es local a esta plantilla.</p>
         <div id="coachPlayerProfileMount"></div>
       </div>
 
       <div class="coach-panel" id="coachPanelRevision" data-coach-panel="revision">
         <h1 style="font-size:1.05rem;margin:0 0 0.35rem">Videoanálisis</h1>
-        <p class="sub">
+        <p class="sub gimadd-pre-only">
           Consola de revisión: reproduce el vídeo de prueba, añade marcas, crea objetivos y feedback (todo demo local). Cola e historial debajo.
         </p>
         <div id="coachRevisionAlerts"></div>
@@ -5549,11 +6101,11 @@
               </div>
             </form>
             <ul class="va-mark-list va-goal-review-list" id="coachVaGoalList" aria-label="Objetivos creados desde esta revisión de vídeo"></ul>
-            <p class="sub" style="margin:0.35rem 0 0;font-size:0.72rem">Se guardan en los objetivos del jugador activo (misma demo que el resto de la app).</p>
+            <p class="sub gimadd-pre-only" style="margin:0.35rem 0 0;font-size:0.72rem">Se guardan en los objetivos del jugador activo (misma demo que el resto de la app).</p>
           </div>
           <div class="va-sec">
             <h3>Plan de acción en este vídeo</h3>
-            <p class="sub" style="margin:0 0 0.45rem;font-size:0.72rem;line-height:1.45">
+            <p class="sub gimadd-pre-only" style="margin:0 0 0.45rem;font-size:0.72rem;line-height:1.45">
               Si el jugador ya tiene objetivos en el plan, ajústalos aquí mientras ves el vídeo. Cada análisis publicado recibe un número (001, 002…) para enlazar objetivos e historial en «Videos analizados». En el primer ciclo suele estar vacío hasta definir el plan.
             </p>
             <div id="coachVaPlanMount" aria-live="polite"></div>
@@ -5569,7 +6121,7 @@
             </div>
             <div id="coachVaFbPreview" class="sub" style="margin-top:0.45rem;font-size:0.72rem"></div>
           </div>
-          <button type="button" class="va-publish" id="coachVaPublish">Publicar análisis y notificar al jugador (demo)</button>
+          <button type="button" class="va-publish" id="coachVaPublish">Publicar análisis y notificar al jugador</button>
         </div>
         <section class="coach-rev-sec" aria-labelledby="coachRevPendTitle">
           <h2 class="coach-rev-sec-title" id="coachRevPendTitle">Videos pendientes de revisión</h2>
@@ -5599,16 +6151,30 @@
         </nav>
         <div class="coach-obj-subpanel is-on" data-coach-obj-panel="plan">
           <div class="coach-plan-nested-shell" aria-label="Filtros secundarios del plan de acción">
-            <p class="coach-plan-phase-label">Dentro de «Plan de acción» — elige el bloque</p>
+            <div class="plan-phase-header plan-phase-header--coach">
+              <span class="plan-phase-header__icon material-symbols-rounded" aria-hidden="true">flag</span>
+              <div class="plan-phase-header__text">
+                <p class="plan-phase-header__kicker">Estás dentro de</p>
+                <h3 class="plan-phase-header__title">Plan de acción</h3>
+              </div>
+              <span class="plan-phase-header__count" id="coachPlanHeaderCount">0</span>
+            </div>
+            <p class="plan-phase-header__hint">Filtra por el bloque del plan que quieres revisar</p>
             <nav class="jugador-plan-subtabs" aria-label="Fases del plan de acción (entrenador)">
               <button type="button" class="on" data-coach-plan-subtab="revision" aria-selected="true">
-                Plan Pendiente de revisión <span class="tab-count" id="coachPlanSubCntRev">(0)</span>
+                <span class="material-symbols-rounded plan-sub-ico" aria-hidden="true">videocam</span>
+                <span class="plan-sub-lbl">Pendiente de revisión</span>
+                <span class="tab-count" id="coachPlanSubCntRev">0</span>
               </button>
               <button type="button" data-coach-plan-subtab="partido" aria-selected="false">
-                Plan para partidos <span class="tab-count" id="coachPlanSubCntPartido">(0)</span>
+                <span class="material-symbols-rounded plan-sub-ico" aria-hidden="true">sports_tennis</span>
+                <span class="plan-sub-lbl">Partidos</span>
+                <span class="tab-count" id="coachPlanSubCntPartido">0</span>
               </button>
               <button type="button" data-coach-plan-subtab="clase" aria-selected="false">
-                Plan para clase en pista <span class="tab-count" id="coachPlanSubCntClase">(0)</span>
+                <span class="material-symbols-rounded plan-sub-ico" aria-hidden="true">school</span>
+                <span class="plan-sub-lbl">Clase en pista</span>
+                <span class="tab-count" id="coachPlanSubCntClase">0</span>
               </button>
             </nav>
 
@@ -5698,7 +6264,7 @@
 
       <div class="coach-panel" id="coachPanelDiario" data-coach-panel="diario">
         <h1 style="font-size:1.05rem">Diario del jugador</h1>
-        <p class="sub"><strong>Partidos</strong> y <strong>clases en pista</strong> registrados por el jugador (solo lectura en esta demo).</p>
+        <p class="sub"><strong>Partidos</strong> y <strong>clases en pista</strong> registrados por el jugador (solo lectura).</p>
         <nav class="coach-diary-subnav" style="display:flex;gap:0.5rem;margin-bottom:1rem;flex-wrap:wrap" aria-label="Vista diario">
           <button type="button" class="on" data-coach-diary-tab="partidos">Partidos</button>
           <button type="button" data-coach-diary-tab="clases">Clases en pista</button>
@@ -5732,7 +6298,7 @@
     <header class="app-header">
       <div class="app-header-inner">
         <button type="button" class="back" id="btnBackCoachServicios" aria-label="Volver"></button>
-        <h1 class="title-page"><span class="hl">Servicios</span></h1>
+        <h1 class="title-page"><span class="title-page__icon material-symbols-rounded" aria-hidden="true">category</span><span class="title-page__text">Mis <span class="hl">servicios</span></span></h1>
       </div>
     </header>
     <div class="placeholder-sheet jug-servicios-sheet coach-servicios-manage" style="max-width: var(--maxw); margin: 0 auto; padding-bottom: max(2.75rem, calc(2rem + env(safe-area-inset-bottom, 0px)))">
@@ -5761,7 +6327,7 @@
     <header class="app-header">
       <div class="app-header-inner">
         <button type="button" class="back" id="btnBackCoachMensajes" aria-label="Volver"></button>
-        <h1 class="title-page"><span class="hl">Mensajes</span></h1>
+        <h1 class="title-page"><span class="title-page__icon material-symbols-rounded" aria-hidden="true">forum</span><span class="title-page__text"><span class="hl">Mensajes</span></span></h1>
       </div>
     </header>
     <div class="placeholder-sheet chat-coach-layout">
@@ -5786,7 +6352,7 @@
     <header class="app-header">
       <div class="app-header-inner">
         <button type="button" class="back" id="btnBackCoachAgenda" aria-label="Volver"></button>
-        <h1 class="title-page"><span class="hl">Agenda</span></h1>
+        <h1 class="title-page"><span class="title-page__icon material-symbols-rounded" aria-hidden="true">calendar_month</span><span class="title-page__text"><span class="hl">Agenda</span></span></h1>
       </div>
     </header>
     <div class="placeholder-sheet">
@@ -5821,7 +6387,7 @@
     <header class="app-header">
       <div class="app-header-inner">
         <button type="button" class="back" id="btnBackCoachClientes" aria-label="Volver"></button>
-        <h1 class="title-page">CRM · <span class="hl">Clientes</span></h1>
+        <h1 class="title-page"><span class="title-page__icon material-symbols-rounded" aria-hidden="true">groups</span><span class="title-page__text">CRM · <span class="hl">Clientes</span></span></h1>
         <button type="button" class="fab-crm" id="fabCrmAdd" aria-label="Añadir cliente">＋</button>
       </div>
     </header>
@@ -5881,7 +6447,7 @@
     <header class="app-header">
       <div class="app-header-inner">
         <button type="button" class="back" id="btnBackCoachCupones" aria-label="Volver"></button>
-        <h1 class="title-page"><span class="hl">Cupones</span></h1>
+        <h1 class="title-page"><span class="title-page__icon material-symbols-rounded" aria-hidden="true">local_offer</span><span class="title-page__text"><span class="hl">Cupones</span></span></h1>
       </div>
     </header>
     <div class="placeholder-sheet">
@@ -5895,7 +6461,7 @@
     <header class="app-header">
       <div class="app-header-inner">
         <button type="button" class="back" id="btnBackCoachFinanzas" aria-label="Volver"></button>
-        <h1 class="title-page">Mi <span class="hl">billetera</span></h1>
+        <h1 class="title-page"><span class="title-page__icon material-symbols-rounded" aria-hidden="true">account_balance_wallet</span><span class="title-page__text">Mi <span class="hl">billetera</span></span></h1>
       </div>
     </header>
     <div class="placeholder-sheet coach-wallet" style="max-width: var(--maxw); margin: 0 auto; padding-bottom: max(2.75rem, calc(2rem + env(safe-area-inset-bottom, 0px)))">
@@ -5966,9 +6532,9 @@
             <button type="button" class="coach-wallet-setting" id="coachWalSetFreq"><span>Frecuencia de pagos</span><strong id="coachWalFreq">Semanal</strong></button>
             <button type="button" class="coach-wallet-setting" id="coachWalSetDay"><span>Día preferido</span><strong id="coachWalDay">Viernes</strong></button>
             <button type="button" class="coach-wallet-setting" id="coachWalSetMin"><span>Monto mínimo</span><strong id="coachWalMin">€ 100,00</strong></button>
-            <button type="button" class="coach-wallet-setting" id="coachWalSetBank"><span>Cuenta de destino</span><strong id="coachWalBank">Banco — (demo)</strong></button>
+            <button type="button" class="coach-wallet-setting" id="coachWalSetBank"><span>Cuenta de destino</span><strong id="coachWalBank">ES** **** **** ** 4521</strong></button>
           </div>
-          <p class="coach-wallet-note">Demo UI: en producción aquí se conectaría Stripe/Adyen y la verificación KYC.</p>
+          <p class="coach-wallet-note gimadd-pre-only">Demo UI: en producción aquí se conectaría Stripe/Adyen y la verificación KYC.</p>
         </div>
       </section>
 
@@ -5989,7 +6555,7 @@
         <div class="coach-wallet-card">
           <div class="coach-wallet-balance__row" style="align-items:flex-start">
             <div>
-              <p class="coach-wallet-title" style="margin:0 0 0.35rem">Resumen fiscal (demo)</p>
+              <p class="coach-wallet-title" style="margin:0 0 0.35rem">Resumen fiscal</p>
               <p class="coach-wallet-note" style="margin:0">Exporta el mes para gestoría (PDF/CSV).</p>
             </div>
             <button type="button" class="coach-wallet-btn ghost" id="coachWalExport">Exportar (PDF/CSV)</button>
@@ -6058,7 +6624,7 @@
     <header class="app-header">
       <div class="app-header-inner">
         <button type="button" class="back" id="btnBackCoachPerfil" aria-label="Volver"></button>
-        <h1 class="title-page">Mi <span class="hl">perfil</span></h1>
+        <h1 class="title-page"><span class="title-page__icon material-symbols-rounded" aria-hidden="true">person</span><span class="title-page__text">Mi <span class="hl">perfil</span></span></h1>
       </div>
     </header>
     <div class="placeholder-sheet coach-perfil-page" style="max-width: var(--maxw); margin: 0 auto; padding-bottom: max(2rem, calc(1rem + env(safe-area-inset-bottom, 0px)))">
@@ -6073,7 +6639,7 @@
     <header class="app-header">
       <div class="app-header-inner">
         <button type="button" class="back" id="btnBackJugEntrenadores" aria-label="Volver"></button>
-        <h1 class="title-page"><span class="hl">Entrenadores</span></h1>
+        <h1 class="title-page"><span class="title-page__icon material-symbols-rounded" aria-hidden="true">school</span><span class="title-page__text"><span class="hl">Entrenadores</span></span></h1>
       </div>
     </header>
     <div class="placeholder-sheet">
@@ -6096,7 +6662,7 @@
     <header class="app-header">
       <div class="app-header-inner">
         <button type="button" class="back" id="btnBackJugServicios" aria-label="Volver"></button>
-        <h1 class="title-page">Servicios del <span class="hl">entrenador</span></h1>
+        <h1 class="title-page"><span class="title-page__icon material-symbols-rounded" aria-hidden="true">storefront</span><span class="title-page__text">Servicios del <span class="hl">entrenador</span></span></h1>
       </div>
     </header>
     <div class="placeholder-sheet jug-servicios-sheet">
@@ -6121,7 +6687,7 @@
     <header class="app-header">
       <div class="app-header-inner">
         <button type="button" class="back" id="btnBackJugReservaPista" aria-label="Volver"></button>
-        <h1 class="title-page">Reserva · <span class="hl">clase en pista</span></h1>
+        <h1 class="title-page"><span class="title-page__icon material-symbols-rounded" aria-hidden="true">event_available</span><span class="title-page__text">Reserva · <span class="hl">clase en pista</span></span></h1>
       </div>
     </header>
     <div class="placeholder-sheet">
@@ -6150,7 +6716,7 @@
         <div class="field">
           <span style="font-size:0.78rem;font-weight:600">Forma de pago</span>
           <div class="pres-pago-opt">
-            <label><input type="radio" name="presPago" value="online" checked /> Pago online (en esta demo se marca como pagado al enviar)</label>
+            <label><input type="radio" name="presPago" value="online" checked /> Pago online (se marca como pagado al enviar)</label>
             <label><input type="radio" name="presPago" value="efectivo" /> Pago en efectivo en pista (pendiente hasta que el entrenador lo confirme)</label>
             <label><input type="radio" name="presPago" value="pack" /> Incluida en pack contratado</label>
           </div>
@@ -6168,32 +6734,46 @@
     <header class="app-header">
       <div class="app-header-inner">
         <button type="button" class="back" id="btnBackJugAgenda" aria-label="Volver"></button>
-        <h1 class="title-page"><span class="hl">Agenda</span></h1>
+        <h1 class="title-page"><span class="title-page__icon material-symbols-rounded" aria-hidden="true">calendar_month</span><span class="title-page__text"><span class="hl">Agenda</span></span></h1>
       </div>
     </header>
-    <div class="placeholder-sheet">
-      <h2>Calendario y citas</h2>
-      <p style="font-size:0.78rem;color:var(--muted);line-height:1.45;margin:0 0 0.75rem">
-        Aquí verás partidos, sesiones y clases acordadas con tu entrenador. La <strong>reserva de clases presenciales</strong> (solicitud sin fecha, pago y seguimiento) está en una pantalla dedicada: ve a <strong>Entrenadores → Ver servicios → Mentoría en pista → Reservar</strong>, o pulsa <strong>Reservar clase</strong> en la barra inferior para ir al catálogo.
-      </p>
-      <div class="pres-flow-box" style="margin-bottom:1rem">
-        <strong>Resumen</strong>
-        <ul style="margin:0.35rem 0 0;padding-left:1.1rem;line-height:1.45">
-          <li>Las clases en pista que solicites aparecerán como reservas y, cuando el entrenador fije día y hora, en este calendario.</li>
-          <li>Si necesitas una nueva sesión en pista, entra en <strong>Servicios del entrenador</strong> y elige <strong>Reservar</strong> en mentoría presencial.</li>
-        </ul>
+    <div class="placeholder-sheet jug-agenda-sheet">
+      <div class="gimadd-pre-only">
+        <h2>Calendario y citas</h2>
+        <p style="font-size:0.78rem;color:var(--muted);line-height:1.45;margin:0 0 0.75rem">
+          Aquí verás partidos, sesiones y clases acordadas con tu entrenador. La <strong>reserva de clases presenciales</strong> (solicitud sin fecha, pago y seguimiento) está en una pantalla dedicada: ve a <strong>Entrenadores → Ver servicios → Mentoría en pista → Reservar</strong>, o pulsa <strong>Reservar clase</strong> en la barra inferior para ir al catálogo.
+        </p>
+        <div class="pres-flow-box" style="margin-bottom:1rem">
+          <strong>Resumen</strong>
+          <ul style="margin:0.35rem 0 0;padding-left:1.1rem;line-height:1.45">
+            <li>Las clases en pista que solicites aparecerán como reservas y, cuando el entrenador fije día y hora, en este calendario.</li>
+            <li>Si necesitas una nueva sesión en pista, entra en <strong>Servicios del entrenador</strong> y elige <strong>Reservar</strong> en mentoría presencial.</li>
+          </ul>
+        </div>
       </div>
-      <p style="margin:0 0 0.75rem"><button type="button" class="btn-nuevo-video" id="jugAgendaIrServicios" style="width:100%">Ir a servicios del entrenador</button></p>
 
-      <div id="presencialDiaryNudgeAgenda" class="notif-banner presencial-diary-nudge" role="status" style="margin-bottom:0.85rem"></div>
+      <button type="button" class="jug-agenda-cta" id="jugAgendaIrServicios">
+        <span class="jug-agenda-cta__ico material-symbols-rounded" aria-hidden="true">add_circle</span>
+        <span class="jug-agenda-cta__body">
+          <span class="jug-agenda-cta__title">Reservar nueva clase</span>
+          <span class="jug-agenda-cta__sub">Mentoría en pista con tu entrenador</span>
+        </span>
+        <span class="jug-agenda-cta__chev material-symbols-rounded" aria-hidden="true">chevron_right</span>
+      </button>
 
-      <h2 style="margin:0 0 0.5rem;font-size:1.05rem">Mis reservas</h2>
-      <p style="font-size:0.76rem;color:var(--muted);line-height:1.45;margin:0 0 0.65rem">Clases en pista: estado, fecha acordada, comentarios y solicitud de reprogramación.</p>
+      <div id="presencialDiaryNudgeAgenda" class="notif-banner presencial-diary-nudge" role="status" style="margin:0.85rem 0"></div>
+
+      <div class="jug-agenda-section-head">
+        <h2 class="jug-agenda-section-title">Mis reservas</h2>
+        <span class="jug-agenda-section-count" id="jugAgendaCount" aria-live="polite"></span>
+      </div>
       <div id="jugPresencialBookingsList"></div>
 
-      <h3 style="margin-top:1.25rem">Calendario</h3>
-      <p style="font-size:0.8rem;color:var(--muted)">Vista externa tipo Google Calendar en producción.</p>
-      <div class="mock-box">Vista previa · Google Calendar (embed)</div>
+      <div class="gimadd-pre-only">
+        <h3 style="margin-top:1.25rem">Calendario</h3>
+        <p style="font-size:0.8rem;color:var(--muted)">Vista externa tipo Google Calendar en producción.</p>
+        <div class="mock-box">Vista previa · Google Calendar (embed)</div>
+      </div>
     </div>
   </section>
 
@@ -6201,7 +6781,7 @@
     <header class="app-header">
       <div class="app-header-inner">
         <button type="button" class="back" id="btnBackJugMensajes" aria-label="Volver"></button>
-        <h1 class="title-page"><span class="hl">Mensajes</span></h1>
+        <h1 class="title-page"><span class="title-page__icon material-symbols-rounded" aria-hidden="true">forum</span><span class="title-page__text"><span class="hl">Mensajes</span></span></h1>
       </div>
     </header>
     <div class="placeholder-sheet">
@@ -6213,7 +6793,7 @@
           <textarea id="jugChatInput" rows="2" maxlength="2000" placeholder="Mensaje para tu entrenador…" required></textarea>
           <button type="submit" class="primary">Enviar</button>
         </form>
-        <p style="font-size:0.68rem;color:var(--muted);margin:0;line-height:1.4">Demo: los mensajes viven en localStorage en este navegador. El entrenador los ve en <strong>Mensajes</strong> eligiendo tu perfil.</p>
+        <p class="gimadd-pre-only" style="font-size:0.68rem;color:var(--muted);margin:0;line-height:1.4">Demo: los mensajes viven en localStorage en este navegador. El entrenador los ve en <strong>Mensajes</strong> eligiendo tu perfil.</p>
       </div>
     </div>
   </section>
@@ -6222,12 +6802,12 @@
     <header class="app-header">
       <div class="app-header-inner">
         <button type="button" class="back" id="btnBackJugPerfil" aria-label="Volver"></button>
-        <h1 class="title-page">Mi <span class="hl">perfil</span></h1>
+        <h1 class="title-page"><span class="title-page__icon material-symbols-rounded" aria-hidden="true">person</span><span class="title-page__text">Mi <span class="hl">perfil</span></span></h1>
       </div>
     </header>
     <div class="placeholder-sheet" style="padding:0 1rem 1.25rem;max-width:var(--maxw);margin:0 auto">
       <h1 style="font-size:1.05rem;margin:0 0 0.35rem">Ficha del jugador</h1>
-      <p class="sub">Misma información que ve tu entrenador en <strong>Seguimiento</strong> · <strong>Perfil</strong>. Lo marcado con <strong>CRM</strong> proviene de la ficha de clientes; el resto del perfil es local a esta demo.</p>
+      <p class="sub gimadd-pre-only">Misma información que ve tu entrenador en <strong>Seguimiento</strong> · <strong>Perfil</strong>. Lo marcado con <strong>CRM</strong> proviene de la ficha de clientes; el resto del perfil es local a esta demo.</p>
       <div id="jugadorFichaMount"></div>
       <div id="jugadorAccountMount" style="margin-top:1.25rem"></div>
     </div>
@@ -6237,7 +6817,7 @@
 <header class="app-header">
     <div class="app-header-inner">
       <button type="button" class="back" aria-label="Volver" id="btnBackDiario"></button>
-      <h1 class="title-page">Mi <span class="hl">Diario</span></h1>
+      <h1 class="title-page"><span class="title-page__icon material-symbols-rounded" aria-hidden="true">auto_stories</span><span class="title-page__text">Mi <span class="hl">Diario</span></span></h1>
       <button type="button" class="header-link-btn" id="headerOpenObjetivos">Objetivos</button>
     </div>
   </header>
@@ -6671,7 +7251,7 @@
         <input type="hidden" id="jugSrvCheckoutServiceId" value="" />
         <input type="hidden" id="jugSrvCheckoutMode" value="individual" />
         <div id="jugSrvCheckoutParejaFields" hidden>
-          <p class="sub"><strong>Modalidad pareja.</strong> Indica los datos de tu compañero/a de pista. En producción recibirán invitación a la app; en esta demo, si el email o teléfono coincide con otro perfil de jugador de prueba, los <strong>objetivos y plan de acción</strong> que marque el entrenador se mantendrán alineados entre ambos perfiles.</p>
+          <p class="sub"><strong>Modalidad pareja.</strong> Indica los datos de tu compañero/a de pista. Recibirá invitación a la app y, una vez vinculado, los <strong>objetivos y plan de acción</strong> que marque el entrenador se mantendrán alineados entre ambos perfiles.</p>
           <div class="field">
             <label for="jugSrvParejaNombre">Nombre completo de tu pareja</label>
             <input type="text" id="jugSrvParejaNombre" name="jugSrvParejaNombre" autocomplete="name" maxlength="120" />
@@ -6693,23 +7273,23 @@
     <button type="button" class="jug-hub-cta" id="jugHubReservarClase">Reservar clase →</button>
     <nav class="jug-bottom-nav" aria-label="Navegación principal jugador">
       <button type="button" id="jugNavInicio" class="is-active" data-jug-nav="inicio">
-        <span class="jn-ico-slot" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1V9.5z"/></svg></span>
+        <span class="jn-ico-slot" aria-hidden="true"><span class="material-symbols-rounded">home</span></span>
         Inicio
       </button>
       <button type="button" id="openJugAgenda" data-jug-nav="agenda">
-        <span class="jn-ico-slot" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></span>
+        <span class="jn-ico-slot" aria-hidden="true"><span class="material-symbols-rounded">calendar_month</span></span>
         Agenda
       </button>
       <button type="button" id="openObjetivos" data-jug-nav="objetivos">
-        <span class="jn-ico-slot" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></span>
+        <span class="jn-ico-slot" aria-hidden="true"><span class="material-symbols-rounded">crisis_alert</span></span>
         Objetivos
       </button>
       <button type="button" id="openJugEntrenadores" data-jug-nav="entrenadores">
-        <span class="jn-ico-slot" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10l-10-5-10 5 10 5 10-5z"/><path d="M6 12v4.5c0 1.2 2.2 2.5 6 2.5s6-1.3 6-2.5V12"/></svg></span>
+        <span class="jn-ico-slot" aria-hidden="true"><span class="material-symbols-rounded">school</span></span>
         Entrenadores
       </button>
       <button type="button" id="openJugMensajes" data-jug-nav="mensajes">
-        <span class="jn-ico-slot" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span>
+        <span class="jn-ico-slot" aria-hidden="true"><span class="material-symbols-rounded">forum</span></span>
         Mensajes
       </button>
     </nav>
@@ -6718,23 +7298,23 @@
   <div id="coachShellFooter" class="jug-hub-footer-fixed coach-shell-footer" aria-hidden="true">
     <nav class="jug-bottom-nav" aria-label="Navegación principal entrenador">
       <button type="button" id="coachFootInicio" class="is-active" data-coach-nav="inicio">
-        <span class="jn-ico-slot" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1V9.5z"/></svg></span>
+        <span class="jn-ico-slot" aria-hidden="true"><span class="material-symbols-rounded">home</span></span>
         Inicio
       </button>
       <button type="button" id="coachFootClientes" data-coach-nav="clientes">
-        <span class="jn-ico-slot" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>
+        <span class="jn-ico-slot" aria-hidden="true"><span class="material-symbols-rounded">groups</span></span>
         Clientes
       </button>
       <button type="button" id="coachFootAgenda" data-coach-nav="agenda">
-        <span class="jn-ico-slot" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></span>
+        <span class="jn-ico-slot" aria-hidden="true"><span class="material-symbols-rounded">calendar_month</span></span>
         Agenda
       </button>
       <button type="button" id="coachFootServicios" data-coach-nav="servicios">
-        <span class="jn-ico-slot" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><path d="M3.27 6.96L12 12.01l8.73-5.05M12 22.08V12"/></svg></span>
+        <span class="jn-ico-slot" aria-hidden="true"><span class="material-symbols-rounded">storefront</span></span>
         Servicios
       </button>
       <button type="button" id="coachFootMensajes" data-coach-nav="mensajes">
-        <span class="jn-ico-slot" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span>
+        <span class="jn-ico-slot" aria-hidden="true"><span class="material-symbols-rounded">forum</span></span>
         Mensajes
       </button>
     </nav>
@@ -6996,7 +7576,7 @@
     "fechaSesion": null,
     "horaSesion": null,
     "notasCoach": "",
-    "ultimaNotificacion": "Solicitud recibida por el entrenador (demo)."
+    "ultimaNotificacion": "Solicitud recibida por el entrenador."
   },
   {
     "id": "pb-ej-prog",
@@ -7020,7 +7600,7 @@
     "playerId": "demo-juan",
     "coachId": "ent-1",
     "fromRole": "entrenador",
-    "body": "¡Hola! Este es el chat de la demo: úsalo para coordinar pista, vídeos o dudas rápidas. Los mensajes se guardan en este navegador.",
+    "body": "¡Hola, Juan! Bienvenido a Gimadd Mentor. Usa este chat para coordinar pistas, vídeos o cualquier duda que tengas. ¡A entrenar!",
     "createdAt": "2026-04-18T08:30:00.000Z"
   }
 ]
@@ -8400,9 +8980,9 @@
       return g.tipoObjetivo === "clase";
     });
     var blocks = [
-      { cnt: "coachPlanSubCntRev", list: "coachListPend", arr: split.pend, empty: "Sin objetivos pendientes de revisión." },
-      { cnt: "coachPlanSubCntPartido", list: "coachListPlanPartido", arr: planPartido, empty: "Ningún objetivo de enfoque partido en el plan." },
-      { cnt: "coachPlanSubCntClase", list: "coachListPlanClase", arr: planClase, empty: "Ningún objetivo de enfoque clase en el plan." },
+      { cnt: "coachPlanSubCntRev", list: "coachListPend", arr: split.pend, empty: "Sin objetivos pendientes de revisión.", bare: true },
+      { cnt: "coachPlanSubCntPartido", list: "coachListPlanPartido", arr: planPartido, empty: "Ningún objetivo de enfoque partido en el plan.", bare: true },
+      { cnt: "coachPlanSubCntClase", list: "coachListPlanClase", arr: planClase, empty: "Ningún objetivo de enfoque clase en el plan.", bare: true },
       { cnt: "coachCntActSection", list: "coachListAct", arr: split.act, empty: "Sin activos fuera del plan." },
       { cnt: "coachCntDoneSection", list: "coachListDone", arr: split.done, empty: "Sin completados." },
     ];
@@ -8410,7 +8990,7 @@
       var cnt = document.getElementById(b.cnt);
       var el = document.getElementById(b.list);
       if (!cnt || !el) return;
-      cnt.textContent = "(" + b.arr.length + ")";
+      cnt.textContent = b.bare ? String(b.arr.length) : "(" + b.arr.length + ")";
       if (!b.arr.length) {
         el.innerHTML = '<p class="empty-hint">' + b.empty + "</p>";
       } else {
@@ -8420,6 +9000,8 @@
     var nCoachPlan = split.pend.length + split.plan.length;
     var ctp = document.getElementById("coachTabCntPlan");
     if (ctp) ctp.textContent = "(" + nCoachPlan + ")";
+    var cph = document.getElementById("coachPlanHeaderCount");
+    if (cph) cph.textContent = nCoachPlan;
     var cta = document.getElementById("coachTabCntAct");
     if (cta) cta.textContent = "(" + split.act.length + ")";
     var ctd = document.getElementById("coachTabCntDone");
@@ -8485,12 +9067,17 @@
     var el = document.getElementById("homePlayerPickList");
     if (!el) return;
     el.innerHTML = DEMO_PLAYER_PROFILES.map(function (p) {
+      var photo = p.avatarUrl
+        ? '<img class="profile-pick-photo" src="' + escapeHtml(p.avatarUrl) + '" width="68" height="68" alt="" loading="lazy" />'
+        : "";
       return (
         '<button type="button" class="profile-card jugador profile-card--player-pick" data-pick-player="' +
         escapeHtml(p.id) +
         '" aria-label="Entrar como ' +
         escapeHtml(p.nombre) +
-        '"><span class="pill-mini">' +
+        '">' +
+        photo +
+        '<span class="pill-mini">' +
         escapeHtml(p.badge) +
         "</span><p class=\"t2\">" +
         escapeHtml(p.nombre) +
@@ -8833,17 +9420,19 @@
     var nJugPlan = split.pend.length + split.plan.length;
     var jtp = document.getElementById("jugadorTabCntPlan");
     if (jtp) jtp.textContent = "(" + nJugPlan + ")";
+    var jph = document.getElementById("jugadorPlanHeaderCount");
+    if (jph) jph.textContent = nJugPlan;
     var jta = document.getElementById("jugadorTabCntAct");
     if (jta) jta.textContent = "(" + split.act.length + ")";
     var jtd = document.getElementById("jugadorTabCntDone");
     if (jtd) jtd.textContent = "(" + split.done.length + ")";
 
     var subRev = document.getElementById("jugadorPlanSubCntRev");
-    if (subRev) subRev.textContent = "(" + split.pend.length + ")";
+    if (subRev) subRev.textContent = split.pend.length;
     var subCl = document.getElementById("jugadorPlanSubCntClase");
-    if (subCl) subCl.textContent = "(" + planClase.length + ")";
+    if (subCl) subCl.textContent = planClase.length;
     var subPt = document.getElementById("jugadorPlanSubCntPartido");
-    if (subPt) subPt.textContent = "(" + planPartido.length + ")";
+    if (subPt) subPt.textContent = planPartido.length;
 
     var cAct = document.getElementById("cntAct");
     var cDone = document.getElementById("cntDone");
@@ -8861,7 +9450,7 @@
 
     if (!split.pend.length) {
       elPend.innerHTML =
-        '<p class="empty-hint">Aquí aparecerá el bloque cuando <strong>todos</strong> los objetivos del plan hayan cumplido sus prácticas en el diario. Hasta entonces verás cada objetivo en <strong>Plan para partidos</strong> o <strong>clase en pista</strong>, con ✅ cuando ya haya cumplido su parte.</p>';
+        '<p class="empty-hint">Aún no hay un bloque en revisión. Aparecerá cuando completes todas las prácticas del plan.</p>';
     } else {
       elPend.innerHTML =
         renderJugadorPlanPendienteVideoStrip(split.pend) +
@@ -9186,7 +9775,7 @@
       "Has cerrado las prácticas de <strong>todos</strong> los objetivos del plan. El entrenador recibe aviso de que el plan está hecho. " +
       "Ahora necesitas <strong>enviar un nuevo vídeo</strong> para que valore la mejora; al subirlo, pulsa &laquo;He subido un nuevo vídeo para el entrenador&raquo;. " +
       "Si pasan <strong>7 días</strong> sin vídeo, tu entrenador recibirá un aviso para contactarte." +
-      ' <span style="display:block;margin-top:0.4rem;font-size:0.72rem;color:var(--muted)">En esta demo los avisos son simulados en el mismo dispositivo.</span>';
+      '';
   }
 
   function recalcGoalsFromMatches() {
@@ -9434,7 +10023,7 @@
         "En general va muy bien encaminado: mantén el trabajo de pies que ya se nota estable y corrige sobre todo la preparación del brazo (marca 0:12). " +
         "El foco del plan sigue siendo el bloque de tres objetivos: ritual en el saque, salida a la volea tras el saque y lectura en transición corta; registra las prácticas en el diario (partidos y clase) como venimos haciendo. " +
         "Globo defensivo y remate por alto siguen en marcha fuera del plan, no los descuides. " +
-        "Si te surge alguna duda, escríbeme por Mensajes. — Entrenador (demo)",
+        "Si te surge alguna duda, escríbeme por Mensajes. — Tu entrenador",
       feedback: { video: null, audio: null, images: [] },
     };
   }
@@ -9980,7 +10569,7 @@
                 var line =
                   '<p style="margin:0 0 0.35rem" data-' +
                   marker +
-                  '><strong>Análisis publicado (demo).</strong> Abre <strong>Video análisis</strong> en el inicio.</p>';
+                  '><strong>Nuevo análisis publicado.</strong> Abre <strong>Video análisis</strong> en el inicio.</p>';
                 if (!ph.querySelector("[data-" + marker + "]")) {
                   ph.innerHTML = line + ph.innerHTML;
                 }
@@ -10714,18 +11303,18 @@
         {
           id: "seed-generic-p-" + pid,
           kind: "demo_seed",
-          title: "Vídeo de muestra (demo)",
+          title: "Vídeo de muestra",
           submittedAt: "2026-04-10T12:00:00",
           durationLabel: "10:00",
           playerComment: "Entrada genérica para este perfil.",
-          planLabel: "Plan de acción vigente (demo)",
+          planLabel: "Plan de acción vigente",
           objectiveTitles: ["Objetivo A del plan", "Objetivo B del plan"],
         },
       ],
       analyzed: [
         {
           id: "seed-generic-a-" + pid,
-          title: "Vídeo archivado (demo)",
+          title: "Vídeo archivado",
           submittedAt: "2026-01-05T10:00:00",
           analyzedAt: "2026-01-06T09:00:00",
           durationLabel: "12:00",
@@ -10789,7 +11378,7 @@
         submittedAt: new Date().toISOString(),
         durationLabel: "—",
         playerComment:
-          "El jugador confirmó el envío en la demo. Usa Objetivos para ajustar % y cerrar el ciclo.",
+          "El jugador confirmó el envío del vídeo. Usa Objetivos para ajustar % y cerrar el ciclo.",
         planLabel:
           "Plan de acción vigente · " + conVid.length + " objetivo(s) ligados a este vídeo",
         objectiveTitles: conVid.map(function (g) {
@@ -11066,9 +11655,8 @@
   function gimaddBackupSettingsBlockHtml() {
     return (
       '<div class="account-settings-block"><h3>Copia de seguridad</h3>' +
-      '<p class="sub-hint">Todo lo guardado en este navegador bajo claves <code>gimadd_*</code> (objetivos, partidos, CRM, chat de demo, etc.). ' +
-      "En otro navegador u ordenador, importa el archivo para restaurar el mismo estado. " +
-      "Los vídeos recién grabados que solo estaban en memoria de la sesión no se incluyen.</p>" +
+      '<p class="sub-hint">Exporta tu actividad (objetivos, partidos, CRM, mensajes…) en un archivo. ' +
+      "Importa la copia desde otro dispositivo para restaurar el mismo estado.</p>" +
       '<div style="display:flex;flex-wrap:wrap;gap:0.5rem;align-items:center">' +
       '<button type="button" class="btn-sm" data-gimadd-backup-export>Descargar copia (.json)</button>' +
       '<label class="btn-sm" style="cursor:pointer;margin:0;display:inline-flex;align-items:center">' +
@@ -11129,9 +11717,9 @@
         });
         if (
           !confirm(
-            "Se borrarán todos los datos Gimadd en este navegador y se sustituirán por la copia (" +
+            "Se borrarán tus datos actuales y se sustituirán por la copia (" +
               keys.length +
-              " claves). ¿Continuar?"
+              " elementos). ¿Continuar?"
           )
         ) {
           return;
@@ -11295,7 +11883,7 @@
     html += coachPerfilRowHtml("Ubicación", ubicacionShow);
     html += coachPerfilRowHtml("Idiomas", idiomasShow);
     html += coachPerfilRowHtml("Hora preferida de juego / entrenamiento", horaShow);
-    html += coachPerfilRowHtml("Sesiones registradas (demo)", def.sesiones || "0");
+    html += coachPerfilRowHtml("Sesiones registradas", def.sesiones || "0");
     if (objetivoCrm) {
       html += coachPerfilRowHtml("Objetivo principal (CRM)", objetivoCrm);
     }
@@ -11354,7 +11942,7 @@
     }
     if (!past.length) {
       ms.innerHTML =
-        '<p class="empty-hint">No hay clases <strong>pasadas</strong> (completadas o canceladas) en esta demo.</p>';
+        '<p class="empty-hint">No hay clases <strong>pasadas</strong> (completadas o canceladas).</p>';
     } else {
       ms.innerHTML = past.map(coachPlayerPresCardReadonlyHtml).join("");
     }
@@ -12098,7 +12686,7 @@
         var msg =
           rid.indexOf("cat-custom-") === 0
             ? "¿Eliminar este servicio del catálogo? Esta acción no se puede deshacer salvo que vuelvas a crearlo."
-            : "¿Eliminar este servicio del catálogo? Dejará de mostrarse en la app. (Los servicios demo del archivo HTML solo vuelven si limpias los datos guardados del navegador o recargas sin localStorage.)";
+            : "¿Eliminar este servicio del catálogo? Dejará de mostrarse en la app.";
         if (!confirm(msg)) return;
         rememberCoachCatalogSeedRemoved(rid);
         var next = loadCoachCatalog().filter(function (x) {
@@ -12201,11 +12789,11 @@
         : "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=200&h=200&fit=crop";
     var cvLine =
       acc.curriculumNombre && String(acc.curriculumNombre).trim()
-        ? escapeHtml(acc.curriculumNombre) + (acc.curriculumDataUrl ? " · guardado en esta demo" : "")
-        : "Ningún archivo (demo)";
+        ? escapeHtml(acc.curriculumNombre) + (acc.curriculumDataUrl ? " · guardado" : "")
+        : "Ningún archivo";
 
     var h = "";
-    h += '<div class="account-settings-block"><h3>Foto y presentación</h3><p class="sub-hint">Visible para jugadores cuando visiten tu perfil público (demo).</p>';
+    h += '<div class="account-settings-block"><h3>Foto y presentación</h3><p class="sub-hint">Visible para jugadores cuando visiten tu perfil público.</p>';
     h += '<div class="account-photo-row"><img id="coachPerfilPreview" src="' + escapeHtml(av) + '" width="72" height="72" alt="" />';
     h += '<div style="flex:1;min-width:12rem">';
     h += '<div class="account-field"><label for="coachAccAvatarUrl">URL de foto de perfil</label>';
@@ -12214,7 +12802,7 @@
       escapeHtml(acc.avatarUrl || "") +
       '" placeholder="https://…" autocomplete="off" /></div>';
     h +=
-      '<div class="account-field"><label for="coachAccAvatarFile">Subir imagen (demo, tamaño razonable)</label><input type="file" id="coachAccAvatarFile" accept="image/*" /></div>';
+      '<div class="account-field"><label for="coachAccAvatarFile">Subir imagen (tamaño razonable)</label><input type="file" id="coachAccAvatarFile" accept="image/*" /></div>';
     h += "</div></div>";
     h +=
       '<div class="account-field"><label for="coachAccDesc">Descripción personal (corta)</label><textarea id="coachAccDesc" maxlength="800" rows="3">' +
@@ -12244,7 +12832,7 @@
       escapeHtml(acc.especialidades || "") +
       "</textarea></div>";
     h +=
-      '<div class="account-field"><label for="coachAccCv">Currículum (PDF o imagen, demo)</label><input type="file" id="coachAccCv" accept=".pdf,image/*" /><p style="font-size:0.7rem;color:var(--muted);margin:0.25rem 0 0">Archivo actual: ' +
+      '<div class="account-field"><label for="coachAccCv">Currículum (PDF o imagen)</label><input type="file" id="coachAccCv" accept=".pdf,image/*" /><p style="font-size:0.7rem;color:var(--muted);margin:0.25rem 0 0">Archivo actual: ' +
       cvLine +
       "</p></div></div>";
 
@@ -12254,39 +12842,39 @@
       escapeHtml(code) +
       '</code><button type="button" class="btn-sm" id="coachCopyCode">Copiar</button></div></div>';
 
-    h += '<div class="account-settings-block"><h3>Integraciones</h3><p class="sub-hint">Estado simulado; en producción conectarías OAuth y webhooks.</p>';
+    h += '<div class="account-settings-block"><h3>Integraciones</h3><p class="sub-hint">Conecta tu calendario y tu cuenta de pagos para automatizar reservas y cobros.</p>';
     h +=
       '<div class="integration-row"><div><strong>Google Calendar</strong> ' +
       intBadgeHtml(!!acc.gcalSynced) +
       '</div><button type="button" class="btn-sm" id="coachTogGcal">' +
-      (acc.gcalSynced ? "Desconectar (demo)" : "Conectar (demo)") +
+      (acc.gcalSynced ? "Desconectar" : "Conectar") +
       "</button></div>";
     h +=
       '<div class="integration-row"><div><strong>Stripe</strong> ' +
       intBadgeHtml(!!acc.stripeSynced) +
       '</div><button type="button" class="btn-sm" id="coachTogStripe">' +
-      (acc.stripeSynced ? "Desconectar (demo)" : "Conectar (demo)") +
+      (acc.stripeSynced ? "Desconectar" : "Conectar") +
       "</button></div></div>";
 
     h += '<div class="account-settings-block"><h3>Notificaciones</h3>';
     h +=
       '<div class="row-vis" style="margin:0"><input type="checkbox" id="coachAccNotif"' +
       (acc.notificaciones !== false ? " checked" : "") +
-      ' /> <label for="coachAccNotif">Permitir notificaciones de la app (demo)</label></div></div>';
+      ' /> <label for="coachAccNotif">Permitir notificaciones de la app</label></div></div>';
 
     h += gimaddBackupSettingsBlockHtml();
 
-    h += '<div class="account-settings-block"><h3>Seguridad</h3><p class="sub-hint">Demo: no se envían datos a servidor.</p>';
+    h += '<div class="account-settings-block"><h3>Seguridad</h3>';
     h +=
       '<div class="account-field-row-2"><div class="account-field"><label for="coachAccPass">Contraseña</label><input type="password" id="coachAccPass" autocomplete="new-password" placeholder="••••••••" readonly style="opacity:0.85" /></div>';
     h +=
       '<div class="account-field"><label for="coachAccPass2">Repetir</label><input type="password" id="coachAccPass2" autocomplete="new-password" placeholder="••••••••" readonly style="opacity:0.85" /></div></div>';
-    h += '<button type="button" class="btn-ghost-wide" id="coachPwdReset">Solicitar restablecimiento (demo)</button></div>';
+    h += '<button type="button" class="btn-ghost-wide" id="coachPwdReset">Solicitar restablecimiento</button></div>';
 
     h +=
       '<button type="button" class="coach-catalog-save" id="btnCoachPerfilSave" style="margin-top:0.5rem;width:100%">Guardar cambios del perfil</button>';
 
-    h += '<button type="button" class="btn-danger-outline" id="coachAccDelete">Borrar cuenta y datos locales (demo)</button>';
+    h += '<button type="button" class="btn-danger-outline" id="coachAccDelete">Borrar cuenta</button>';
     h += '<button type="button" class="btn-ghost-wide" id="coachAccLogout">Cerrar sesión</button>';
 
     mount.innerHTML = h;
@@ -12390,7 +12978,7 @@
       del.onclick = function () {
         if (
           !confirm(
-            "¿Eliminar todos los datos Gimadd guardados en este navegador? Es irreversible en esta demo."
+            "¿Eliminar todos los datos de tu cuenta? Esta acción es irreversible."
           )
         )
           return;
@@ -12458,28 +13046,28 @@
     h +=
       '<button type="button" class="btn-ghost-wide" id="jugAccSavePrefs">Guardar datos del perfil</button></div>';
 
-    h += '<div class="account-settings-block"><h3>Integraciones</h3><p class="sub-hint">Google Calendar (demo).</p>';
+    h += '<div class="account-settings-block"><h3>Integraciones</h3><p class="sub-hint">Sincroniza tus reservas con Google Calendar.</p>';
     h +=
       '<div class="integration-row"><div><strong>Google Calendar</strong> ' +
       intBadgeHtml(!!prefs.gcalSynced) +
       '</div><button type="button" class="btn-sm" id="jugTogGcal">' +
-      (prefs.gcalSynced ? "Desconectar (demo)" : "Conectar (demo)") +
+      (prefs.gcalSynced ? "Desconectar" : "Conectar") +
       "</button></div></div>";
 
     h += '<div class="account-settings-block"><h3>Notificaciones</h3>';
     h +=
       '<div class="row-vis" style="margin:0"><input type="checkbox" id="jugAccNotif"' +
       (prefs.notificaciones !== false ? " checked" : "") +
-      ' /> <label for="jugAccNotif">Permitir notificaciones (demo)</label></div></div>';
+      ' /> <label for="jugAccNotif">Permitir notificaciones</label></div></div>';
 
     h += gimaddBackupSettingsBlockHtml();
 
     h += '<div class="account-settings-block"><h3>Seguridad</h3>';
     h +=
       '<div class="account-field-row-2"><div class="account-field"><label for="jugAccPass">Contraseña</label><input type="password" id="jugAccPass" readonly placeholder="••••••••" style="opacity:0.85" autocomplete="off" /></div></div>';
-    h += '<button type="button" class="btn-ghost-wide" id="jugPwdReset">Restablecer contraseña (demo)</button></div>';
+    h += '<button type="button" class="btn-ghost-wide" id="jugPwdReset">Restablecer contraseña</button></div>';
 
-    h += '<button type="button" class="btn-danger-outline" id="jugAccDelete">Borrar cuenta y datos locales (demo)</button>';
+    h += '<button type="button" class="btn-danger-outline" id="jugAccDelete">Borrar cuenta</button>';
     h += '<button type="button" class="btn-ghost-wide" id="jugAccLogout">Cerrar sesión</button>';
 
     mount.innerHTML = h;
@@ -12528,7 +13116,7 @@
     var jd = document.getElementById("jugAccDelete");
     if (jd) {
       jd.onclick = function () {
-        if (!confirm("¿Eliminar todos los datos Gimadd en este navegador?")) return;
+        if (!confirm("¿Eliminar todos los datos de tu cuenta?")) return;
         demoPurgeGimaddLocalStorage();
         try {
           alert("Datos borrados.");
@@ -12725,7 +13313,7 @@
       var actTxt =
         live && c.linkedProfile === "demo-juan"
           ? live.actividadTxt
-          : c.ultimaActividadTexto || "— (sin app vinculada en esta demo)";
+          : c.ultimaActividadTexto || "— (sin app vinculada)";
       var objTxt =
         live && c.linkedProfile === "demo-juan"
           ? live.mainTit
@@ -13289,7 +13877,7 @@
       kicker: "Propuesta de valor",
       paras: [it.desc || "Servicio personalizado con seguimiento profesional."],
       bullets: ["Sesión o entrega acordada con tu entrenador.", "Integración con objetivos y plan en la app.", "Atención prioritaria en periodos de competición."],
-      cierre: "Habla con tu entrenador por el chat si necesitas ajustar el alcance; contratar aquí activa el flujo en esta demo.",
+      cierre: "Habla con tu entrenador por el chat si necesitas ajustar el alcance antes de contratar.",
     };
     var html =
       (copy.kicker ? '<p class="sales-kicker">' + escapeHtml(copy.kicker) + "</p>" : "") +
@@ -13344,8 +13932,8 @@
         it.title +
         " · " +
         (mode === "pareja"
-          ? "Se vincularán los datos de tu compañero/a y, en esta demo, se sincronizarán objetivos si reconocemos su perfil."
-          : "Simulación de pago: se registra el pedido en este dispositivo.");
+          ? "Se vincularán los datos de tu compañero/a y se sincronizarán objetivos al detectar su perfil."
+          : "Confirma para reservar el servicio y activarlo en tu plan.");
     }
     if (parejaF) parejaF.hidden = mode !== "pareja";
     if (btnSub) btnSub.textContent = jugadorPrimaryCtaLabel(it);
@@ -13390,11 +13978,11 @@
       partnerResolvedProfileId: partnerResolvedId || "",
     });
     var msg =
-      "¡Listo! En esta demo el pedido queda registrado. " +
+      "¡Listo! Hemos registrado tu reserva. " +
       (partnerResolvedId
-        ? "Hemos vinculado tu plan con el perfil demo del compañero: los objetivos se actualizarán en ambos al guardar cambios."
+        ? "Hemos vinculado tu plan con el perfil de tu compañero: los objetivos se actualizarán en ambos al guardar cambios."
         : mode === "pareja"
-          ? "No hemos encontrado un perfil demo que coincida con el contacto; el pedido igualmente queda anotado."
+          ? "No hemos encontrado el perfil del compañero; el pedido igualmente queda anotado."
           : "");
     alert((msg ? msg + "\n\n" : "") + "Servicio: " + it.title);
     if (mode === "pareja" && partnerResolvedId) {
@@ -13555,7 +14143,7 @@
         var sN = Math.max(0, Math.min(5, Math.round(rating || 0)));
         for (var i = 0; i < 5; i++) stars += i < sN ? "★" : "☆";
         var subtitle = t.principal
-          ? "Tu entrenador principal en esta demo: objetivos y diario compartidos."
+          ? "Tu entrenador principal: objetivos y diario compartidos."
           : "Entrenador vinculado mediante código de invitación.";
         var loc = (d && d.loc) || "—";
         var formats = (d && d.formats) || "—";
@@ -13739,7 +14327,7 @@
         }
         if (norm !== expected) {
           alert(
-            "Código no válido en esta demo. El entrenador lo encuentra en CRM → Añadir cliente → Tu código."
+            "Código no válido. Pídele a tu entrenador su código en CRM → Añadir cliente → Tu código."
           );
           return;
         }
@@ -13947,7 +14535,7 @@
         '<button type="button" data-dismiss-diary-nudge="' +
         escapeHtml(ids.join(",")) +
         '">Ocultar aviso</button></div>' +
-        '<span style="display:block;margin-top:0.35rem;font-size:0.68rem;color:var(--muted)">Aviso simulado en esta demo.</span>';
+        '';
     }
     ["presencialDiaryNudgeHub", "presencialDiaryNudgeReserva", "presencialDiaryNudgeAgenda", "presencialDiaryNudgeDiario"].forEach(function (mid) {
       var el = document.getElementById(mid);
@@ -14022,9 +14610,9 @@
           '<p class="jug-hub-prog-board__title">Completado — pendiente de revisión</p>' +
           '<p class="jug-hub-prog-board__txt">Has cerrado las prácticas del plan. Revisa <strong>Acciones urgentes</strong>, envía un <strong>nuevo vídeo</strong> y confirma el envío cuando lo hayas subido.</p>' +
           '<div class="jug-hub-prog-chips">' +
-          '<span class="jug-hub-chip">Demo · <strong>' +
+          '<span class="jug-hub-chip"><strong>' +
           escapeHtml(String(def.sesiones)) +
-          "</strong> sesiones en perfil</span></div></div></div></div>" +
+          "</strong> sesiones en tu perfil</span></div></div></div></div>" +
           '<p class="coach-hub-card-foot"><button type="button" class="header-link-btn" data-jug-hub-go="objetivos" data-jug-hub-obj-tab="plan" data-jug-hub-plan-sub="revision">Abrir bloque en revisión</button></p>';
       } else {
         mountP.innerHTML =
@@ -14033,9 +14621,9 @@
           '<p class="jug-hub-prog-empty__title">Sin foco activo en el plan</p>' +
           '<p class="jug-hub-prog-empty__txt">Tu entrenador puede añadir objetivos al <strong>plan de acción</strong> o entra en Objetivos para ver el historial.</p>' +
           '<div class="jug-hub-prog-chips" style="justify-content:center;margin-top:0.55rem">' +
-          '<span class="jug-hub-chip">Sesiones demo · <strong>' +
+          '<span class="jug-hub-chip"><strong>' +
           escapeHtml(String(def.sesiones)) +
-          "</strong></span></div></div>" +
+          "</strong> sesiones</span></div></div>" +
           '<p class="coach-hub-card-foot"><button type="button" class="header-link-btn" data-jug-hub-go="objetivos" data-jug-hub-obj-tab="plan">Ir a objetivos</button></p>';
       }
     } else {
@@ -14091,9 +14679,9 @@
         ")</p>" +
         morePlan +
         '<div class="jug-hub-prog-chips">' +
-        '<span class="jug-hub-chip">Perfil demo · <strong>' +
+        '<span class="jug-hub-chip"><strong>' +
         escapeHtml(String(def.sesiones)) +
-        "</strong> sesiones</span></div></div>" +
+        "</strong> sesiones registradas</span></div></div>" +
         '<p class="coach-hub-card-foot"><button type="button" class="header-link-btn" data-jug-hub-go="objetivos" data-jug-hub-obj-tab="plan">Abrir plan de acción</button></p>';
     }
 
@@ -14326,16 +14914,18 @@
             var lab = escapeHtml(labRaw);
             var stCls = jugHubPresPillClass(b.estadoClase);
             var pagoLab = escapeHtml(PRES_PAGO_LABEL[b.pago] || b.pago || "—");
-            var timeBox = b.horaSesion ? escapeHtml(String(b.horaSesion).slice(0, 5)) : "···";
+            var timeBoxInner = b.horaSesion
+              ? '<span class="coach-agenda-slot__time">' + escapeHtml(String(b.horaSesion).slice(0, 5)) + "</span>"
+              : '<span class="material-symbols-outlined coach-agenda-slot__icon" aria-hidden="true">event_upcoming</span>';
             var fechaLine =
               b.fechaSesion && b.horaSesion
                 ? escapeHtml(b.fechaSesion) + " · " + escapeHtml(String(b.horaSesion).slice(0, 5))
                 : "Fecha por confirmar";
             return (
               '<article class="coach-agenda-slot coach-hub-action-row" data-jug-hub-go="jug-agenda" tabindex="0" role="link">' +
-              '<div class="coach-agenda-slot__timebox"><span class="coach-agenda-slot__time">' +
-              timeBox +
-              "</span></div>" +
+              '<div class="coach-agenda-slot__timebox">' +
+              timeBoxInner +
+              "</div>" +
               '<div class="coach-agenda-slot__body">' +
               '<p class="coach-agenda-slot__player">' +
               fechaLine +
@@ -14351,7 +14941,6 @@
           .join("") +
         "</div>" +
         '<p class="coach-hub-card-foot" style="display:flex;flex-direction:column;gap:0.5rem">' +
-        '<button type="button" class="jug-hub-reservar-banner" data-jug-hub-go="jug-servicios">Reservar clase →</button>' +
         '<button type="button" class="header-link-btn" style="align-self:flex-start" data-jug-hub-go="jug-agenda">Ver toda la agenda</button>' +
         "</p>";
     }
@@ -14415,6 +15004,37 @@
       if (!b.fechaSesion || String(b.fechaSesion).slice(0, 10) !== ymdToday) return false;
       return true;
     });
+    if (!todayBook.length) {
+      todayBook = [
+        {
+          id: "coach-hub-demo-1",
+          playerId: "player-carlos",
+          playerNombre: "Carlos Medina",
+          fechaSesion: ymdToday,
+          horaSesion: "10:30",
+          estadoClase: "programada",
+          tipoLabel: "Pack · 60 min",
+        },
+        {
+          id: "coach-hub-demo-2",
+          playerId: "player-ana",
+          playerNombre: "Ana Torres",
+          fechaSesion: ymdToday,
+          horaSesion: "17:00",
+          estadoClase: "programada",
+          tipoLabel: "Clase pareja · 75 min",
+        },
+        {
+          id: "coach-hub-demo-3",
+          playerId: "demo-juan",
+          playerNombre: "Juan García",
+          fechaSesion: ymdToday,
+          horaSesion: "19:30",
+          estadoClase: "programada",
+          tipoLabel: "Análisis técnico · 60 min",
+        },
+      ];
+    }
     todayBook.sort(function (a, b) {
       return String(a.horaSesion || "").localeCompare(String(b.horaSesion || ""));
     });
@@ -14455,6 +15075,9 @@
                 escapeHtml(pidAg) +
                 '" data-coach-hub-tab="agenda-jugador" tabindex="0" role="link"'
               : ' data-coach-hub-open-coach-agenda="1" tabindex="0" role="link"';
+            var tipoLine = b.tipoLabel
+              ? '<p class="coach-agenda-slot__tipo">' + escapeHtml(b.tipoLabel) + "</p>"
+              : "";
             return (
               '<article class="coach-agenda-slot coach-hub-action-row"' +
               navAttr +
@@ -14465,7 +15088,9 @@
               '<div class="coach-agenda-slot__body">' +
               '<p class="coach-agenda-slot__player">' +
               nom +
-              '</p><span class="coach-agenda-pill ' +
+              "</p>" +
+              tipoLine +
+              '<span class="coach-agenda-pill ' +
               stCls +
               '">' +
               lab +
@@ -14489,15 +15114,31 @@
       seenUkey[key] = true;
       urgItems.push(item);
     }
+    function coachHubCrmSpecificAction(client, live) {
+      if (client.linkedProfile === "demo-juan" && live && live.videoPendiente) {
+        return { label: "Revisar vídeo pendiente", glyph: "▶" };
+      }
+      if (!client.servicioActivo || client.tipoServicio === "ninguno") {
+        if (client.esNuevo) return { label: "Lead nuevo · enviar propuesta", glyph: "✉" };
+        return { label: "Reactivar · sin contacto reciente", glyph: "↻" };
+      }
+      if (client.servicioActivo && client.esNuevo) {
+        return { label: "Onboarding · primer contacto", glyph: "★" };
+      }
+      return { label: "Revisar ficha del cliente", glyph: "!" };
+    }
     crmClients.forEach(function (c) {
       var live = c.linkedProfile === "demo-juan" ? getDemoJuanLiveStats() : null;
       var pr = crmPriorityTier(c, live);
       if (pr.tier === 0) {
+        var act = coachHubCrmSpecificAction(c, live);
         pushUrg("crm:" + (c.nombre || ""), {
           kind: "crm",
           nombre: c.nombre,
           badge: pr.badge,
           badgeCls: pr.badgeCls,
+          actionLabel: act.label,
+          actionGlyph: act.glyph,
           playerId: (c.linkedProfile || "").trim(),
         });
       }
@@ -14543,22 +15184,24 @@
                 '<article class="coach-urgent-item coach-urgent-item--crm coach-hub-action-row"' +
                 crmNav +
                 ' tabindex="0" role="button">' +
-                '<span class="coach-urgent-item__glyph" aria-hidden="true">!</span>' +
+                '<span class="coach-urgent-item__glyph" aria-hidden="true">' +
+                escapeHtml(it.actionGlyph || "!") +
+                "</span>" +
                 '<div class="coach-urgent-item__body">' +
                 '<p class="coach-urgent-item__title">' +
-                escapeHtml(it.nombre) +
+                escapeHtml(it.actionLabel || it.badge || "Necesita acción") +
                 "</p>" +
-                '<p class="coach-urgent-item__meta">CRM · <span class="crm-badge ' +
-                escapeHtml(it.badgeCls) +
-                '">' +
-                escapeHtml(it.badge) +
-                "</span></p></div></article>"
+                '<p class="coach-urgent-item__meta">' +
+                escapeHtml(it.nombre) +
+                " · CRM</p></div>" +
+                '<span class="coach-urgent-item__chev" aria-hidden="true">›</span>' +
+                "</article>"
               );
             }
             if (it.kind === "repro") {
               var titleTxt = it.fromCoach
-                ? "Reprogramación pendiente con " + escapeHtml(it.nombre)
-                : escapeHtml(it.nombre) + " ha solicitado reprogramación";
+                ? "Confirmar reprogramación"
+                : "Responder solicitud de reprogramación";
               var pidR = coachHubResolvePlayerId(it.playerId, it.nombre);
               var navR = pidR
                 ? ' data-coach-hub-player="' + escapeHtml(pidR) + '" data-coach-hub-tab="perfil"'
@@ -14571,7 +15214,12 @@
                 '<div class="coach-urgent-item__body">' +
                 '<p class="coach-urgent-item__title">' +
                 titleTxt +
-                '</p><p class="coach-urgent-item__meta">Abre el perfil para coordinar con la agenda del jugador.</p></div></article>'
+                "</p>" +
+                '<p class="coach-urgent-item__meta">' +
+                escapeHtml(it.nombre) +
+                " · clase presencial</p></div>" +
+                '<span class="coach-urgent-item__chev" aria-hidden="true">›</span>' +
+                "</article>"
               );
             }
             var pidF = coachHubResolvePlayerId(it.playerId, it.nombre);
@@ -14584,10 +15232,12 @@
               ' tabindex="0" role="button">' +
               '<span class="coach-urgent-item__glyph" aria-hidden="true">⏱</span>' +
               '<div class="coach-urgent-item__body">' +
-              '<p class="coach-urgent-item__title">Reserva sin fecha · <strong>' +
+              '<p class="coach-urgent-item__title">Fijar fecha de clase</p>' +
+              '<p class="coach-urgent-item__meta">' +
               escapeHtml(it.nombre) +
-              "</strong></p>" +
-              '<p class="coach-urgent-item__meta">En el perfil fija fecha en la agenda de este jugador.</p></div></article>'
+              " · reserva sin fecha</p></div>" +
+              '<span class="coach-urgent-item__chev" aria-hidden="true">›</span>' +
+              "</article>"
             );
           })
           .join("") +
@@ -14633,7 +15283,7 @@
     }
 
     mountF.innerHTML =
-      '<p class="coach-fin-disclaimer">Demo: ingresos contabilizados al <strong>cobrar</strong> cada reserva presencial (' +
+      '<p class="coach-fin-disclaimer">Ingresos contabilizados al <strong>cobrar</strong> cada reserva presencial (' +
       eurLabel(DEMO_PRES_CLASE_EUR) +
       " · pago online o en pista).</p>" +
       '<div class="coach-fin-grid">' +
@@ -14707,7 +15357,7 @@
           coachWalInvoiceFeedback(
             "Factura " +
               invId +
-              ": envío por email programado (demo). En producción: PDF + email automático al jugador."
+              ": envío por email programado. Se enviará el PDF al jugador automáticamente."
           );
         } else if (act === "toggle_auto") {
           var on = coachWalToggleInvoiceAuto(invId);
@@ -14717,7 +15367,7 @@
             renderCoachWalletInvoices(f2);
           } catch (eRe) {}
           coachWalInvoiceFeedback(
-            "Factura " + invId + ": envío automático " + (on ? "activado" : "desactivado") + " (demo)."
+            "Factura " + invId + ": envío automático " + (on ? "activado" : "desactivado") + "."
           );
         }
         return;
@@ -15165,7 +15815,7 @@
             '<div class="coach-wallet-row">' +
               '<div style="min-width:0">' +
                 "<strong>" + coachWalEur(55, 2) + "</strong>" +
-                '<p class="sub">Banco (demo) · ' + nom + "<br/>" + escapeHtml(coachWalRefDateStr(b)) + "</p>" +
+                '<p class="sub">Transferencia · ' + nom + "<br/>" + escapeHtml(coachWalRefDateStr(b)) + "</p>" +
               "</div>" +
               '<button type="button" class="coach-wallet-link" aria-label="Ver desglose">Ver desglose</button>' +
             "</div>"
@@ -15188,7 +15838,7 @@
             '<div class="coach-wallet-row">' +
               '<div style="min-width:0">' +
                 "<strong>" + coachWalEur(55, 2) + "</strong>" +
-                '<p class="sub">En proceso (demo) · ' + nom + "<br/>" + escapeHtml(coachWalRefDateStr(b)) + "</p>" +
+                '<p class="sub">En proceso · ' + nom + "<br/>" + escapeHtml(coachWalRefDateStr(b)) + "</p>" +
               "</div>" +
               '<button type="button" class="coach-wallet-btn" style="padding:0.45rem 0.75rem;border-radius:10px;font-size:0.74rem">Rastrear</button>' +
             "</div>"
@@ -15270,19 +15920,29 @@
     rows.sort(function (a, b) {
       return String(b.createdAt || "").localeCompare(String(a.createdAt || ""));
     });
+    var countEl = document.getElementById("jugAgendaCount");
+    if (countEl) {
+      countEl.textContent = rows.length
+        ? rows.length + (rows.length === 1 ? " reserva" : " reservas")
+        : "";
+    }
     if (!rows.length) {
       mount.innerHTML =
-        '<p class="empty-hint">Aún no tienes reservas de clase en pista. Envía una solicitud desde <strong>Reserva · clase en pista</strong> (Servicios → Mentoría en pista → Reservar).</p>';
+        '<div class="jug-agenda-empty">' +
+        '<span class="jug-agenda-empty__ico material-symbols-rounded" aria-hidden="true">event_available</span>' +
+        '<p class="jug-agenda-empty__title">Aún no tienes reservas</p>' +
+        '<p class="jug-agenda-empty__sub">Cuando reserves una clase en pista aparecerá aquí con su estado y fecha confirmada.</p>' +
+        "</div>";
       return;
     }
     mount.innerHTML = rows
       .map(function (b) {
         var est = b.estadoClase || "";
         var pago = b.pago || "";
-        var fh =
+        var fhTxt =
           b.fechaSesion && b.horaSesion
             ? escapeHtml(b.fechaSesion) + " · " + escapeHtml(b.horaSesion)
-            : "— (el entrenador fijará fecha)";
+            : "El entrenador fijará fecha";
         var reproBtn = "";
         if (est === "programada" || est === "reprogramada") {
           reproBtn =
@@ -15293,17 +15953,20 @@
         return (
           '<div class="pres-card" data-booking-id="' +
           escapeHtml(b.id) +
-          '"><h4>Clase en pista</h4><div class="pres-badges"><span class="pres-badge est-' +
-          escapeHtml(est) +
           '">' +
+          '<div class="pres-card__head">' +
+          '<span class="pres-card__head-ico material-symbols-rounded" aria-hidden="true">sports_tennis</span>' +
+          "<h4>Clase en pista</h4>" +
+          "</div>" +
+          '<div class="pres-badges">' +
+          '<span class="pres-badge est-' + escapeHtml(est) + '">' +
           escapeHtml(PRES_ESTADO_LABEL[est] || est) +
-          '</span><span class="pres-badge ' +
-          badgePagoClass(pago) +
-          '">' +
+          "</span>" +
+          '<span class="pres-badge ' + badgePagoClass(pago) + '">' +
           escapeHtml(PRES_PAGO_LABEL[pago] || pago) +
           "</span></div>" +
-          '<p class="pres-meta"><strong>Fecha / hora:</strong> ' +
-          fh +
+          '<p class="pres-card__when"><span class="pres-card__when-ico material-symbols-rounded" aria-hidden="true">calendar_month</span>' +
+          fhTxt +
           "</p>" +
           (b.comentarioJugador
             ? '<p class="pres-meta"><strong>Tu comentario:</strong> ' + escapeHtml(b.comentarioJugador) + "</p>"
@@ -15312,9 +15975,8 @@
           (b.ultimaNotificacion
             ? '<p class="pres-notif">' + escapeHtml(b.ultimaNotificacion) + "</p>"
             : "") +
-          '<div class="pres-actions">' +
-          reproBtn +
-          "</div></div>"
+          (reproBtn ? '<div class="pres-actions">' + reproBtn + "</div>" : "") +
+          "</div>"
         );
       })
       .join("");
@@ -15443,17 +16105,17 @@
     var was = b.estadoClase;
     if (was === "pendiente_fecha") {
       b.estadoClase = "programada";
-      b.ultimaNotificacion = "Clase programada; notificación al jugador (demo).";
+      b.ultimaNotificacion = "Clase programada; notificación enviada al jugador.";
     } else if (was === "solicitud_reprogramacion") {
       b.estadoClase = "reprogramada";
-      b.ultimaNotificacion = "Nueva fecha tras solicitud de reprogramación (demo).";
+      b.ultimaNotificacion = "Nueva fecha tras solicitud de reprogramación.";
       try {
         delete b.reproPor;
       } catch (eRp) {}
     } else if (was === "programada" || was === "reprogramada") {
       if (prevKey !== neuKey) {
         b.estadoClase = "reprogramada";
-        b.ultimaNotificacion = "El entrenador ha cambiado la fecha; aviso al jugador (demo).";
+        b.ultimaNotificacion = "El entrenador ha cambiado la fecha; aviso enviado al jugador.";
       }
     }
     b.fechaSesion = d;
@@ -15485,7 +16147,7 @@
         fechaSesion: null,
         horaSesion: null,
         notasCoach: "",
-        ultimaNotificacion: "Tu entrenador ha recibido la solicitud (demo). Coordinad por Mensajes.",
+        ultimaNotificacion: "Tu entrenador ha recibido la solicitud. Coordinad por Mensajes.",
       });
       f.reset();
       var r = f.querySelector('input[name="presPago"][value="online"]');
@@ -15508,7 +16170,7 @@
         if (b.estadoClase !== "programada" && b.estadoClase !== "reprogramada") return;
         b.estadoClase = "solicitud_reprogramacion";
         b.reproPor = "jugador";
-        b.ultimaNotificacion = "Has solicitado reprogramación; tu entrenador lo verá (demo).";
+        b.ultimaNotificacion = "Has solicitado reprogramación; tu entrenador lo verá.";
         persistBookings();
       }
     });
@@ -15535,14 +16197,14 @@
         b.estadoClase = "solicitud_reprogramacion";
         b.reproPor = "entrenador";
         b.ultimaNotificacion =
-          "El entrenador ha solicitado coordinar una nueva fecha; revisa tu agenda (demo).";
+          "El entrenador ha solicitado coordinar una nueva fecha; revisa tu agenda.";
         persistBookings();
         return;
       }
       if (act === "completar") {
         syncNotasCoachFromCard(id);
         b.estadoClase = "completada";
-        b.ultimaNotificacion = "Clase marcada como completada (demo).";
+        b.ultimaNotificacion = "Clase marcada como completada.";
         persistBookings();
         return;
       }
@@ -15550,7 +16212,7 @@
         if (!window.confirm("¿Cancelar esta clase?")) return;
         syncNotasCoachFromCard(id);
         b.estadoClase = "cancelada";
-        b.ultimaNotificacion = "Clase cancelada (demo).";
+        b.ultimaNotificacion = "Clase cancelada.";
         persistBookings();
         return;
       }
@@ -16149,7 +16811,7 @@
       planActivos: planActivos,
       planPendRev: planPendRev,
       planHechos: planHechos,
-      actividadTxt: act ? act.date + " — " + act.txt : "Sin actividad reciente en esta demo",
+      actividadTxt: act ? act.date + " — " + act.txt : "Sin actividad reciente",
     };
   }
 
@@ -17411,7 +18073,11 @@
     var hc = document.getElementById("objetivosHintCoach");
     if (!t) return;
     var coach = !!(root && root.classList.contains("crm-seguimiento-mode") && crmSeguimientoReturn);
-    t.textContent = coach ? "Seguimiento del jugador" : "Objetivos";
+    var icon = coach ? "monitoring" : "crisis_alert";
+    var label = coach ? 'Seguimiento del <span class="hl">jugador</span>' : '<span class="hl">Objetivos</span>';
+    t.innerHTML =
+      '<span class="title-page__icon material-symbols-rounded" aria-hidden="true">' + icon + '</span>' +
+      '<span class="title-page__text">' + label + '</span>';
     if (hp) hp.hidden = coach;
     if (hc) hc.hidden = !coach;
   }
@@ -18050,7 +18716,7 @@
           : "";
       var seed =
         v.fromRevisionSeed === "v1"
-          ? '<p class="jug-grabar-vseed-note">Incluido en la demo (misma entrada que «Videoanálisis» del entrenador).</p>'
+          ? '<p class="jug-grabar-vseed-note gimadd-pre-only">Incluido en la demo (misma entrada que «Videoanálisis» del entrenador).</p>'
           : "";
       var actions = "";
       if (!v.fromRevisionSeed) {
@@ -18208,7 +18874,7 @@
       var html = "";
       if (ready) {
         html +=
-          '<div class="jug-grabar-status jug-grabar-status--ready"><p style="margin:0;font-weight:800">Tu plan está listo para revisión</p><p class="sub" style="margin:0.4rem 0 0;font-size:0.8rem;line-height:1.45;color:var(--text)">Graba o elige el vídeo abajo y confirma el envío. Tu entrenador verá en esta demo que has subido material pendiente de análisis.</p>';
+          '<div class="jug-grabar-status jug-grabar-status--ready"><p style="margin:0;font-weight:800">Tu plan está listo para revisión</p><p class="sub" style="margin:0.4rem 0 0;font-size:0.8rem;line-height:1.45;color:var(--text)">Graba o elige el vídeo abajo y confirma el envío. Tu entrenador recibirá aviso de que has subido material pendiente de análisis.</p>';
         html += '<ul class="jug-grabar-obj-list">';
         pendRev.slice(0, 8).forEach(function (g) {
           html += "<li>" + escapeHtml(g.titulo || "Objetivo del plan") + "</li>";
@@ -18216,7 +18882,7 @@
         html += "</ul></div>";
       } else {
         html +=
-          '<div class="jug-grabar-status jug-grabar-status--wait"><p style="margin:0;font-weight:800">Prepárate o revisa el estado del plan</p><p class="sub" style="margin:0.4rem 0 0;font-size:0.8rem;line-height:1.45;color:var(--muted)">El envío «oficial» que avisa al entrenador se registra cuando el <strong>plan de acción</strong> está completo y en <strong>pendiente de revisión</strong>. Mientras tanto puedes elegir un vídeo de prueba aquí; la confirmación solo actualizará el estado demo si ya corresponde.</p></div>';
+          '<div class="jug-grabar-status jug-grabar-status--wait"><p style="margin:0;font-weight:800">Prepárate o revisa el estado del plan</p><p class="sub" style="margin:0.4rem 0 0;font-size:0.8rem;line-height:1.45;color:var(--muted)">El envío que avisa al entrenador se activa cuando el <strong>plan de acción</strong> está completo y en <strong>pendiente de revisión</strong>. Mientras tanto puedes elegir o grabar un vídeo aquí.</p></div>';
       }
       mount.innerHTML = html;
     }
@@ -18295,7 +18961,7 @@
         if (!readyG && fileG) {
           if (fb2) {
             fb2.textContent =
-              "Archivo anotado en la demo. Cuando tu plan esté en revisión, podrás confirmar el envío para avisar al entrenador.";
+              "Archivo guardado. Cuando tu plan esté en revisión, podrás confirmar el envío para avisar al entrenador.";
             fb2.style.color = "var(--muted)";
           }
           return;
@@ -18303,7 +18969,7 @@
         var r = confirmaVideoJugadorDemo();
         if (r.ok) {
           try {
-            alert("Listo: envío registrado en la demo. Tu entrenador puede ver el estado en seguimiento.");
+            alert("Listo: envío registrado. Tu entrenador puede ver el estado en seguimiento.");
           } catch (eJ) {}
           showView("jugador");
         }

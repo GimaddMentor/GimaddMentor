@@ -290,3 +290,423 @@ button.primary:hover,
 .coach-catalog-save-coach {
   background: linear-gradient(180deg, var(--brand-ink), #1e293b) !important;
 }
+
+/* -----------------------------------------------------------------------------
+   Pantalla de bienvenida — versión premium con avatares circulares
+   ----------------------------------------------------------------------------- */
+
+.home-hero {
+  padding-top: 2.25rem !important;
+  padding-bottom: 2rem !important;
+}
+
+.home-hero h1 {
+  font-size: 1.7rem !important;
+  letter-spacing: -0.035em !important;
+}
+
+.home-tagline {
+  margin: 0.6rem auto 0;
+  max-width: 22rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--brand-court-deep, #0c4a6e);
+  line-height: 1.4;
+  text-align: center;
+}
+
+.home-pick-section {
+  max-width: 460px;
+  margin: 0 auto;
+  padding: 0.35rem 1rem 1.1rem;
+}
+
+.home-pick-label {
+  font-size: 0.68rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  margin: 0.4rem 0 0.85rem;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+}
+
+.home-pick-label::before,
+.home-pick-label::after {
+  content: "";
+  flex: 1;
+  max-width: 2.5rem;
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, var(--border) 50%, transparent 100%);
+}
+
+.home-pick-label .pre-tag {
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--brand-court-deep, #0c4a6e);
+}
+
+/* Grid de jugadores */
+.home-player-section.home-pick-section .home-player-grid {
+  gap: 0.7rem;
+}
+
+.profile-card--player-pick {
+  display: flex !important;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 1rem 0.6rem 0.95rem !important;
+  border: 1.5px solid var(--border) !important;
+  border-left-width: 1.5px !important;
+  border-radius: 18px !important;
+  background: var(--surface);
+  position: relative;
+  overflow: visible;
+  box-shadow: 0 4px 18px rgba(15, 23, 42, 0.05);
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+}
+
+.profile-card--player-pick:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 28px rgba(15, 23, 42, 0.09);
+  border-color: var(--brand-accent-dark, #ca8a04) !important;
+}
+
+.profile-pick-photo {
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+  margin: 0 auto 0.65rem;
+  background: var(--card);
+  border: 3px solid var(--surface);
+  box-shadow: 0 0 0 2px var(--brand-accent, #f2ec1f), 0 6px 16px rgba(242, 236, 31, 0.28);
+}
+
+.profile-card--player-pick .t2 {
+  font-size: 0.95rem !important;
+  font-weight: 700;
+  margin: 0 !important;
+  letter-spacing: -0.01em;
+  color: var(--brand-ink, #0f172a);
+}
+
+.profile-card--player-pick .pill-mini {
+  position: absolute;
+  top: 0.55rem;
+  right: 0.55rem;
+  font-size: 0.5rem !important;
+  padding: 0.16rem 0.4rem !important;
+  border-radius: 999px !important;
+  background: rgba(242, 236, 31, 0.22) !important;
+  color: #6b5b00 !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.04em;
+  margin: 0 !important;
+}
+
+.profile-card--player-pick .d2 {
+  font-size: 0.66rem;
+  margin: 0.4rem 0 0;
+  color: var(--muted);
+  line-height: 1.4;
+}
+
+/* Tarjeta de entrenador — horizontal, premium */
+.profile-pick.home-pick-section {
+  display: block;
+  padding-bottom: 1.4rem;
+}
+
+.profile-card.entrenador {
+  display: flex !important;
+  flex-direction: row;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.15rem !important;
+  border: 1.5px solid var(--border) !important;
+  border-left-width: 1.5px !important;
+  border-radius: 20px !important;
+  background:
+    linear-gradient(135deg, rgba(56, 189, 248, 0.08) 0%, rgba(56, 189, 248, 0) 55%),
+    var(--surface);
+  position: relative;
+  text-align: left;
+  box-shadow: 0 6px 22px rgba(12, 74, 110, 0.07);
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+}
+
+.profile-card.entrenador:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 30px rgba(12, 74, 110, 0.13);
+  border-color: var(--brand-court, #0369a1) !important;
+}
+
+.profile-card.entrenador .profile-pick-photo {
+  width: 80px;
+  height: 80px;
+  margin: 0;
+  flex-shrink: 0;
+  box-shadow:
+    0 0 0 2px var(--brand-court-deep, #0c4a6e),
+    0 6px 18px rgba(12, 74, 110, 0.22);
+}
+
+.profile-pick-body {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  flex: 1;
+  gap: 0.15rem;
+}
+
+.profile-card.entrenador .tag,
+.profile-card.entrenador .tag.ent {
+  display: inline-block;
+  font-size: 0.6rem !important;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--brand-court, #0369a1) !important;
+  margin-bottom: 0.1rem !important;
+}
+
+.profile-card.entrenador .t2 {
+  font-size: 1.15rem !important;
+  font-weight: 800;
+  margin: 0 !important;
+  letter-spacing: -0.02em;
+  color: var(--brand-ink, #0f172a);
+}
+
+.profile-card.entrenador .d2 {
+  font-size: 0.72rem;
+  margin: 0.3rem 0 0 !important;
+  color: var(--muted);
+  line-height: 1.4;
+}
+
+.profile-card.entrenador::after {
+  content: "›";
+  position: absolute;
+  right: 1.1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1.6rem;
+  color: var(--brand-court-deep, #0c4a6e);
+  line-height: 1;
+  font-weight: 600;
+  pointer-events: none;
+}
+
+/* En producción ocultamos la sección de descarga del HTML local */
+.gimadd-prod .persist-app-home {
+  display: none !important;
+}
+
+/* En producción ocultamos también el lead largo y el párrafo de demo */
+.gimadd-prod .home-lead-short.gimadd-pre-only,
+.gimadd-prod .home-hero p.gimadd-pre-only {
+  display: none !important;
+}
+
+/* -----------------------------------------------------------------------------
+   Hub jugador + Hub entrenador — versión premium para feria B2B
+   ----------------------------------------------------------------------------- */
+
+.app-view-jugador .jug-hub-top,
+.app-view-coach .jug-hub-top {
+  padding-top: calc(0.75rem + env(safe-area-inset-top, 0px)) !important;
+  padding-bottom: 1.25rem !important;
+}
+
+.app-view-jugador .jug-hub-profile-row,
+.app-view-coach .jug-hub-profile-row {
+  margin-top: 1.75rem !important;
+  gap: 0.9rem !important;
+}
+
+.app-view-jugador .jug-hub-avatar {
+  width: 64px !important;
+  height: 64px !important;
+  border: 3px solid #fff !important;
+  box-shadow:
+    0 0 0 2px var(--brand-accent, #f2ec1f),
+    0 6px 16px rgba(242, 236, 31, 0.3) !important;
+}
+
+.app-view-coach .jug-hub-avatar {
+  width: 64px !important;
+  height: 64px !important;
+  border: 3px solid #fff !important;
+  box-shadow:
+    0 0 0 2px var(--brand-court-deep, #0c4a6e),
+    0 6px 16px rgba(12, 74, 110, 0.22) !important;
+}
+
+.app-view-jugador .jug-hub-greet,
+.app-view-coach .jug-hub-greet {
+  font-size: 1.18rem !important;
+  letter-spacing: -0.025em !important;
+  font-weight: 800 !important;
+}
+
+.app-view-jugador .jug-hub-sub,
+.app-view-coach .jug-hub-sub {
+  font-size: 0.76rem !important;
+  margin-top: 0.22rem !important;
+  font-weight: 600 !important;
+  color: var(--brand-court-deep, #0c4a6e) !important;
+}
+
+/* Botón "Perfil" → icono circular */
+.app-view-jugador .jug-hub-settings.jug-hub-perfil-btn,
+.app-view-coach .jug-hub-settings.jug-hub-perfil-btn {
+  width: 2.5rem !important;
+  height: 2.5rem !important;
+  min-width: 2.5rem !important;
+  padding: 0 !important;
+  font-size: 0 !important;
+  color: transparent !important;
+  border-radius: 999px !important;
+  position: relative;
+  background: rgba(255, 255, 255, 0.85) !important;
+  backdrop-filter: blur(6px);
+}
+
+.app-view-jugador .jug-hub-settings.jug-hub-perfil-btn::before,
+.app-view-coach .jug-hub-settings.jug-hub-perfil-btn::before {
+  content: "person";
+  font-family: "Material Symbols Outlined";
+  font-size: 1.35rem;
+  font-weight: normal;
+  font-variation-settings: "FILL" 0, "wght" 500, "GRAD" 0, "opsz" 24;
+  color: var(--brand-court-deep, #0c4a6e);
+  line-height: 1;
+  letter-spacing: 0 !important;
+}
+
+/* Mini-KPIs en el hub del coach */
+.coach-hub-kpis {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.coach-hub-kpi {
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(12, 74, 110, 0.14);
+  border-radius: 14px;
+  padding: 0.55rem 0.35rem 0.55rem;
+  text-align: center;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 2px 10px rgba(12, 74, 110, 0.06);
+}
+
+.coach-hub-kpi-num {
+  display: block;
+  font-size: 1.05rem;
+  font-weight: 900;
+  letter-spacing: -0.025em;
+  color: var(--brand-ink, #0f172a);
+  line-height: 1.1;
+}
+
+.coach-hub-kpi-lbl {
+  display: block;
+  font-size: 0.58rem;
+  font-weight: 700;
+  color: var(--muted);
+  margin-top: 0.2rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  line-height: 1.2;
+}
+
+.coach-hub-kpi--alert {
+  background: rgba(254, 243, 199, 0.85);
+  border-color: rgba(202, 138, 4, 0.3);
+}
+
+.coach-hub-kpi--alert .coach-hub-kpi-num {
+  color: #c2410c;
+}
+
+/* Quick actions — badge de notificación */
+.jug-quick-actions button {
+  position: relative;
+}
+
+.qa-badge {
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  min-width: 20px;
+  height: 20px;
+  background: #ef4444;
+  color: #fff;
+  border-radius: 999px;
+  font-size: 0.62rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 6px;
+  border: 2px solid #fff;
+  line-height: 1;
+  box-shadow: 0 2px 6px rgba(239, 68, 68, 0.4);
+  z-index: 2;
+}
+
+/* Tarjetas dashboard — más premium */
+.jug-dash-card {
+  border-radius: 18px !important;
+  padding: 1rem 1.05rem !important;
+  box-shadow: 0 4px 18px rgba(15, 23, 42, 0.05) !important;
+}
+
+.jug-dash-card h3 {
+  font-size: 0.68rem !important;
+  letter-spacing: 0.09em !important;
+  margin-bottom: 0.65rem !important;
+}
+
+/* Anular el botón de simulación de vídeo en el hub jugador en prod
+   (se sustituye por una notificación visual del badge) */
+.gimadd-prod .jug-hub-video-confirm {
+  display: none !important;
+}
+
+/* Ocultar en prod los hints largos de explicación de flujo en objetivos
+   (el inversor ve directamente la lista de objetivos sin texto denso) */
+.gimadd-prod .jugador-objetivos-lead.gimadd-pre-only {
+  display: none !important;
+}
+
+/* En prod ocultamos los párrafos largos descriptivos de cada subpanel del plan,
+   evitando saturar la pantalla con texto cuando el inversor revisa la app */
+.gimadd-prod .jug-plan-subdesc {
+  display: none !important;
+}
+
+.gimadd-prod .coach-plan-phase-label {
+  display: none !important;
+}
+
+/* Siguientes clases — caja amarilla con icono de calendario cuando no hay hora */
+.coach-agenda-slot__icon {
+  font-size: 1.55rem !important;
+  color: #1a1a1a;
+  line-height: 1;
+}
+
+.coach-agenda-slot__timebox {
+  min-height: 3.35rem;
+}

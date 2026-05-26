@@ -20,6 +20,8 @@ flowchart LR
   V[Visitante / marketplace] --> P
 ```
 
+
+
 - **Jugador:** contrata, entrena, registra partidos y clases, sube vídeos, ve feedback, habla con su coach y sigue su plan.
 - **Entrenador:** vende servicios, organiza agenda, da seguimiento, analiza vídeos, cobra con trazabilidad y gestiona su cartera de clientes como un negocio.
 - **Visitante:** descubre entrenadores en un **marketplace** público y da el salto a la app con una invitación clara (código o enlace).
@@ -28,12 +30,14 @@ flowchart LR
 
 ## 3. Dónde vive el producto (sin especificar tecnología)
 
-| Canal | Para quién | Por qué importa al negocio |
-|-------|------------|----------------------------|
-| **App nativa Android** | Jugador y/o entrenador | Donde está el día a día: notificaciones, cámara, agenda en el bolsillo. |
-| **App nativa iOS** | Igual | Paridad de experiencia en el mercado español y europeo de pádel. |
+
+| Canal                                           | Para quién             | Por qué importa al negocio                                                                                 |
+| ----------------------------------------------- | ---------------------- | ---------------------------------------------------------------------------------------------------------- |
+| **App nativa Android**                          | Jugador y/o entrenador | Donde está el día a día: notificaciones, cámara, agenda en el bolsillo.                                    |
+| **App nativa iOS**                              | Igual                  | Paridad de experiencia en el mercado español y europeo de pádel.                                           |
 | **Aplicación de escritorio para el entrenador** | Entrenador profesional | Pantalla grande y flujo cómodo para **videoanálisis** y para **gestionar a muchos clientes** sin fricción. |
-| **Web pública** | Captación | El **marketplace** da visibilidad y confianza antes de instalar la app. |
+| **Web pública**                                 | Captación              | El **marketplace** da visibilidad y confianza antes de instalar la app.                                    |
+
 
 La misma persona puede usar móvil en pista y escritorio en casa; el valor es **continuidad**, no el dispositivo.
 
@@ -76,13 +80,15 @@ La misma persona puede usar móvil en pista y escritorio en casa; el valor es **
 
 ## 7. Contratación de servicios — qué supone cada tipo (lenguaje de negocio)
 
-| Tipo de servicio | Qué compra el jugador | Qué debe cumplir la experiencia |
-|------------------|----------------------|--------------------------------|
-| **Sesión suelta de videoanálisis** | Una revisión profesional de un vídeo suyo. | Plazos de entrega claros, cola visible para el jugador, notificación al coach. |
-| **Sesión en pista (mentoría)** | Tiempo real con el entrenador. | Solicitud, confirmación de fecha, recordatorios, posibilidad de reprogramar con trazabilidad. |
-| **Pack** | Varios usos (por ejemplo pista + vídeo) con una **caducidad** razonable. | Saldo de “sesiones restantes”, avisos antes de perder valor, transparencia en el consumo. |
-| **Mensualidad** | Acceso recurrente (cupos que se renuevan cada mes). | Alta, cobro periódico, pausa o baja con reglas claras, sin sorpresas en la tarjeta. |
-| **Programa de acompañamiento (3 / 6 / 12 meses)** | Un **camino** de mejora con ritmo y seguimiento. | Hitos de valor, combinación de pista, vídeo y objetivos, sensación de “proyecto”, no de ticket suelto. |
+
+| Tipo de servicio                                  | Qué compra el jugador                                                    | Qué debe cumplir la experiencia                                                                        |
+| ------------------------------------------------- | ------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------ |
+| **Sesión suelta de videoanálisis**                | Una revisión profesional de un vídeo suyo.                               | Plazos de entrega claros, cola visible para el jugador, notificación al coach.                         |
+| **Sesión en pista (mentoría)**                    | Tiempo real con el entrenador.                                           | Solicitud, confirmación de fecha, recordatorios, posibilidad de reprogramar con trazabilidad.          |
+| **Pack**                                          | Varios usos (por ejemplo pista + vídeo) con una **caducidad** razonable. | Saldo de “sesiones restantes”, avisos antes de perder valor, transparencia en el consumo.              |
+| **Mensualidad**                                   | Acceso recurrente (cupos que se renuevan cada mes).                      | Alta, cobro periódico, pausa o baja con reglas claras, sin sorpresas en la tarjeta.                    |
+| **Programa de acompañamiento (3 / 6 / 12 meses)** | Un **camino** de mejora con ritmo y seguimiento.                         | Hitos de valor, combinación de pista, vídeo y objetivos, sensación de “proyecto”, no de ticket suelto. |
+
 
 **Mensaje para dirección:** el catálogo no es solo “precios”: es la **política comercial** del entrenador empaquetada de forma que el jugador entienda qué recibe y qué debe hacer él (vídeo, asistencia, diario).
 
@@ -148,7 +154,6 @@ Si pasan demasiados días sin vídeo, el sistema **avisa al entrenador** para qu
 La plataforma combina dos ingresos, con **papel distinto** para entrenador y jugador:
 
 1. **Mensualidad al entrenador** — Se cobra **solo al entrenador** por usar la plataforma (cuota SaaS recurrente). Es predecible para Gimadd y debe ser clara para el coach (“sé lo que pago cada mes por la herramienta”).
-
 2. **Recargo del 5 % (mínimo 1,50 €)** sobre el **precio que el entrenador fija** para cada servicio — Ese porcentaje **no lo paga el coach**: se **añade en el checkout** al precio del servicio, lo **paga el cliente (jugador)** y el entrenador **cobra íntegro** el importe que él configuró. Gimadd retiene el recargo como ingreso variable ligado al volumen de ventas por la plataforma.
 
 **Por qué importa a dirección:** mensaje simple para el mercado (“el coach cobra lo que publica”) y transparencia en checkout para el jugador (precio del servicio + línea de plataforma); implica copy legal y fiscal claro para ambas líneas de ingreso.
@@ -217,13 +222,15 @@ El entrenador **crea**, **edita**, **activa** o **desactiva** ofertas (sesión, 
 
 Son **plantillas** que aceleran el arranque del entrenador; puede renombrarlas, ocultarlas o adaptarlas.
 
-| Plantilla (resumen) | Propuesta de valor |
-|---------------------|-------------------|
-| Videoanálisis | Feedback asincrónico de calidad con plazo de entrega claro. |
-| Mentoría en pista | Hora de trabajo técnico o táctico presencial. |
-| Pack intensivo | Compromiso medio: combina pista y vídeo con caducidad. |
-| Plan mensual | Relación continua: cupos que se renuevan cada mes. |
+
+| Plantilla (resumen)        | Propuesta de valor                                                   |
+| -------------------------- | -------------------------------------------------------------------- |
+| Videoanálisis              | Feedback asincrónico de calidad con plazo de entrega claro.          |
+| Mentoría en pista          | Hora de trabajo técnico o táctico presencial.                        |
+| Pack intensivo             | Compromiso medio: combina pista y vídeo con caducidad.               |
+| Plan mensual               | Relación continua: cupos que se renuevan cada mes.                   |
 | Programas 3 / 6 / 12 meses | Acompañamiento profundo: proyecto, hábito y recurrencia de ingresos. |
+
 
 ---
 
@@ -231,22 +238,26 @@ Son **plantillas** que aceleran el arranque del entrenador; puede renombrarlas, 
 
 **Qué debe mostrar y por qué:**
 
-| Bloque | Información | Por qué |
-|--------|--------------|--------|
-| **Progreso / foco** | Objetivo principal del plan o estado “listo para revisión” | Da sentido inmediato a abrir la app cada semana. |
-| **Acciones urgentes** | Vídeo pendiente, reprogramación, diario sin rellenar | Reduce abandono y incidencias. |
-| **Próximas clases** | Fecha, estado y forma de pago entendible | Conecta lo digital con lo que pasará en el club. |
+
+| Bloque                | Información                                                | Por qué                                          |
+| --------------------- | ---------------------------------------------------------- | ------------------------------------------------ |
+| **Progreso / foco**   | Objetivo principal del plan o estado “listo para revisión” | Da sentido inmediato a abrir la app cada semana. |
+| **Acciones urgentes** | Vídeo pendiente, reprogramación, diario sin rellenar       | Reduce abandono y incidencias.                   |
+| **Próximas clases**   | Fecha, estado y forma de pago entendible                   | Conecta lo digital con lo que pasará en el club. |
+
 
 ---
 
 ## 22. Pantalla de inicio del entrenador
 
-| Bloque | Información | Por qué |
-|--------|---------------|--------|
-| **Agenda de hoy** | Quién entrena y a qué hora | Operativa del día. |
-| **Urgencias** | Clientes que requieren acción, fechas abiertas, revisiones | Prioriza el tiempo del coach. |
-| **Finanzas rápidas** | Cobrado / pendiente en ventana corta | Salud del negocio de un vistazo. |
-| **Accesos** | Clientes, finanzas, promociones | Navegación rápida a “donde duele” el negocio. |
+
+| Bloque               | Información                                                | Por qué                                       |
+| -------------------- | ---------------------------------------------------------- | --------------------------------------------- |
+| **Agenda de hoy**    | Quién entrena y a qué hora                                 | Operativa del día.                            |
+| **Urgencias**        | Clientes que requieren acción, fechas abiertas, revisiones | Prioriza el tiempo del coach.                 |
+| **Finanzas rápidas** | Cobrado / pendiente en ventana corta                       | Salud del negocio de un vistazo.              |
+| **Accesos**          | Clientes, finanzas, promociones                            | Navegación rápida a “donde duele” el negocio. |
+
 
 ---
 

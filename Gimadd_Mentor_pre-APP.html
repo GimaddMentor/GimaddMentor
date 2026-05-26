@@ -4261,34 +4261,38 @@
   <section class="app-view app-view-home is-active" data-view="home" id="view-home">
     <div class="home-hero">
       <h1>Gimadd <span style="background:var(--lime,#d9f64a);padding:0.08em 0.25em;border-radius:6px">Mentor</span></h1>
-      <p class="home-lead-short">Consola para entrenadores de alto rendimiento: objetivos, vídeo y seguimiento en un solo flujo.</p>
-        <p>Una sola app demo: elige tu perfil. Objetivos y partidos se guardan en el navegador y se comparten entre jugador y entrenador en este dispositivo (también se incrustan al exportar el HTML).</p>
-      </div>
-      <p class="home-subtitle gimadd-pre-only"><strong>Mismo dispositivo:</strong> cada jugador tiene sus objetivos y diario aparte. El entrenador cambia de jugador en el panel o aquí; el CRM lista a todos los clientes.</p>
+      <p class="home-tagline">Objetivos, vídeo y seguimiento. La app que conecta a entrenadores y jugadores de pádel.</p>
+      <p class="home-lead-short gimadd-pre-only">Consola para entrenadores de alto rendimiento: objetivos, vídeo y seguimiento en un solo flujo.</p>
+      <p class="gimadd-pre-only">Una sola app demo: elige tu perfil. Objetivos y partidos se guardan en el navegador y se comparten entre jugador y entrenador en este dispositivo (también se incrustan al exportar el HTML).</p>
     </div>
+    <p class="home-subtitle gimadd-pre-only"><strong>Mismo dispositivo:</strong> cada jugador tiene sus objetivos y diario aparte. El entrenador cambia de jugador en el panel o aquí; el CRM lista a todos los clientes.</p>
 
-    <div class="home-player-section">
-      <h2>Jugadores (demo multipérfil)</h2>
+    <div class="home-player-section home-pick-section">
+      <h2 class="home-pick-label">Jugadores<span class="pre-tag gimadd-pre-only">(demo multipérfil)</span></h2>
       <div class="home-player-grid" id="homePlayerPickList" role="list">
-        <button type="button" class="profile-card jugador profile-card--player-pick" data-pick-player="demo-juan" aria-label="Entrar como Juan García"><span class="pill-mini">App + CRM</span><p class="t2">Juan García</p><p class="d2">Plan completo · mismo estado demo que antes (objetivos + diario).</p></button>
-        <button type="button" class="profile-card jugador profile-card--player-pick" data-pick-player="player-laura" aria-label="Entrar como Laura Sánchez"><span class="pill-mini">Lead</span><p class="t2">Laura Sánchez</p><p class="d2">Sin app todavía · encaja con lead del CRM.</p></button>
-        <button type="button" class="profile-card jugador profile-card--player-pick" data-pick-player="player-marta" aria-label="Entrar como Marta Ruiz"><span class="pill-mini">Reactivación</span><p class="t2">Marta Ruiz</p><p class="d2">Histórico mínimo en app · pausa y último partido 2025.</p></button>
-        <button type="button" class="profile-card jugador profile-card--player-pick" data-pick-player="player-carlos" aria-label="Entrar como Carlos Medina"><span class="pill-mini">Nuevo pack</span><p class="t2">Carlos Medina</p><p class="d2">Objetivos recientes + partido y clase de pista.</p></button>
-        <button type="button" class="profile-card jugador profile-card--player-pick" data-pick-player="player-ana" aria-label="Entrar como Ana Torres"><span class="pill-mini">Videoanálisis</span><p class="t2">Ana Torres</p><p class="d2">Perfil competitivo · partidos y foco en vídeo.</p></button>
+        <button type="button" class="profile-card jugador profile-card--player-pick" data-pick-player="demo-juan" aria-label="Entrar como Juan García"><img class="profile-pick-photo" src="https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=200&amp;h=200&amp;fit=crop" width="68" height="68" alt="" /><span class="pill-mini">App + CRM</span><p class="t2">Juan García</p><p class="d2">Plan completo · mismo estado demo que antes (objetivos + diario).</p></button>
+        <button type="button" class="profile-card jugador profile-card--player-pick" data-pick-player="player-laura" aria-label="Entrar como Laura Sánchez"><img class="profile-pick-photo" src="https://images.unsplash.com/photo-1544723795-3fb6469f5b39?w=200&amp;h=200&amp;fit=crop" width="68" height="68" alt="" /><span class="pill-mini">Lead</span><p class="t2">Laura Sánchez</p><p class="d2">Sin app todavía · encaja con lead del CRM.</p></button>
+        <button type="button" class="profile-card jugador profile-card--player-pick" data-pick-player="player-marta" aria-label="Entrar como Marta Ruiz"><img class="profile-pick-photo" src="https://images.unsplash.com/photo-1580489944761-15a19d654956?w=200&amp;h=200&amp;fit=crop" width="68" height="68" alt="" /><span class="pill-mini">Reactivación</span><p class="t2">Marta Ruiz</p><p class="d2">Histórico mínimo en app · pausa y último partido 2025.</p></button>
+        <button type="button" class="profile-card jugador profile-card--player-pick" data-pick-player="player-carlos" aria-label="Entrar como Carlos Medina"><img class="profile-pick-photo" src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&amp;h=200&amp;fit=crop" width="68" height="68" alt="" /><span class="pill-mini">Nuevo pack</span><p class="t2">Carlos Medina</p><p class="d2">Objetivos recientes + partido y clase de pista.</p></button>
+        <button type="button" class="profile-card jugador profile-card--player-pick" data-pick-player="player-ana" aria-label="Entrar como Ana Torres"><img class="profile-pick-photo" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&amp;h=200&amp;fit=crop" width="68" height="68" alt="" /><span class="pill-mini">Videoanálisis</span><p class="t2">Ana Torres</p><p class="d2">Perfil competitivo · partidos y foco en vídeo.</p></button>
       </div>
     </div>
 
-    <div class="profile-pick">
+    <div class="profile-pick home-pick-section">
+      <h2 class="home-pick-label">Entrenador</h2>
       <button type="button" class="profile-card entrenador" id="pickEntrenador" aria-label="Entrar como entrenador">
-        <div class="tag ent">Perfil entrenador</div>
-        <p class="t2">Soy entrenador</p>
-        <p class="d2 gimadd-pre-only">Crear y gestionar objetivos del jugador, revisiones de videoanálisis, completar o reactivar metas, y ver el diario de partidos.</p>
+        <img class="profile-pick-photo" src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=200&amp;h=200&amp;fit=crop" width="80" height="80" alt="" />
+        <span class="profile-pick-body">
+          <span class="tag ent">Perfil entrenador</span>
+          <span class="t2">Soy entrenador</span>
+          <span class="d2 gimadd-pre-only">Crear y gestionar objetivos del jugador, revisiones de videoanálisis, completar o reactivar metas, y ver el diario de partidos.</span>
+        </span>
       </button>
     </div>
 
-    <div class="persist-app-home">
+    <div class="persist-app-home gimadd-pre-only">
       <button type="button" id="btnDownloadFullApp">Descargar aplicación completa (objetivos + partidos en este HTML)</button>
-      <p class="hint gimadd-pre-only">Guarda el archivo descargado y reemplaza este para conservar todo aunque borres datos del sitio.</p>
+      <p class="hint">Guarda el archivo descargado y reemplaza este para conservar todo aunque borres datos del sitio.</p>
     </div>
   </section>
 
@@ -4430,7 +4434,7 @@
       <button type="button" class="btn-nuevo-video" id="btnJugGrabarConfirm" style="width:100%;margin-top:0.35rem">
         Confirmar envío al entrenador
       </button>
-      <p style="margin:0.65rem 0 0;font-size:0.72rem;color:var(--muted);line-height:1.4;text-align:center">
+      <p class="gimadd-pre-only" style="margin:0.65rem 0 0;font-size:0.72rem;color:var(--muted);line-height:1.4;text-align:center">
         Demo: el archivo no se sube a ningún servidor; solo simulamos el aviso al entrenador en esta app.
       </p>
     </div>
@@ -4461,8 +4465,8 @@
     </button>
   </nav>
 
-  <p class="progress-hint jugador-objetivos-lead" id="objetivosHintPlayer">El porcentaje de progreso (0–100&nbsp;%) lo ajusta tu <strong>entrenador</strong>. Las prácticas del <strong>plan de acción</strong> se registran en el <strong>diario</strong> (partidos o clases según el enfoque del objetivo). Cuando un objetivo cumple sus prácticas aparece ✅, pero el paso a <strong>pendiente de revisión</strong> ocurre cuando <strong>todos</strong> los objetivos del plan han cumplido las prácticas; entonces debes enviar un nuevo vídeo. El <strong>completado</strong> lo marca el entrenador tras el análisis.</p>
-  <p class="progress-hint jugador-objetivos-lead" id="objetivosHintCoach" hidden>Vista entrenador CRM: misma información que el jugador en <strong>Plan de acción</strong>. El paso a <strong>pendiente de revisión</strong> ocurre cuando <strong>todos</strong> los objetivos del plan cumplen prácticas; hasta entonces verás ✅ en quien ya las cumplió, pero siguen en el plan de partidos o clase.</p>
+  <p class="progress-hint jugador-objetivos-lead gimadd-pre-only" id="objetivosHintPlayer">El porcentaje de progreso (0–100&nbsp;%) lo ajusta tu <strong>entrenador</strong>. Las prácticas del <strong>plan de acción</strong> se registran en el <strong>diario</strong> (partidos o clases según el enfoque del objetivo). Cuando un objetivo cumple sus prácticas aparece ✅, pero el paso a <strong>pendiente de revisión</strong> ocurre cuando <strong>todos</strong> los objetivos del plan han cumplido las prácticas; entonces debes enviar un nuevo vídeo. El <strong>completado</strong> lo marca el entrenador tras el análisis.</p>
+  <p class="progress-hint jugador-objetivos-lead gimadd-pre-only" id="objetivosHintCoach" hidden>Vista entrenador CRM: misma información que el jugador en <strong>Plan de acción</strong>. El paso a <strong>pendiente de revisión</strong> ocurre cuando <strong>todos</strong> los objetivos del plan cumplen prácticas; hasta entonces verás ✅ en quien ya las cumplió, pero siguen en el plan de partidos o clase.</p>
 
   <main>
     <div class="jugador-obj-panel is-on" data-jugador-obj-panel="plan">
@@ -4531,6 +4535,20 @@
             <p class="jug-hub-sub" id="coachHubSub">Pilar de la Horadada · Gimadd Mentor</p>
           </div>
           <button type="button" class="jug-hub-settings jug-hub-perfil-btn" id="btnCoachHubSettings" title="Mi perfil" aria-label="Abrir perfil">Perfil</button>
+        </div>
+        <div class="coach-hub-kpis" aria-label="Resumen del entrenador">
+          <div class="coach-hub-kpi">
+            <span class="coach-hub-kpi-num">23</span>
+            <span class="coach-hub-kpi-lbl">jugadores</span>
+          </div>
+          <div class="coach-hub-kpi coach-hub-kpi--alert">
+            <span class="coach-hub-kpi-num">7</span>
+            <span class="coach-hub-kpi-lbl">vídeos pendientes</span>
+          </div>
+          <div class="coach-hub-kpi">
+            <span class="coach-hub-kpi-num">1.847&nbsp;€</span>
+            <span class="coach-hub-kpi-lbl">este mes</span>
+          </div>
         </div>
       </header>
 
@@ -4691,7 +4709,7 @@
 
       <div class="coach-panel" id="coachPanelDiario" data-coach-panel="diario">
         <h1 style="font-size:1.05rem">Diario del jugador</h1>
-        <p class="sub"><strong>Partidos</strong> y <strong>clases en pista</strong> registrados por el jugador (solo lectura en esta demo).</p>
+        <p class="sub"><strong>Partidos</strong> y <strong>clases en pista</strong> registrados por el jugador (solo lectura).</p>
         <nav class="coach-diary-subnav" style="display:flex;gap:0.5rem;margin-bottom:1rem;flex-wrap:wrap" aria-label="Vista diario">
           <button type="button" class="on" data-coach-diary-tab="partidos">Partidos</button>
           <button type="button" data-coach-diary-tab="clases">Clases en pista</button>
@@ -7388,12 +7406,17 @@
     var el = document.getElementById("homePlayerPickList");
     if (!el) return;
     el.innerHTML = DEMO_PLAYER_PROFILES.map(function (p) {
+      var photo = p.avatarUrl
+        ? '<img class="profile-pick-photo" src="' + escapeHtml(p.avatarUrl) + '" width="68" height="68" alt="" loading="lazy" />'
+        : "";
       return (
         '<button type="button" class="profile-card jugador profile-card--player-pick" data-pick-player="' +
         escapeHtml(p.id) +
         '" aria-label="Entrar como ' +
         escapeHtml(p.nombre) +
-        '"><span class="pill-mini">' +
+        '">' +
+        photo +
+        '<span class="pill-mini">' +
         escapeHtml(p.badge) +
         "</span><p class=\"t2\">" +
         escapeHtml(p.nombre) +
