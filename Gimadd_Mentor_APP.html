@@ -5357,6 +5357,7 @@
     }
     .coach-srv-form-inner select,
     .coach-srv-form-inner input[type="text"],
+    .coach-srv-form-inner input[type="number"],
     .coach-srv-form-inner textarea {
       width: 100%;
       padding: 0.45rem;
@@ -5378,6 +5379,123 @@
       .coach-srv-extra-field {
         grid-column: 1 / -1;
       }
+    }
+
+    /* Bloque de inclusiones del pack (solo visible cuando kind=pack) */
+    .coach-srv-stack .coach-srv-pack-fields {
+      display: none;
+    }
+    .coach-srv-stack[data-kind="pack"] .coach-srv-pack-fields {
+      display: block;
+      margin-top: 0.85rem;
+      padding: 0.85rem;
+      border-radius: 14px;
+      background: linear-gradient(160deg, #fffbeb 0%, #fef9c3 100%);
+      border: 1px solid #fde68a;
+      box-shadow: 0 2px 10px rgba(234, 179, 8, 0.08);
+    }
+    .coach-srv-pack-head {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.6rem;
+      margin: 0 0 0.7rem;
+    }
+    .coach-srv-pack-head > .material-symbols-rounded {
+      flex-shrink: 0;
+      width: 2rem;
+      height: 2rem;
+      border-radius: 10px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(140deg, #1a1a1a 0%, #0f172a 100%);
+      color: #facc15;
+      font-size: 1.15rem;
+      font-variation-settings: "FILL" 1, "wght" 600, "GRAD" 0, "opsz" 24;
+      box-shadow: 0 3px 8px rgba(15, 23, 42, 0.22);
+    }
+    .coach-srv-pack-head > div { line-height: 1.3; }
+    .coach-srv-pack-head strong {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 800;
+      color: #0f172a;
+    }
+    .coach-srv-pack-head small {
+      display: block;
+      font-size: 0.7rem;
+      color: #6b7280;
+      margin-top: 0.1rem;
+      line-height: 1.4;
+    }
+    .coach-srv-pack-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.6rem;
+    }
+    .coach-srv-pack-grid .lbl {
+      display: inline-flex !important;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 0.72rem !important;
+      font-weight: 700;
+      color: #0f172a;
+      margin: 0 0 0.25rem !important;
+    }
+    .coach-srv-pack-grid .lbl .material-symbols-rounded {
+      font-size: 1rem;
+      font-variation-settings: "FILL" 1, "wght" 600, "GRAD" 0, "opsz" 20;
+      color: #b45309;
+    }
+    .coach-srv-pack-grid input[type="number"] {
+      font-weight: 700;
+      font-size: 1rem;
+      text-align: center;
+      padding: 0.55rem 0.45rem !important;
+      background: #fff;
+      border: 1.5px solid #fde68a !important;
+    }
+    .coach-srv-pack-grid input[type="number"]:focus {
+      outline: none;
+      border-color: #eab308 !important;
+      box-shadow: 0 0 0 3px rgba(234, 179, 8, 0.18);
+    }
+
+    /* Chips de inclusiones en la tarjeta del jugador */
+    .jug-srv-includes {
+      list-style: none;
+      margin: 0.55rem 0 0.65rem;
+      padding: 0;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+    }
+    .jug-srv-include-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.35rem 0.6rem 0.35rem 0.42rem;
+      border-radius: 999px;
+      background: linear-gradient(140deg, #fef9c3 0%, #fef3c7 100%);
+      border: 1px solid #fde68a;
+      font-size: 0.74rem;
+      color: #0f172a;
+      box-shadow: 0 1px 4px rgba(234, 179, 8, 0.12);
+    }
+    .jug-srv-include-chip .material-symbols-rounded {
+      font-size: 1rem;
+      font-variation-settings: "FILL" 1, "wght" 600, "GRAD" 0, "opsz" 20;
+      color: #b45309;
+    }
+    .jug-srv-include-num {
+      font-weight: 800;
+      font-size: 0.85rem;
+      color: #0f172a;
+      letter-spacing: -0.01em;
+    }
+    .jug-srv-include-lbl {
+      font-weight: 600;
+      color: #374151;
     }
     .coach-srv-del-wrap { margin: 0.5rem 0 0; }
     .coach-srv-del-wrap .btn-sm {
@@ -7696,7 +7814,7 @@
 [
   {"id":"cat-video","kind":"individual","tag":"Videoanálisis","title":"Videoanálisis","desc":"El jugador **sube vídeo**; recibes **análisis** con marcas temporales y foco en **técnica y táctica**.","meta":"individual 45 € · parejas 72 € · entrega ~48 h","visible":true,"sort":10},
   {"id":"cat-pista","kind":"individual","tag":"Mentoría en pista","title":"Mentoría en pista","desc":"**Sesión presencial**: trabajo **técnico**, **táctico** o **mixto** según planificación compartida.","meta":"individual 55 € · parejas 90 € · 60 min","visible":true,"sort":20},
-  {"id":"cat-pack","kind":"pack","tag":"Pack","title":"Pack intensivo — pista + videoanálisis","desc":"**Pago único** con cupos combinados en un periodo. Ideal para una **temporada corta** de trabajo concentrado.","meta":"individual 420 € · parejas 360 € · validez 3 meses","visible":true,"sort":30},
+  {"id":"cat-pack","kind":"pack","tag":"Pack","title":"Pack intensivo — pista + videoanálisis","desc":"**Pago único** con cupos combinados en un periodo. Ideal para una **temporada corta** de trabajo concentrado.","meta":"individual 420 € · parejas 360 € · validez 3 meses","packIncludes":{"clases":6,"video":3},"visible":true,"sort":30},
   {"id":"cat-mensual","kind":"mensual","tag":"Mensualidad","title":"Plan Pro mensual","desc":"Cupos de **pista y vídeo** que se renuevan **cada mes** hasta cancelación. **Seguimiento continuo** con ritmo fijo.","meta":"individual 149 €/mes · parejas 199 €/mes","visible":true,"sort":40},
   {"id":"cat-acomp-3","kind":"acompanamiento","tag":"Acompañamiento","title":"Impulso Momentum — 90 días contigo","desc":"Plan **90 días** a tu medida: dudas al vuelo y **asesoramiento integral** en técnica, táctica, físico y mental. **Sin clases cerradas** en contrato.","meta":"individual 429 € (programa 3 meses) · parejas 589 €","visible":true,"sort":50},
   {"id":"cat-acomp-6","kind":"acompanamiento","tag":"Acompañamiento","title":"Progresión Semestral — media temporada Pro","desc":"**Seis meses** de coach a tu lado: **hábitos**, **táctica** y **mentalidad**. **100 % adaptable** — sin cupos rígidos de pista en papel.","meta":"individual 789 € (programa 6 meses) · parejas 1.099 €","visible":true,"sort":60},
@@ -12133,7 +12251,7 @@
         var o = byId[s.id];
         if (!o) return JSON.parse(JSON.stringify(s));
         var vis = o.visible !== false;
-        return {
+        var merged = {
           id: s.id,
           kind: s.kind,
           tag: o.tag != null && String(o.tag).trim() ? String(o.tag).trim() : s.tag,
@@ -12143,10 +12261,14 @@
           visible: vis,
           sort: typeof o.sort === "number" ? o.sort : s.sort,
         };
+        if (s.kind === "pack") {
+          merged.packIncludes = (o && o.packIncludes) ? o.packIncludes : (s.packIncludes || { clases: 0, video: 0 });
+        }
+        return merged;
       });
     stored.forEach(function (x) {
       if (x && x.id && !seedIdSet[x.id]) {
-        out.push({
+        var custom = {
           id: String(x.id),
           kind: x.kind || "individual",
           tag: x.tag != null ? String(x.tag) : "Personalizado",
@@ -12155,7 +12277,11 @@
           meta: x.meta != null ? String(x.meta) : "",
           visible: x.visible !== false,
           sort: typeof x.sort === "number" ? x.sort : 99,
-        });
+        };
+        if (custom.kind === "pack" && x.packIncludes) {
+          custom.packIncludes = x.packIncludes;
+        }
+        out.push(custom);
       }
     });
     out.sort(function (a, b) {
@@ -12225,6 +12351,24 @@
     if (k === "mensual") return "Mensualidad (suscripción)";
     if (k === "pack") return "Pack (pago único)";
     return "Servicio individual";
+  }
+
+  function coachPackIncludesFromItem(it) {
+    var raw = it && it.packIncludes ? it.packIncludes : {};
+    function num(v) {
+      var n = parseInt(v, 10);
+      return isNaN(n) || n < 0 ? 0 : Math.min(n, 99);
+    }
+    return { clases: num(raw.clases), video: num(raw.video) };
+  }
+
+  function coachPackIncludesFromInputs(clasesRaw, videoRaw) {
+    function num(v) {
+      var s = String(v == null ? "" : v).replace(/[^0-9]/g, "");
+      var n = parseInt(s, 10);
+      return isNaN(n) || n < 0 ? 0 : Math.min(n, 99);
+    }
+    return { clases: num(clasesRaw), video: num(videoRaw) };
   }
 
   function coachCatalogKindOptionsHtml(selected) {
@@ -12572,6 +12716,31 @@
       escapeHtml(id) +
       '">Eliminar servicio</button>';
     var pf = coachMetaToPriceFormFields(it.meta || "", it.kind);
+    var inc = coachPackIncludesFromItem(it);
+    var packFields =
+      '<div class="coach-srv-pack-fields" data-pack-fields>' +
+      '<div class="coach-srv-pack-head">' +
+      '<span class="material-symbols-rounded" aria-hidden="true">inventory_2</span>' +
+      '<div><strong>Contenido del pack</strong><small>El jugador verá estas inclusiones al ver tu oferta.</small></div>' +
+      '</div>' +
+      '<div class="coach-srv-pack-grid">' +
+      '<div class="account-field"><label class="lbl" for="cat-pack-clases-' +
+      id +
+      '"><span class="material-symbols-rounded" aria-hidden="true">sports_tennis</span> Clases en pista</label>' +
+      '<input type="number" id="cat-pack-clases-' +
+      id +
+      '" class="cat-pack-num" inputmode="numeric" min="0" max="99" step="1" placeholder="0" value="' +
+      escapeHtml(inc.clases ? String(inc.clases) : "") +
+      '" /></div>' +
+      '<div class="account-field"><label class="lbl" for="cat-pack-video-' +
+      id +
+      '"><span class="material-symbols-rounded" aria-hidden="true">play_circle</span> Videoanálisis</label>' +
+      '<input type="number" id="cat-pack-video-' +
+      id +
+      '" class="cat-pack-num" inputmode="numeric" min="0" max="99" step="1" placeholder="0" value="' +
+      escapeHtml(inc.video ? String(inc.video) : "") +
+      '" /></div>' +
+      '</div></div>';
     var form =
       '<div class="coach-srv-form-inner">' +
       (custom
@@ -12624,6 +12793,7 @@
       '" maxlength="160" placeholder="Ej. 60 min · entrega 48 h · validez 3 meses · (programa 3 meses)" value="' +
       escapeHtml(pf.extra) +
       '" /></div></div>' +
+      packFields +
       '<p class="sub" style="font-size:0.68rem;color:var(--muted);margin:0 0 0.35rem;line-height:1.4">En <strong>mensualidad</strong> se añade «/mes» solo. Usa coma o punto para decimales. En <strong>programas</strong>, el texto del bloque de tiempo suele ir junto al precio individual en la ficha.</p>' +
       "</div>";
     var coachAdmin =
@@ -12647,6 +12817,8 @@
       (vis ? "" : " is-inactive") +
       '" data-cat-id="' +
       escapeHtml(id) +
+      '" data-kind="' +
+      escapeHtml(String(it.kind || "individual")) +
       '">' +
       renderJugSrvCardArticleHtml(it, coachAdmin) +
       "</div>"
@@ -12714,6 +12886,13 @@
         }
       });
     });
+    mount.querySelectorAll(".cat-kind-select").forEach(function (sel) {
+      sel.addEventListener("change", function () {
+        var stack = sel.closest(".coach-srv-stack");
+        if (!stack) return;
+        stack.setAttribute("data-kind", String(sel.value || "individual"));
+      });
+    });
   }
 
   function saveCoachCatalogFromForm() {
@@ -12730,19 +12909,28 @@
       var pin = document.getElementById("cat-price-ind-" + id);
       var ppar = document.getElementById("cat-price-par-" + id);
       var mex = document.getElementById("cat-meta-extra-" + id);
+      var kd = document.getElementById("cat-kind-" + id);
+      var tg = document.getElementById("cat-tag-" + id);
+      var kind = kd && kd.value ? kd.value : String(it.kind || "individual");
       var metaFromForm = String(
         coachPriceFormFieldsToMeta(kind, pin && pin.value, ppar && ppar.value, mex && mex.value) || ""
       ).trim();
-      return {
+      var next = {
         id: it.id,
         kind: kind,
         tag: tg && tg.value.trim() ? tg.value.trim() : it.tag,
         title: ti && ti.value.trim() ? ti.value.trim() : it.title,
         desc: de && de.value.trim() ? de.value.trim() : it.desc,
-        meta: metaFromForm,
+        meta: metaFromForm || it.meta || "",
         visible: vis ? vis.checked : it.visible !== false,
         sort: typeof it.sort === "number" ? it.sort : 0,
       };
+      if (kind === "pack") {
+        var pcEl = document.getElementById("cat-pack-clases-" + id);
+        var pvEl = document.getElementById("cat-pack-video-" + id);
+        next.packIncludes = coachPackIncludesFromInputs(pcEl && pcEl.value, pvEl && pvEl.value);
+      }
+      return next;
     });
     saveCoachCatalog(items);
     renderCoachCatalogEditor();
@@ -13798,11 +13986,32 @@
     return out;
   }
 
+  function renderJugSrvPackIncludesHtml(it) {
+    if (!it || it.kind !== "pack") return "";
+    var inc = coachPackIncludesFromItem(it);
+    if (!inc.clases && !inc.video) return "";
+    var chips = "";
+    if (inc.clases > 0) {
+      chips +=
+        '<li class="jug-srv-include-chip"><span class="material-symbols-rounded" aria-hidden="true">sports_tennis</span>' +
+        '<span class="jug-srv-include-num">' + inc.clases + '</span>' +
+        '<span class="jug-srv-include-lbl">' + (inc.clases === 1 ? "clase en pista" : "clases en pista") + '</span></li>';
+    }
+    if (inc.video > 0) {
+      chips +=
+        '<li class="jug-srv-include-chip"><span class="material-symbols-rounded" aria-hidden="true">play_circle</span>' +
+        '<span class="jug-srv-include-num">' + inc.video + '</span>' +
+        '<span class="jug-srv-include-lbl">' + (inc.video === 1 ? "videoanálisis" : "videoanálisis") + '</span></li>';
+    }
+    return '<ul class="jug-srv-includes" aria-label="Contenido del pack">' + chips + "</ul>";
+  }
+
   function renderJugSrvCardArticleHtml(it, innerAfterPricingHtml) {
     innerAfterPricingHtml = innerAfterPricingHtml || "";
     var tag = String(it.tag || it.kind || "").toUpperCase();
     var pr = splitJugMetaPricing(it.meta);
     var subHtml = pr.sub ? '<p class="jug-srv-price-sub">' + escapeHtml(pr.sub) + "</p>" : "";
+    var includesHtml = renderJugSrvPackIncludesHtml(it);
     return (
       '<article class="jug-srv-card" data-srv-id="' +
       escapeHtml(it.id) +
@@ -13817,7 +14026,9 @@
       escapeHtml(it.title || "") +
       '</h3><p class="jug-srv-desc">' +
       formatJugSrvRichText(it.desc || "") +
-      '</p><div class="jug-srv-pricing"><p class="jug-srv-price-line">' +
+      '</p>' +
+      includesHtml +
+      '<div class="jug-srv-pricing"><p class="jug-srv-price-line">' +
       escapeHtml(pr.bold) +
       "</p>" +
       subHtml +
@@ -13879,7 +14090,9 @@
       bullets: ["Sesión o entrega acordada con tu entrenador.", "Integración con objetivos y plan en la app.", "Atención prioritaria en periodos de competición."],
       cierre: "Habla con tu entrenador por el chat si necesitas ajustar el alcance antes de contratar.",
     };
+    var includesHtml = renderJugSrvPackIncludesHtml(it);
     var html =
+      includesHtml +
       (copy.kicker ? '<p class="sales-kicker">' + escapeHtml(copy.kicker) + "</p>" : "") +
       (copy.paras || [])
         .map(function (p) {
