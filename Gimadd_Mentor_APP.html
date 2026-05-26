@@ -5926,8 +5926,7 @@
         <h2 class="va-ws-title" id="jugVaTitle">Revisión de tu entrenador</h2>
         <p class="sub" id="jugVaMeta" style="margin:-0.35rem 0 0.5rem;font-size:0.74rem"></p>
         <div class="va-video-wrap" id="jugVaVideoWrap">
-          <video id="jugVaVideo" playsinline preload="metadata"
-            poster="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.jpg"></video>
+          <video id="jugVaVideo" playsinline preload="metadata"></video>
           <button type="button" class="va-fs-btn" id="jugVaFs" aria-label="Pantalla completa">Pantalla completa</button>
         </div>
         <div class="va-transport">
@@ -6167,8 +6166,7 @@
           <h2 class="va-ws-title">Revisión en pantalla única</h2>
           <p class="sub va-session-video-badge" id="coachVaSessionVideoLabel" style="margin:0 0 0.55rem;font-size:0.72rem;line-height:1.4"></p>
           <div class="va-video-wrap" id="coachVaVideoWrap">
-            <video id="coachVaVideo" playsinline preload="metadata"
-              poster="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.jpg"></video>
+            <video id="coachVaVideo" playsinline preload="metadata"></video>
             <button type="button" class="va-fs-btn" id="coachVaFs" aria-label="Pantalla completa">Pantalla completa</button>
           </div>
           <div class="va-transport">
@@ -6315,8 +6313,7 @@
                 <h2 class="va-ws-title" id="coachPlanVaTitle">Revisión del jugador</h2>
                 <p class="sub" id="coachPlanVaMeta" style="margin:-0.35rem 0 0.5rem;font-size:0.74rem"></p>
                 <div class="va-video-wrap" id="coachPlanVaVideoWrap">
-                  <video id="coachPlanVaVideo" playsinline preload="metadata"
-                    poster="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.jpg"></video>
+                  <video id="coachPlanVaVideo" playsinline preload="metadata"></video>
                   <button type="button" class="va-fs-btn" id="coachPlanVaFs" aria-label="Pantalla completa">Pantalla completa</button>
                 </div>
                 <div class="va-transport">
@@ -9476,13 +9473,20 @@
     pid = String(pid || "");
     if (!pid) return;
     var list = loadJugVideoLib(pid);
+    var dirty = false;
+    list.forEach(function (it) {
+      if (it && it.fromRevisionSeed === "v1" && it.url !== VA_DEMO_VIDEO_SRC) {
+        it.url = VA_DEMO_VIDEO_SRC;
+        dirty = true;
+      }
+    });
+    if (dirty) saveJugVideoLib(list, pid);
     if (list.some(function (it) {
       return it && it.fromRevisionSeed === "v1";
     })) return;
     ensureCoachRevisionStoreInitialized(pid);
     var bucket = coachRevisionLoadAll()[pid] || {};
-    var demoUrl =
-      "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4";
+    var demoUrl = VA_DEMO_VIDEO_SRC;
     var toAdd = [];
     (bucket.pendingDemo || []).forEach(function (row) {
       if (!row || !row.id) return;
@@ -10094,8 +10098,7 @@
 
   
   function vaDemoPublishedPackageJuan() {
-    var vidSrc =
-      "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.webm";
+    var vidSrc = VA_DEMO_VIDEO_SRC;
     var markers = [
       {
         id: "seed-va-juan-m1",
@@ -10148,7 +10151,21 @@
   function ensureVaPublishedDemoSeedForJuan() {
     var pid = "demo-juan";
     var b = vaGetPublishBucket(pid);
-    if (b.entries && b.entries.length) return;
+    if (b.entries && b.entries.length) {
+      var dirty = false;
+      b.entries.forEach(function (e) {
+        if (e && e.videoSrc && e.videoSrc.indexOf("flower") !== -1) {
+          e.videoSrc = VA_DEMO_VIDEO_SRC;
+          dirty = true;
+        }
+      });
+      if (dirty) {
+        var m = vaLoadMap(VA_PUBLISH_STORE_KEY);
+        m[pid] = b;
+        vaSaveMap(VA_PUBLISH_STORE_KEY, m);
+      }
+      return;
+    }
     var pkg = vaDemoPublishedPackageJuan();
     vaPublishPush(pid, pkg);
     vaSetMarkersBucket(pid, {
@@ -11265,10 +11282,11 @@
           {
             id: "seed-juan-p1",
             kind: "demo_seed",
-            title: "Vídeo · saque y devolución (ciclo actual)",
+            title: "Vídeo · sesión de pista (ciclo actual)",
             submittedAt: "2026-05-04T10:25:00",
-            durationLabel: "18:40",
-            playerComment: "Enfoque en salida de saque y primer golpe de revés.",
+            durationLabel: "1:54",
+            playerComment:
+              "Sesión de hoy en pista. Foco en mi saque y la salida tras el primer golpe. Me ha costado mantener el ritmo en los puntos largos — ¿lo ves desde el vídeo?",
             planLabel: "Plan de acción vigente — revisión tras completar prácticas en diario",
             objectiveTitles: [
               "Ritual y continuidad en el saque",
