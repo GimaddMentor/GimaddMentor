@@ -220,27 +220,30 @@
     @keyframes dash-flow { to { stroke-dashoffset: -44; } }
 
     .loop-badge {
-      position: relative;
+      display: none;
+    }
+
+    .hub-loop {
       display: inline-flex;
       align-items: center;
-      gap: 0.35rem;
-      padding: 0.45rem 1rem;
-      margin-top: 1rem;
+      justify-content: center;
+      gap: 0.3rem;
+      margin-top: 0.4rem;
+      padding: 0.32rem 0.65rem;
       border-radius: 999px;
       background: linear-gradient(140deg, #047857 0%, #10b981 100%);
       color: #fff;
-      font-size: 0.68rem;
+      font-size: clamp(0.48rem, 1.5vw, 0.58rem);
       font-weight: 800;
-      letter-spacing: 0.04em;
+      letter-spacing: 0.05em;
       text-transform: uppercase;
-      box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+      box-shadow: 0 3px 12px rgba(16, 185, 129, 0.45);
+      line-height: 1;
       white-space: nowrap;
-      z-index: 4;
-      flex-shrink: 0;
     }
 
-    .loop-badge .material-symbols-rounded {
-      font-size: 1rem;
+    .hub-loop .material-symbols-rounded {
+      font-size: 0.85rem;
       font-variation-settings: "FILL" 1, "wght" 700;
       animation: spin-icon 3s linear infinite;
     }
@@ -266,8 +269,9 @@
       align-items: center;
       justify-content: center;
       text-align: center;
-      padding: 0.85rem;
+      padding: 0.75rem 0.5rem;
       z-index: 2;
+      gap: 0.05rem;
     }
 
     .flywheel-hub .infinity {
@@ -303,13 +307,13 @@
       line-height: 1.2;
     }
 
-    .flywheel-hub span {
-      font-size: clamp(0.55rem, 1.7vw, 0.65rem);
+    .flywheel-hub span.hub-sub {
+      font-size: clamp(0.52rem, 1.6vw, 0.62rem);
       color: rgba(255,255,255,0.78);
       font-weight: 600;
-      margin-top: 0.15rem;
-      line-height: 1.3;
-      padding: 0 0.25rem;
+      margin-top: 0.12rem;
+      line-height: 1.25;
+      padding: 0 0.2rem;
     }
 
     .flywheel-step {
@@ -465,7 +469,7 @@
 
     @media (prefers-reduced-motion: reduce) {
       .flywheel-ring--outer, .flywheel-ring--mid, .flow-path,
-      .flywheel-step, .flywheel-ring--pulse, .loop-badge .material-symbols-rounded {
+      .flywheel-step, .flywheel-ring--pulse, .hub-loop .material-symbols-rounded {
         animation: none;
       }
     }
@@ -495,9 +499,6 @@
 
   <div class="flywheel-stage" id="flywheelStage">
     <div class="flywheel-wrap" id="flywheel" data-count="3" role="img" aria-live="polite"></div>
-    <div class="loop-badge" id="loopBadge" aria-hidden="false">
-      <span class="material-symbols-rounded">autorenew</span> Bucle infinito
-    </div>
   </div>
 
   <div class="legend">
@@ -513,7 +514,7 @@
       min: {
         desc: "<strong>Vista rápida</strong> para quien no conoce la app: grabas, te analizan, registras en el diario — y el bucle vuelve a empezar con otro vídeo.",
         cta: "Cada vuelta empieza igual: <strong>nuevo vídeo → nuevo análisis → más práctica en el diario</strong>. El juego mejora sin parar.",
-        hub: { showInfinity: true, title: "Mejora continua", sub: "Grabas otra vez → el ciclo sigue" },
+        hub: { showInfinity: true, title: "Mejora continua", sub: "" },
         steps: [
           { role: "player", icon: "videocam", title: "Grabas tu juego", desc: "Subes un vídeo de partido o entreno (cada vuelta empieza aquí)" },
           { role: "coach", icon: "play_circle", title: "Te analizan", desc: "El entrenador revisa el vídeo y te orienta" },
@@ -567,6 +568,13 @@
         .replace(/"/g, "&quot;");
     }
 
+    function hubLoopHtml() {
+      return (
+        '<span class="hub-loop">' +
+        '<span class="material-symbols-rounded" aria-hidden="true">autorenew</span> Bucle infinito</span>'
+      );
+    }
+
     function renderFlywheel(versionKey) {
       var v = VERSIONS[versionKey];
       var steps = v.steps;
@@ -588,7 +596,8 @@
         (v.hub.showInfinity ? '<span class="infinity" aria-hidden="true">∞</span>' :
           '<div class="logo-mark"><span class="material-symbols-rounded">sports_tennis</span></div>') +
         '<strong>' + escapeHtml(v.hub.title) + '</strong>' +
-        '<span>' + escapeHtml(v.hub.sub) + '</span></div>';
+        (v.hub.sub ? '<span class="hub-sub">' + escapeHtml(v.hub.sub) + '</span>' : '') +
+        hubLoopHtml() + '</div>';
 
       var stepsHtml = steps.map(function (step, i) {
         var angle = -90 + (360 / n) * i;
