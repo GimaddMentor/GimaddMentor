@@ -150,10 +150,11 @@
       flex-shrink: 0;
     }
 
-    .flywheel-wrap[data-count="4"] {
-      --ring-size: min(78vw, 460px);
-      --step-w: clamp(112px, 24vw, 140px);
-      --orbit-inset: 15%;
+    .flywheel-wrap[data-count="3"] {
+      --ring-size: min(80vw, 480px);
+      --step-w: clamp(118px, 26vw, 148px);
+      --orbit-inset: 18%;
+      --hub-scale: 0.82;
     }
     .flywheel-wrap[data-count="6"] {
       --ring-size: min(76vw, 540px);
@@ -250,9 +251,9 @@
       position: absolute;
       left: 50%;
       top: 50%;
-      transform: translate(-50%, -50%);
+      transform: translate(-50%, -50%) scale(var(--hub-scale, 1));
       width: 36%;
-      min-width: 120px;
+      min-width: 108px;
       aspect-ratio: 1;
       border-radius: 50%;
       background: linear-gradient(145deg, var(--court-deep) 0%, var(--court) 55%, #0284c7 100%);
@@ -456,7 +457,7 @@
     .cta-strip strong { color: var(--ink); }
 
     @media (max-width: 520px) {
-      .flywheel-wrap[data-count="4"] { --ring-size: min(92vw, 380px); --step-w: 98px; --orbit-inset: 16%; }
+      .flywheel-wrap[data-count="3"] { --ring-size: min(92vw, 400px); --step-w: 108px; --orbit-inset: 19%; --hub-scale: 0.78; }
       .flywheel-wrap[data-count="6"] { --ring-size: min(94vw, 400px); --step-w: 88px; --orbit-inset: 17%; }
       .flywheel-wrap[data-count="10"] { --ring-size: min(98vw, 420px); --step-w: 78px; --orbit-inset: 20%; }
       .version-tabs button { font-size: 0.72rem; padding: 0.45rem 0.75rem; }
@@ -484,7 +485,7 @@
     </p>
 
     <nav class="version-tabs" role="tablist" aria-label="Nivel de detalle del flywheel">
-      <button type="button" role="tab" aria-selected="true" data-version="min" class="is-on">Esencial · 4 pasos</button>
+      <button type="button" role="tab" aria-selected="true" data-version="min" class="is-on">Esencial · 3 pasos</button>
       <button type="button" role="tab" aria-selected="false" data-version="mid">Intermedio · 6 pasos</button>
       <button type="button" role="tab" aria-selected="false" data-version="full">Completo · 10 pasos</button>
     </nav>
@@ -493,7 +494,7 @@
   </header>
 
   <div class="flywheel-stage" id="flywheelStage">
-    <div class="flywheel-wrap" id="flywheel" data-count="4" role="img" aria-live="polite"></div>
+    <div class="flywheel-wrap" id="flywheel" data-count="3" role="img" aria-live="polite"></div>
     <div class="loop-badge" id="loopBadge" aria-hidden="false">
       <span class="material-symbols-rounded">autorenew</span> Bucle infinito
     </div>
@@ -510,14 +511,13 @@
   <script>
     var VERSIONS = {
       min: {
-        desc: "<strong>Vista rápida</strong> para quien no conoce la app: cuatro ideas, un solo mensaje — grabar, analizar, practicar y volver a empezar.",
-        cta: "No hace falta saber cómo funciona por dentro: <strong>siempre el mismo bucle</strong>, cada vez con un nivel de juego un poco más alto.",
-        hub: { showInfinity: true, title: "Mejora continua", sub: "El ciclo no para" },
+        desc: "<strong>Vista rápida</strong> para quien no conoce la app: grabas, te analizan, registras en el diario — y el bucle vuelve a empezar con otro vídeo.",
+        cta: "Cada vuelta empieza igual: <strong>nuevo vídeo → nuevo análisis → más práctica en el diario</strong>. El juego mejora sin parar.",
+        hub: { showInfinity: true, title: "Mejora continua", sub: "Grabas otra vez → el ciclo sigue" },
         steps: [
-          { role: "player", icon: "videocam", title: "Grabas tu juego", desc: "Vídeo de un partido o entreno" },
-          { role: "coach", icon: "play_circle", title: "Te analizan", desc: "El entrenador revisa y te orienta" },
-          { role: "player", icon: "sports_tennis", title: "Practicas en pista", desc: "Partidos y clases con foco claro" },
-          { role: "loop", icon: "sync", title: "Vuelves a grabar", desc: "Otro vídeo → otra vuelta del bucle" }
+          { role: "player", icon: "videocam", title: "Grabas tu juego", desc: "Subes un vídeo de partido o entreno (cada vuelta empieza aquí)" },
+          { role: "coach", icon: "play_circle", title: "Te analizan", desc: "El entrenador revisa el vídeo y te orienta" },
+          { role: "player", icon: "auto_stories", title: "Diario", desc: "Registras partidos y clases · marcas lo practicado" }
         ]
       },
       mid: {
@@ -591,7 +591,7 @@
         '<span>' + escapeHtml(v.hub.sub) + '</span></div>';
 
       var stepsHtml = steps.map(function (step, i) {
-        var angle = (360 / n) * i;
+        var angle = -90 + (360 / n) * i;
         var delay = (i * (parseFloat(cycleDur) / n)).toFixed(2) + "s";
         var roleClass = "step-role--" + step.role;
         var icoClass = "step-ico--" + step.role;
