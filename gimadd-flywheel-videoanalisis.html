@@ -136,20 +136,35 @@
     .flywheel-stage {
       position: relative;
       width: 100%;
+      max-width: 720px;
       display: flex;
-      justify-content: center;
-      min-height: var(--ring-size);
+      flex-direction: column;
+      align-items: center;
+      margin: 0 auto 1.25rem;
     }
 
     .flywheel-wrap {
       position: relative;
       width: var(--ring-size);
       height: var(--ring-size);
+      flex-shrink: 0;
     }
 
-    .flywheel-wrap[data-count="4"] { --ring-size: min(78vw, 440px); --step-w: clamp(118px, 26vw, 148px); }
-    .flywheel-wrap[data-count="6"] { --ring-size: min(74vw, 500px); --step-w: clamp(108px, 22vw, 128px); }
-    .flywheel-wrap[data-count="10"] { --ring-size: min(88vw, 580px); --step-w: clamp(96px, 18vw, 112px); }
+    .flywheel-wrap[data-count="4"] {
+      --ring-size: min(78vw, 460px);
+      --step-w: clamp(112px, 24vw, 140px);
+      --orbit-inset: 15%;
+    }
+    .flywheel-wrap[data-count="6"] {
+      --ring-size: min(76vw, 540px);
+      --step-w: clamp(100px, 20vw, 122px);
+      --orbit-inset: 16%;
+    }
+    .flywheel-wrap[data-count="10"] {
+      --ring-size: min(94vw, 640px);
+      --step-w: clamp(86px, 15vw, 100px);
+      --orbit-inset: 19%;
+    }
 
     .flywheel-ring {
       position: absolute;
@@ -204,15 +219,12 @@
     @keyframes dash-flow { to { stroke-dashoffset: -44; } }
 
     .loop-badge {
-      position: absolute;
-      left: 50%;
-      bottom: -0.5rem;
-      transform: translateX(-50%);
-      z-index: 5;
+      position: relative;
       display: inline-flex;
       align-items: center;
       gap: 0.35rem;
-      padding: 0.4rem 0.85rem;
+      padding: 0.45rem 1rem;
+      margin-top: 1rem;
       border-radius: 999px;
       background: linear-gradient(140deg, #047857 0%, #10b981 100%);
       color: #fff;
@@ -222,6 +234,8 @@
       text-transform: uppercase;
       box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
       white-space: nowrap;
+      z-index: 4;
+      flex-shrink: 0;
     }
 
     .loop-badge .material-symbols-rounded {
@@ -306,7 +320,7 @@
       width: var(--step-w);
       margin-left: calc(var(--step-w) / -2);
       margin-top: calc(var(--step-w) / -2);
-      transform: rotate(var(--angle)) translateY(calc(var(--ring-size) / -2 + 7%)) rotate(calc(-1 * var(--angle)));
+      transform: rotate(var(--angle)) translateY(calc(var(--ring-size) / -2 + var(--orbit-inset, 14%))) rotate(calc(-1 * var(--angle)));
       z-index: 3;
       animation: step-glow var(--cycle-dur, 8s) ease-in-out infinite;
       animation-delay: var(--delay);
@@ -316,7 +330,7 @@
       0%, 100% { filter: drop-shadow(0 4px 12px rgba(15,23,42,0.08)); }
       8%, 18% {
         filter: drop-shadow(0 8px 24px var(--accent-glow));
-        transform: rotate(var(--angle)) translateY(calc(var(--ring-size) / -2 + 7%)) rotate(calc(-1 * var(--angle))) scale(1.05);
+        transform: rotate(var(--angle)) translateY(calc(var(--ring-size) / -2 + var(--orbit-inset, 14%))) rotate(calc(-1 * var(--angle))) scale(1.05);
       }
     }
 
@@ -406,7 +420,7 @@
       flex-wrap: wrap;
       justify-content: center;
       gap: 1rem 1.75rem;
-      margin-top: 2.75rem;
+      margin-top: 0.75rem;
       padding: 0.9rem 1.25rem;
       background: rgba(255,255,255,0.75);
       backdrop-filter: blur(8px);
@@ -442,9 +456,9 @@
     .cta-strip strong { color: var(--ink); }
 
     @media (max-width: 520px) {
-      .flywheel-wrap[data-count="4"] { --ring-size: min(92vw, 360px); --step-w: 100px; }
-      .flywheel-wrap[data-count="6"] { --ring-size: min(94vw, 380px); --step-w: 92px; }
-      .flywheel-wrap[data-count="10"] { --ring-size: min(96vw, 400px); --step-w: 82px; }
+      .flywheel-wrap[data-count="4"] { --ring-size: min(92vw, 380px); --step-w: 98px; --orbit-inset: 16%; }
+      .flywheel-wrap[data-count="6"] { --ring-size: min(94vw, 400px); --step-w: 88px; --orbit-inset: 17%; }
+      .flywheel-wrap[data-count="10"] { --ring-size: min(98vw, 420px); --step-w: 78px; --orbit-inset: 20%; }
       .version-tabs button { font-size: 0.72rem; padding: 0.45rem 0.75rem; }
     }
 
@@ -478,8 +492,11 @@
     <p class="version-desc" id="versionDesc"></p>
   </header>
 
-  <div class="flywheel-stage">
+  <div class="flywheel-stage" id="flywheelStage">
     <div class="flywheel-wrap" id="flywheel" data-count="4" role="img" aria-live="polite"></div>
+    <div class="loop-badge" id="loopBadge" aria-hidden="false">
+      <span class="material-symbols-rounded">autorenew</span> Bucle infinito
+    </div>
   </div>
 
   <div class="legend">
@@ -558,7 +575,6 @@
       var cycleDur = Math.max(6, n * 1.1) + "s";
 
       mount.setAttribute("data-count", String(n));
-      mount.style.setProperty("--ring-size", n <= 4 ? "min(78vw, 440px)" : n <= 6 ? "min(74vw, 500px)" : "min(88vw, 580px)");
 
       var hubHtml =
         '<div class="flywheel-ring flywheel-ring--outer"></div>' +
@@ -590,9 +606,7 @@
         );
       }).join("");
 
-      mount.innerHTML =
-        hubHtml + stepsHtml +
-        '<div class="loop-badge"><span class="material-symbols-rounded">autorenew</span> Bucle infinito</div>';
+      mount.innerHTML = hubHtml + stepsHtml;
 
       mount.setAttribute(
         "aria-label",
