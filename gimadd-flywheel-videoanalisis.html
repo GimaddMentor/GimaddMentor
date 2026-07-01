@@ -600,7 +600,7 @@
         hubLoopHtml() + '</div>';
 
       var stepsHtml = steps.map(function (step, i) {
-        var angle = -90 + (360 / n) * i;
+        var angle = (360 / n) * i;
         var delay = (i * (parseFloat(cycleDur) / n)).toFixed(2) + "s";
         var roleClass = "step-role--" + step.role;
         var icoClass = "step-ico--" + step.role;
