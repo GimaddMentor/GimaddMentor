@@ -31,7 +31,7 @@
       --radius-md: 16px;
       --shadow-soft: 0 1px 2px rgba(10, 10, 10, 0.04), 0 12px 40px rgba(10, 10, 10, 0.07);
       --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
-      --arrow-size: clamp(108px, 28vw, 148px);
+      --arrow-size: calc(var(--ring-size) - var(--step-w) * 2.2);
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -221,13 +221,52 @@
     }
 
     .flywheel-ring--outer {
-      border: 1.5px dashed rgba(10, 10, 10, 0.1);
+      border: 1.5px dashed rgba(10, 10, 10, 0.12);
+      animation: spin-slow 60s linear infinite;
     }
 
     .flywheel-ring--mid {
-      inset: 9%;
-      border: 1px solid rgba(244, 212, 60, 0.28);
+      inset: 7%;
+      border: 1px solid rgba(244, 212, 60, 0.35);
+      box-shadow:
+        0 0 60px rgba(244, 212, 60, 0.15),
+        inset 0 0 30px rgba(244, 212, 60, 0.06);
+      animation: spin-slow 45s linear infinite reverse;
     }
+
+    .flywheel-ring--pulse {
+      inset: 16%;
+      background: radial-gradient(circle, rgba(244, 212, 60, 0.14) 0%, transparent 68%);
+      animation: pulse-hub 5s ease-in-out infinite;
+    }
+
+    @keyframes spin-slow { to { transform: rotate(360deg); } }
+    @keyframes pulse-hub {
+      0%, 100% { opacity: 0.55; transform: scale(1); }
+      50% { opacity: 1; transform: scale(1.04); }
+    }
+
+    .flow-svg {
+      position: absolute;
+      inset: -2%;
+      width: 104%;
+      height: 104%;
+      pointer-events: none;
+      overflow: visible;
+      z-index: 1;
+    }
+
+    .flow-path {
+      fill: none;
+      stroke: url(#flowGradient);
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-dasharray: 6 18;
+      animation: dash-flow 3s linear infinite;
+      opacity: 0.75;
+    }
+
+    @keyframes dash-flow { to { stroke-dashoffset: -44; } }
 
     /* —— Flecha central —— */
     .arrow-hub {
@@ -237,7 +276,7 @@
       transform: translate(-50%, -50%);
       width: var(--arrow-size);
       height: var(--arrow-size);
-      z-index: 4;
+      z-index: 2;
       pointer-events: none;
     }
 
@@ -263,16 +302,17 @@
       left: 50%;
       top: 50%;
       transform: translate(-50%, -50%);
-      width: 42%;
-      height: 42%;
+      width: 38%;
+      height: 38%;
       border-radius: 50%;
       object-fit: contain;
       background: var(--ink);
-      padding: 9%;
+      padding: 8%;
       box-shadow:
-        0 0 0 3px var(--surface-solid),
-        0 0 0 4px rgba(244, 212, 60, 0.55);
-      z-index: 2;
+        0 0 0 4px var(--surface-solid),
+        0 0 0 6px rgba(244, 212, 60, 0.5),
+        0 12px 32px rgba(10, 10, 10, 0.25);
+      z-index: 3;
     }
 
     .flywheel-step {
@@ -530,13 +570,11 @@
         --ring-size: min(96vw, 420px);
         --step-w: 74px;
         --orbit-inset: 12%;
-        --arrow-size: clamp(118px, 34vw, 148px);
       }
       .flywheel-wrap[data-count="9"] {
         --ring-size: min(97vw, 420px);
         --step-w: 68px;
         --orbit-inset: 10%;
-        --arrow-size: clamp(112px, 32vw, 140px);
       }
 
       .step-flip-inner { min-height: 4.85rem; }
@@ -548,6 +586,8 @@
     }
 
     @media (prefers-reduced-motion: reduce) {
+      .flywheel-ring--outer, .flywheel-ring--mid, .flow-path,
+      .flywheel-ring--pulse { animation: none; }
       .arrow-rotator { animation: none !important; transform: rotate(0deg); }
       .flywheel-step { animation: none; }
       .step-flip-inner { animation: none !important; }
@@ -684,8 +724,9 @@
         '<stop offset="100%" stop-color="#D8B814"/>' +
         '</linearGradient>' +
         '</defs>' +
-        '<circle cx="60" cy="60" r="48" fill="none" stroke="url(#arrowGrad)" stroke-width="4" opacity="0.35"/>' +
-        '<path d="M60 8 L76 50 L66 50 L66 92 L54 92 L54 50 L44 50 Z" fill="url(#arrowGrad)"/>' +
+        '<circle cx="60" cy="60" r="48" fill="none" stroke="url(#arrowGrad)" stroke-width="3" opacity="0.4"/>' +
+        '<circle cx="60" cy="60" r="38" fill="#0A0A0A" stroke="url(#arrowGrad)" stroke-width="2.5"/>' +
+        '<path d="M60 6 L78 48 L68 48 L68 94 L52 94 L52 48 L42 48 Z" fill="url(#arrowGrad)"/>' +
         '</svg>' +
         '</div>' +
         '<img class="arrow-logo" src="assets/gimadd-mentor-logo.png" alt="Gimadd Mentor" width="64" height="64" decoding="async" />' +
@@ -760,6 +801,11 @@
       var ringHtml =
         '<div class="flywheel-ring flywheel-ring--outer"></div>' +
         '<div class="flywheel-ring flywheel-ring--mid"></div>' +
+        '<div class="flywheel-ring flywheel-ring--pulse"></div>' +
+        '<svg class="flow-svg" viewBox="0 0 100 100" aria-hidden="true">' +
+        '<defs><linearGradient id="flowGradient" x1="0%" y1="0%" x2="100%" y2="100%">' +
+        '<stop offset="0%" stop-color="#0A0A0A"/><stop offset="50%" stop-color="#F4D43C"/><stop offset="100%" stop-color="#0F8B4A"/>' +
+        '</linearGradient></defs><circle class="flow-path" cx="50" cy="50" r="44"/></svg>' +
         arrowHubHtml();
 
       var stepsHtml = steps.map(function (step, i) {
