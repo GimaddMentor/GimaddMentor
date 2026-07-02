@@ -440,15 +440,6 @@
       padding: 0.55rem 0.45rem;
     }
 
-    .step-card--back .step-back-label {
-      font-size: 0.48rem;
-      font-weight: 800;
-      color: var(--court-deep);
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-      margin-bottom: 0.25rem;
-    }
-
     .step-num {
       position: absolute;
       top: -0.3rem;
@@ -769,7 +760,6 @@
         '<h3>' + escapeHtml(step.title) + '</h3>' +
         '<p class="step-desc-front">' + escapeHtml(step.desc) + '</p></div>' +
         '<div class="step-card step-card--back" aria-hidden="true">' +
-        '<span class="step-back-label">Detalle</span>' +
         '<p>' + escapeHtml(step.desc) + '</p></div>' +
         '</div></button>'
       );
