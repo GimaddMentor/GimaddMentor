@@ -254,9 +254,10 @@
     }
 
     .flywheel-ring--pulse {
-      inset: 22%;
-      background: radial-gradient(circle, rgba(244, 212, 60, 0.1) 0%, transparent 72%);
+      inset: 34%;
+      background: radial-gradient(circle, rgba(244, 212, 60, 0.06) 0%, transparent 78%);
       animation: pulse-hub 4s ease-in-out infinite;
+      opacity: 0.45;
     }
 
     @keyframes spin-slow { to { transform: rotate(360deg); } }
@@ -686,7 +687,7 @@
         </nav>
 
       <p class="version-desc" id="versionDesc"></p>
-      <p class="build-tag" aria-hidden="true">Build flecha · v2026-07-02h · deploy</p>
+      <p class="build-tag" aria-hidden="true">Build flecha · v2026-07-03</p>
     </header>
 
       <div class="flywheel-stage" id="flywheelStage">
@@ -801,11 +802,9 @@
         '<circle cx="60" cy="60" r="33.5" fill="#000"/>' +
         '</mask>' +
         '</defs>' +
-        '<circle cx="60" cy="60" r="46" fill="none" stroke="#F4D43C" stroke-width="0.8" opacity="0.25"/>' +
-        '<circle cx="60" cy="60" r="43.5" fill="none" stroke="#F4D43C" stroke-width="0.6" opacity="0.18"/>' +
-        '<path d="M60 0 C76 18 94 42 88 50 C84 56 76 53 70 53 L70 94 C70 101 60 104 60 104 C60 104 50 101 50 94 L50 53 C44 53 36 56 32 50 C26 42 44 18 60 0 Z" fill="url(#arrowGrad)"/>' +
-        '<circle cx="60" cy="60" r="43" fill="#0A0A0A" mask="url(#ringHole)"/>' +
-        '<circle cx="60" cy="60" r="43" fill="none" stroke="url(#arrowGrad)" stroke-width="2.5"/>' +
+        '<path d="M60 -2 C78 16 98 40 92 48 C88 54 78 51 72 51 L72 96 C72 103 60 106 60 106 C60 106 48 103 48 96 L48 51 C42 51 32 54 28 48 C22 40 42 16 60 -2 Z" fill="url(#arrowGrad)"/>' +
+        '<circle cx="60" cy="60" r="37" fill="#0A0A0A" mask="url(#ringHole)"/>' +
+        '<circle cx="60" cy="60" r="37" fill="none" stroke="url(#arrowGrad)" stroke-width="2.4"/>' +
         '</svg>' +
         '</div>' +
         '<div class="arrow-core">' +
