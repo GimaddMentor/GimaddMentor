@@ -336,16 +336,53 @@
       margin-top: calc(var(--step-w) / -2);
       transform: rotate(var(--angle)) translateY(calc(var(--ring-size) / -2 + var(--orbit-inset, 14%))) rotate(calc(-1 * var(--angle)));
       z-index: 3;
-      animation: step-glow var(--cycle-dur, 8s) ease-in-out infinite;
+      animation: step-active-pulse var(--cycle-dur, 8s) ease-in-out infinite;
       animation-delay: var(--delay);
     }
 
-    @keyframes step-glow {
-      0%, 100% { filter: drop-shadow(0 4px 12px rgba(15,23,42,0.08)); }
-      8%, 18% {
-        filter: drop-shadow(0 8px 24px var(--accent-glow));
-        transform: rotate(var(--angle)) translateY(calc(var(--ring-size) / -2 + var(--orbit-inset, 14%))) rotate(calc(-1 * var(--angle))) scale(1.05);
+    @keyframes step-active-pulse {
+      0%, 2%, 16%, 19%, 100% {
+        z-index: 3;
+        filter: drop-shadow(0 4px 12px rgba(15,23,42,0.08));
       }
+      4%, 14% {
+        z-index: 5;
+        filter: drop-shadow(0 8px 24px var(--accent-glow));
+      }
+    }
+
+    .step-flip {
+      display: block;
+      width: 100%;
+      border: none;
+      background: none;
+      padding: 0;
+      margin: 0;
+      font: inherit;
+      text-align: inherit;
+      cursor: pointer;
+      perspective: 600px;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .step-flip-inner {
+      position: relative;
+      width: 100%;
+      min-height: 5.35rem;
+      transform-style: preserve-3d;
+      transition: transform 0.65s cubic-bezier(0.4, 0.2, 0.2, 1);
+      animation: step-auto-flip var(--cycle-dur, 8s) ease-in-out infinite;
+      animation-delay: var(--delay);
+    }
+
+    @keyframes step-auto-flip {
+      0%, 2%, 16%, 19%, 100% { transform: rotateY(0deg); }
+      4%, 14% { transform: rotateY(180deg); }
+    }
+
+    .step-flip-inner.is-flipped {
+      transform: rotateY(180deg);
+      animation-play-state: paused;
     }
 
     .step-card {
@@ -355,6 +392,28 @@
       padding: 0.65rem 0.55rem 0.6rem;
       text-align: center;
       box-shadow: 0 8px 24px rgba(15,23,42,0.08);
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+    }
+
+    .step-card--back {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transform: rotateY(180deg);
+      padding: 0.55rem 0.45rem;
+    }
+
+    .step-card--back .step-back-label {
+      font-size: 0.48rem;
+      font-weight: 800;
+      color: var(--court-deep);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 0.25rem;
     }
 
     .step-num {
@@ -399,15 +458,18 @@
       font-weight: 800;
       line-height: 1.22;
       letter-spacing: -0.02em;
-      margin-bottom: 0.12rem;
+      margin-bottom: 0;
     }
 
-    .step-card p {
+    .step-card p,
+    .step-card--back p {
       font-size: 0.56rem;
       color: var(--muted);
       line-height: 1.35;
       font-weight: 500;
     }
+
+    .step-desc-front { display: none; }
 
     .step-role {
       display: inline-block;
@@ -470,19 +532,78 @@
     .cta-strip strong { color: var(--ink); }
 
     @media (max-width: 520px) {
-      .flywheel-wrap[data-count="3"] { --ring-size: min(92vw, 400px); --step-w: 108px; --orbit-inset: 19%; --hub-scale: 0.78; }
-      .flywheel-wrap[data-count="6"] { --ring-size: min(94vw, 400px); --step-w: 88px; --orbit-inset: 17%; }
-      .flywheel-wrap[data-count="8"] { --ring-size: min(96vw, 420px); --step-w: 78px; --orbit-inset: 22%; }
-      .flywheel-wrap[data-count="10"] { --ring-size: min(98vw, 420px); --step-w: 78px; --orbit-inset: 20%; }
+      body { padding: 1.5rem 1rem 2.5rem; }
+      .version-tabs button { font-size: 0.72rem; padding: 0.45rem 0.75rem; }
+      .version-desc { margin-bottom: 1.25rem; min-height: auto; }
+
+      .flywheel-wrap[data-count="8"] {
+        --ring-size: min(96vw, 420px);
+        --step-w: 72px;
+        --orbit-inset: 9%;
+        --hub-scale: 0.72;
+      }
+      .flywheel-wrap[data-count="10"] {
+        --ring-size: min(98vw, 420px);
+        --step-w: 66px;
+        --orbit-inset: 7%;
+        --hub-scale: 0.68;
+      }
+
+      .step-flip-inner { min-height: 4.85rem; }
+
+      .step-card {
+        padding: 0.48rem 0.38rem 0.42rem;
+      }
+
+      .step-card h3 {
+        font-size: 0.56rem;
+        margin-bottom: 0;
+        line-height: 1.18;
+      }
+
+      .step-card--back p { font-size: 0.5rem; line-height: 1.3; }
+
+      .step-ico {
+        width: 1.65rem;
+        height: 1.65rem;
+        margin-bottom: 0.22rem;
+      }
+
+      .step-ico .material-symbols-rounded { font-size: 0.95rem; }
+
+      .step-role {
+        font-size: 0.42rem;
+        margin-bottom: 0.18rem;
+        padding: 0.08rem 0.28rem;
+      }
+
+      .step-num {
+        width: 1.1rem;
+        height: 1.1rem;
+        font-size: 0.54rem;
+        top: -0.2rem;
+        right: -0.2rem;
+      }
+
+      .flywheel-hub .hub-sub { display: none; }
+
+      .hub-loop {
+        font-size: 0.42rem;
+        padding: 0.22rem 0.45rem;
+        margin-top: 0.25rem;
+      }
+
       .legend { margin-top: 4rem; }
       .cta-strip { margin-top: 1.5rem; }
     }
 
     @media (prefers-reduced-motion: reduce) {
       .flywheel-ring--outer, .flywheel-ring--mid, .flow-path,
-      .flywheel-step, .flywheel-ring--pulse, .hub-loop .material-symbols-rounded {
+      .flywheel-ring--pulse, .hub-loop .material-symbols-rounded {
         animation: none;
       }
+      .flywheel-step { animation: none; }
+      .step-flip-inner { animation: none !important; }
     }
   </style>
 </head>
@@ -577,12 +698,57 @@
       );
     }
 
+    function stepFlipHtml(step) {
+      var roleClass = "step-role--" + step.role;
+      var icoClass = "step-ico--" + step.role;
+      return (
+        '<button type="button" class="step-flip" aria-label="' + escapeHtml(step.title) + ': pulsa para ver detalle" aria-expanded="false">' +
+        '<div class="step-flip-inner">' +
+        '<div class="step-card step-card--front">' +
+        '<span class="step-role ' + roleClass + '">' + escapeHtml(ROLE_LABEL[step.role] || "") + '</span>' +
+        '<div class="step-ico ' + icoClass + '"><span class="material-symbols-rounded">' + escapeHtml(step.icon) + '</span></div>' +
+        '<h3>' + escapeHtml(step.title) + '</h3>' +
+        '<p class="step-desc-front">' + escapeHtml(step.desc) + '</p></div>' +
+        '<div class="step-card step-card--back" aria-hidden="true">' +
+        '<span class="step-back-label">Detalle</span>' +
+        '<p>' + escapeHtml(step.desc) + '</p></div>' +
+        '</div></button>'
+      );
+    }
+
+    function bindStepFlips(mount) {
+      if (mount._flipBound) return;
+      mount._flipBound = true;
+
+      mount.addEventListener("click", function (e) {
+        var btn = e.target.closest(".step-flip");
+        if (!btn) return;
+
+        var inner = btn.querySelector(".step-flip-inner");
+        var willFlip = !inner.classList.contains("is-flipped");
+
+        mount.querySelectorAll(".step-flip-inner.is-flipped").forEach(function (el) {
+          el.classList.remove("is-flipped");
+          el.style.animationPlayState = "";
+          var otherBtn = el.closest(".step-flip");
+          if (otherBtn) otherBtn.setAttribute("aria-expanded", "false");
+        });
+
+        if (willFlip) {
+          inner.classList.add("is-flipped");
+          inner.style.animationPlayState = "paused";
+          btn.setAttribute("aria-expanded", "true");
+        }
+      });
+    }
+
     function renderFlywheel(versionKey) {
       var v = VERSIONS[versionKey];
       var steps = v.steps;
       var n = steps.length;
       var mount = document.getElementById("flywheel");
-      var cycleDur = Math.max(6, n * 1.1) + "s";
+      var cycleDur = (n * 4.5).toFixed(1) + "s";
+      var stepTitles = steps.map(function (s) { return s.title; }).join(", ");
 
       mount.setAttribute("data-count", String(n));
 
@@ -604,25 +770,17 @@
       var stepsHtml = steps.map(function (step, i) {
         var angle = (360 / n) * i;
         var delay = (i * (parseFloat(cycleDur) / n)).toFixed(2) + "s";
-        var roleClass = "step-role--" + step.role;
-        var icoClass = "step-ico--" + step.role;
         return (
           '<div class="flywheel-step" style="--angle:' + angle + 'deg;--delay:' + delay + ';--cycle-dur:' + cycleDur + '">' +
           '<span class="step-num">' + (i + 1) + '</span>' +
-          '<article class="step-card">' +
-          '<span class="step-role ' + roleClass + '">' + escapeHtml(ROLE_LABEL[step.role] || "") + '</span>' +
-          '<div class="step-ico ' + icoClass + '"><span class="material-symbols-rounded">' + escapeHtml(step.icon) + '</span></div>' +
-          '<h3>' + escapeHtml(step.title) + '</h3>' +
-          '<p>' + escapeHtml(step.desc) + '</p></article></div>'
+          stepFlipHtml(step) + '</div>'
         );
       }).join("");
 
       mount.innerHTML = hubHtml + stepsHtml;
+      bindStepFlips(mount);
 
-      mount.setAttribute(
-        "aria-label",
-        "Flywheel Gimadd Mentor, " + n + " pasos: " + steps.map(function (s) { return s.title; }).join(", ")
-      );
+      mount.setAttribute("aria-label", "Flywheel Gimadd Mentor, " + n + " pasos: " + stepTitles);
 
       document.getElementById("versionDesc").innerHTML = v.desc;
       document.getElementById("ctaStrip").innerHTML = v.cta;
