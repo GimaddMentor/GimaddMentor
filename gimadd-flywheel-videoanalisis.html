@@ -434,7 +434,7 @@
       flex-wrap: wrap;
       justify-content: center;
       gap: 1rem 1.75rem;
-      margin-top: 0.75rem;
+      margin-top: 3.25rem;
       padding: 0.9rem 1.25rem;
       background: rgba(255,255,255,0.75);
       backdrop-filter: blur(8px);
@@ -458,7 +458,7 @@
     .legend-dot--loop { background: var(--green); }
 
     .cta-strip {
-      margin-top: 1.5rem;
+      margin-top: 1.75rem;
       text-align: center;
       font-size: 0.8rem;
       color: var(--muted);
@@ -474,6 +474,8 @@
       .flywheel-wrap[data-count="6"] { --ring-size: min(94vw, 400px); --step-w: 88px; --orbit-inset: 17%; }
       .flywheel-wrap[data-count="8"] { --ring-size: min(96vw, 420px); --step-w: 78px; --orbit-inset: 22%; }
       .flywheel-wrap[data-count="10"] { --ring-size: min(98vw, 420px); --step-w: 78px; --orbit-inset: 20%; }
+      .legend { margin-top: 4rem; }
+      .cta-strip { margin-top: 1.5rem; }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -491,10 +493,10 @@
       <span class="material-symbols-rounded" style="font-size:1rem;font-variation-settings:'FILL' 1,'wght' 600">cycle</span>
       Gimadd Mentor
     </p>
-    <h1>Un <em>bucle infinito</em> de mejora en pádel</h1>
+    <h1>Mejora tu pádel con <em>videoanálisis</em></h1>
     <p class="intro">
-      Conecta jugador y entrenador: grabas, recibes análisis, practicas en pista y vuelves a grabar.
-      <strong>Cada vuelta te hace jugar mejor.</strong> El ciclo no termina — se repite temporada tras temporada.
+      Graba tu juego, recibe correcciones claras del entrenador y entrena con foco.
+      <strong>Vuelta a vuelta, mejoras de verdad.</strong>
     </p>
 
     <nav class="version-tabs" role="tablist" aria-label="Versión del flywheel">
@@ -520,32 +522,32 @@
   <script>
     var VERSIONS = {
       player: {
-        desc: "<strong>Jugador</strong>: el bucle de mejora completo centrado en el videoanálisis (sin contratación).",
-        cta: "<strong>Flywheel de juego:</strong> mejores vídeos → mejores análisis → mejores decisiones en pista → más progreso — y vuelta a empezar.",
+        desc: "<strong>Jugador</strong>: mejora tu pádel con videoanálisis. Graba, recibe correcciones, entrena con foco y repite.",
+        cta: "<strong>Vas a notar el cambio:</strong> cada vídeo te da correcciones claras y objetivos para la siguiente sesión.",
         hub: { showInfinity: false, title: "Gimadd Mentor", sub: "Coaching digital en bucle cerrado" },
         steps: [
           { role: "player", icon: "videocam", title: "Graba en pista", desc: "Partido o sesión de entreno" },
           { role: "player", icon: "send", title: "Envía al coach", desc: "Cola de revisión pendiente" },
-          { role: "coach", icon: "rate_review", title: "Revisa el vídeo", desc: "Ve el juego con contexto" },
-          { role: "coach", icon: "bookmark", title: "Marcas temporales", desc: "Puntos clave en el timeline" },
-          { role: "coach", icon: "flag", title: "Publica objetivos", desc: "Plan de acción al jugador" },
-          { role: "player", icon: "auto_stories", title: "Diario", desc: "Marca objetivos practicados" },
+          { role: "coach", icon: "rate_review", title: "Analiza el vídeo", desc: "Ve tu juego con contexto" },
+          { role: "coach", icon: "bookmark", title: "Correcciones clave", desc: "Marcas y notas en momentos exactos" },
+          { role: "coach", icon: "flag", title: "Plan de acción", desc: "Objetivos claros para la pista" },
+          { role: "player", icon: "auto_stories", title: "Diario", desc: "Entrenas con foco y marcas lo practicado" },
           { role: "both", icon: "check_circle", title: "Metas cumplidas", desc: "Todo el plan completado" },
           { role: "loop", icon: "sync", title: "Nuevo vídeo", desc: "El bucle vuelve a empezar" }
         ]
       },
       coach: {
-        desc: "<strong>Entrenador</strong>: visión completa del producto, desde el catálogo hasta el cierre del ciclo con nuevo vídeo.",
-        cta: "<strong>Flywheel de negocio y de juego:</strong> más práctica genera mejores vídeos, mejores análisis y más retención — el jugador y el entrenador ganan en cada vuelta.",
+        desc: "<strong>Entrenador</strong>: convierte cada vídeo en una sesión de mejora medible con correcciones claras y objetivos accionables.",
+        cta: "<strong>Valor para tu alumno:</strong> entregas correcciones clave + plan de acción. <strong>Valor para ti:</strong> retención y progreso visible.",
         hub: { showInfinity: false, title: "Gimadd Mentor", sub: "Coaching digital en bucle cerrado" },
         steps: [
           { role: "coach", icon: "storefront", title: "Catálogo y packs", desc: "Pista + vídeo, precios y cupos" },
           { role: "player", icon: "shopping_bag", title: "Contrata servicio", desc: "Pago seguro · cupos activos" },
           { role: "player", icon: "videocam", title: "Graba en pista", desc: "Partido o sesión de entreno" },
           { role: "player", icon: "send", title: "Envía al coach", desc: "Cola de revisión pendiente" },
-          { role: "coach", icon: "rate_review", title: "Revisa el vídeo", desc: "Ve el juego con contexto" },
-          { role: "coach", icon: "bookmark", title: "Marcas temporales", desc: "Puntos clave en el timeline" },
-          { role: "coach", icon: "flag", title: "Publica objetivos", desc: "Plan de acción al jugador" },
+          { role: "coach", icon: "rate_review", title: "Analiza el vídeo", desc: "Ves el juego con contexto" },
+          { role: "coach", icon: "bookmark", title: "Correcciones clave", desc: "Marcas y notas en el timeline" },
+          { role: "coach", icon: "flag", title: "Plan de acción", desc: "Objetivos accionables al jugador" },
           { role: "player", icon: "auto_stories", title: "Diario", desc: "Marca objetivos practicados" },
           { role: "both", icon: "check_circle", title: "Metas cumplidas", desc: "Todo el plan completado" },
           { role: "loop", icon: "sync", title: "Nuevo vídeo", desc: "El bucle vuelve a empezar" }
