@@ -34,8 +34,8 @@
       --radius-md: 16px;
       --shadow-soft: 0 1px 2px rgba(10, 10, 10, 0.04), 0 12px 40px rgba(10, 10, 10, 0.07);
       --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
-      --arrow-size: calc(var(--ring-size) - var(--step-w) * 1.65);
-      --disc-size: calc(var(--ring-size) * 0.64);
+      --arrow-size: calc(var(--ring-size) - var(--step-w) * 2.05);
+      --core-width: 50%;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -220,15 +220,15 @@
       --ring-size: min(88vw, 600px);
       --step-w: clamp(84px, 15vw, 106px);
       --orbit-inset: 19%;
-      --disc-size: calc(min(88vw, 600px) * 0.64);
-      --arrow-size: calc(min(88vw, 600px) - clamp(84px, 15vw, 106px) * 1.65);
+      --arrow-size: calc(min(88vw, 600px) - clamp(84px, 15vw, 106px) * 2.05);
+      --core-width: 50%;
     }
     .flywheel-wrap[data-count="9"] {
       --ring-size: min(92vw, 630px);
       --step-w: clamp(84px, 14.8vw, 102px);
       --orbit-inset: 18%;
-      --disc-size: calc(min(92vw, 630px) * 0.62);
-      --arrow-size: calc(min(92vw, 630px) - clamp(84px, 14.8vw, 102px) * 1.65);
+      --arrow-size: calc(min(92vw, 630px) - clamp(84px, 14.8vw, 102px) * 2.05);
+      --core-width: 48%;
     }
 
     .flywheel-ring {
@@ -322,33 +322,20 @@
       top: 50%;
       transform: translate(-50%, -50%);
       z-index: 3;
-      width: var(--disc-size);
-      height: var(--disc-size);
-      min-width: var(--disc-size);
-      min-height: var(--disc-size);
-      border-radius: 50%;
-      background: linear-gradient(155deg, #141414 0%, var(--ink) 50%, #0a0a0a 100%);
-      border: 3px solid var(--yellow-deep);
-      box-shadow:
-        0 0 0 2px rgba(244, 212, 60, 0.35),
-        0 16px 48px rgba(10, 10, 10, 0.35),
-        0 0 60px rgba(244, 212, 60, 0.15);
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 14% 10% 12%;
+      width: var(--core-width);
       text-align: center;
-      gap: 0;
+      gap: 0.2rem;
+      pointer-events: none;
     }
 
     .arrow-logo {
-      width: 48%;
-      max-width: 100%;
-      height: auto;
+      width: 62%;
       aspect-ratio: 1;
       object-fit: contain;
-      flex-shrink: 0;
       background: transparent;
       padding: 0;
       border-radius: 0;
@@ -357,13 +344,12 @@
 
     .arrow-tagline {
       font-family: "Space Grotesk", sans-serif;
-      font-size: clamp(0.5rem, 2.2vw, 0.72rem);
+      font-size: clamp(0.44rem, 1.6vw, 0.62rem);
       font-weight: 700;
       letter-spacing: 0.05em;
       text-transform: uppercase;
       color: #fff;
-      line-height: 1.2;
-      margin-top: 0.45rem;
+      line-height: 1.15;
       white-space: nowrap;
     }
 
@@ -622,15 +608,15 @@
         --ring-size: min(96vw, 420px);
         --step-w: 74px;
         --orbit-inset: 12%;
-        --disc-size: calc(min(96vw, 420px) * 0.66);
-        --arrow-size: calc(min(96vw, 420px) - 74px * 1.55);
+        --arrow-size: calc(min(96vw, 420px) - 74px * 2.05);
+        --core-width: 52%;
       }
       .flywheel-wrap[data-count="9"] {
         --ring-size: min(97vw, 420px);
         --step-w: 68px;
         --orbit-inset: 10%;
-        --disc-size: calc(min(97vw, 420px) * 0.64);
-        --arrow-size: calc(min(97vw, 420px) - 68px * 1.55);
+        --arrow-size: calc(min(97vw, 420px) - 68px * 2.05);
+        --core-width: 50%;
       }
 
       .step-flip-inner { min-height: 4.85rem; }
@@ -639,8 +625,7 @@
       .step-ico { width: 1.65rem; height: 1.65rem; }
       .step-num { width: 1.1rem; height: 1.1rem; font-size: 0.54rem; }
       .arrow-tagline {
-        font-size: clamp(0.44rem, 3.2vw, 0.58rem);
-        margin-top: 0.35rem;
+        font-size: clamp(0.38rem, 2.9vw, 0.5rem);
         letter-spacing: 0.04em;
       }
       .legend { margin-top: 4rem; }
@@ -675,7 +660,7 @@
         </nav>
 
       <p class="version-desc" id="versionDesc"></p>
-      <p class="build-tag" aria-hidden="true">Build flecha · v2026-07-02d</p>
+      <p class="build-tag" aria-hidden="true">Build flecha · v2026-07-02e</p>
     </header>
 
       <div class="flywheel-stage" id="flywheelStage">
@@ -786,12 +771,15 @@
         '<stop offset="100%" stop-color="#D8B814"/>' +
         '</linearGradient>' +
         '</defs>' +
-        '<path d="M60 4 L80 46 L69 46 L69 96 L51 96 L51 46 L40 46 Z" fill="url(#arrowGrad)"/>' +
+        '<circle cx="60" cy="60" r="48" fill="none" stroke="url(#arrowGrad)" stroke-width="3" opacity="0.45"/>' +
+        '<circle cx="60" cy="60" r="38" fill="#0A0A0A" stroke="url(#arrowGrad)" stroke-width="2.5"/>' +
+        '<circle cx="60" cy="60" r="30" fill="none" stroke="rgba(255,255,255,0.75)" stroke-width="1.2"/>' +
+        '<path d="M60 6 L78 48 L68 48 L68 94 L52 94 L52 48 L42 48 Z" fill="url(#arrowGrad)"/>' +
         '</svg>' +
         '</div>' +
         '<div class="arrow-core">' +
         '<img class="arrow-logo" src="assets/gimadd-mentor-logo.png" alt="Gimadd Mentor" width="64" height="64" decoding="async" />' +
-        '<span class="arrow-tagline">Aprendizaje continuo</span>' +
+        '<span class="arrow-tagline">Aprendizaje Continuo</span>' +
         '</div></div>'
       );
     }
