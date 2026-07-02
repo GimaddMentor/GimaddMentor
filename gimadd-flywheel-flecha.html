@@ -312,22 +312,44 @@
       filter: drop-shadow(0 8px 24px rgba(10, 10, 10, 0.22));
     }
 
-    .arrow-logo {
+    .arrow-core {
       position: absolute;
       left: 50%;
       top: 50%;
       transform: translate(-50%, -50%);
-      width: 38%;
-      height: 38%;
+      z-index: 3;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 42%;
+      text-align: center;
+      gap: 0.35rem;
+    }
+
+    .arrow-logo {
+      width: 100%;
+      aspect-ratio: 1;
       border-radius: 50%;
       object-fit: contain;
       background: var(--ink);
-      padding: 8%;
+      padding: 14%;
       box-shadow:
         0 0 0 4px var(--surface-solid),
         0 0 0 6px rgba(244, 212, 60, 0.5),
         0 12px 32px rgba(10, 10, 10, 0.25);
-      z-index: 3;
+    }
+
+    .arrow-tagline {
+      font-family: "Space Grotesk", sans-serif;
+      font-size: clamp(0.42rem, 1.35vw, 0.58rem);
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--yellow);
+      line-height: 1.15;
+      text-shadow: 0 1px 6px rgba(0, 0, 0, 0.45);
+      white-space: nowrap;
     }
 
     .flywheel-step {
@@ -599,6 +621,8 @@
       .step-card--back p { font-size: 0.5rem; }
       .step-ico { width: 1.65rem; height: 1.65rem; }
       .step-num { width: 1.1rem; height: 1.1rem; font-size: 0.54rem; }
+      .arrow-core { width: 46%; gap: 0.25rem; }
+      .arrow-tagline { font-size: clamp(0.38rem, 2.8vw, 0.48rem); letter-spacing: 0.04em; }
       .legend { margin-top: 4rem; }
     }
 
@@ -631,7 +655,7 @@
         </nav>
 
       <p class="version-desc" id="versionDesc"></p>
-      <p class="build-tag" aria-hidden="true">Build flecha · v2026-07-02b</p>
+      <p class="build-tag" aria-hidden="true">Build flecha · v2026-07-02c</p>
     </header>
 
       <div class="flywheel-stage" id="flywheelStage">
@@ -747,8 +771,10 @@
         '<path d="M60 6 L78 48 L68 48 L68 94 L52 94 L52 48 L42 48 Z" fill="url(#arrowGrad)"/>' +
         '</svg>' +
         '</div>' +
+        '<div class="arrow-core">' +
         '<img class="arrow-logo" src="assets/gimadd-mentor-logo.png" alt="Gimadd Mentor" width="64" height="64" decoding="async" />' +
-        '</div>'
+        '<span class="arrow-tagline">Aprendizaje continuo</span>' +
+        '</div></div>'
       );
     }
 
