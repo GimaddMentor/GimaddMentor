@@ -3,6 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
   <title>Gimadd Mentor — Flywheel · Flecha</title>
   <meta name="description" content="Flywheel Gimadd Mentor con flecha indicadora y logo. La flecha señala cada paso al voltear la tarjeta." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -31,6 +34,7 @@
       --radius-md: 16px;
       --shadow-soft: 0 1px 2px rgba(10, 10, 10, 0.04), 0 12px 40px rgba(10, 10, 10, 0.07);
       --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+      --arrow-size: 280px;
       --arrow-size: calc(var(--ring-size) - var(--step-w) * 2.2);
     }
 
@@ -185,6 +189,16 @@
 
     .version-desc strong { color: var(--ink); }
 
+    .build-tag {
+      font-family: "Space Grotesk", sans-serif;
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--ink-mute);
+      opacity: 0.55;
+      margin-top: 0.35rem;
+    }
+
     .flywheel-stage {
       position: relative;
       width: 100%;
@@ -218,26 +232,27 @@
       inset: 0;
       border-radius: 50%;
       pointer-events: none;
+      z-index: 0;
     }
 
     .flywheel-ring--outer {
-      border: 1.5px dashed rgba(10, 10, 10, 0.12);
-      animation: spin-slow 60s linear infinite;
+      border: 2px dashed rgba(10, 10, 10, 0.18);
+      animation: spin-slow 40s linear infinite;
     }
 
     .flywheel-ring--mid {
-      inset: 7%;
-      border: 1px solid rgba(244, 212, 60, 0.35);
+      inset: 5%;
+      border: 2px solid rgba(244, 212, 60, 0.55);
       box-shadow:
-        0 0 60px rgba(244, 212, 60, 0.15),
-        inset 0 0 30px rgba(244, 212, 60, 0.06);
-      animation: spin-slow 45s linear infinite reverse;
+        0 0 80px rgba(244, 212, 60, 0.22),
+        inset 0 0 40px rgba(244, 212, 60, 0.1);
+      animation: spin-slow 28s linear infinite reverse;
     }
 
     .flywheel-ring--pulse {
-      inset: 16%;
-      background: radial-gradient(circle, rgba(244, 212, 60, 0.14) 0%, transparent 68%);
-      animation: pulse-hub 5s ease-in-out infinite;
+      inset: 12%;
+      background: radial-gradient(circle, rgba(244, 212, 60, 0.22) 0%, transparent 70%);
+      animation: pulse-hub 4s ease-in-out infinite;
     }
 
     @keyframes spin-slow { to { transform: rotate(360deg); } }
@@ -259,11 +274,11 @@
     .flow-path {
       fill: none;
       stroke: url(#flowGradient);
-      stroke-width: 2;
+      stroke-width: 2.5;
       stroke-linecap: round;
-      stroke-dasharray: 6 18;
-      animation: dash-flow 3s linear infinite;
-      opacity: 0.75;
+      stroke-dasharray: 8 14;
+      animation: dash-flow 2s linear infinite;
+      opacity: 0.9;
     }
 
     @keyframes dash-flow { to { stroke-dashoffset: -44; } }
@@ -570,11 +585,13 @@
         --ring-size: min(96vw, 420px);
         --step-w: 74px;
         --orbit-inset: 12%;
+        --arrow-size: calc(min(96vw, 420px) - 74px * 2.2);
       }
       .flywheel-wrap[data-count="9"] {
         --ring-size: min(97vw, 420px);
         --step-w: 68px;
         --orbit-inset: 10%;
+        --arrow-size: calc(min(97vw, 420px) - 68px * 2.2);
       }
 
       .step-flip-inner { min-height: 4.85rem; }
@@ -613,8 +630,9 @@
           <button type="button" role="tab" aria-selected="false" data-version="coach">Entrenador · 9 pasos</button>
         </nav>
 
-        <p class="version-desc" id="versionDesc"></p>
-      </header>
+      <p class="version-desc" id="versionDesc"></p>
+      <p class="build-tag" aria-hidden="true">Build flecha · v2026-07-02b</p>
+    </header>
 
       <div class="flywheel-stage" id="flywheelStage">
         <div class="flywheel-wrap" id="flywheel" data-count="7" role="img" aria-live="polite"></div>
