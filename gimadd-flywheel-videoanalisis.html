@@ -98,7 +98,7 @@
     .version-tabs button {
       font-family: inherit;
       font-size: 0.78rem;
-      font-weight: 700;
+      font-weight: 800;
       padding: 0.5rem 1rem;
       border-radius: 999px;
       border: 1.5px solid #e2e8f0;
@@ -106,11 +106,14 @@
       color: var(--muted);
       cursor: pointer;
       transition: all 0.2s ease;
+      box-shadow: 0 8px 18px rgba(15,23,42,0.08);
     }
 
     .version-tabs button:hover {
       border-color: var(--accent);
       color: var(--ink);
+      transform: translateY(-1px);
+      box-shadow: 0 12px 24px rgba(15,23,42,0.12);
     }
 
     .version-tabs button.is-on {
@@ -118,6 +121,7 @@
       border-color: #eab308;
       color: var(--ink);
       box-shadow: 0 4px 14px rgba(234, 179, 8, 0.35);
+      transform: translateY(-1px);
     }
 
     .version-desc {
@@ -160,6 +164,11 @@
       --ring-size: min(76vw, 540px);
       --step-w: clamp(100px, 20vw, 122px);
       --orbit-inset: 16%;
+    }
+    .flywheel-wrap[data-count="8"] {
+      --ring-size: min(90vw, 620px);
+      --step-w: clamp(82px, 14.5vw, 104px);
+      --orbit-inset: 20%;
     }
     .flywheel-wrap[data-count="10"] {
       --ring-size: min(94vw, 640px);
@@ -463,8 +472,8 @@
     @media (max-width: 520px) {
       .flywheel-wrap[data-count="3"] { --ring-size: min(92vw, 400px); --step-w: 108px; --orbit-inset: 19%; --hub-scale: 0.78; }
       .flywheel-wrap[data-count="6"] { --ring-size: min(94vw, 400px); --step-w: 88px; --orbit-inset: 17%; }
+      .flywheel-wrap[data-count="8"] { --ring-size: min(96vw, 420px); --step-w: 78px; --orbit-inset: 22%; }
       .flywheel-wrap[data-count="10"] { --ring-size: min(98vw, 420px); --step-w: 78px; --orbit-inset: 20%; }
-      .version-tabs button { font-size: 0.72rem; padding: 0.45rem 0.75rem; }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -488,17 +497,16 @@
       <strong>Cada vuelta te hace jugar mejor.</strong> El ciclo no termina — se repite temporada tras temporada.
     </p>
 
-    <nav class="version-tabs" role="tablist" aria-label="Nivel de detalle del flywheel">
-      <button type="button" role="tab" aria-selected="true" data-version="min" class="is-on">Esencial · 3 pasos</button>
-      <button type="button" role="tab" aria-selected="false" data-version="mid">Intermedio · 6 pasos</button>
-      <button type="button" role="tab" aria-selected="false" data-version="full">Completo · 10 pasos</button>
+    <nav class="version-tabs" role="tablist" aria-label="Versión del flywheel">
+      <button type="button" role="tab" aria-selected="true" data-version="player" class="is-on">Jugador · 8 pasos</button>
+      <button type="button" role="tab" aria-selected="false" data-version="coach">Entrenador · 10 pasos</button>
     </nav>
 
     <p class="version-desc" id="versionDesc"></p>
   </header>
 
   <div class="flywheel-stage" id="flywheelStage">
-    <div class="flywheel-wrap" id="flywheel" data-count="3" role="img" aria-live="polite"></div>
+    <div class="flywheel-wrap" id="flywheel" data-count="8" role="img" aria-live="polite"></div>
   </div>
 
   <div class="legend">
@@ -511,31 +519,23 @@
 
   <script>
     var VERSIONS = {
-      min: {
-        desc: "<strong>Vista rápida</strong> para quien no conoce la app: grabas, te analizan, registras en el diario — y el bucle vuelve a empezar con otro vídeo.",
-        cta: "Cada vuelta empieza igual: <strong>nuevo vídeo → nuevo análisis → más práctica en el diario</strong>. El juego mejora sin parar.",
-        hub: { showInfinity: true, title: "Mejora continua", sub: "" },
+      player: {
+        desc: "<strong>Jugador</strong>: el bucle de mejora completo centrado en el videoanálisis (sin contratación).",
+        cta: "<strong>Flywheel de juego:</strong> mejores vídeos → mejores análisis → mejores decisiones en pista → más progreso — y vuelta a empezar.",
+        hub: { showInfinity: false, title: "Gimadd Mentor", sub: "Coaching digital en bucle cerrado" },
         steps: [
-          { role: "player", icon: "videocam", title: "Grabas tu juego", desc: "Subes un vídeo de partido o entreno (cada vuelta empieza aquí)" },
-          { role: "coach", icon: "play_circle", title: "Te analizan", desc: "El entrenador revisa el vídeo y te orienta" },
-          { role: "player", icon: "auto_stories", title: "Diario", desc: "Registras partidos y clases · marcas lo practicado" }
+          { role: "player", icon: "videocam", title: "Graba en pista", desc: "Partido o sesión de entreno" },
+          { role: "player", icon: "send", title: "Envía al coach", desc: "Cola de revisión pendiente" },
+          { role: "coach", icon: "rate_review", title: "Revisa el vídeo", desc: "Ve el juego con contexto" },
+          { role: "coach", icon: "bookmark", title: "Marcas temporales", desc: "Puntos clave en el timeline" },
+          { role: "coach", icon: "flag", title: "Publica objetivos", desc: "Plan de acción al jugador" },
+          { role: "player", icon: "auto_stories", title: "Diario", desc: "Marca objetivos practicados" },
+          { role: "both", icon: "check_circle", title: "Metas cumplidas", desc: "Todo el plan completado" },
+          { role: "loop", icon: "sync", title: "Nuevo vídeo", desc: "El bucle vuelve a empezar" }
         ]
       },
-      mid: {
-        desc: "<strong>Vista intermedia</strong>: ya se ve la relación jugador–entrenador, el plan de acción y el diario donde se registra la práctica.",
-        cta: "Cuando cumples los objetivos del plan, <strong>subes un nuevo vídeo</strong> y el entrenador ajusta el siguiente bloque. Así ganas nivel sin perder el hilo.",
-        hub: { showInfinity: false, title: "Gimadd Mentor", sub: "Análisis → plan → práctica → repetir" },
-        steps: [
-          { role: "player", icon: "school", title: "Eliges entrenador", desc: "Contratas pack o sesión" },
-          { role: "player", icon: "upload", title: "Subes el vídeo", desc: "Desde el móvil, en minutos" },
-          { role: "coach", icon: "play_circle", title: "Videoanálisis", desc: "Marcas y comentarios en el clip" },
-          { role: "coach", icon: "flag", title: "Plan de acción", desc: "Objetivos concretos para ti" },
-          { role: "player", icon: "auto_stories", title: "Diario de práctica", desc: "Registras partidos y clases" },
-          { role: "loop", icon: "sync", title: "Nuevo ciclo", desc: "Meta cumplida → otro vídeo" }
-        ]
-      },
-      full: {
-        desc: "<strong>Vista completa</strong> del producto Gimadd Mentor: desde el catálogo del entrenador hasta la publicación del análisis y el cierre del ciclo con nuevo vídeo.",
+      coach: {
+        desc: "<strong>Entrenador</strong>: visión completa del producto, desde el catálogo hasta el cierre del ciclo con nuevo vídeo.",
         cta: "<strong>Flywheel de negocio y de juego:</strong> más práctica genera mejores vídeos, mejores análisis y más retención — el jugador y el entrenador ganan en cada vuelta.",
         hub: { showInfinity: false, title: "Gimadd Mentor", sub: "Coaching digital en bucle cerrado" },
         steps: [
@@ -630,14 +630,15 @@
       btn.addEventListener("click", function () {
         var key = btn.getAttribute("data-version");
         document.querySelectorAll(".version-tabs button").forEach(function (b) {
-          b.classList.toggle("is-on", b === btn);
-          b.setAttribute("aria-selected", b === btn ? "true" : "false");
+          var isOn = b === btn;
+          b.classList.toggle("is-on", isOn);
+          b.setAttribute("aria-selected", isOn ? "true" : "false");
         });
         renderFlywheel(key);
       });
     });
 
-    renderFlywheel("min");
+    renderFlywheel("player");
   </script>
 </body>
 </html>
