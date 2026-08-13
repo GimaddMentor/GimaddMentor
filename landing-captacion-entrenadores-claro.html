@@ -3,54 +3,301 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="theme-color" content="#f4f7f8" />
-  <meta name="description" content="Conviértete en Entrenador 2.0 con Gimadd Mentor. Videoanálisis, seguimiento y nuevos ingresos — sin depender solo de la pista." />
-  <title>Fundadores Entrenador 2.0 · Gimadd Mentor (claro)</title>
+  <meta name="theme-color" content="#f4fbf7" />
+  <meta name="description" content="Conviértete en Entrenador 2.0 con Gimadd Mentor. Videoanálisis, seguimiento y nuevos ingresos." />
+  <title>Fundadores Entrenador 2.0 · Gimadd Mentor</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@700&family=Roboto+Mono:wght@500;600;700&family=Space+Grotesk:wght@500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@700&family=Outfit:wght@500;600;700;800&family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,600,1,0&display=swap" rel="stylesheet" />
   <style id="arrowKeyframes"></style>
   <style>
     :root {
-      --bg: #f7fafb;
-      --bg-soft: #eef5f7;
-      --court: #0a3d4a;
-      --court-deep: #0a3d4a;
-      --lime: #c8e83a;
-      --lime-soft: rgba(200, 232, 58, 0.22);
-      --coral: #ff6b4a;
-      --coral-deep: #e84f2e;
-      --ink: #0f1c22;
-      --ink-soft: #334155;
-      --ink-mute: #64748b;
-      --line: rgba(10, 61, 74, 0.12);
-      --card-glass: #ffffff;
+      --bg: #f3faf6;
+      --bg-2: #e8f5ee;
+      --court: #0b3d3a;
+      --court-mid: #14635c;
+      --volt: #c8f542;
+      --volt-deep: #a8d12a;
+      --coral: #ff5a3c;
+      --coral-deep: #e43f22;
+      --ink: #0c1a18;
+      --ink-soft: #2d4541;
+      --mute: #5c7470;
+      --line: rgba(11, 61, 58, 0.12);
       --yellow: #f2ec1f;
       --yellow-deep: #d8b814;
-      --ease: cubic-bezier(0.22, 1, 0.36, 1);
-      --safe-b: env(safe-area-inset-bottom, 0px);
-      --safe-t: env(safe-area-inset-top, 0px);
-      --radius: 22px;
       --wa: #25d366;
-      --shadow-soft: 0 1px 2px rgba(15, 28, 34, 0.04), 0 12px 32px rgba(15, 28, 34, 0.07);
+      --ease: cubic-bezier(0.22, 1, 0.36, 1);
+      --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+      --safe-t: env(safe-area-inset-top, 0px);
+      --safe-b: env(safe-area-inset-bottom, 0px);
+      --shadow: 0 10px 40px rgba(11, 61, 58, 0.1);
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
     html, body { height: 100%; }
     html { background: var(--bg); scroll-behavior: smooth; }
     body {
-      font-family: "Manrope", system-ui, sans-serif;
+      font-family: "Outfit", system-ui, sans-serif;
       color: var(--ink);
       background: var(--bg);
       -webkit-font-smoothing: antialiased;
       overflow: hidden;
     }
     button, input, select { font: inherit; color: inherit; }
-    a { color: inherit; }
+    a { color: inherit; text-decoration: none; }
+    img { display: block; max-width: 100%; }
 
-    /* —— Deck (TikTok-style snap) —— */
+    /* —— Ambient court world —— */
+    .world {
+      position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden;
+      background:
+        radial-gradient(ellipse 80% 50% at 100% 0%, rgba(200, 245, 66, 0.28), transparent 55%),
+        radial-gradient(ellipse 60% 40% at 0% 100%, rgba(255, 90, 60, 0.12), transparent 50%),
+        linear-gradient(160deg, #ffffff 0%, var(--bg) 45%, var(--bg-2) 100%);
+    }
+    .court-grid {
+      position: absolute; inset: -10%;
+      background-image:
+        linear-gradient(rgba(11,61,58,0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(11,61,58,0.05) 1px, transparent 1px);
+      background-size: 48px 48px;
+      transform: perspective(600px) rotateX(58deg) scale(1.4);
+      transform-origin: center top;
+      animation: gridDrift 18s linear infinite;
+      opacity: 0.55;
+    }
+    @keyframes gridDrift {
+      from { background-position: 0 0, 0 0; }
+      to { background-position: 0 48px, 48px 0; }
+    }
+    .net-line {
+      position: absolute; left: 8%; right: 8%; top: 42%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, rgba(11,61,58,0.18), transparent);
+      transform: rotate(-8deg);
+    }
+    .ball {
+      position: absolute;
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, #fff59a, var(--yellow) 45%, var(--yellow-deep));
+      box-shadow: 0 4px 16px rgba(216, 184, 20, 0.45), inset -2px -2px 4px rgba(0,0,0,0.12);
+      animation: ballRally 7.5s var(--ease) infinite;
+      z-index: 1;
+    }
+    .ball::after {
+      content: "";
+      position: absolute; inset: 18%;
+      border: 1.5px solid rgba(11,61,58,0.18);
+      border-radius: 50%;
+      border-left-color: transparent;
+      border-bottom-color: transparent;
+      transform: rotate(35deg);
+    }
+    .ball-b { animation-delay: -2.4s; width: 14px; height: 14px; opacity: 0.7; }
+    .ball-c { animation-delay: -4.8s; width: 10px; height: 10px; opacity: 0.45; }
+    @keyframes ballRally {
+      0%   { left: 8%;  top: 72%; transform: scale(1) rotate(0deg); }
+      25%  { left: 72%; top: 28%; transform: scale(1.15) rotate(120deg); }
+      50%  { left: 55%; top: 68%; transform: scale(0.95) rotate(220deg); }
+      75%  { left: 18%; top: 22%; transform: scale(1.1) rotate(300deg); }
+      100% { left: 8%;  top: 72%; transform: scale(1) rotate(360deg); }
+    }
+    .spark {
+      position: absolute;
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--volt);
+      animation: spark 3.2s ease-in-out infinite;
+      opacity: 0;
+    }
+    .spark:nth-child(5) { left: 20%; top: 30%; animation-delay: 0.2s; }
+    .spark:nth-child(6) { left: 70%; top: 55%; animation-delay: 1.1s; }
+    .spark:nth-child(7) { left: 40%; top: 18%; animation-delay: 1.8s; }
+    @keyframes spark {
+      0%, 100% { opacity: 0; transform: scale(0.4); }
+      40% { opacity: 1; transform: scale(1.4); }
+      70% { opacity: 0.2; transform: scale(0.8); }
+    }
+
+    /* —— Chrome —— */
+    .topbar {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 0.75rem;
+      padding: calc(var(--safe-t) + 0.7rem) 1rem 0.6rem;
+      background: linear-gradient(180deg, rgba(243,250,246,0.96), rgba(243,250,246,0));
+      pointer-events: none;
+    }
+    .brand {
+      pointer-events: auto;
+      display: inline-flex; align-items: center; gap: 0.55rem;
+    }
+    .brand-mark {
+      width: 34px; height: 34px; border-radius: 11px;
+      background: linear-gradient(145deg, var(--yellow), var(--volt));
+      color: var(--court);
+      font-family: "Space Grotesk", sans-serif;
+      font-weight: 700; font-size: 0.72rem;
+      display: grid; place-items: center;
+      box-shadow: 0 6px 18px rgba(200, 245, 66, 0.35);
+      animation: brandPulse 3s ease-in-out infinite;
+    }
+    @keyframes brandPulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.06); }
+    }
+    .brand-name {
+      font-family: "Space Grotesk", sans-serif;
+      font-weight: 700; font-size: 0.95rem; letter-spacing: -0.02em;
+    }
+    .slot-pill {
+      pointer-events: auto;
+      font-size: 0.68rem; font-weight: 700;
+      letter-spacing: 0.02em; text-transform: uppercase;
+      color: var(--court);
+      background: var(--volt);
+      padding: 0.45rem 0.75rem;
+      border-radius: 999px;
+      box-shadow: 0 4px 16px rgba(200, 245, 66, 0.35);
+      animation: pillBounce 2.8s var(--ease-spring) infinite;
+      white-space: nowrap;
+      max-width: min(52vw, 12rem);
+    }
+    @keyframes pillBounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-3px); }
+    }
+
+    /* Side progress — large hit areas */
+    .progress {
+      position: fixed;
+      right: 0.35rem;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 50;
+      display: flex;
+      flex-direction: column;
+      gap: 0.15rem;
+      padding: 0.25rem;
+    }
+    .progress button {
+      width: 44px; height: 44px;
+      border: 0; background: transparent;
+      cursor: pointer;
+      display: grid; place-items: center;
+      border-radius: 12px;
+      transition: background 0.2s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .progress button:hover { background: rgba(11,61,58,0.06); }
+    .progress button::before {
+      content: "";
+      width: 10px; height: 10px;
+      border-radius: 999px;
+      background: rgba(11,61,58,0.22);
+      transition: height 0.35s var(--ease), background 0.25s, width 0.25s, box-shadow 0.25s;
+    }
+    .progress button[aria-current="true"]::before {
+      height: 28px; width: 10px;
+      background: var(--coral);
+      box-shadow: 0 0 16px rgba(255, 90, 60, 0.45);
+    }
+
+    /* Desktop / always: big arrows */
+    .nav-arrows {
+      position: fixed;
+      z-index: 50;
+      display: flex;
+      flex-direction: column;
+      gap: 0.55rem;
+      left: max(0.75rem, env(safe-area-inset-left));
+      bottom: calc(var(--safe-b) + 5.5rem);
+    }
+    @media (min-width: 900px) {
+      .nav-arrows {
+        left: auto;
+        right: 1.25rem;
+        bottom: auto;
+        top: 50%;
+        transform: translateY(-50%);
+        margin-right: 3.2rem;
+      }
+    }
+    .nav-arrows button {
+      width: 52px; height: 52px;
+      border-radius: 16px;
+      border: 1.5px solid var(--line);
+      background: rgba(255,255,255,0.85);
+      backdrop-filter: blur(12px);
+      box-shadow: var(--shadow);
+      cursor: pointer;
+      display: grid; place-items: center;
+      transition: transform 0.2s var(--ease), background 0.2s, border-color 0.2s;
+      color: var(--court);
+    }
+    .nav-arrows button:hover:not(:disabled) {
+      transform: scale(1.06);
+      border-color: var(--court);
+      background: #fff;
+    }
+    .nav-arrows button:active:not(:disabled) { transform: scale(0.96); }
+    .nav-arrows button:disabled { opacity: 0.35; cursor: not-allowed; }
+    .nav-arrows .material-symbols-rounded { font-size: 1.45rem; font-variation-settings: "FILL" 1; }
+
+    .swipe-hint {
+      position: fixed;
+      left: 50%; bottom: calc(var(--safe-b) + 0.7rem);
+      transform: translateX(-50%);
+      z-index: 40;
+      display: flex; flex-direction: column; align-items: center; gap: 0.15rem;
+      color: var(--mute);
+      font-size: 0.65rem; letter-spacing: 0.1em; text-transform: uppercase;
+      pointer-events: none;
+      transition: opacity 0.4s;
+    }
+    .swipe-hint.is-hidden { opacity: 0; }
+    .swipe-hint .chev {
+      width: 16px; height: 16px;
+      border-right: 2.5px solid var(--coral);
+      border-bottom: 2.5px solid var(--coral);
+      transform: rotate(45deg);
+      animation: bounce 1.5s var(--ease) infinite;
+      margin-bottom: 0.2rem;
+    }
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0) rotate(45deg); opacity: 0.4; }
+      50% { transform: translateY(6px) rotate(45deg); opacity: 1; }
+    }
+
+    /* Floating WA on mobile */
+    .fab-wa {
+      position: fixed;
+      right: 1rem;
+      bottom: calc(var(--safe-b) + 1rem);
+      z-index: 55;
+      width: 56px; height: 56px;
+      border-radius: 50%;
+      background: var(--wa);
+      color: #053318;
+      display: grid; place-items: center;
+      box-shadow: 0 10px 28px rgba(37, 211, 102, 0.4);
+      animation: fabPulse 2.4s ease-in-out infinite;
+    }
+    .fab-wa .material-symbols-rounded { font-size: 1.7rem; font-variation-settings: "FILL" 1; }
+    @keyframes fabPulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.07); }
+    }
+    @media (min-width: 900px) {
+      .fab-wa { bottom: 1.5rem; right: 1.5rem; }
+    }
+
+    /* —— Deck —— */
     .deck {
+      position: relative; z-index: 1;
       height: 100dvh;
       overflow-y: auto;
       overflow-x: hidden;
@@ -58,6 +305,8 @@
       scroll-behavior: smooth;
       -webkit-overflow-scrolling: touch;
       overscroll-behavior-y: contain;
+      /* Ensure wheel/trackpad works on desktop */
+      touch-action: pan-y;
     }
     .card {
       position: relative;
@@ -67,37 +316,9 @@
       scroll-snap-stop: always;
       display: flex;
       flex-direction: column;
-      padding:
-        calc(var(--safe-t) + 3.6rem)
-        1.15rem
-        calc(var(--safe-b) + 4.6rem);
+      padding: calc(var(--safe-t) + 4rem) 1.15rem calc(var(--safe-b) + 5.2rem);
       overflow: hidden;
       isolation: isolate;
-    }
-    .card::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      z-index: -1;
-      background:
-        radial-gradient(ellipse 90% 55% at 85% -5%, rgba(200, 232, 58, 0.28), transparent 55%),
-        radial-gradient(ellipse 70% 45% at 0% 100%, rgba(255, 107, 74, 0.1), transparent 50%),
-        linear-gradient(165deg, #ffffff 0%, var(--bg) 48%, var(--bg-soft) 100%);
-    }
-    .card--fly::before {
-      background:
-        radial-gradient(ellipse 80% 50% at 50% 0%, rgba(242, 236, 31, 0.28), transparent 55%),
-        linear-gradient(180deg, #ffffff 0%, #f4f7f8 100%);
-    }
-    .card--fly {
-      padding-bottom: calc(var(--safe-b) + 3.2rem);
-      overflow: hidden;
-    }
-    .card--fly .card-inner {
-      width: min(720px, 100%);
-      justify-content: flex-start;
-      gap: 0.55rem;
-      overflow: hidden;
     }
     .card-inner {
       width: min(560px, 100%);
@@ -107,411 +328,336 @@
       flex-direction: column;
       justify-content: center;
       gap: 0.85rem;
-      animation: cardIn 0.7s var(--ease) both;
     }
-    .card.is-active .card-inner { animation-name: cardIn; }
+    .card.is-active .reveal {
+      animation: riseIn 0.7s var(--ease) both;
+    }
+    .card.is-active .reveal-d1 { animation-delay: 0.05s; }
+    .card.is-active .reveal-d2 { animation-delay: 0.12s; }
+    .card.is-active .reveal-d3 { animation-delay: 0.2s; }
+    .card.is-active .reveal-d4 { animation-delay: 0.28s; }
+    .card.is-active .reveal-d5 { animation-delay: 0.36s; }
+    @keyframes riseIn {
+      from { opacity: 0; transform: translateY(28px) scale(0.98); filter: blur(4px); }
+      to { opacity: 1; transform: none; filter: none; }
+    }
 
-    @keyframes cardIn {
-      from { opacity: 0; transform: translateY(28px) scale(0.985); }
-      to { opacity: 1; transform: none; }
-    }
-
-    /* —— Chrome UI —— */
-    .topbar {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      z-index: 40;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 0.75rem;
-      padding: calc(var(--safe-t) + 0.65rem) 1rem 0.55rem;
-      background: linear-gradient(180deg, rgba(247, 250, 251, 0.96), rgba(247, 250, 251, 0));
-      pointer-events: none;
-    }
-    .brand {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.55rem;
-      pointer-events: auto;
-      text-decoration: none;
-    }
-    .brand-mark {
-      width: 28px; height: 28px;
-      border-radius: 8px;
-      background: var(--yellow);
-      color: #111;
+    .feel {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      width: fit-content;
       font-family: "Space Grotesk", sans-serif;
-      font-weight: 700;
-      font-size: 0.72rem;
-      display: grid; place-items: center;
-      letter-spacing: -0.04em;
-    }
-    .brand-name {
-      font-family: "Space Grotesk", sans-serif;
-      font-weight: 700;
-      font-size: 0.92rem;
-      letter-spacing: -0.02em;
-    }
-    .slot-pill {
-      pointer-events: auto;
-      flex-shrink: 1;
-      max-width: min(52vw, 11.5rem);
-      font-size: 0.62rem;
-      font-weight: 700;
-      letter-spacing: 0.02em;
-      line-height: 1.25;
-      text-transform: uppercase;
-      text-align: center;
-      color: var(--court-deep);
-      background: var(--lime);
-      padding: 0.35rem 0.6rem;
+      font-size: 0.7rem; font-weight: 700;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--court);
+      background: rgba(200, 245, 66, 0.35);
+      border: 1px solid rgba(11,61,58,0.1);
+      padding: 0.4rem 0.75rem;
       border-radius: 999px;
-      white-space: nowrap;
     }
-    @media (max-width: 380px) {
-      .slot-pill {
-        font-size: 0.56rem;
-        letter-spacing: 0.01em;
-        padding: 0.32rem 0.5rem;
-        max-width: 48vw;
-      }
+    .feel::before {
+      content: "";
+      width: 7px; height: 7px; border-radius: 50%;
+      background: var(--coral);
+      box-shadow: 0 0 12px rgba(255,90,60,0.55);
+      animation: spark 1.8s ease-in-out infinite;
     }
-
-    .progress {
-      position: fixed;
-      right: 0.55rem;
-      top: 50%;
-      transform: translateY(-50%);
-      z-index: 40;
-      display: flex;
-      flex-direction: column;
-      gap: 0.42rem;
-      padding: 0.35rem;
-    }
-    .progress button {
-      width: 7px; height: 7px;
-      border-radius: 999px;
-      border: 0;
-      background: rgba(10, 61, 74, 0.18);
-      cursor: pointer;
-      transition: height 0.35s var(--ease), background 0.25s, transform 0.25s;
-      padding: 0;
-    }
-    .progress button[aria-current="true"] {
-      height: 22px;
-      background: var(--court);
-      transform: scaleX(1.15);
-    }
-
-    .swipe-hint {
-      position: fixed;
-      left: 50%;
-      bottom: calc(var(--safe-b) + 0.85rem);
-      transform: translateX(-50%);
-      z-index: 40;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 0.2rem;
-      color: var(--ink-mute);
-      font-size: 0.68rem;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      pointer-events: none;
-      transition: opacity 0.4s;
-    }
-    .swipe-hint.is-hidden { opacity: 0; }
-    .swipe-hint .chev {
-      width: 18px; height: 18px;
-      border-right: 2px solid var(--lime);
-      border-bottom: 2px solid var(--lime);
-      transform: rotate(45deg);
-      animation: bounce 1.6s var(--ease) infinite;
-      margin-bottom: 0.15rem;
-      opacity: 0.85;
-    }
-    @keyframes bounce {
-      0%, 100% { transform: translateY(0) rotate(45deg); opacity: 0.4; }
-      50% { transform: translateY(5px) rotate(45deg); opacity: 1; }
-    }
-
-    /* —— Typography —— */
     .kicker {
-      font-size: 0.75rem;
-      color: var(--ink-mute);
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      font-weight: 600;
+      font-size: 0.75rem; color: var(--mute);
+      letter-spacing: 0.08em; text-transform: uppercase; font-weight: 600;
     }
     h1 {
       font-family: "Space Grotesk", sans-serif;
       font-weight: 700;
-      font-size: clamp(2rem, 8.2vw, 3.15rem);
+      font-size: clamp(2rem, 8vw, 3.2rem);
       line-height: 1.02;
       letter-spacing: -0.045em;
       text-wrap: balance;
     }
     h1 em {
       font-style: normal;
-      color: var(--court);
-      background: linear-gradient(120deg, transparent 0%, var(--lime-soft) 40%, var(--lime-soft) 60%, transparent 100%);
+      background: linear-gradient(120deg, var(--court) 0%, var(--court-mid) 40%, var(--coral) 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      position: relative;
     }
     .impact {
       font-family: "Space Grotesk", sans-serif;
       font-weight: 700;
-      font-size: clamp(1.05rem, 4.2vw, 1.35rem);
+      font-size: clamp(1.05rem, 4vw, 1.35rem);
       line-height: 1.25;
       letter-spacing: -0.025em;
-      color: var(--ink);
-      text-wrap: pretty;
     }
-    .impact strong { color: var(--court); }
-    .feel {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.4rem;
-      width: fit-content;
-      font-family: "Space Grotesk", sans-serif;
-      font-size: 0.72rem;
-      font-weight: 600;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: var(--court);
-      background: var(--lime-soft);
-      border: 1px solid rgba(10, 61, 74, 0.12);
-      padding: 0.38rem 0.7rem;
-      border-radius: 999px;
-    }
-    .feel::before {
-      content: "";
-      width: 6px; height: 6px;
-      border-radius: 50%;
-      background: var(--coral);
-      box-shadow: 0 0 10px rgba(255, 107, 74, 0.45);
-    }
-    .micro {
-      font-size: 0.82rem;
-      color: var(--ink-mute);
-      line-height: 1.45;
-    }
-    .micro strong { color: var(--ink-soft); font-weight: 600; }
+    .impact strong { color: var(--coral-deep); }
+    .micro { font-size: 0.84rem; color: var(--mute); line-height: 1.45; }
+    .micro strong { color: var(--ink-soft); }
 
-    /* —— Buttons —— */
-    .cta-stack { display: flex; flex-direction: column; gap: 0.55rem; margin-top: 0.25rem; }
+    /* Media strip / ken burns */
+    .media {
+      position: relative;
+      border-radius: 22px;
+      overflow: hidden;
+      aspect-ratio: 16 / 9;
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(255,255,255,0.7);
+    }
+    .media img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      animation: ken 18s ease-in-out infinite alternate;
+      transform-origin: center;
+    }
+    @keyframes ken {
+      from { transform: scale(1) translate(0, 0); }
+      to { transform: scale(1.12) translate(-2%, -1%); }
+    }
+    .media-badge {
+      position: absolute; left: 0.75rem; bottom: 0.75rem;
+      background: rgba(11,61,58,0.88);
+      color: #fff;
+      font-size: 0.68rem; font-weight: 700;
+      letter-spacing: 0.06em; text-transform: uppercase;
+      padding: 0.4rem 0.65rem;
+      border-radius: 999px;
+      backdrop-filter: blur(8px);
+    }
+    .media-float {
+      position: absolute; right: 0.7rem; top: 0.7rem;
+      width: 48px; height: 48px;
+      border-radius: 14px;
+      background: var(--volt);
+      display: grid; place-items: center;
+      animation: fabPulse 2s ease-in-out infinite;
+      box-shadow: 0 8px 20px rgba(200,245,66,0.4);
+    }
+    .media-float .material-symbols-rounded { font-size: 1.4rem; color: var(--court); font-variation-settings: "FILL" 1; }
+
+    /* Buttons */
+    .cta-stack { display: flex; flex-direction: column; gap: 0.55rem; margin-top: 0.15rem; }
     .btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-      min-height: 52px;
-      padding: 0.85rem 1.15rem;
+      position: relative;
+      display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+      min-height: 54px;
+      padding: 0.9rem 1.2rem;
       border-radius: 999px;
       border: 0;
-      text-decoration: none;
       font-family: "Space Grotesk", sans-serif;
-      font-weight: 700;
-      font-size: 0.98rem;
+      font-weight: 700; font-size: 0.98rem;
       letter-spacing: -0.02em;
       cursor: pointer;
-      transition: transform 0.2s var(--ease), box-shadow 0.2s, filter 0.2s;
+      overflow: hidden;
+      transition: transform 0.2s var(--ease), box-shadow 0.25s;
       -webkit-tap-highlight-color: transparent;
     }
-    .btn:active { transform: scale(0.98); }
+    .btn:active { transform: scale(0.97); }
     .btn-primary {
-      background: linear-gradient(180deg, #ff7d5f 0%, var(--coral) 45%, var(--coral-deep) 100%);
+      background: linear-gradient(135deg, #ff7a5c 0%, var(--coral) 45%, var(--coral-deep) 100%);
       color: #fff;
-      box-shadow:
-        0 1px 0 rgba(255,255,255,0.22) inset,
-        0 10px 28px rgba(255, 107, 74, 0.35);
+      box-shadow: 0 12px 32px rgba(255, 90, 60, 0.38);
     }
-    .btn-primary:hover { filter: brightness(1.05); }
-    .btn-secondary {
-      background: transparent;
-      color: var(--ink);
-      border: 1.5px solid var(--line);
+    .btn-primary::after {
+      content: "";
+      position: absolute; inset: 0;
+      background: linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.35) 50%, transparent 60%);
+      transform: translateX(-120%);
+      animation: shine 3.2s ease-in-out infinite;
     }
-    .btn-secondary:hover { border-color: rgba(255,255,255,0.35); background: rgba(255,255,255,0.04); }
+    @keyframes shine {
+      0%, 55%, 100% { transform: translateX(-120%); }
+      70% { transform: translateX(120%); }
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 16px 36px rgba(255, 90, 60, 0.45); }
     .btn-wa {
-      background: var(--wa);
-      color: #053318;
-      box-shadow: 0 8px 22px rgba(37, 211, 102, 0.28);
+      background: var(--wa); color: #053318;
+      box-shadow: 0 10px 26px rgba(37, 211, 102, 0.3);
     }
+    .btn-wa:hover { transform: translateY(-2px); }
+    .btn-secondary {
+      background: #fff;
+      border: 1.5px solid var(--line);
+      color: var(--ink);
+    }
+    .btn-secondary:hover { border-color: var(--court); }
 
     .more-toggle {
       align-self: flex-start;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.35rem;
-      background: none;
-      border: 0;
-      color: var(--ink-mute);
-      font-size: 0.82rem;
-      font-weight: 600;
-      padding: 0.55rem 0.15rem;
+      display: inline-flex; align-items: center; gap: 0.35rem;
+      background: none; border: 0;
+      color: var(--mute);
+      font-size: 0.84rem; font-weight: 600;
+      padding: 0.55rem 0.1rem; min-height: 44px;
       cursor: pointer;
-      min-height: 44px;
-      letter-spacing: 0.01em;
-      transition: color 0.2s;
     }
-    .more-toggle:hover { color: var(--court); }
-    .more-toggle[aria-expanded="true"] { color: var(--court); }
-    .more-toggle .arrow {
-      display: inline-block;
-      transition: transform 0.35s var(--ease);
-      font-size: 0.75rem;
-    }
+    .more-toggle:hover, .more-toggle[aria-expanded="true"] { color: var(--coral-deep); }
+    .more-toggle .arrow { transition: transform 0.35s var(--ease); font-size: 0.75rem; }
     .more-toggle[aria-expanded="true"] .arrow { transform: rotate(180deg); }
-
-    .more-panel {
-      display: grid;
-      grid-template-rows: 0fr;
-      transition: grid-template-rows 0.45s var(--ease);
-    }
+    .more-panel { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.45s var(--ease); }
     .more-panel.is-open { grid-template-rows: 1fr; }
-    .more-panel > div {
-      overflow: hidden;
-      min-height: 0;
-    }
+    .more-panel > div { overflow: hidden; min-height: 0; }
     .more-copy {
-      font-size: 0.9rem;
-      line-height: 1.55;
-      color: var(--ink-soft);
-      padding: 0.15rem 0 0.35rem;
-      opacity: 0;
-      transform: translateY(-6px);
-      transition: opacity 0.35s var(--ease) 0.05s, transform 0.35s var(--ease);
+      font-size: 0.9rem; line-height: 1.55; color: var(--ink-soft);
+      padding: 0.2rem 0 0.35rem;
+      opacity: 0; transform: translateY(-6px);
+      transition: opacity 0.35s var(--ease), transform 0.35s var(--ease);
     }
-    .more-panel.is-open .more-copy {
-      opacity: 1;
-      transform: none;
-    }
-    .more-copy ul {
-      list-style: none;
-      display: grid;
-      gap: 0.45rem;
-      margin-top: 0.35rem;
-    }
-    .more-copy li {
-      position: relative;
-      padding-left: 1.05rem;
-    }
+    .more-panel.is-open .more-copy { opacity: 1; transform: none; }
+    .more-copy ul { list-style: none; display: grid; gap: 0.45rem; margin-top: 0.35rem; }
+    .more-copy li { padding-left: 1.05rem; position: relative; }
     .more-copy li::before {
-      content: "";
-      position: absolute;
-      left: 0; top: 0.55em;
-      width: 6px; height: 6px;
-      border-radius: 50%;
-      background: var(--lime);
+      content: ""; position: absolute; left: 0; top: 0.55em;
+      width: 6px; height: 6px; border-radius: 50%; background: var(--coral);
     }
 
-    /* —— Comparison —— */
-    .compare {
-      display: grid;
-      gap: 0.45rem;
-      margin: 0.15rem 0 0.2rem;
+    /* Compare */
+    .compare { display: grid; gap: 0.45rem; }
+    .compare-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.4rem; }
+    .cmp {
+      border-radius: 16px; padding: 0.75rem;
+      font-size: 0.78rem; line-height: 1.35;
+      border: 1px solid var(--line);
+      transition: transform 0.35s var(--ease);
     }
-    .compare-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 0.4rem;
-      animation: rise 0.55s var(--ease) both;
-    }
-    .compare-row:nth-child(1) { animation-delay: 0.05s; }
-    .compare-row:nth-child(2) { animation-delay: 0.1s; }
-    .compare-row:nth-child(3) { animation-delay: 0.15s; }
-    .compare-row:nth-child(4) { animation-delay: 0.2s; }
-    .compare-row:nth-child(5) { animation-delay: 0.25s; }
-    @keyframes rise {
-      from { opacity: 0; transform: translateY(12px); }
+    .card.is-active .compare-row:nth-child(odd) .cmp-after { animation: slideInR 0.55s var(--ease) both; }
+    .card.is-active .compare-row:nth-child(even) .cmp-after { animation: slideInR 0.55s var(--ease) 0.08s both; }
+    @keyframes slideInR {
+      from { opacity: 0; transform: translateX(12px); }
       to { opacity: 1; transform: none; }
     }
-    .cmp {
-      border-radius: 14px;
-      padding: 0.7rem 0.75rem;
-      font-size: 0.78rem;
-      line-height: 1.35;
-      border: 1px solid var(--line);
-    }
-    .cmp-before {
-      background: #f1f5f9;
-      color: var(--ink-mute);
-    }
+    .cmp-before { background: #eef2f1; color: var(--mute); }
     .cmp-after {
-      background: var(--lime-soft);
-      border-color: rgba(10, 61, 74, 0.14);
-      color: var(--ink);
+      background: linear-gradient(145deg, rgba(200,245,66,0.45), rgba(200,245,66,0.2));
+      border-color: rgba(11,61,58,0.12);
       font-weight: 600;
     }
     .cmp-label {
-      display: block;
-      font-size: 0.62rem;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      margin-bottom: 0.28rem;
-      opacity: 0.7;
-      font-weight: 700;
+      display: block; font-size: 0.6rem; letter-spacing: 0.08em;
+      text-transform: uppercase; margin-bottom: 0.25rem; font-weight: 700; opacity: 0.7;
     }
     .cmp-after .cmp-label { color: var(--court); opacity: 1; }
 
-    /* —— Offer cards —— */
-    .offers {
-      display: grid;
-      gap: 0.45rem;
-    }
+    .offers { display: grid; gap: 0.5rem; }
     .offer {
-      border-radius: 16px;
-      padding: 0.85rem 0.95rem;
-      background: var(--card-glass);
-      border: 1px solid var(--line);
-      box-shadow: var(--shadow-soft);
-      transition: border-color 0.25s, transform 0.25s var(--ease);
+      border-radius: 18px; padding: 0.9rem 1rem;
+      background: #fff; border: 1px solid var(--line);
+      box-shadow: 0 4px 18px rgba(11,61,58,0.05);
+      transition: transform 0.25s var(--ease), border-color 0.25s;
+      position: relative;
+      overflow: hidden;
     }
-    .offer:hover {
-      border-color: rgba(10, 61, 74, 0.28);
-      transform: translateY(-1px);
+    .offer::before {
+      content: "";
+      position: absolute; left: 0; top: 0; bottom: 0; width: 4px;
+      background: linear-gradient(180deg, var(--volt), var(--coral));
     }
+    .offer:hover { transform: translateY(-3px); border-color: rgba(11,61,58,0.22); }
     .offer h3 {
       font-family: "Space Grotesk", sans-serif;
-      font-size: 0.98rem;
-      font-weight: 700;
-      letter-spacing: -0.02em;
-      margin-bottom: 0.25rem;
+      font-size: 0.98rem; font-weight: 700; margin-bottom: 0.25rem;
     }
-    .offer p {
-      font-size: 0.8rem;
-      color: var(--ink-soft);
-      line-height: 1.4;
-    }
+    .offer p { font-size: 0.8rem; color: var(--ink-soft); line-height: 1.4; }
 
-    /* —— Embedded flywheel (coach · 9 pasos) —— */
-    .fly-caption {
-      font-size: 0.78rem;
-      color: var(--ink-mute);
-      margin-bottom: 0.15rem;
+    /* Calc */
+    .calc {
+      border-radius: 20px; padding: 1rem;
+      background: #fff; border: 1px solid var(--line);
+      box-shadow: var(--shadow); display: grid; gap: 0.65rem;
     }
+    .calc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.55rem; }
+    .field { display: grid; gap: 0.28rem; }
+    .field.full { grid-column: 1 / -1; }
+    .field label {
+      font-size: 0.66rem; letter-spacing: 0.05em;
+      text-transform: uppercase; color: var(--mute); font-weight: 700;
+    }
+    .field input, .field select {
+      width: 100%; min-height: 44px; border-radius: 12px;
+      border: 1px solid var(--line); background: #f7fbf9;
+      padding: 0.45rem 0.65rem; outline: none;
+    }
+    .field input:focus, .field select:focus {
+      border-color: var(--coral); background: #fff;
+      box-shadow: 0 0 0 3px rgba(255,90,60,0.15);
+    }
+    .calc-result { display: grid; grid-template-columns: 1fr 1fr; gap: 0.45rem; }
+    .metric {
+      border-radius: 14px; padding: 0.7rem 0.75rem;
+      background: linear-gradient(145deg, rgba(200,245,66,0.35), rgba(200,245,66,0.12));
+      border: 1px solid rgba(11,61,58,0.1);
+    }
+    .metric.span { grid-column: 1 / -1; }
+    .metric .lbl { font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--mute); margin-bottom: 0.2rem; }
+    .metric .val {
+      font-family: "IBM Plex Mono", monospace;
+      font-weight: 600; font-size: 1.15rem; color: var(--court);
+      letter-spacing: -0.03em;
+    }
+    .metric .val small { font-size: 0.72rem; color: var(--mute); font-weight: 500; }
+
+    .trust {
+      font-size: 0.84rem; color: var(--ink-soft); line-height: 1.45;
+      padding: 0.75rem 0.9rem;
+      border-left: 4px solid var(--coral);
+      background: #fff; border-radius: 0 14px 14px 0;
+      box-shadow: var(--shadow);
+    }
+    .split-lists {
+      display: grid; gap: 0.65rem;
+      max-height: min(36vh, 260px);
+      overflow-y: auto; -webkit-overflow-scrolling: touch;
+    }
+    .list-block h3 {
+      font-family: "Space Grotesk", sans-serif;
+      font-size: 0.9rem; margin-bottom: 0.4rem; color: var(--court);
+    }
+    .list-block ul { list-style: none; display: grid; gap: 0.35rem; }
+    .list-block li {
+      font-size: 0.8rem; color: var(--ink-soft); line-height: 1.35;
+      padding-left: 1rem; position: relative;
+    }
+    .list-block li::before {
+      content: "✓"; position: absolute; left: 0; color: var(--coral); font-weight: 700; font-size: 0.72rem;
+    }
+    .list-block.seek li::before { content: "→"; }
+
+    .faq-list { display: grid; gap: 0.45rem; }
+    .faq-item {
+      border-radius: 16px; border: 1px solid var(--line);
+      background: #fff; overflow: hidden;
+      box-shadow: 0 2px 10px rgba(11,61,58,0.04);
+    }
+    .faq-q {
+      width: 100%; text-align: left; background: none; border: 0;
+      padding: 0.9rem 1rem; min-height: 52px;
+      font-family: "Space Grotesk", sans-serif; font-weight: 600; font-size: 0.92rem;
+      display: flex; justify-content: space-between; align-items: center; gap: 0.75rem;
+      cursor: pointer;
+    }
+    .faq-q .ico {
+      width: 26px; height: 26px; border-radius: 50%;
+      border: 1px solid var(--line); display: grid; place-items: center;
+      color: var(--coral); transition: transform 0.3s var(--ease), background 0.2s;
+      flex-shrink: 0;
+    }
+    .faq-item.is-open .faq-q .ico { transform: rotate(45deg); background: rgba(255,90,60,0.1); }
+    .faq-a { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.4s var(--ease); }
+    .faq-item.is-open .faq-a { grid-template-rows: 1fr; }
+    .faq-a > div { overflow: hidden; min-height: 0; }
+    .faq-a p { padding: 0 1rem 0.95rem; font-size: 0.86rem; line-height: 1.5; color: var(--ink-soft); }
+    .footer-note { text-align: center; font-size: 0.72rem; color: var(--mute); margin-top: 0.4rem; }
+
+    /* Flywheel card */
+    .card--fly { padding-bottom: calc(var(--safe-b) + 4.2rem); }
+    .card--fly .card-inner { width: min(720px, 100%); justify-content: flex-start; gap: 0.5rem; }
+    .fly-caption { font-size: 0.78rem; color: var(--mute); }
     .lw-legend {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 0.75rem 1.25rem;
-      font-size: 0.72rem;
-      font-weight: 600;
-      color: var(--ink-mute);
+      display: flex; flex-wrap: wrap; justify-content: center; gap: 0.75rem 1.25rem;
+      font-size: 0.72rem; font-weight: 600; color: var(--mute);
     }
     .lw-legend span { display: inline-flex; align-items: center; gap: 0.35rem; }
-    .lw-dot {
-      width: 8px; height: 8px; border-radius: 50%;
-    }
+    .lw-dot { width: 8px; height: 8px; border-radius: 50%; }
     .lw-dot--coach { background: #0a0a0a; }
     .lw-dot--player { background: var(--yellow); }
-
-    .lw-stage {
-      width: 100%;
-      display: flex;
-      justify-content: center;
-      margin: 0.15rem 0 0.35rem;
-    }
+    .lw-stage { width: 100%; display: flex; justify-content: center; margin: 0.1rem 0; }
     .lw-wrap {
       --ring-size: min(86vw, 340px);
       --step-w: clamp(62px, 16vw, 74px);
@@ -521,544 +667,232 @@
       --hub-ring-x: 50%;
       --hub-ring-y: 54.545%;
       --cycle-dur: 31.5s;
-      position: relative;
-      width: var(--ring-size);
-      height: var(--ring-size);
-      flex-shrink: 0;
+      position: relative; width: var(--ring-size); height: var(--ring-size); flex-shrink: 0;
     }
-    .lw-ring {
-      position: absolute;
-      inset: 0;
-      border-radius: 50%;
-      pointer-events: none;
-      z-index: 0;
-    }
-    .lw-ring--outer {
-      border: 1.5px dashed rgba(10, 61, 74, 0.18);
-      animation: lw-spin 40s linear infinite;
-    }
+    .lw-ring { position: absolute; inset: 0; border-radius: 50%; pointer-events: none; z-index: 0; }
+    .lw-ring--outer { border: 1.5px dashed rgba(11,61,58,0.18); animation: lw-spin 40s linear infinite; }
     .lw-ring--mid {
-      inset: 5%;
-      border: 2px solid rgba(242, 236, 31, 0.65);
-      box-shadow: 0 0 40px rgba(242, 236, 31, 0.22);
+      inset: 5%; border: 2px solid rgba(242,236,31,0.7);
+      box-shadow: 0 0 40px rgba(242,236,31,0.25);
       animation: lw-spin 28s linear infinite reverse;
     }
     @keyframes lw-spin { to { transform: rotate(360deg); } }
-
-    .lw-flow {
-      position: absolute;
-      inset: -2%;
-      width: 104%;
-      height: 104%;
-      pointer-events: none;
-      z-index: 1;
-    }
+    .lw-flow { position: absolute; inset: -2%; width: 104%; height: 104%; pointer-events: none; z-index: 1; }
     .lw-flow-path {
-      fill: none;
-      stroke: url(#lwFlowGrad);
-      stroke-width: 2.2;
-      stroke-dasharray: 7 12;
-      animation: lw-dash 2s linear infinite;
-      opacity: 0.85;
+      fill: none; stroke: url(#lwFlowGrad); stroke-width: 2.2;
+      stroke-dasharray: 7 12; animation: lw-dash 2s linear infinite; opacity: 0.85;
     }
     @keyframes lw-dash { to { stroke-dashoffset: -38; } }
-
     .lw-arrow-hub {
-      position: absolute;
-      left: 50%; top: 50%;
-      transform: translate(-50%, -50%);
-      width: var(--arrow-size);
-      height: var(--arrow-size);
-      z-index: 2;
-      pointer-events: none;
+      position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%);
+      width: var(--arrow-size); height: var(--arrow-size); z-index: 2; pointer-events: none;
     }
     .lw-arrow-rotator {
-      position: absolute;
-      inset: 0;
+      position: absolute; inset: 0;
       transform-origin: var(--hub-ring-x) var(--hub-ring-y);
-      animation: arrow-cycle var(--cycle-dur) var(--ease) infinite;
-      will-change: transform;
+      animation: arrow-cycle var(--cycle-dur) var(--ease) infinite; will-change: transform;
     }
     .lw-arrow-rotator.is-paused { animation-play-state: paused; }
-    .lw-arrow-svg {
-      width: 100%; height: 100%;
-      display: block;
-      filter: drop-shadow(0 6px 16px rgba(15, 28, 34, 0.18));
-    }
+    .lw-arrow-svg { width: 100%; height: 100%; display: block; filter: drop-shadow(0 6px 16px rgba(11,61,58,0.18)); }
     .lw-arrow-core {
-      position: absolute;
-      left: var(--hub-ring-x);
-      top: var(--hub-ring-y);
-      transform: translate(-50%, -50%);
-      z-index: 4;
-      width: var(--core-width);
+      position: absolute; left: var(--hub-ring-x); top: var(--hub-ring-y);
+      transform: translate(-50%,-50%); z-index: 4; width: var(--core-width);
     }
     .lw-arrow-disc {
-      width: 100%;
-      aspect-ratio: 1;
-      border-radius: 50%;
-      background: #0a0a0a;
-      border: 2px solid #fff;
-      box-shadow: 0 6px 20px rgba(0,0,0,0.28);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 10% 8%;
-      gap: 0.1rem;
-      text-align: center;
+      width: 100%; aspect-ratio: 1; border-radius: 50%; background: #0a0a0a;
+      border: 2px solid #fff; box-shadow: 0 6px 20px rgba(0,0,0,0.28);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      padding: 10% 8%; gap: 0.1rem; text-align: center;
     }
     .lw-logo-wrap {
-      width: 52%;
-      aspect-ratio: 1;
-      border-radius: 50%;
-      overflow: hidden;
-      background: rgba(48,48,48,0.72);
-      padding: 11%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      width: 52%; aspect-ratio: 1; border-radius: 50%; overflow: hidden;
+      background: rgba(48,48,48,0.72); padding: 11%;
+      display: flex; align-items: center; justify-content: center;
     }
-    .lw-logo {
-      width: 100%; height: 100%;
-      object-fit: contain;
-      border-radius: 20%;
-    }
+    .lw-logo { width: 100%; height: 100%; object-fit: contain; border-radius: 20%; }
     .lw-tagline {
       font-family: "Libre Baskerville", Georgia, serif;
-      font-size: clamp(0.32rem, 2.4vw, 0.42rem);
-      font-weight: 700;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-      color: #fff;
-      line-height: 1.15;
-      white-space: nowrap;
+      font-size: clamp(0.32rem, 2.4vw, 0.42rem); font-weight: 700;
+      letter-spacing: 0.04em; text-transform: uppercase; color: #fff; white-space: nowrap;
     }
-
     .lw-step {
-      --angle: 0deg;
-      --delay: 0s;
-      position: absolute;
-      left: 50%; top: 50%;
-      width: var(--step-w);
-      margin-left: calc(var(--step-w) / -2);
-      margin-top: calc(var(--step-w) / -2);
+      --angle: 0deg; --delay: 0s;
+      position: absolute; left: 50%; top: 50%; width: var(--step-w);
+      margin-left: calc(var(--step-w) / -2); margin-top: calc(var(--step-w) / -2);
       transform: rotate(var(--angle)) translateY(calc(var(--ring-size) / -2 + var(--orbit-inset))) rotate(calc(-1 * var(--angle)));
       z-index: 3;
     }
     .lw-flip {
-      display: block;
-      width: 100%;
-      border: none;
-      background: none;
-      padding: 0;
-      font: inherit;
-      cursor: pointer;
-      perspective: 700px;
-      -webkit-tap-highlight-color: transparent;
-      position: relative;
+      display: block; width: 100%; border: none; background: none; padding: 0;
+      font: inherit; cursor: pointer; perspective: 700px; -webkit-tap-highlight-color: transparent; position: relative;
     }
     .lw-flip-inner {
-      position: relative;
-      width: 100%;
-      min-height: 4.4rem;
-      transform-style: preserve-3d;
-      transition: transform 0.65s var(--ease);
-      animation: lw-auto-flip var(--cycle-dur) ease-in-out infinite;
-      animation-delay: var(--delay);
+      position: relative; width: 100%; min-height: 4.4rem;
+      transform-style: preserve-3d; transition: transform 0.65s var(--ease);
+      animation: lw-auto-flip var(--cycle-dur) ease-in-out infinite; animation-delay: var(--delay);
     }
     @keyframes lw-auto-flip {
       0%, 2%, 16%, 19%, 100% { transform: rotateY(0deg) scale(1); }
       4%, 14% { transform: rotateY(180deg) scale(1.04); }
     }
-    .lw-flip-inner.is-flipped {
-      transform: rotateY(180deg);
-      animation-play-state: paused;
-    }
+    .lw-flip-inner.is-flipped { transform: rotateY(180deg); animation-play-state: paused; }
     .lw-card {
-      background: #fff;
-      border: 1px solid rgba(10, 61, 74, 0.1);
-      border-radius: 12px;
-      padding: 0.45rem 0.35rem 0.4rem;
-      text-align: center;
-      box-shadow: var(--shadow-soft);
-      backface-visibility: hidden;
-      -webkit-backface-visibility: hidden;
+      background: #fff; border: 1px solid rgba(11,61,58,0.1); border-radius: 12px;
+      padding: 0.45rem 0.35rem 0.4rem; text-align: center; box-shadow: var(--shadow);
+      backface-visibility: hidden; -webkit-backface-visibility: hidden;
     }
     .lw-card--back {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transform: rotateY(180deg);
-      padding: 0.4rem;
-      background: linear-gradient(160deg, #fff 0%, #f7fafb 100%);
-      border-color: rgba(242, 236, 31, 0.45);
+      position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+      transform: rotateY(180deg); padding: 0.4rem;
+      background: linear-gradient(160deg, #fff, #f3faf6); border-color: rgba(242,236,31,0.5);
     }
-    .lw-card--back p {
-      font-size: 0.48rem;
-      color: var(--ink-mute);
-      line-height: 1.3;
-      font-weight: 500;
-    }
+    .lw-card--back p { font-size: 0.48rem; color: var(--mute); line-height: 1.3; font-weight: 500; }
     .lw-num {
-      position: absolute;
-      top: -0.3rem; right: -0.3rem;
-      width: 1.05rem; height: 1.05rem;
-      border-radius: 50%;
+      position: absolute; top: -0.3rem; right: -0.3rem;
+      width: 1.05rem; height: 1.05rem; border-radius: 50%;
       background: linear-gradient(145deg, var(--yellow), var(--yellow-deep));
-      color: #111;
-      font-family: "Space Grotesk", sans-serif;
-      font-size: 0.5rem;
-      font-weight: 700;
-      display: grid; place-items: center;
-      border: 1.5px solid #fff;
-      z-index: 10;
-      pointer-events: none;
+      color: #111; font-family: "Space Grotesk", sans-serif; font-size: 0.5rem; font-weight: 700;
+      display: grid; place-items: center; border: 1.5px solid #fff; z-index: 10; pointer-events: none;
     }
     .lw-ico {
-      width: 1.55rem; height: 1.55rem;
-      margin: 0 auto 0.22rem;
-      border-radius: 9px;
+      width: 1.55rem; height: 1.55rem; margin: 0 auto 0.22rem; border-radius: 9px;
       display: grid; place-items: center;
     }
-    .lw-ico .material-symbols-rounded {
-      font-size: 0.95rem;
-      font-variation-settings: "FILL" 1, "wght" 600;
-    }
+    .lw-ico .material-symbols-rounded { font-size: 0.95rem; font-variation-settings: "FILL" 1, "wght" 600; }
     .lw-ico--coach { background: #0a0a0a; color: var(--yellow); }
     .lw-ico--player { background: var(--yellow); color: #0a0a0a; }
     .lw-ico--both { background: linear-gradient(140deg, #c09955, #d4b06a); color: #0a0a0a; }
-    .lw-card h3 {
-      font-size: 0.52rem;
-      font-weight: 800;
-      line-height: 1.2;
-      letter-spacing: -0.02em;
-      color: var(--ink);
-    }
+    .lw-card h3 { font-size: 0.52rem; font-weight: 800; line-height: 1.2; letter-spacing: -0.02em; }
     .lw-role {
-      display: inline-block;
-      font-family: "Space Grotesk", sans-serif;
-      font-size: 0.4rem;
-      font-weight: 700;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      padding: 0.1rem 0.3rem;
-      border-radius: 999px;
-      margin-bottom: 0.2rem;
+      display: inline-block; font-family: "Space Grotesk", sans-serif;
+      font-size: 0.4rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+      padding: 0.1rem 0.3rem; border-radius: 999px; margin-bottom: 0.2rem;
     }
-    .lw-role--coach { background: rgba(10,10,10,0.08); color: var(--ink); }
-    .lw-role--player { background: rgba(242,236,31,0.4); color: var(--ink); }
+    .lw-role--coach { background: rgba(10,10,10,0.08); }
+    .lw-role--player { background: rgba(242,236,31,0.4); }
     .lw-role--both { background: rgba(192,153,85,0.22); color: #7a5c28; }
     .lw-cta-line {
-      text-align: center;
-      font-size: 0.78rem;
-      color: var(--ink-soft);
-      line-height: 1.4;
-      max-width: 34ch;
-      margin: 0 auto;
+      text-align: center; font-size: 0.78rem; color: var(--ink-soft);
+      line-height: 1.4; max-width: 36ch; margin: 0 auto;
     }
     .lw-cta-line strong { color: var(--ink); }
 
     @media (min-width: 768px) {
+      .card-inner { width: min(640px, 100%); gap: 1rem; }
+      .offers { grid-template-columns: repeat(3, 1fr); }
+      .split-lists { grid-template-columns: 1fr 1fr; max-height: none; overflow: visible; }
+      .progress { right: 0.75rem; }
+      h1 { font-size: clamp(2.4rem, 4vw, 3.4rem); }
       .lw-wrap {
-        --ring-size: min(52vw, 420px);
-        --step-w: 86px;
-        --orbit-inset: 14%;
+        --ring-size: min(52vw, 420px); --step-w: 86px; --orbit-inset: 14%;
         --arrow-size: calc(var(--ring-size) - var(--step-w) * 2.05);
       }
       .lw-card h3 { font-size: 0.62rem; }
       .lw-flip-inner { min-height: 5rem; }
+      /* Desktop: proximity snap feels more natural with arrows */
+      .deck { scroll-snap-type: y proximity; }
     }
     @media (max-height: 720px) {
+      .card { padding-top: calc(var(--safe-t) + 3.2rem); padding-bottom: calc(var(--safe-b) + 4.5rem); }
+      h1 { font-size: clamp(1.65rem, 6.5vw, 2.3rem); }
+      .card-inner { gap: 0.5rem; justify-content: flex-start; overflow-y: auto; }
+      .media { aspect-ratio: 2.2 / 1; }
       .lw-wrap {
-        --ring-size: min(72vw, 280px);
-        --step-w: 56px;
-        --orbit-inset: 9%;
+        --ring-size: min(72vw, 280px); --step-w: 56px; --orbit-inset: 9%;
         --arrow-size: calc(var(--ring-size) - var(--step-w) * 2.05);
       }
-      .lw-flip-inner { min-height: 3.8rem; }
-      .lw-card h3 { font-size: 0.46rem; }
-      .lw-tagline { font-size: 0.3rem; }
     }
-    @media (prefers-reduced-motion: reduce) {
-      .lw-ring--outer, .lw-ring--mid, .lw-flow-path, .lw-arrow-rotator, .lw-flip-inner {
-        animation: none !important;
-      }
-    }
-
-    /* —— Calculator —— */
-    .calc {
-      border-radius: 18px;
-      padding: 0.95rem;
-      background: #ffffff;
-      border: 1px solid var(--line);
-      box-shadow: var(--shadow-soft);
-      display: grid;
-      gap: 0.65rem;
-    }
-    .calc-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 0.55rem;
-    }
-    .field { display: grid; gap: 0.28rem; }
-    .field.full { grid-column: 1 / -1; }
-    .field label {
-      font-size: 0.68rem;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-      color: var(--ink-mute);
-      font-weight: 600;
-    }
-    .field input, .field select {
-      width: 100%;
-      min-height: 42px;
-      border-radius: 12px;
-      border: 1px solid var(--line);
-      background: #f8fafc;
-      padding: 0.45rem 0.65rem;
-      outline: none;
-      color: var(--ink);
-      transition: border-color 0.2s, background 0.2s;
-    }
-    .field input:focus, .field select:focus {
-      border-color: rgba(10, 61, 74, 0.4);
-      background: #fff;
-    }
-    .calc-result {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 0.45rem;
-      padding-top: 0.15rem;
-    }
-    .metric {
-      border-radius: 14px;
-      padding: 0.7rem 0.75rem;
-      background: var(--lime-soft);
-      border: 1px solid rgba(217, 246, 74, 0.28);
-    }
-    .metric.span { grid-column: 1 / -1; }
-    .metric .lbl {
-      font-size: 0.65rem;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      color: var(--ink-mute);
-      margin-bottom: 0.2rem;
-    }
-    .metric .val {
-      font-family: "Roboto Mono", monospace;
-      font-weight: 700;
-      font-size: 1.15rem;
-      color: var(--court);
-      letter-spacing: -0.03em;
-    }
-    .metric .val small {
-      font-size: 0.72rem;
-      color: var(--ink-soft);
-      font-weight: 500;
-    }
-
-    /* —— Founders lists —— */
-    .trust {
-      font-size: 0.84rem;
-      color: var(--ink-soft);
-      line-height: 1.45;
-      padding: 0.7rem 0.85rem;
-      border-left: 3px solid var(--coral);
-      background: #fff;
-      border-radius: 0 12px 12px 0;
-      box-shadow: var(--shadow-soft);
-    }
-    .split-lists {
-      display: grid;
-      gap: 0.65rem;
-      max-height: min(38vh, 280px);
-      overflow-y: auto;
-      padding-right: 0.15rem;
-      -webkit-overflow-scrolling: touch;
-    }
-    .list-block h3 {
-      font-family: "Space Grotesk", sans-serif;
-      font-size: 0.88rem;
-      margin-bottom: 0.4rem;
-      color: var(--court);
-    }
-    .list-block ul {
-      list-style: none;
-      display: grid;
-      gap: 0.35rem;
-    }
-    .list-block li {
-      font-size: 0.8rem;
-      color: var(--ink-soft);
-      line-height: 1.35;
-      padding-left: 1rem;
-      position: relative;
-    }
-    .list-block li::before {
-      content: "✓";
-      position: absolute;
-      left: 0;
-      color: var(--court);
-      font-size: 0.72rem;
-      font-weight: 700;
-      top: 0.1em;
-    }
-    .list-block.seek li::before { content: "→"; }
-
-    /* —— FAQ —— */
-    .faq-list { display: grid; gap: 0.45rem; }
-    .faq-item {
-      border-radius: 14px;
-      border: 1px solid var(--line);
-      background: #ffffff;
-      box-shadow: 0 1px 2px rgba(15, 28, 34, 0.03);
-      overflow: hidden;
-    }
-    .faq-q {
-      width: 100%;
-      text-align: left;
-      background: none;
-      border: 0;
-      color: var(--ink);
-      padding: 0.85rem 1rem;
-      font-family: "Space Grotesk", sans-serif;
-      font-weight: 600;
-      font-size: 0.92rem;
-      letter-spacing: -0.015em;
-      cursor: pointer;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 0.75rem;
-      min-height: 52px;
-    }
-    .faq-q .ico {
-      flex-shrink: 0;
-      width: 22px; height: 22px;
-      border-radius: 50%;
-      border: 1px solid var(--line);
-      display: grid; place-items: center;
-      font-size: 0.85rem;
-      color: var(--court);
-      transition: transform 0.3s var(--ease), background 0.2s;
-    }
-    .faq-item.is-open .faq-q .ico {
-      transform: rotate(45deg);
-      background: var(--lime-soft);
-    }
-    .faq-a {
-      display: grid;
-      grid-template-rows: 0fr;
-      transition: grid-template-rows 0.4s var(--ease);
-    }
-    .faq-item.is-open .faq-a { grid-template-rows: 1fr; }
-    .faq-a > div { overflow: hidden; min-height: 0; }
-    .faq-a p {
-      padding: 0 1rem 0.95rem;
-      font-size: 0.86rem;
-      line-height: 1.5;
-      color: var(--ink-soft);
-    }
-
-    .footer-note {
-      text-align: center;
-      font-size: 0.72rem;
-      color: var(--ink-mute);
-      margin-top: 0.5rem;
-    }
-
-    /* —— Desktop polish —— */
-    @media (min-width: 768px) {
-      body { overflow: auto; }
-      .deck { scroll-snap-type: y mandatory; }
-      .card {
-        padding-left: 2rem;
-        padding-right: 2rem;
-      }
-      .card-inner {
-        width: min(640px, 100%);
-        gap: 1rem;
-      }
-      .compare-row { grid-template-columns: 1fr 1fr; }
-      .offers { grid-template-columns: repeat(3, 1fr); }
-      .split-lists {
-        grid-template-columns: 1fr 1fr;
-        max-height: none;
-        overflow: visible;
-      }
-      .progress { right: 1.25rem; }
-      h1 { font-size: clamp(2.4rem, 4vw, 3.4rem); }
-    }
-
-    @media (max-height: 720px) {
-      .card { padding-top: calc(var(--safe-t) + 3.1rem); padding-bottom: calc(var(--safe-b) + 3.8rem); }
-      h1 { font-size: clamp(1.7rem, 7vw, 2.4rem); }
-      .card-inner { gap: 0.55rem; justify-content: flex-start; overflow-y: auto; }
-      .btn { min-height: 46px; font-size: 0.9rem; }
-    }
-
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after {
         animation-duration: 0.01ms !important;
         transition-duration: 0.01ms !important;
       }
       .deck { scroll-behavior: auto; }
+      .media img { animation: none; }
     }
   </style>
 </head>
 <body>
+  <div class="world" aria-hidden="true">
+    <div class="court-grid"></div>
+    <div class="net-line"></div>
+    <div class="ball"></div>
+    <div class="ball ball-b"></div>
+    <div class="ball ball-c"></div>
+    <div class="spark"></div>
+    <div class="spark"></div>
+    <div class="spark"></div>
+  </div>
+
   <header class="topbar">
     <a class="brand" href="#s1" aria-label="Gimadd Mentor">
       <span class="brand-mark">GM</span>
       <span class="brand-name">Gimadd Mentor</span>
     </a>
-    <span class="slot-pill" id="slotPill" aria-live="polite">Quedan 80 / 100 plazas</span>
+    <span class="slot-pill" id="slotPill">Quedan 80 / 100 plazas</span>
   </header>
 
   <nav class="progress" id="progress" aria-label="Secciones"></nav>
+
+  <div class="nav-arrows" aria-label="Navegación">
+    <button type="button" id="btnPrev" aria-label="Sección anterior">
+      <span class="material-symbols-rounded">keyboard_arrow_up</span>
+    </button>
+    <button type="button" id="btnNext" aria-label="Siguiente sección">
+      <span class="material-symbols-rounded">keyboard_arrow_down</span>
+    </button>
+  </div>
+
+  <a class="fab-wa" data-wa="hablar" href="#" aria-label="Hablar por WhatsApp" title="WhatsApp">
+    <span class="material-symbols-rounded">chat</span>
+  </a>
 
   <div class="swipe-hint" id="swipeHint" aria-hidden="true">
     <span class="chev"></span>
     Desliza
   </div>
 
-  <main class="deck" id="deck">
+  <main class="deck" id="deck" tabindex="0">
 
-    <!-- 1 · Hero -->
-    <section class="card is-active" id="s1" data-feel="Claridad" aria-label="Conviértete en un Entrenador 2.0">
+    <!-- 1 Hero -->
+    <section class="card is-active" id="s1" aria-label="Conviértete en un Entrenador 2.0">
       <div class="card-inner">
-        <span class="feel">Claridad</span>
-        <p class="kicker">Programa Fundadores</p>
-        <h1>Conviértete en un <em>Entrenador 2.0</em></h1>
-        <p class="impact"><strong>Videoanálisis, seguimiento y nuevos ingresos</strong>, sin depender de la pista.</p>
+        <span class="feel reveal reveal-d1">Claridad</span>
+        <p class="kicker reveal reveal-d1">Programa Fundadores</p>
+        <h1 class="reveal reveal-d2">Conviértete en un <em>Entrenador 2.0</em></h1>
+        <p class="impact reveal reveal-d3"><strong>Videoanálisis, seguimiento y nuevos ingresos</strong>, sin depender de la pista.</p>
 
-        <div class="cta-stack">
+        <div class="media reveal reveal-d4">
+          <img
+            src="https://images.unsplash.com/photo-1554068865-24cecd4e79c0?auto=format&fit=crop&w=1200&q=80"
+            alt="Jugadores de pádel en pista"
+            width="1200" height="675" loading="eager" decoding="async" />
+          <span class="media-badge">Pista → pantalla</span>
+          <div class="media-float" aria-hidden="true"><span class="material-symbols-rounded">videocam</span></div>
+        </div>
+
+        <div class="cta-stack reveal reveal-d5">
           <a class="btn btn-primary" data-wa="fundador" href="#">Quiero ser Fundador Entrenador 2.0</a>
         </div>
-        <p class="micro" id="slotMicro">Cupo Fundadores: quedan <strong>80 de 100 plazas</strong>.</p>
+        <p class="micro reveal reveal-d5" id="slotMicro">Cupo Fundadores: quedan <strong>80 de 100 plazas</strong>.</p>
 
         <button type="button" class="more-toggle" aria-expanded="false" aria-controls="more1" data-more>
           Descubre más <span class="arrow" aria-hidden="true">▾</span>
         </button>
-        <div class="more-panel" id="more1">
-          <div>
-            <p class="more-copy">Combina tus clases con videoanálisis y seguimiento online para aportar más valor, llegar a nuevos jugadores y generar ingresos digitales.</p>
-          </div>
-        </div>
+        <div class="more-panel" id="more1"><div>
+          <p class="more-copy">Combina tus clases con videoanálisis y seguimiento online para aportar más valor, llegar a nuevos jugadores y generar ingresos digitales.</p>
+        </div></div>
       </div>
     </section>
 
-    <!-- 2 · Qué es -->
-    <section class="card" id="s2" data-feel="Un camino" aria-label="Qué es un Entrenador 2.0">
+    <!-- 2 Qué es -->
+    <section class="card" id="s2" aria-label="Qué es un Entrenador 2.0">
       <div class="card-inner">
-        <span class="feel">Un camino que seguir</span>
-        <h1>¿Qué es un <em>Entrenador 2.0</em>?</h1>
-        <p class="impact">No vende solo clases. <strong>Ofrece un proceso de mejora.</strong></p>
+        <span class="feel reveal reveal-d1">Un camino que seguir</span>
+        <h1 class="reveal reveal-d2">¿Qué es un <em>Entrenador 2.0</em>?</h1>
+        <p class="impact reveal reveal-d3">No vende solo clases. <strong>Ofrece un proceso de mejora.</strong></p>
 
-        <div class="compare" role="table" aria-label="Antes frente a Entrenador 2.0">
+        <div class="compare reveal reveal-d4" role="table" aria-label="Antes frente a Entrenador 2.0">
           <div class="compare-row">
             <div class="cmp cmp-before"><span class="cmp-label">Antes</span>Vende solo horas en pista</div>
             <div class="cmp cmp-after"><span class="cmp-label">Entrenador 2.0</span>Clases + seguimiento personalizado</div>
@@ -1084,88 +918,77 @@
         <button type="button" class="more-toggle" aria-expanded="false" aria-controls="more2" data-more>
           Ver más <span class="arrow" aria-hidden="true">▾</span>
         </button>
-        <div class="more-panel" id="more2">
-          <div>
-            <p class="more-copy">Un Entrenador 2.0 combina el trabajo en pista con servicios digitales para acompañar a sus jugadores entre sesiones, generar más ingresos y fidelizar ofreciendo más valor.</p>
-          </div>
-        </div>
+        <div class="more-panel" id="more2"><div>
+          <p class="more-copy">Un Entrenador 2.0 combina el trabajo en pista con servicios digitales para acompañar a sus jugadores entre sesiones, generar más ingresos y fidelizar ofreciendo más valor.</p>
+        </div></div>
       </div>
     </section>
 
-    <!-- 3 · Cómo -->
-    <section class="card" id="s3" data-feel="Simplicidad" aria-label="Cómo me convierto en Entrenador 2.0">
+    <!-- 3 Cómo -->
+    <section class="card" id="s3" aria-label="Cómo me convierto en Entrenador 2.0">
       <div class="card-inner">
-        <span class="feel">Simplicidad</span>
-        <h1>¿Cómo me convierto en <em>Entrenador 2.0</em>?</h1>
-        <p class="impact">Gimadd Mentor te da <strong>el sistema y las herramientas</strong>.</p>
-        <p class="impact" style="font-size:1rem">Ya no ofreces solo clases de pádel. Ofreces <strong>acompañamiento y mejora continua</strong>.</p>
+        <span class="feel reveal reveal-d1">Simplicidad</span>
+        <h1 class="reveal reveal-d2">¿Cómo me convierto en <em>Entrenador 2.0</em>?</h1>
+        <p class="impact reveal reveal-d3">Gimadd Mentor te da <strong>el sistema y las herramientas</strong>.</p>
 
-        <div class="offers" aria-label="Crea tu propia oferta">
-          <article class="offer">
-            <h3>Sesión de videoanálisis</h3>
-            <p>Feedback profesional, objetivos concretos y un plan para seguir mejorando.</p>
-          </article>
-          <article class="offer">
-            <h3>Packs</h3>
-            <p>Combina clases presenciales y sesiones de videoanálisis.</p>
-          </article>
-          <article class="offer">
-            <h3>Programas</h3>
-            <p>Acompañamiento continuo 3, 6 o 12 meses con objetivos y seguimiento.</p>
-          </article>
+        <div class="media reveal reveal-d4">
+          <img
+            src="https://images.unsplash.com/photo-1626224582412-abb0a4446876?auto=format&fit=crop&w=1200&q=80"
+            alt="Entrenamiento de pádel intenso"
+            width="1200" height="675" loading="lazy" decoding="async" />
+          <span class="media-badge">Sistema + herramientas</span>
+          <div class="media-float" aria-hidden="true"><span class="material-symbols-rounded">sports_tennis</span></div>
         </div>
 
-        <div class="cta-stack">
+        <p class="impact reveal reveal-d4" style="font-size:1rem">Ya no ofreces solo clases. Ofreces <strong>acompañamiento y mejora continua</strong>.</p>
+
+        <div class="offers reveal reveal-d5" aria-label="Crea tu propia oferta">
+          <article class="offer"><h3>Sesión de videoanálisis</h3><p>Feedback profesional, objetivos concretos y un plan para seguir mejorando.</p></article>
+          <article class="offer"><h3>Packs</h3><p>Combina clases presenciales y sesiones de videoanálisis.</p></article>
+          <article class="offer"><h3>Programas</h3><p>Acompañamiento continuo 3, 6 o 12 meses con objetivos y seguimiento.</p></article>
+        </div>
+
+        <div class="cta-stack reveal reveal-d5">
           <a class="btn btn-primary" data-wa="fundador" href="#">Quiero ser Fundador Entrenador 2.0</a>
         </div>
 
         <button type="button" class="more-toggle" aria-expanded="false" aria-controls="more3" data-more>
           Más sobre Gimadd Mentor <span class="arrow" aria-hidden="true">▾</span>
         </button>
-        <div class="more-panel" id="more3">
-          <div>
-            <p class="more-copy">Una plataforma para gestionar a tus alumnos y ofrecerles videoanálisis y seguimiento personalizado desde un solo lugar. Gimadd Mentor organiza el proceso para que tú puedas centrarte en entrenar, analizar y aportar valor.</p>
-          </div>
-        </div>
+        <div class="more-panel" id="more3"><div>
+          <p class="more-copy">Una plataforma para gestionar a tus alumnos y ofrecerles videoanálisis y seguimiento personalizado desde un solo lugar. Gimadd Mentor organiza el proceso para que tú puedas centrarte en entrenar, analizar y aportar valor.</p>
+        </div></div>
       </div>
     </section>
 
-    <!-- 3b · Flywheel embebido -->
-    <section class="card card--fly" id="s3b" data-feel="Un camino" aria-label="Ciclo de videoanálisis">
+    <!-- 3b Flywheel -->
+    <section class="card card--fly" id="s3b" aria-label="Ciclo de videoanálisis">
       <div class="card-inner">
-        <span class="feel">Un camino que seguir</span>
-        <h1 style="font-size:clamp(1.45rem,6.2vw,2.15rem)">Así funciona el <em>ciclo</em></h1>
-        <p class="fly-caption">9 pasos · la flecha señala el paso activo</p>
-
-        <div class="lw-stage">
+        <span class="feel reveal reveal-d1">Un camino que seguir</span>
+        <h1 class="reveal reveal-d2" style="font-size:clamp(1.45rem,6.2vw,2.15rem)">Así funciona el <em>ciclo</em></h1>
+        <p class="fly-caption reveal reveal-d3">9 pasos · la flecha señala el paso activo · toca una tarjeta</p>
+        <div class="lw-stage reveal reveal-d4">
           <div class="lw-wrap" id="lwFlywheel" data-count="9" role="img" aria-label="Flywheel de 9 pasos del entrenador"></div>
         </div>
-
-        <div class="lw-legend" aria-hidden="true">
+        <div class="lw-legend reveal reveal-d5" aria-hidden="true">
           <span><i class="lw-dot lw-dot--player"></i> Lo hace el jugador</span>
           <span><i class="lw-dot lw-dot--coach"></i> Lo hace el entrenador</span>
         </div>
-        <p class="lw-cta-line"><strong>Valor para tu alumno:</strong> correcciones + plan. <strong>Para ti:</strong> retención y progreso visible.</p>
+        <p class="lw-cta-line reveal reveal-d5"><strong>Valor para tu alumno:</strong> correcciones + plan. <strong>Para ti:</strong> retención y progreso visible.</p>
       </div>
     </section>
 
-    <!-- 4 · Qué gano -->
-    <section class="card" id="s4" data-feel="Tiempo" aria-label="Qué gano siendo Entrenador 2.0">
+    <!-- 4 Qué gano -->
+    <section class="card" id="s4" aria-label="Qué gano siendo Entrenador 2.0">
       <div class="card-inner">
-        <span class="feel">Tiempo · Libertad</span>
-        <h1>¿Qué gano siendo <em>Entrenador 2.0</em>?</h1>
-        <p class="impact">Más valor para tus jugadores. <strong>Más ingresos para ti.</strong></p>
+        <span class="feel reveal reveal-d1">Tiempo · Libertad</span>
+        <h1 class="reveal reveal-d2">¿Qué gano siendo <em>Entrenador 2.0</em>?</h1>
+        <p class="impact reveal reveal-d3">Más valor para tus jugadores. <strong>Más ingresos para ti.</strong></p>
 
-        <div class="calc" id="calc" aria-label="Calculadora de ingresos estimados">
+        <div class="calc reveal reveal-d4" id="calc" aria-label="Calculadora de ingresos estimados">
           <div class="calc-grid">
-            <div class="field">
-              <label for="alumnos">Alumnos</label>
-              <input id="alumnos" type="number" min="1" max="500" value="35" inputmode="numeric" />
-            </div>
-            <div class="field">
-              <label for="interesados">Interesados</label>
-              <input id="interesados" type="number" min="0" max="500" value="5" inputmode="numeric" />
-            </div>
+            <div class="field"><label for="alumnos">Alumnos</label><input id="alumnos" type="number" min="1" max="500" value="35" inputmode="numeric" /></div>
+            <div class="field"><label for="interesados">Interesados</label><input id="interesados" type="number" min="0" max="500" value="5" inputmode="numeric" /></div>
             <div class="field full">
               <label for="servicio">Servicio</label>
               <select id="servicio">
@@ -1177,59 +1000,52 @@
                 <option value="mensual|1|month" selected>Seguimiento mensual</option>
               </select>
             </div>
-            <div class="field full">
-              <label for="precio">Precio (€)</label>
-              <input id="precio" type="number" min="1" max="5000" value="100" inputmode="decimal" />
-            </div>
+            <div class="field full"><label for="precio">Precio (€)</label><input id="precio" type="number" min="1" max="5000" value="100" inputmode="decimal" /></div>
           </div>
           <div class="calc-result" aria-live="polite">
-            <div class="metric">
-              <div class="lbl">Ingreso por venta</div>
-              <div class="val" id="mUnit">100 €</div>
-            </div>
-            <div class="metric">
-              <div class="lbl">Equivalente mensual</div>
-              <div class="val" id="mMonth">100 € <small>/mes</small></div>
-            </div>
-            <div class="metric span">
-              <div class="lbl">Ingreso total estimado</div>
-              <div class="val" id="mTotal">500 €</div>
-            </div>
+            <div class="metric"><div class="lbl">Ingreso por venta</div><div class="val" id="mUnit">100 €</div></div>
+            <div class="metric"><div class="lbl">Equivalente mensual</div><div class="val" id="mMonth">100 € <small>/mes</small></div></div>
+            <div class="metric span"><div class="lbl">Ingreso total estimado</div><div class="val" id="mTotal">500 €</div></div>
           </div>
         </div>
 
-        <div class="cta-stack">
+        <div class="cta-stack reveal reveal-d5">
           <a class="btn btn-primary" data-wa="fundador" href="#">Quiero ser Fundador Entrenador 2.0</a>
         </div>
 
         <button type="button" class="more-toggle" aria-expanded="false" aria-controls="more4" data-more>
           Ver más beneficios <span class="arrow" aria-hidden="true">▾</span>
         </button>
-        <div class="more-panel" id="more4">
-          <div>
-            <div class="more-copy">
-              <ul>
-                <li>Genera ingresos más allá de tus horas en pista.</li>
-                <li>Trabaja con jugadores de cualquier lugar.</li>
-                <li>Monetiza tu experiencia y tu marca personal.</li>
-                <li>Mejora la retención mostrando un progreso claro.</li>
-                <li>Gestiona alumnos, servicios, comunicación y seguimiento desde una sola plataforma.</li>
-              </ul>
-            </div>
-          </div>
-        </div>
+        <div class="more-panel" id="more4"><div>
+          <div class="more-copy"><ul>
+            <li>Genera ingresos más allá de tus horas en pista.</li>
+            <li>Trabaja con jugadores de cualquier lugar.</li>
+            <li>Monetiza tu experiencia y tu marca personal.</li>
+            <li>Mejora la retención mostrando un progreso claro.</li>
+            <li>Gestiona alumnos, servicios, comunicación y seguimiento desde una sola plataforma.</li>
+          </ul></div>
+        </div></div>
       </div>
     </section>
 
-    <!-- 5 · Fundadores -->
-    <section class="card" id="s5" data-feel="Seguridad" aria-label="Únete a Fundadores Entrenador 2.0">
+    <!-- 5 Fundadores -->
+    <section class="card" id="s5" aria-label="Únete a Fundadores Entrenador 2.0">
       <div class="card-inner">
-        <span class="feel">Seguridad</span>
-        <h1>Conviértete en <em>Entrenador 2.0</em></h1>
-        <p class="impact">Sé de los <strong>primeros</strong>.</p>
-        <p class="trust">Construido junto a entrenadores que ya hacen este seguimiento a mano, con herramientas sueltas.</p>
+        <span class="feel reveal reveal-d1">Seguridad</span>
+        <h1 class="reveal reveal-d2">Conviértete en <em>Entrenador 2.0</em></h1>
+        <p class="impact reveal reveal-d3">Sé de los <strong>primeros</strong>.</p>
 
-        <div class="split-lists">
+        <div class="media reveal reveal-d3" style="aspect-ratio:2.4/1">
+          <img
+            src="https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=1200&q=80"
+            alt="Energía deportiva y movimiento"
+            width="1200" height="500" loading="lazy" decoding="async" />
+          <span class="media-badge">Fundadores</span>
+        </div>
+
+        <p class="trust reveal reveal-d4">Construido junto a entrenadores que ya hacen este seguimiento a mano, con herramientas sueltas.</p>
+
+        <div class="split-lists reveal reveal-d4">
           <div class="list-block">
             <h3>Recibirás</h3>
             <ul>
@@ -1252,7 +1068,7 @@
           </div>
         </div>
 
-        <div class="cta-stack">
+        <div class="cta-stack reveal reveal-d5">
           <a class="btn btn-primary" data-wa="acceso" href="#">Solicitar acceso a Gimadd Mentor</a>
           <a class="btn btn-wa" data-wa="hablar" href="#">Hablar por WhatsApp</a>
         </div>
@@ -1261,22 +1077,20 @@
         <button type="button" class="more-toggle" aria-expanded="false" aria-controls="more5" data-more>
           Ver más <span class="arrow" aria-hidden="true">▾</span>
         </button>
-        <div class="more-panel" id="more5">
-          <div>
-            <p class="more-copy">Accede antes del lanzamiento, crea tu primer servicio digital y empieza a ofrecerlo a tus alumnos con nuestro acompañamiento.</p>
-          </div>
-        </div>
+        <div class="more-panel" id="more5"><div>
+          <p class="more-copy">Accede antes del lanzamiento, crea tu primer servicio digital y empieza a ofrecerlo a tus alumnos con nuestro acompañamiento.</p>
+        </div></div>
       </div>
     </section>
 
-    <!-- 6 · FAQ -->
-    <section class="card" id="s6" data-feel="Claridad" aria-label="Preguntas frecuentes">
+    <!-- 6 FAQ -->
+    <section class="card" id="s6" aria-label="Preguntas frecuentes">
       <div class="card-inner">
-        <span class="feel">Claridad</span>
-        <h1>Preguntas <em>frecuentes</em></h1>
-        <p class="impact" style="font-size:1.05rem">Lo esencial, sin rodeos.</p>
+        <span class="feel reveal reveal-d1">Claridad</span>
+        <h1 class="reveal reveal-d2">Preguntas <em>frecuentes</em></h1>
+        <p class="impact reveal reveal-d3" style="font-size:1.05rem">Lo esencial, sin rodeos.</p>
 
-        <div class="faq-list" id="faq">
+        <div class="faq-list reveal reveal-d4" id="faq">
           <div class="faq-item">
             <button type="button" class="faq-q" aria-expanded="false">¿Necesito tener muchos seguidores? <span class="ico" aria-hidden="true">+</span></button>
             <div class="faq-a"><div><p>No. Puedes empezar ofreciendo el servicio a los alumnos que ya confían en ti.</p></div></div>
@@ -1299,7 +1113,7 @@
           </div>
         </div>
 
-        <div class="cta-stack" style="margin-top:0.75rem">
+        <div class="cta-stack reveal reveal-d5" style="margin-top:0.75rem">
           <a class="btn btn-primary" data-wa="acceso" href="#">Solicitar acceso a Gimadd Mentor</a>
           <a class="btn btn-secondary" data-wa="hablar" href="#">Hablar por WhatsApp</a>
         </div>
@@ -1310,13 +1124,10 @@
 
   <script>
     (function () {
-      /* ═══════════════════════════════════════════════
-         CONFIG — cambia solo esto antes de WordPress
-         ═══════════════════════════════════════════════ */
       var CONFIG = {
-        whatsappNumber: "34697944429", // ← sustituye por el número real (sin + ni espacios)
-        plazasTotal: 100,       // ← cupo Fundadores
-        plazasRestantes: 80,    // ← actualiza este número para el contador de escasez
+        whatsappNumber: "34697944429",
+        plazasTotal: 100,
+        plazasRestantes: 80,
         messages: {
           fundador: "Hola, quiero ser Fundador Entrenador 2.0 con Gimadd Mentor.",
           acceso: "Hola, quiero solicitar acceso como Fundador a Gimadd Mentor.",
@@ -1338,71 +1149,74 @@
       ];
 
       function escapeHtml(s) {
-        return String(s)
-          .replace(/&/g, "&amp;")
-          .replace(/</g, "&lt;")
-          .replace(/>/g, "&gt;")
-          .replace(/"/g, "&quot;");
+        return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
       }
 
+      function waUrl(key) {
+        var text = CONFIG.messages[key] || CONFIG.messages.hablar;
+        return "https://wa.me/" + CONFIG.whatsappNumber + "?text=" + encodeURIComponent(text);
+      }
+
+      (function renderPlazas() {
+        var total = Math.max(0, Number(CONFIG.plazasTotal) || 0);
+        var left = Math.max(0, Math.min(total, Number(CONFIG.plazasRestantes) || 0));
+        var pill = document.getElementById("slotPill");
+        var micro = document.getElementById("slotMicro");
+        var micro5 = document.getElementById("slotMicroFundadores");
+        if (pill) pill.textContent = "Quedan " + left + " / " + total + " plazas";
+        if (micro) micro.innerHTML = "Cupo Fundadores: quedan <strong>" + left + " de " + total + " plazas</strong>.";
+        if (micro5) micro5.textContent = "Quedan " + left + " de " + total + " plazas · acompañamiento personalizado.";
+      })();
+
+      document.querySelectorAll("[data-wa]").forEach(function (el) {
+        el.setAttribute("href", waUrl(el.getAttribute("data-wa")));
+        el.setAttribute("target", "_blank");
+        el.setAttribute("rel", "noopener");
+      });
+
       function buildArrowKeyframes(n) {
-        var slot = 100 / n;
-        var stepDeg = 360 / n;
-        var frames = [];
+        var slot = 100 / n, stepDeg = 360 / n, frames = [];
         for (var i = 0; i < n; i++) {
           var fromAngle = ((i - 1 + n) % n) * stepDeg;
           var toAngle = i * stepDeg;
-          var rotStart = (i * slot + slot * 0.04).toFixed(4);
-          var rotEnd = (i * slot + slot * 0.14).toFixed(4);
           frames.push(
-            rotStart + "% { transform: rotate(" + fromAngle.toFixed(3) + "deg); }",
-            rotEnd + "% { transform: rotate(" + toAngle.toFixed(3) + "deg); }"
+            (i * slot + slot * 0.04).toFixed(4) + "% { transform: rotate(" + fromAngle.toFixed(3) + "deg); }",
+            (i * slot + slot * 0.14).toFixed(4) + "% { transform: rotate(" + toAngle.toFixed(3) + "deg); }"
           );
         }
-        var lastAngle = ((n - 1) * stepDeg).toFixed(3);
-        frames.push("99.99% { transform: rotate(" + lastAngle + "deg); }");
-        frames.push("100% { transform: rotate(" + lastAngle + "deg); }");
+        var last = ((n - 1) * stepDeg).toFixed(3);
+        frames.push("99.99% { transform: rotate(" + last + "deg); }", "100% { transform: rotate(" + last + "deg); }");
         return "@keyframes arrow-cycle {\n  " + frames.join("\n  ") + "\n}";
       }
 
       function renderEmbeddedFlywheel() {
         var mount = document.getElementById("lwFlywheel");
         if (!mount) return;
-        var steps = COACH_STEPS;
-        var n = steps.length;
+        var steps = COACH_STEPS, n = steps.length;
         var cycleDur = (n * 3.5).toFixed(1) + "s";
         var styleEl = document.getElementById("arrowKeyframes");
-        if (styleEl) {
-          styleEl.textContent = buildArrowKeyframes(n) + "\n.lw-arrow-rotator { animation-duration: " + cycleDur + "; }";
-        }
+        if (styleEl) styleEl.textContent = buildArrowKeyframes(n) + "\n.lw-arrow-rotator { animation-duration: " + cycleDur + "; }";
         mount.style.setProperty("--cycle-dur", cycleDur);
 
         var hub =
-          '<div class="lw-arrow-hub" aria-hidden="true">' +
-          '<div class="lw-arrow-rotator" id="lwArrowRotator">' +
-          '<svg class="lw-arrow-svg" viewBox="-6 -12 132 132" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">' +
+          '<div class="lw-arrow-hub" aria-hidden="true"><div class="lw-arrow-rotator" id="lwArrowRotator">' +
+          '<svg class="lw-arrow-svg" viewBox="-6 -12 132 132" xmlns="http://www.w3.org/2000/svg">' +
           '<defs><linearGradient id="lwArrowGrad" x1="0%" y1="0%" x2="100%" y2="100%">' +
-          '<stop offset="0%" stop-color="#F2EC1F"/><stop offset="100%" stop-color="#D8B814"/>' +
-          '</linearGradient><mask id="lwRingHole">' +
-          '<rect x="-6" y="-12" width="132" height="132" fill="#fff"/>' +
-          '<circle cx="60" cy="60" r="33.5" fill="#000"/></mask></defs>' +
+          '<stop offset="0%" stop-color="#F2EC1F"/><stop offset="100%" stop-color="#D8B814"/></linearGradient>' +
+          '<mask id="lwRingHole"><rect x="-6" y="-12" width="132" height="132" fill="#fff"/><circle cx="60" cy="60" r="33.5" fill="#000"/></mask></defs>' +
           '<path d="M60 -9 C76 16 96 40 90 48 C86 54 76 51 72 51 L72 96 C72 103 60 106 60 106 C60 106 48 103 48 96 L48 51 C44 51 34 54 30 48 C24 40 44 16 60 -9 Z" fill="url(#lwArrowGrad)"/>' +
           '<circle cx="60" cy="60" r="37" fill="#0A0A0A" mask="url(#lwRingHole)"/>' +
-          '<circle cx="60" cy="60" r="37" fill="none" stroke="url(#lwArrowGrad)" stroke-width="2.4"/>' +
-          '</svg></div>' +
-          '<div class="lw-arrow-core"><div class="lw-arrow-disc">' +
-          '<div class="lw-logo-wrap"><img class="lw-logo" src="assets/gimadd-mentor-logo.png" alt="" width="64" height="64" decoding="async" /></div>' +
-          '<span class="lw-tagline">Aprendizaje Continuo</span>' +
-          '</div></div></div>';
+          '<circle cx="60" cy="60" r="37" fill="none" stroke="url(#lwArrowGrad)" stroke-width="2.4"/></svg></div>' +
+          '<div class="lw-arrow-core"><div class="lw-arrow-disc"><div class="lw-logo-wrap">' +
+          '<img class="lw-logo" src="assets/gimadd-mentor-logo.png" alt="" width="64" height="64" decoding="async" /></div>' +
+          '<span class="lw-tagline">Aprendizaje Continuo</span></div></div></div>';
 
         var rings =
-          '<div class="lw-ring lw-ring--outer"></div>' +
-          '<div class="lw-ring lw-ring--mid"></div>' +
-          '<svg class="lw-flow" viewBox="0 0 100 100" aria-hidden="true">' +
-          '<defs><linearGradient id="lwFlowGrad" x1="0%" y1="0%" x2="100%" y2="100%">' +
-          '<stop offset="0%" stop-color="#0A3D4A"/><stop offset="50%" stop-color="#F2EC1F"/><stop offset="100%" stop-color="#FF6B4A"/>' +
-          '</linearGradient></defs>' +
-          '<circle class="lw-flow-path" cx="50" cy="50" r="44"/></svg>' + hub;
+          '<div class="lw-ring lw-ring--outer"></div><div class="lw-ring lw-ring--mid"></div>' +
+          '<svg class="lw-flow" viewBox="0 0 100 100" aria-hidden="true"><defs>' +
+          '<linearGradient id="lwFlowGrad" x1="0%" y1="0%" x2="100%" y2="100%">' +
+          '<stop offset="0%" stop-color="#0B3D3A"/><stop offset="50%" stop-color="#F2EC1F"/><stop offset="100%" stop-color="#FF5A3C"/>' +
+          '</linearGradient></defs><circle class="lw-flow-path" cx="50" cy="50" r="44"/></svg>' + hub;
 
         var stepsHtml = steps.map(function (step, i) {
           var angle = (360 / n) * i;
@@ -1410,19 +1224,16 @@
           return (
             '<div class="lw-step" style="--angle:' + angle + 'deg;--delay:' + delay + ';--cycle-dur:' + cycleDur + '">' +
             '<button type="button" class="lw-flip" aria-label="' + escapeHtml(step.title) + '" aria-expanded="false">' +
-            '<div class="lw-flip-inner">' +
-            '<div class="lw-card lw-card--front">' +
+            '<div class="lw-flip-inner"><div class="lw-card lw-card--front">' +
             '<span class="lw-role lw-role--' + step.role + '">' + escapeHtml(ROLE_LABEL[step.role] || "") + '</span>' +
             '<div class="lw-ico lw-ico--' + step.role + '"><span class="material-symbols-rounded">' + escapeHtml(step.icon) + '</span></div>' +
             '<h3>' + escapeHtml(step.title) + '</h3></div>' +
             '<div class="lw-card lw-card--back" aria-hidden="true"><p>' + escapeHtml(step.desc) + '</p></div>' +
-            '</div></button>' +
-            '<span class="lw-num">' + (i + 1) + '</span></div>'
+            '</div></button><span class="lw-num">' + (i + 1) + '</span></div>'
           );
         }).join("");
 
         mount.innerHTML = rings + stepsHtml;
-
         var arrow = document.getElementById("lwArrowRotator");
         mount.addEventListener("click", function (e) {
           var btn = e.target.closest(".lw-flip");
@@ -1443,40 +1254,8 @@
           if (arrow) arrow.classList.toggle("is-paused", willFlip);
         });
       }
-
-      function waUrl(key) {
-        var text = CONFIG.messages[key] || CONFIG.messages.hablar;
-        return "https://wa.me/" + CONFIG.whatsappNumber + "?text=" + encodeURIComponent(text);
-      }
-
-      /* Escasez · plazas Fundadores (pill + microcopy) */
-      (function renderPlazas() {
-        var total = Math.max(0, Number(CONFIG.plazasTotal) || 0);
-        var left = Math.max(0, Math.min(total, Number(CONFIG.plazasRestantes) || 0));
-        var pill = document.getElementById("slotPill");
-        var micro = document.getElementById("slotMicro");
-        var micro5 = document.getElementById("slotMicroFundadores");
-        if (pill) {
-          pill.textContent = "Quedan " + left + " / " + total + " plazas";
-        }
-        if (micro) {
-          micro.innerHTML = "Cupo Fundadores: quedan <strong>" + left + " de " + total + " plazas</strong>.";
-        }
-        if (micro5) {
-          micro5.textContent = "Quedan " + left + " de " + total + " plazas · acompañamiento personalizado.";
-        }
-      })();
-
-      /* WhatsApp links */
-      document.querySelectorAll("[data-wa]").forEach(function (el) {
-        el.setAttribute("href", waUrl(el.getAttribute("data-wa")));
-        el.setAttribute("target", "_blank");
-        el.setAttribute("rel", "noopener");
-      });
-
       renderEmbeddedFlywheel();
 
-      /* Descubre más */
       document.querySelectorAll("[data-more]").forEach(function (btn) {
         btn.addEventListener("click", function () {
           var id = btn.getAttribute("aria-controls");
@@ -1487,7 +1266,6 @@
         });
       });
 
-      /* FAQ */
       document.querySelectorAll(".faq-q").forEach(function (btn) {
         btn.addEventListener("click", function () {
           var item = btn.closest(".faq-item");
@@ -1503,7 +1281,6 @@
         });
       });
 
-      /* Calculator */
       function euro(n) {
         return new Intl.NumberFormat("es-ES", { maximumFractionDigits: 0 }).format(Math.round(n)) + " €";
       }
@@ -1516,40 +1293,43 @@
         var perSale = mode === "month" ? precio * months : precio;
         var total = perSale * interesados;
         var monthly = mode === "month" ? (precio * interesados) : (total / Math.max(months, 1));
-
         document.getElementById("mUnit").textContent = euro(perSale);
         document.getElementById("mTotal").textContent = euro(total);
         document.getElementById("mMonth").innerHTML = euro(monthly) + " <small>/mes</small>";
       }
       ["alumnos", "interesados", "precio", "servicio"].forEach(function (id) {
         var el = document.getElementById(id);
-        if (el) el.addEventListener("input", recalc);
-        if (el) el.addEventListener("change", recalc);
+        if (el) { el.addEventListener("input", recalc); el.addEventListener("change", recalc); }
       });
       recalc();
 
-      /* Progress + snap tracking */
+      /* Navigation */
       var deck = document.getElementById("deck");
       var cards = Array.prototype.slice.call(document.querySelectorAll(".card"));
       var progress = document.getElementById("progress");
       var hint = document.getElementById("swipeHint");
+      var btnPrev = document.getElementById("btnPrev");
+      var btnNext = document.getElementById("btnNext");
+      var active = 0;
 
       cards.forEach(function (card, i) {
         var b = document.createElement("button");
         b.type = "button";
-        b.setAttribute("aria-label", "Ir a sección " + (i + 1));
+        b.setAttribute("aria-label", "Ir a sección " + (i + 1) + " de " + cards.length);
         if (i === 0) b.setAttribute("aria-current", "true");
-        b.addEventListener("click", function () {
-          card.scrollIntoView({ behavior: "smooth", block: "start" });
-        });
+        b.addEventListener("click", function () { goTo(i); });
         progress.appendChild(b);
       });
-
       var dots = Array.prototype.slice.call(progress.children);
-      var active = 0;
+
+      function goTo(index) {
+        index = Math.max(0, Math.min(cards.length - 1, index));
+        cards[index].scrollIntoView({ behavior: "smooth", block: "start" });
+        setActive(index);
+      }
 
       function setActive(index) {
-        if (index === active) return;
+        if (index < 0 || index >= cards.length) return;
         active = index;
         cards.forEach(function (c, i) { c.classList.toggle("is-active", i === index); });
         dots.forEach(function (d, i) {
@@ -1557,32 +1337,47 @@
           else d.removeAttribute("aria-current");
         });
         if (hint) hint.classList.toggle("is-hidden", index >= cards.length - 1);
+        if (btnPrev) btnPrev.disabled = index <= 0;
+        if (btnNext) btnNext.disabled = index >= cards.length - 1;
       }
+
+      if (btnPrev) btnPrev.addEventListener("click", function () { goTo(active - 1); });
+      if (btnNext) btnNext.addEventListener("click", function () { goTo(active + 1); });
 
       if ("IntersectionObserver" in window) {
         var io = new IntersectionObserver(function (entries) {
           entries.forEach(function (entry) {
-            if (entry.isIntersecting && entry.intersectionRatio >= 0.55) {
+            if (entry.isIntersecting && entry.intersectionRatio >= 0.45) {
               setActive(cards.indexOf(entry.target));
             }
           });
-        }, { root: deck, threshold: [0.55, 0.7] });
+        }, { root: deck, threshold: [0.45, 0.6] });
         cards.forEach(function (c) { io.observe(c); });
       }
 
-      /* Keyboard navigation */
       window.addEventListener("keydown", function (e) {
-        if (e.key === "ArrowDown" || e.key === "PageDown") {
+        if (e.key === "ArrowDown" || e.key === "PageDown" || e.key === " ") {
           e.preventDefault();
-          var next = cards[Math.min(active + 1, cards.length - 1)];
-          next.scrollIntoView({ behavior: "smooth" });
+          goTo(active + 1);
         }
         if (e.key === "ArrowUp" || e.key === "PageUp") {
           e.preventDefault();
-          var prev = cards[Math.max(active - 1, 0)];
-          prev.scrollIntoView({ behavior: "smooth" });
+          goTo(active - 1);
         }
       });
+
+      /* Ensure wheel scrolls the deck even if focus is on body */
+      document.addEventListener("wheel", function (e) {
+        if (!deck) return;
+        if (e.target.closest(".lw-wrap, .calc, .split-lists, .faq-list, .more-panel.is-open")) return;
+        /* Let native scroll on deck happen; if event targets body, forward delta */
+        if (e.target === document.body || e.target === document.documentElement) {
+          deck.scrollTop += e.deltaY;
+        }
+      }, { passive: true });
+
+      setActive(0);
+      deck.focus({ preventScroll: true });
     })();
   </script>
 </body>
