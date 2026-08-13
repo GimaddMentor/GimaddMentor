@@ -206,25 +206,20 @@
       box-shadow: 0 0 16px rgba(255, 90, 60, 0.45);
     }
 
-    /* Desktop / always: big arrows */
+    /* Desktop only: navigation arrows */
     .nav-arrows {
       position: fixed;
       z-index: 50;
-      display: flex;
+      display: none;
       flex-direction: column;
       gap: 0.55rem;
-      left: max(0.75rem, env(safe-area-inset-left));
-      bottom: calc(var(--safe-b) + 5.5rem);
+      right: 1.25rem;
+      top: 50%;
+      transform: translateY(-50%);
+      margin-right: 3.2rem;
     }
     @media (min-width: 900px) {
-      .nav-arrows {
-        left: auto;
-        right: 1.25rem;
-        bottom: auto;
-        top: 50%;
-        transform: translateY(-50%);
-        margin-right: 3.2rem;
-      }
+      .nav-arrows { display: flex; }
     }
     .nav-arrows button {
       width: 52px; height: 52px;
@@ -317,7 +312,8 @@
       display: flex;
       flex-direction: column;
       padding: calc(var(--safe-t) + 4rem) 1.15rem calc(var(--safe-b) + 5.2rem);
-      overflow: hidden;
+      overflow-x: hidden;
+      overflow-y: visible;
       isolation: isolate;
     }
     .card-inner {
@@ -328,6 +324,8 @@
       flex-direction: column;
       justify-content: center;
       gap: 0.85rem;
+      min-height: 0;
+      overflow: visible;
     }
     .card.is-active .reveal {
       animation: riseIn 0.7s var(--ease) both;
@@ -392,7 +390,7 @@
     .micro { font-size: 0.84rem; color: var(--mute); line-height: 1.45; }
     .micro strong { color: var(--ink-soft); }
 
-    /* Media strip / ken burns */
+    /* Media — video local + fallback animado */
     .media {
       position: relative;
       border-radius: 22px;
@@ -400,17 +398,47 @@
       aspect-ratio: 16 / 9;
       box-shadow: var(--shadow);
       border: 1px solid rgba(255,255,255,0.7);
+      background: linear-gradient(145deg, #0b3d3a 0%, #14635c 50%, #c8f542 100%);
     }
+    .media video,
     .media img {
       width: 100%; height: 100%;
       object-fit: cover;
-      animation: ken 18s ease-in-out infinite alternate;
-      transform-origin: center;
+      display: block;
     }
-    @keyframes ken {
-      from { transform: scale(1) translate(0, 0); }
-      to { transform: scale(1.12) translate(-2%, -1%); }
+    .media video {
+      opacity: 0;
+      transition: opacity 0.45s var(--ease);
     }
+    .media.is-playing video { opacity: 1; }
+    .media-fallback {
+      position: absolute; inset: 0;
+      display: grid; place-items: center;
+      background:
+        linear-gradient(135deg, rgba(11,61,58,0.92), rgba(20,99,92,0.85)),
+        repeating-linear-gradient(90deg, rgba(255,255,255,0.06) 0 2px, transparent 2px 48px);
+      transition: opacity 0.35s var(--ease);
+    }
+    .media-fallback::after {
+      content: "";
+      position: absolute; inset: 18%;
+      border: 2px dashed rgba(200,245,66,0.35);
+      border-radius: 16px;
+      animation: mediaScan 3.2s ease-in-out infinite;
+    }
+    @keyframes mediaScan {
+      0%, 100% { opacity: 0.35; transform: scale(0.98); }
+      50% { opacity: 0.85; transform: scale(1); }
+    }
+    .media-fallback .material-symbols-rounded {
+      font-size: 3rem; color: var(--volt);
+      font-variation-settings: "FILL" 1;
+      animation: fabPulse 2s ease-in-out infinite;
+      position: relative; z-index: 1;
+    }
+    .media.is-playing .media-fallback { opacity: 0; pointer-events: none; }
+    .media:has(> img) .media-fallback { display: none; }
+    .media:not(.is-playing) video:not([src]) { display: none; }
     .media-badge {
       position: absolute; left: 0.75rem; bottom: 0.75rem;
       background: rgba(11,61,58,0.88);
@@ -562,7 +590,7 @@
       background: #fff; border: 1px solid var(--line);
       box-shadow: var(--shadow); display: grid; gap: 0.65rem;
     }
-    .calc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.55rem; }
+    .calc-grid { display: grid; grid-template-columns: 1fr; gap: 0.55rem; }
     .field { display: grid; gap: 0.28rem; }
     .field.full { grid-column: 1 / -1; }
     .field label {
@@ -579,6 +607,7 @@
       box-shadow: 0 0 0 3px rgba(255,90,60,0.15);
     }
     .calc-result { display: grid; grid-template-columns: 1fr 1fr; gap: 0.45rem; }
+    .metric.span { display: none; }
     .metric {
       border-radius: 14px; padding: 0.7rem 0.75rem;
       background: linear-gradient(145deg, rgba(200,245,66,0.35), rgba(200,245,66,0.12));
@@ -647,23 +676,88 @@
 
     /* Flywheel card */
     .card--fly { padding-bottom: calc(var(--safe-b) + 4.2rem); }
-    .card--fly .card-inner { width: min(720px, 100%); justify-content: flex-start; gap: 0.5rem; }
-    .fly-caption { font-size: 0.78rem; color: var(--mute); }
+    .card--fly .card-inner {
+      width: min(720px, 100%);
+      justify-content: flex-start;
+      gap: 0.55rem;
+      overflow: visible;
+    }
+    .fly-caption { font-size: 0.78rem; color: var(--mute); margin-bottom: 0.1rem; }
+
+    /* Mobile: carrusel horizontal (sin solapamientos) */
+    .lw-mobile {
+      display: flex;
+      gap: 0.55rem;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      padding: 0.35rem 0.15rem 0.65rem;
+      margin: 0 -0.15rem;
+    }
+    .lw-mobile::-webkit-scrollbar { display: none; }
+    .lw-mstep {
+      flex: 0 0 min(78vw, 280px);
+      scroll-snap-align: center;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 0.85rem 0.9rem;
+      box-shadow: var(--shadow);
+      position: relative;
+    }
+    .lw-mstep::before {
+      content: "";
+      position: absolute; left: 0; top: 0; bottom: 0; width: 4px;
+      border-radius: 18px 0 0 18px;
+      background: var(--volt);
+    }
+    .lw-mstep.is-coach::before { background: #0a0a0a; }
+    .lw-mnum {
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 0.72rem; font-weight: 600; color: var(--coral-deep);
+      margin-bottom: 0.35rem;
+    }
+    .lw-mstep h4 {
+      font-family: "Space Grotesk", sans-serif;
+      font-size: 0.95rem; font-weight: 700;
+      line-height: 1.2; margin-bottom: 0.35rem;
+    }
+    .lw-mstep p { font-size: 0.82rem; color: var(--ink-soft); line-height: 1.4; }
+    .lw-mrole {
+      display: inline-block; margin-top: 0.5rem;
+      font-size: 0.62rem; font-weight: 700; letter-spacing: 0.06em;
+      text-transform: uppercase; color: var(--mute);
+      background: #f0f5f3; padding: 0.2rem 0.45rem; border-radius: 999px;
+    }
+
+    /* Desktop: flywheel circular */
+    .lw-desktop { display: none; }
+    @media (min-width: 768px) {
+      .lw-mobile { display: none; }
+      .lw-desktop {
+        display: flex; justify-content: center; width: 100%;
+        margin: 0.35rem 0 0.15rem;
+        padding: 0.5rem 0 1.25rem;
+        min-height: min(52vw, 420px);
+      }
+    }
+
     .lw-legend {
       display: flex; flex-wrap: wrap; justify-content: center; gap: 0.75rem 1.25rem;
       font-size: 0.72rem; font-weight: 600; color: var(--mute);
+      margin-top: 0.35rem;
     }
     .lw-legend span { display: inline-flex; align-items: center; gap: 0.35rem; }
     .lw-dot { width: 8px; height: 8px; border-radius: 50%; }
     .lw-dot--coach { background: #0a0a0a; }
     .lw-dot--player { background: var(--yellow); }
-    .lw-stage { width: 100%; display: flex; justify-content: center; margin: 0.1rem 0; }
+    .lw-stage { width: 100%; }
     .lw-wrap {
-      --ring-size: min(86vw, 340px);
-      --step-w: clamp(62px, 16vw, 74px);
-      --orbit-inset: 11%;
-      --arrow-size: calc(var(--ring-size) - var(--step-w) * 2.05);
-      --core-width: 50%;
+      --ring-size: min(52vw, 440px);
+      --step-w: clamp(82px, 10vw, 96px);
+      --orbit-inset: 19%;
+      --arrow-size: calc(var(--ring-size) - var(--step-w) * 2.15);
+      --core-width: 44%;
       --hub-ring-x: 50%;
       --hub-ring-y: 54.545%;
       --cycle-dur: 31.5s;
@@ -712,8 +806,9 @@
     .lw-logo { width: 100%; height: 100%; object-fit: contain; border-radius: 20%; }
     .lw-tagline {
       font-family: "Libre Baskerville", Georgia, serif;
-      font-size: clamp(0.32rem, 2.4vw, 0.42rem); font-weight: 700;
-      letter-spacing: 0.04em; text-transform: uppercase; color: #fff; white-space: nowrap;
+      font-size: clamp(0.28rem, 1.6vw, 0.38rem); font-weight: 700;
+      letter-spacing: 0.03em; text-transform: uppercase; color: #fff;
+      line-height: 1.15; max-width: 90%; overflow: hidden; text-overflow: ellipsis;
     }
     .lw-step {
       --angle: 0deg; --delay: 0s;
@@ -727,7 +822,7 @@
       font: inherit; cursor: pointer; perspective: 700px; -webkit-tap-highlight-color: transparent; position: relative;
     }
     .lw-flip-inner {
-      position: relative; width: 100%; min-height: 4.4rem;
+      position: relative; width: 100%; min-height: 4.85rem;
       transform-style: preserve-3d; transition: transform 0.65s var(--ease);
       animation: lw-auto-flip var(--cycle-dur) ease-in-out infinite; animation-delay: var(--delay);
     }
@@ -762,7 +857,7 @@
     .lw-ico--coach { background: #0a0a0a; color: var(--yellow); }
     .lw-ico--player { background: var(--yellow); color: #0a0a0a; }
     .lw-ico--both { background: linear-gradient(140deg, #c09955, #d4b06a); color: #0a0a0a; }
-    .lw-card h3 { font-size: 0.52rem; font-weight: 800; line-height: 1.2; letter-spacing: -0.02em; }
+    .lw-card h3 { font-size: 0.58rem; font-weight: 800; line-height: 1.15; letter-spacing: -0.02em; }
     .lw-role {
       display: inline-block; font-family: "Space Grotesk", sans-serif;
       font-size: 0.4rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
@@ -784,23 +879,21 @@
       .progress { right: 0.75rem; }
       h1 { font-size: clamp(2.4rem, 4vw, 3.4rem); }
       .lw-wrap {
-        --ring-size: min(52vw, 420px); --step-w: 86px; --orbit-inset: 14%;
-        --arrow-size: calc(var(--ring-size) - var(--step-w) * 2.05);
+        --ring-size: min(44vw, 460px); --step-w: 92px; --orbit-inset: 20%;
+        --arrow-size: calc(var(--ring-size) - var(--step-w) * 2.2);
+        --core-width: 42%;
       }
-      .lw-card h3 { font-size: 0.62rem; }
+      .lw-card h3 { font-size: 0.6rem; }
       .lw-flip-inner { min-height: 5rem; }
-      /* Desktop: proximity snap feels more natural with arrows */
+      .lw-tagline { font-size: clamp(0.26rem, 1.2vw, 0.34rem); }
+      .lw-desktop { min-height: min(44vw, 460px); padding-bottom: 1.5rem; }
       .deck { scroll-snap-type: y proximity; }
     }
     @media (max-height: 720px) {
       .card { padding-top: calc(var(--safe-t) + 3.2rem); padding-bottom: calc(var(--safe-b) + 4.5rem); }
       h1 { font-size: clamp(1.65rem, 6.5vw, 2.3rem); }
-      .card-inner { gap: 0.5rem; justify-content: flex-start; overflow-y: auto; }
+      .card-inner { gap: 0.5rem; justify-content: flex-start; }
       .media { aspect-ratio: 2.2 / 1; }
-      .lw-wrap {
-        --ring-size: min(72vw, 280px); --step-w: 56px; --orbit-inset: 9%;
-        --arrow-size: calc(var(--ring-size) - var(--step-w) * 2.05);
-      }
     }
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after {
@@ -862,11 +955,13 @@
         <h1 class="reveal reveal-d2">Conviértete en un <em>Entrenador 2.0</em></h1>
         <p class="impact reveal reveal-d3"><strong>Videoanálisis, seguimiento y nuevos ingresos</strong>, sin depender de la pista.</p>
 
-        <div class="media reveal reveal-d4">
-          <img
-            src="https://images.unsplash.com/photo-1554068865-24cecd4e79c0?auto=format&fit=crop&w=1200&q=80"
-            alt="Jugadores de pádel en pista"
-            width="1200" height="675" loading="eager" decoding="async" />
+        <div class="media reveal reveal-d4" id="heroMedia">
+          <video autoplay muted loop playsinline preload="auto" poster="assets/servicios/srv-victoria-analisis.png" aria-label="Videoanálisis de pádel">
+            <source src="assets/video/juan-garcia-analisis.mp4" type="video/mp4" />
+          </video>
+          <div class="media-fallback" aria-hidden="true">
+            <span class="material-symbols-rounded">play_circle</span>
+          </div>
           <span class="media-badge">Pista → pantalla</span>
           <div class="media-float" aria-hidden="true"><span class="material-symbols-rounded">videocam</span></div>
         </div>
@@ -932,21 +1027,15 @@
         <p class="impact reveal reveal-d3">Gimadd Mentor te da <strong>el sistema y las herramientas</strong>.</p>
 
         <div class="media reveal reveal-d4">
-          <img
-            src="https://images.unsplash.com/photo-1626224582412-abb0a4446876?auto=format&fit=crop&w=1200&q=80"
-            alt="Entrenamiento de pádel intenso"
-            width="1200" height="675" loading="lazy" decoding="async" />
+          <img src="assets/servicios/srv-focus-tecnico.png" alt="Entrenador analizando técnica en pista" loading="lazy" width="800" height="450" />
+          <div class="media-fallback" aria-hidden="true">
+            <span class="material-symbols-rounded">sports_tennis</span>
+          </div>
           <span class="media-badge">Sistema + herramientas</span>
           <div class="media-float" aria-hidden="true"><span class="material-symbols-rounded">sports_tennis</span></div>
         </div>
 
         <p class="impact reveal reveal-d4" style="font-size:1rem">Ya no ofreces solo clases. Ofreces <strong>acompañamiento y mejora continua</strong>.</p>
-
-        <div class="offers reveal reveal-d5" aria-label="Crea tu propia oferta">
-          <article class="offer"><h3>Sesión de videoanálisis</h3><p>Feedback profesional, objetivos concretos y un plan para seguir mejorando.</p></article>
-          <article class="offer"><h3>Packs</h3><p>Combina clases presenciales y sesiones de videoanálisis.</p></article>
-          <article class="offer"><h3>Programas</h3><p>Acompañamiento continuo 3, 6 o 12 meses con objetivos y seguimiento.</p></article>
-        </div>
 
         <div class="cta-stack reveal reveal-d5">
           <a class="btn btn-primary" data-wa="fundador" href="#">Quiero ser Fundador Entrenador 2.0</a>
@@ -961,18 +1050,38 @@
       </div>
     </section>
 
+    <!-- 3c · Ofertas -->
+    <section class="card" id="s3c" aria-label="Crea tu propia oferta">
+      <div class="card-inner">
+        <span class="feel reveal reveal-d1">Simplicidad</span>
+        <h1 class="reveal reveal-d2" style="font-size:clamp(1.5rem,6vw,2.2rem)">Crea tu <em>propia oferta</em></h1>
+        <p class="impact reveal reveal-d3" style="font-size:1rem">Tres formas de monetizar tu conocimiento.</p>
+
+        <div class="offers reveal reveal-d4" aria-label="Tipos de servicio">
+          <article class="offer"><h3>Sesión de videoanálisis</h3><p>Feedback profesional, objetivos concretos y un plan para seguir mejorando.</p></article>
+          <article class="offer"><h3>Packs</h3><p>Combina clases presenciales y sesiones de videoanálisis.</p></article>
+          <article class="offer"><h3>Programas</h3><p>Acompañamiento continuo 3, 6 o 12 meses con objetivos y seguimiento.</p></article>
+        </div>
+
+        <div class="cta-stack reveal reveal-d5">
+          <a class="btn btn-primary" data-wa="fundador" href="#">Quiero ser Fundador Entrenador 2.0</a>
+        </div>
+      </div>
+    </section>
+
     <!-- 3b Flywheel -->
     <section class="card card--fly" id="s3b" aria-label="Ciclo de videoanálisis">
       <div class="card-inner">
         <span class="feel reveal reveal-d1">Un camino que seguir</span>
         <h1 class="reveal reveal-d2" style="font-size:clamp(1.45rem,6.2vw,2.15rem)">Así funciona el <em>ciclo</em></h1>
-        <p class="fly-caption reveal reveal-d3">9 pasos · la flecha señala el paso activo · toca una tarjeta</p>
-        <div class="lw-stage reveal reveal-d4">
+        <p class="fly-caption reveal reveal-d3">Desliza los pasos · en desktop, flywheel interactivo</p>
+        <div class="lw-mobile reveal reveal-d4" id="lwMobile" tabindex="0" aria-label="Pasos del ciclo de videoanálisis"></div>
+        <div class="lw-desktop reveal reveal-d4">
           <div class="lw-wrap" id="lwFlywheel" data-count="9" role="img" aria-label="Flywheel de 9 pasos del entrenador"></div>
         </div>
-        <div class="lw-legend reveal reveal-d5" aria-hidden="true">
-          <span><i class="lw-dot lw-dot--player"></i> Lo hace el jugador</span>
-          <span><i class="lw-dot lw-dot--coach"></i> Lo hace el entrenador</span>
+        <div class="lw-legend reveal reveal-d3" aria-hidden="true">
+          <span><i class="lw-dot lw-dot--player"></i> Jugador</span>
+          <span><i class="lw-dot lw-dot--coach"></i> Entrenador</span>
         </div>
         <p class="lw-cta-line reveal reveal-d5"><strong>Valor para tu alumno:</strong> correcciones + plan. <strong>Para ti:</strong> retención y progreso visible.</p>
       </div>
@@ -987,10 +1096,12 @@
 
         <div class="calc reveal reveal-d4" id="calc" aria-label="Calculadora de ingresos estimados">
           <div class="calc-grid">
-            <div class="field"><label for="alumnos">Alumnos</label><input id="alumnos" type="number" min="1" max="500" value="35" inputmode="numeric" /></div>
-            <div class="field"><label for="interesados">Interesados</label><input id="interesados" type="number" min="0" max="500" value="5" inputmode="numeric" /></div>
             <div class="field full">
-              <label for="servicio">Servicio</label>
+              <label for="alumnos">Alumnos</label>
+              <input id="alumnos" type="number" min="0" max="500" value="5" inputmode="numeric" />
+            </div>
+            <div class="field full">
+              <label for="servicio">Elige tu nuevo servicio</label>
               <select id="servicio">
                 <option value="va|1|once">Videoanálisis individual (pago único)</option>
                 <option value="pack|1|once">Pack (pago único)</option>
@@ -1005,7 +1116,6 @@
           <div class="calc-result" aria-live="polite">
             <div class="metric"><div class="lbl">Ingreso por venta</div><div class="val" id="mUnit">100 €</div></div>
             <div class="metric"><div class="lbl">Equivalente mensual</div><div class="val" id="mMonth">100 € <small>/mes</small></div></div>
-            <div class="metric span"><div class="lbl">Ingreso total estimado</div><div class="val" id="mTotal">500 €</div></div>
           </div>
         </div>
 
@@ -1028,51 +1138,59 @@
       </div>
     </section>
 
-    <!-- 5 Fundadores -->
-    <section class="card" id="s5" aria-label="Únete a Fundadores Entrenador 2.0">
+    <!-- 5a Fundadores · qué recibes -->
+    <section class="card" id="s5" aria-label="Fundadores · qué recibes">
       <div class="card-inner">
         <span class="feel reveal reveal-d1">Seguridad</span>
         <h1 class="reveal reveal-d2">Conviértete en <em>Entrenador 2.0</em></h1>
         <p class="impact reveal reveal-d3">Sé de los <strong>primeros</strong>.</p>
 
-        <div class="media reveal reveal-d3" style="aspect-ratio:2.4/1">
-          <img
-            src="https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=1200&q=80"
-            alt="Energía deportiva y movimiento"
-            width="1200" height="500" loading="lazy" decoding="async" />
+        <div class="media reveal reveal-d3">
+          <img src="assets/servicios/srv-grabacion-pista.png" alt="Entrenadores fundadores en acción" loading="lazy" width="800" height="450" />
+          <div class="media-fallback" aria-hidden="true">
+            <span class="material-symbols-rounded">emoji_events</span>
+          </div>
           <span class="media-badge">Fundadores</span>
         </div>
 
         <p class="trust reveal reveal-d4">Construido junto a entrenadores que ya hacen este seguimiento a mano, con herramientas sueltas.</p>
 
-        <div class="split-lists reveal reveal-d4">
-          <div class="list-block">
-            <h3>Recibirás</h3>
-            <ul>
-              <li>Acceso anticipado a Gimadd Mentor.</li>
-              <li>Onboarding personalizado.</li>
-              <li>Ayuda para crear y presentar tu oferta.</li>
-              <li>Acompañamiento para incorporar a tus primeros jugadores.</li>
-              <li>Contacto directo con el equipo de Gimadd.</li>
-              <li>Reconocimiento como Fundador Entrenador 2.0.</li>
-            </ul>
-          </div>
-          <div class="list-block seek">
-            <h3>Buscamos entrenadores que</h3>
-            <ul>
-              <li>Quieran dar un paso más en su carrera.</li>
-              <li>Tengan alumnos activos o una audiencia interesada.</li>
-              <li>Estén dispuestos a ofrecer servicios digitales.</li>
-              <li>Quieran compartir su experiencia para mejorar la plataforma.</li>
-            </ul>
-          </div>
+        <div class="list-block reveal reveal-d5">
+          <h3>Recibirás</h3>
+          <ul>
+            <li>Acceso anticipado a Gimadd Mentor.</li>
+            <li>Onboarding personalizado.</li>
+            <li>Ayuda para crear y presentar tu oferta.</li>
+            <li>Acompañamiento para incorporar a tus primeros jugadores.</li>
+            <li>Contacto directo con el equipo de Gimadd.</li>
+            <li>Reconocimiento como Fundador Entrenador 2.0.</li>
+          </ul>
+        </div>
+        <p class="micro reveal reveal-d5" id="slotMicroFundadores">Quedan 80 de 100 plazas · acompañamiento personalizado.</p>
+      </div>
+    </section>
+
+    <!-- 5b Fundadores · únete -->
+    <section class="card" id="s5b" aria-label="Fundadores · únete">
+      <div class="card-inner">
+        <span class="feel reveal reveal-d1">Seguridad</span>
+        <h1 class="reveal reveal-d2" style="font-size:clamp(1.5rem,6vw,2.2rem)">Únete como <em>Fundador</em></h1>
+        <p class="impact reveal reveal-d3" style="font-size:1rem">El perfil que buscamos.</p>
+
+        <div class="list-block seek reveal reveal-d4">
+          <h3>Buscamos entrenadores que</h3>
+          <ul>
+            <li>Quieran dar un paso más en su carrera.</li>
+            <li>Tengan alumnos activos o una audiencia interesada.</li>
+            <li>Estén dispuestos a ofrecer servicios digitales.</li>
+            <li>Quieran compartir su experiencia para mejorar la plataforma.</li>
+          </ul>
         </div>
 
         <div class="cta-stack reveal reveal-d5">
           <a class="btn btn-primary" data-wa="acceso" href="#">Solicitar acceso a Gimadd Mentor</a>
           <a class="btn btn-wa" data-wa="hablar" href="#">Hablar por WhatsApp</a>
         </div>
-        <p class="micro" id="slotMicroFundadores">Quedan 80 de 100 plazas · acompañamiento personalizado.</p>
 
         <button type="button" class="more-toggle" aria-expanded="false" aria-controls="more5" data-more>
           Ver más <span class="arrow" aria-hidden="true">▾</span>
@@ -1189,6 +1307,22 @@
         return "@keyframes arrow-cycle {\n  " + frames.join("\n  ") + "\n}";
       }
 
+      function renderMobileFlywheel() {
+        var track = document.getElementById("lwMobile");
+        if (!track) return;
+        track.innerHTML = COACH_STEPS.map(function (step, i) {
+          var cls = step.role === "coach" ? "is-coach" : "";
+          return (
+            '<article class="lw-mstep ' + cls + '">' +
+            '<div class="lw-mnum">Paso ' + (i + 1) + ' / 9</div>' +
+            '<h4>' + escapeHtml(step.title) + '</h4>' +
+            '<p>' + escapeHtml(step.desc) + '</p>' +
+            '<span class="lw-mrole">' + escapeHtml(ROLE_LABEL[step.role] || "") + '</span>' +
+            '</article>'
+          );
+        }).join("");
+      }
+
       function renderEmbeddedFlywheel() {
         var mount = document.getElementById("lwFlywheel");
         if (!mount) return;
@@ -1254,7 +1388,23 @@
           if (arrow) arrow.classList.toggle("is-paused", willFlip);
         });
       }
+      renderMobileFlywheel();
       renderEmbeddedFlywheel();
+
+      /* Video: poster visible hasta que carga; fallback si falla */
+      document.querySelectorAll(".media video").forEach(function (v) {
+        var wrap = v.closest(".media");
+        function markPlaying() { if (wrap) wrap.classList.add("is-playing"); }
+        function markFallback() { if (wrap) wrap.classList.remove("is-playing"); }
+        v.addEventListener("canplay", markPlaying);
+        v.addEventListener("loadeddata", markPlaying);
+        v.addEventListener("error", markFallback);
+        if (v.readyState >= 2) markPlaying();
+        else {
+          var playAttempt = v.play();
+          if (playAttempt && playAttempt.catch) playAttempt.catch(markFallback);
+        }
+      });
 
       document.querySelectorAll("[data-more]").forEach(function (btn) {
         btn.addEventListener("click", function () {
@@ -1285,19 +1435,17 @@
         return new Intl.NumberFormat("es-ES", { maximumFractionDigits: 0 }).format(Math.round(n)) + " €";
       }
       function recalc() {
-        var interesados = Math.max(0, Number(document.getElementById("interesados").value) || 0);
+        var alumnos = Math.max(0, Number(document.getElementById("alumnos").value) || 0);
         var precio = Math.max(0, Number(document.getElementById("precio").value) || 0);
         var parts = (document.getElementById("servicio").value || "").split("|");
         var months = Number(parts[1]) || 1;
         var mode = parts[2] || "once";
         var perSale = mode === "month" ? precio * months : precio;
-        var total = perSale * interesados;
-        var monthly = mode === "month" ? (precio * interesados) : (total / Math.max(months, 1));
+        var monthly = mode === "month" ? (precio * alumnos) : (perSale * alumnos / Math.max(months, 1));
         document.getElementById("mUnit").textContent = euro(perSale);
-        document.getElementById("mTotal").textContent = euro(total);
         document.getElementById("mMonth").innerHTML = euro(monthly) + " <small>/mes</small>";
       }
-      ["alumnos", "interesados", "precio", "servicio"].forEach(function (id) {
+      ["alumnos", "precio", "servicio"].forEach(function (id) {
         var el = document.getElementById(id);
         if (el) { el.addEventListener("input", recalc); el.addEventListener("change", recalc); }
       });
@@ -1324,7 +1472,7 @@
 
       function goTo(index) {
         index = Math.max(0, Math.min(cards.length - 1, index));
-        cards[index].scrollIntoView({ behavior: "smooth", block: "start" });
+        deck.scrollTo({ top: index * deck.clientHeight, behavior: "smooth" });
         setActive(index);
       }
 
@@ -1347,16 +1495,16 @@
       if ("IntersectionObserver" in window) {
         var io = new IntersectionObserver(function (entries) {
           entries.forEach(function (entry) {
-            if (entry.isIntersecting && entry.intersectionRatio >= 0.45) {
+            if (entry.isIntersecting && entry.intersectionRatio >= 0.5) {
               setActive(cards.indexOf(entry.target));
             }
           });
-        }, { root: deck, threshold: [0.45, 0.6] });
+        }, { root: deck, threshold: [0.5, 0.65] });
         cards.forEach(function (c) { io.observe(c); });
       }
 
       window.addEventListener("keydown", function (e) {
-        if (e.key === "ArrowDown" || e.key === "PageDown" || e.key === " ") {
+        if (e.key === "ArrowDown" || e.key === "PageDown") {
           e.preventDefault();
           goTo(active + 1);
         }
@@ -1366,18 +1514,42 @@
         }
       });
 
-      /* Ensure wheel scrolls the deck even if focus is on body */
-      document.addEventListener("wheel", function (e) {
-        if (!deck) return;
-        if (e.target.closest(".lw-wrap, .calc, .split-lists, .faq-list, .more-panel.is-open")) return;
-        /* Let native scroll on deck happen; if event targets body, forward delta */
-        if (e.target === document.body || e.target === document.documentElement) {
-          deck.scrollTop += e.deltaY;
-        }
+      /* Mobile: swipe más fiable entre pantallas */
+      var touchY = 0;
+      var touchT = 0;
+      deck.addEventListener("touchstart", function (e) {
+        if (e.target.closest(".lw-mobile, .calc, .faq-list, .more-panel.is-open, .lw-wrap, select, input, textarea")) return;
+        touchY = e.changedTouches[0].clientY;
+        touchT = Date.now();
+      }, { passive: true });
+      deck.addEventListener("touchend", function (e) {
+        if (e.target.closest(".lw-mobile, .calc, .faq-list, .more-panel.is-open, .lw-wrap, select, input, textarea")) return;
+        var dy = e.changedTouches[0].clientY - touchY;
+        var dt = Date.now() - touchT;
+        if (dt > 650 || Math.abs(dy) < 50) return;
+        if (dy < 0) goTo(active + 1);
+        else goTo(active - 1);
+      }, { passive: true });
+
+      deck.addEventListener("scroll", function () {
+        var idx = Math.round(deck.scrollTop / Math.max(deck.clientHeight, 1));
+        if (idx !== active && idx >= 0 && idx < cards.length) setActive(idx);
+      }, { passive: true });
+
+      var snapTimer;
+      deck.addEventListener("scroll", function () {
+        clearTimeout(snapTimer);
+        snapTimer = setTimeout(function () {
+          var idx = Math.round(deck.scrollTop / Math.max(deck.clientHeight, 1));
+          var target = idx * deck.clientHeight;
+          if (Math.abs(deck.scrollTop - target) > 24) {
+            deck.scrollTo({ top: target, behavior: "smooth" });
+          }
+          setActive(idx);
+        }, 140);
       }, { passive: true });
 
       setActive(0);
-      deck.focus({ preventScroll: true });
     })();
   </script>
 </body>
