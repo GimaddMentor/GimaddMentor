@@ -319,6 +319,29 @@
       min-height: 0;
       overflow: visible;
     }
+
+    /* Hero: repartir el hueco vertical */
+    #s1 .card-inner {
+      justify-content: flex-start;
+      gap: clamp(0.5rem, 1.6vh, 0.85rem);
+      padding-bottom: 0.15rem;
+    }
+    #s1 .media {
+      margin-top: clamp(0.35rem, 1.8vh, 1rem);
+      max-height: min(36vh, 300px);
+      flex: 1 1 auto;
+      min-height: clamp(140px, 22vh, 220px);
+    }
+    #s1 .cta-stack {
+      margin-top: auto;
+      padding-top: clamp(0.35rem, 1.5vh, 0.9rem);
+    }
+    #s1 .micro {
+      margin-top: 0.15rem;
+    }
+    #s1 .extra-copy {
+      margin-top: clamp(0.25rem, 1vh, 0.55rem);
+    }
     .card.is-active .reveal {
       animation: riseIn 0.7s var(--ease) both;
     }
@@ -1243,6 +1266,13 @@
       h1 { font-size: clamp(1.4rem, 5.8vw, 2rem); }
       .card-inner { gap: 0.4rem; justify-content: flex-start; padding-top: 0.15rem; }
       .media { aspect-ratio: 2.35 / 1; max-height: min(22vh, 170px); }
+      #s1 .media {
+        flex: 0 1 auto;
+        min-height: 0;
+        max-height: min(24vh, 180px);
+        margin-top: 0.25rem;
+      }
+      #s1 .cta-stack { margin-top: auto; padding-top: 0.35rem; }
       .extra-copy { font-size: 0.76rem; padding: 0.4rem 0.6rem; }
       .btn { min-height: 48px; font-size: 0.9rem; }
       .cmp { padding: 0.45rem 0.5rem; font-size: 0.68rem; }
