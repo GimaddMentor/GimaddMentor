@@ -688,7 +688,7 @@
     .card--fly h1 { font-size: clamp(1.35rem, 5.5vw, 2rem); }
     .fly-caption {
       font-size: 0.76rem; color: var(--mute);
-      text-align: center; max-width: 34ch; margin: 0 auto;
+      text-align: center; max-width: 34ch; margin: 0 auto 1rem;
     }
 
     .lw-stage {
@@ -696,7 +696,7 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      padding: 0.25rem 0 0.5rem;
+      padding: 0.15rem 0 1.35rem;
       touch-action: pan-x pan-y pinch-zoom;
     }
 
@@ -892,7 +892,7 @@
     .lw-legend {
       display: flex; flex-wrap: wrap; justify-content: center; gap: 0.65rem 1.1rem;
       font-size: 0.72rem; font-weight: 600; color: var(--mute);
-      margin-top: 0.25rem;
+      margin-top: 0.85rem;
       padding: 0.55rem 0.85rem;
       background: rgba(255,255,255,0.65);
       border: 1px solid var(--line);
@@ -906,7 +906,7 @@
 
     .lw-cta-line {
       text-align: center; font-size: 0.76rem; color: var(--ink-soft);
-      line-height: 1.4; max-width: 36ch; margin: 0.35rem auto 0;
+      line-height: 1.4; max-width: 36ch; margin: 0.7rem auto 0;
     }
     .lw-cta-line strong { color: var(--ink); }
 
@@ -930,8 +930,10 @@
       .lw-flip-inner { min-height: 5.35rem; }
       .lw-card h3 { font-size: 0.64rem; }
       .lw-card--back p { font-size: 0.52rem; }
-      .lw-stage { padding: 0.5rem 0 1rem; }
-      .lw-legend { margin-top: 0.5rem; padding: 0.75rem 1.25rem; }
+      .lw-stage { padding: 0.5rem 0 1.75rem; }
+      .lw-legend { margin-top: 1.15rem; padding: 0.75rem 1.25rem; }
+      .fly-caption { margin-bottom: 1.15rem; }
+      .lw-cta-line { margin-top: 0.85rem; }
     }
 
     @media (max-height: 740px) {
