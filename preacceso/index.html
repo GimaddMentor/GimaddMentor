@@ -1,0 +1,1043 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0a0a0a" />
+  <title>Pre-acceso — Gimadd Mentor</title>
+  <meta name="description" content="Confirma tu pre-acceso a Gimadd Mentor. 2 minutos para preparar tu onboarding." />
+  <link rel="icon" href="https://gimaddmentor.com/wp-content/uploads/2025/12/cropped-Diseno-sin-titulo-32x32.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --lime: #ebfd2d;
+      --lime-soft: rgba(235, 253, 45, 0.14);
+      --lime-glow: rgba(235, 253, 45, 0.45);
+      --ink: #0a0a0a;
+      --ink-2: #1a1a1a;
+      --muted: #6b7280;
+      --line: rgba(10, 10, 10, 0.08);
+      --white: #ffffff;
+      --bg: #f7f7f4;
+      --danger: #dc2626;
+      --radius: 22px;
+      --ease: cubic-bezier(0.22, 1, 0.36, 1);
+      --shadow: 0 24px 80px rgba(0, 0, 0, 0.12);
+      --font: "Outfit", system-ui, -apple-system, "Segoe UI", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      min-height: 100dvh;
+      font-family: var(--font);
+      color: var(--ink);
+      background: var(--bg);
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+
+    button, input, textarea, select { font: inherit; }
+
+    .bg {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(ellipse 70% 50% at 100% -10%, var(--lime-glow), transparent 55%),
+        radial-gradient(ellipse 50% 40% at -10% 100%, rgba(235, 253, 45, 0.18), transparent 50%),
+        var(--bg);
+    }
+    .bg::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      opacity: 0.07;
+      background-image: url("./banner-web.webp");
+      background-size: cover;
+      background-position: center 30%;
+      mask-image: linear-gradient(to bottom, black 0%, transparent 70%);
+    }
+
+    .app {
+      position: relative;
+      z-index: 1;
+      min-height: 100dvh;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 20px 20px 28px;
+    }
+
+    header.top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 4px 0 18px;
+      animation: fadeDown 0.7s var(--ease) both;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: inherit;
+    }
+    .brand img {
+      width: 56px;
+      height: 56px;
+      object-fit: contain;
+      filter: drop-shadow(0 8px 20px rgba(235, 253, 45, 0.35));
+    }
+    .brand-text {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      line-height: 1.15;
+    }
+    .brand-text span {
+      font-size: 0.78rem;
+      color: var(--muted);
+      font-weight: 600;
+      letter-spacing: 0.02em;
+    }
+
+    .progress-wrap {
+      flex: 1;
+      max-width: 220px;
+      display: none;
+      flex-direction: column;
+      gap: 6px;
+      align-items: flex-end;
+    }
+    .progress-wrap.visible { display: flex; }
+    .progress-meta {
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--muted);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    .progress-track {
+      width: 100%;
+      height: 6px;
+      background: rgba(10, 10, 10, 0.08);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #d4e820, var(--lime));
+      border-radius: inherit;
+      transition: width 0.55s var(--ease);
+      box-shadow: 0 0 16px var(--lime-glow);
+    }
+
+    main.stage {
+      display: grid;
+      align-content: center;
+      min-height: min(70dvh, 640px);
+    }
+
+    .panel {
+      display: none;
+      animation: riseIn 0.55s var(--ease) both;
+    }
+    .panel.active { display: block; }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 14px;
+    }
+    .eyebrow i {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--lime);
+      box-shadow: 0 0 0 4px var(--lime-soft);
+    }
+
+    h1, h2 {
+      font-family: var(--font);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+      margin: 0 0 14px;
+    }
+    h1 { font-size: clamp(1.75rem, 4.5vw, 2.35rem); }
+    h2 { font-size: clamp(1.35rem, 3.6vw, 1.75rem); }
+
+    .lead {
+      font-size: 1.05rem;
+      line-height: 1.55;
+      color: var(--muted);
+      max-width: 34rem;
+      margin: 0 0 28px;
+    }
+
+    .hello {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: var(--white);
+      border: 1px solid var(--line);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.04);
+      margin-bottom: 22px;
+      font-size: 0.95rem;
+      font-weight: 600;
+    }
+    .hello .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--lime);
+    }
+    .hello .email {
+      color: var(--muted);
+      font-weight: 500;
+      font-size: 0.85rem;
+    }
+
+    .hero-card {
+      position: relative;
+      border-radius: 32px;
+      overflow: hidden;
+      margin: 28px 0 8px;
+      min-height: 180px;
+      background: #111 center/cover no-repeat;
+      background-image: linear-gradient(120deg, rgba(0,0,0,0.55), rgba(0,0,0,0.15)), url("./banner-web.webp");
+      box-shadow: var(--shadow);
+      transform: translateZ(0);
+    }
+    .hero-card::after {
+      content: "Pre-acceso entrenadores";
+      position: absolute;
+      left: 22px;
+      bottom: 20px;
+      color: #fff;
+      font-family: var(--font);
+      font-weight: 700;
+      font-size: 0.95rem;
+      letter-spacing: -0.01em;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 8px;
+    }
+
+    .btn {
+      appearance: none;
+      border: none;
+      cursor: pointer;
+      border-radius: 999px;
+      padding: 16px 26px;
+      font-weight: 700;
+      font-size: 1rem;
+      transition: transform 0.2s var(--ease), box-shadow 0.2s var(--ease), background 0.2s;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+    .btn:active { transform: scale(0.98); }
+    .btn-primary {
+      background: var(--lime);
+      color: var(--ink);
+      box-shadow: 0 14px 40px rgba(235, 253, 45, 0.35);
+    }
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 18px 48px rgba(235, 253, 45, 0.45);
+    }
+    .btn-ghost {
+      background: transparent;
+      color: var(--ink);
+      border: 1px solid rgba(10,10,10,0.14);
+    }
+    .btn-ghost:hover { background: rgba(255,255,255,0.7); }
+    .btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .options {
+      display: grid;
+      gap: 10px;
+      margin: 8px 0 22px;
+    }
+
+    .opt {
+      position: relative;
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 14px;
+      align-items: start;
+      padding: 16px 18px;
+      border-radius: 18px;
+      background: var(--white);
+      border: 1.5px solid transparent;
+      box-shadow: 0 1px 0 rgba(0,0,0,0.03), 0 10px 30px rgba(0,0,0,0.03);
+      cursor: pointer;
+      transition: border-color 0.2s var(--ease), transform 0.2s var(--ease), background 0.2s, box-shadow 0.2s;
+      text-align: left;
+      width: 100%;
+      color: inherit;
+    }
+    .opt:hover {
+      transform: translateY(-1px);
+      border-color: rgba(235, 253, 45, 0.55);
+      box-shadow: 0 14px 36px rgba(0,0,0,0.06);
+    }
+    .opt.selected {
+      border-color: var(--ink);
+      background: linear-gradient(180deg, #fff, #fcffe8);
+      box-shadow: 0 0 0 3px var(--lime-soft), 0 16px 40px rgba(0,0,0,0.06);
+    }
+    .opt .mark {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      border: 2px solid rgba(10,10,10,0.18);
+      margin-top: 2px;
+      display: grid;
+      place-items: center;
+      transition: 0.2s var(--ease);
+      flex-shrink: 0;
+    }
+    .opt.selected .mark {
+      border-color: var(--ink);
+      background: var(--lime);
+      box-shadow: inset 0 0 0 4px var(--ink);
+    }
+    .opt .label {
+      font-size: 1.02rem;
+      font-weight: 600;
+      line-height: 1.35;
+    }
+
+    .field-block { margin: 0 0 16px; }
+    .field-block label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    .field-block .hint {
+      font-weight: 500;
+      color: var(--muted);
+      font-size: 0.8rem;
+    }
+
+    .input, .textarea, .select {
+      width: 100%;
+      border: 1.5px solid rgba(10,10,10,0.1);
+      background: var(--white);
+      border-radius: 16px;
+      padding: 14px 16px;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .input:focus, .textarea:focus, .select:focus {
+      border-color: var(--ink);
+      box-shadow: 0 0 0 4px var(--lime-soft);
+    }
+    .input[readonly] {
+      background: #f3f3f0;
+      color: #333;
+    }
+    .textarea {
+      min-height: 120px;
+      resize: vertical;
+      line-height: 1.45;
+    }
+
+    .other-wrap {
+      display: none;
+      margin-top: -8px;
+      margin-bottom: 18px;
+      animation: riseIn 0.35s var(--ease) both;
+    }
+    .other-wrap.show { display: block; }
+
+    .nav-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      margin-top: 8px;
+    }
+
+    .foot-note {
+      margin-top: 28px;
+      font-size: 0.8rem;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    .success {
+      text-align: left;
+    }
+    .success-badge {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: var(--lime);
+      display: grid;
+      place-items: center;
+      font-size: 1.6rem;
+      margin-bottom: 20px;
+      box-shadow: 0 16px 40px rgba(235, 253, 45, 0.4);
+      animation: pop 0.6s var(--ease) both;
+    }
+
+    .error-banner {
+      display: none;
+      margin-top: 14px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      background: #fef2f2;
+      color: var(--danger);
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+    .error-banner.show { display: block; }
+
+    .config-warn {
+      display: none;
+      margin-top: 16px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      background: #fff7ed;
+      border: 1px solid #fed7aa;
+      color: #9a3412;
+      font-size: 0.85rem;
+      line-height: 1.4;
+    }
+    .config-warn.show { display: block; }
+
+    footer.legal {
+      padding-top: 24px;
+      text-align: center;
+      font-size: 0.75rem;
+      color: var(--muted);
+    }
+    footer.legal a { color: inherit; }
+
+    @keyframes fadeDown {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: none; }
+    }
+    @keyframes riseIn {
+      from { opacity: 0; transform: translateY(18px); }
+      to { opacity: 1; transform: none; }
+    }
+    @keyframes pop {
+      0% { transform: scale(0.4); opacity: 0; }
+      70% { transform: scale(1.08); }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    @media (max-width: 560px) {
+      .app { padding: 14px 14px 22px; }
+      .brand img { width: 44px; height: 44px; }
+      .opt { padding: 14px; }
+      .btn { width: 100%; }
+      .nav-row { flex-direction: column-reverse; }
+      .nav-row .btn-ghost { width: 100%; }
+      .hello { flex-wrap: wrap; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg" aria-hidden="true"></div>
+
+  <div class="app">
+    <header class="top">
+      <a class="brand" href="https://gimaddmentor.com/" target="_blank" rel="noopener" aria-label="Gimadd Mentor">
+        <img src="./logo-gimadd.svg" width="56" height="56" alt="Gimadd Mentor" />
+        <div class="brand-text">
+          <span>Pre-acceso · entrenadores</span>
+        </div>
+      </a>
+      <div class="progress-wrap" id="progressWrap" aria-hidden="true">
+        <div class="progress-meta"><span id="progressLabel">0%</span></div>
+        <div class="progress-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="progressTrack">
+          <div class="progress-bar" id="progressBar"></div>
+        </div>
+      </div>
+    </header>
+
+    <main class="stage">
+      <!-- WELCOME -->
+      <section class="panel active" data-panel="welcome" aria-labelledby="welcomeTitle">
+        <div class="eyebrow"><i></i> Lista de pre-acceso</div>
+        <div class="hello" id="helloChip" hidden>
+          <span class="dot" aria-hidden="true"></span>
+          <span id="helloName">Hola</span>
+          <span class="email" id="helloEmail"></span>
+        </div>
+        <h1 id="welcomeTitle">Este pre-acceso es para entrenadores listos para dar un paso más.</h1>
+        <p class="lead">
+          Este formulario te llevará 2 minutos. Tus respuestas nos ayudan a preparar tu onboarding con lo que realmente necesitas.
+        </p>
+        <div class="hero-card" role="img" aria-label="Gimadd Mentor — plataforma para entrenadores de pádel"></div>
+        <div class="actions">
+          <button type="button" class="btn btn-primary" id="btnStart">
+            Empezar
+            <span aria-hidden="true">→</span>
+          </button>
+        </div>
+        <p class="foot-note">6 preguntas · sin spam · puedes cerrar cuando quieras</p>
+      </section>
+
+      <!-- P1 -->
+      <section class="panel" data-panel="p1">
+        <div class="eyebrow"><i></i> Pregunta 1 de 6</div>
+        <h2>¿En qué punto estás con la idea de ofrecer servicios online a tus alumnos?</h2>
+        <p class="lead">Situación actual — no intención declarada.</p>
+        <div class="options" data-q="p1" role="radiogroup" aria-label="Situación actual con servicios online"></div>
+        <div class="nav-row">
+          <button type="button" class="btn btn-ghost" data-back>Atrás</button>
+          <button type="button" class="btn btn-primary" data-next disabled>Continuar →</button>
+        </div>
+      </section>
+
+      <!-- P2 -->
+      <section class="panel" data-panel="p2">
+        <div class="eyebrow"><i></i> Pregunta 2 de 6</div>
+        <h2>De tus alumnos actuales, ¿cuántos crees que estarían dispuestos a pagar por un seguimiento más personalizado?</h2>
+        <p class="lead">Videoanálisis, objetivos, plan de mejora… piensa en números reales.</p>
+        <div class="options" data-q="p2" role="radiogroup"></div>
+        <div class="nav-row">
+          <button type="button" class="btn btn-ghost" data-back>Atrás</button>
+          <button type="button" class="btn btn-primary" data-next disabled>Continuar →</button>
+        </div>
+      </section>
+
+      <!-- P3 -->
+      <section class="panel" data-panel="p3">
+        <div class="eyebrow"><i></i> Pregunta 3 de 6</div>
+        <h2>¿Cuánto tiempo dedicas a la semana a gestionar el seguimiento fuera de la pista?</h2>
+        <p class="lead">WhatsApp, notas, coordinación, pagos…</p>
+        <div class="options" data-q="p3" role="radiogroup"></div>
+        <div class="nav-row">
+          <button type="button" class="btn btn-ghost" data-back>Atrás</button>
+          <button type="button" class="btn btn-primary" data-next disabled>Continuar →</button>
+        </div>
+      </section>
+
+      <!-- P4 -->
+      <section class="panel" data-panel="p4">
+        <div class="eyebrow"><i></i> Pregunta 4 de 6</div>
+        <h2>¿Qué te frena hoy para adoptar una plataforma como Gimadd Mentor?</h2>
+        <div class="options" data-q="p4" role="radiogroup"></div>
+        <div class="other-wrap" id="p4OtherWrap">
+          <div class="field-block">
+            <label for="p4Other">Cuéntanos brevemente</label>
+            <input class="input" id="p4Other" name="p4_other" maxlength="280" placeholder="Tu objeción u otra razón…" />
+          </div>
+        </div>
+        <div class="nav-row">
+          <button type="button" class="btn btn-ghost" data-back>Atrás</button>
+          <button type="button" class="btn btn-primary" data-next disabled>Continuar →</button>
+        </div>
+      </section>
+
+      <!-- P5 -->
+      <section class="panel" data-panel="p5">
+        <div class="eyebrow"><i></i> Pregunta 5 de 6</div>
+        <h2>Cuando lancemos la plataforma en unos meses, ¿te gustaría formar parte del primer grupo?</h2>
+        <div class="options" data-q="p5" role="radiogroup"></div>
+        <div class="nav-row">
+          <button type="button" class="btn btn-ghost" data-back>Atrás</button>
+          <button type="button" class="btn btn-primary" data-next disabled>Continuar →</button>
+        </div>
+      </section>
+
+      <!-- P6 -->
+      <section class="panel" data-panel="p6">
+        <div class="eyebrow"><i></i> Pregunta 6 de 6 · opcional</div>
+        <h2>¿Hay algo específico que te gustaría contarnos antes de arrancar?</h2>
+        <p class="lead">Objeciones, expectativas o lo que necesites que resolvamos.</p>
+        <div class="field-block">
+          <label for="p6" class="visually-hidden" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)">Mensaje opcional</label>
+          <textarea class="textarea" id="p6" name="p6" maxlength="2000" placeholder="Escribe aquí… (opcional)"></textarea>
+        </div>
+        <div class="nav-row">
+          <button type="button" class="btn btn-ghost" data-back>Atrás</button>
+          <button type="button" class="btn btn-primary" data-next>Continuar →</button>
+        </div>
+      </section>
+
+      <!-- OPS -->
+      <section class="panel" data-panel="ops">
+        <div class="eyebrow"><i></i> Último paso</div>
+        <h2>Para preparar tu onboarding</h2>
+        <p class="lead">Solo lo imprescindible. Si llegaste desde el email, ya te reconocemos.</p>
+
+        <div class="field-block">
+          <label for="nombre">Nombre y apellidos</label>
+          <input class="input" id="nombre" name="nombre" required autocomplete="name" placeholder="Tu nombre completo" />
+        </div>
+        <div class="field-block">
+          <label for="email">Email <span class="hint" id="emailHint"></span></label>
+          <input class="input" id="email" name="email" type="email" required autocomplete="email" placeholder="tu@email.com" />
+        </div>
+        <div class="field-block">
+          <label for="ciudad">Ciudad y país</label>
+          <input class="input" id="ciudad" name="ciudad_pais" required autocomplete="address-level2" placeholder="Ej. Madrid, España" />
+        </div>
+        <div class="field-block">
+          <label for="alumnos">Número aproximado de alumnos activos</label>
+          <input class="input" id="alumnos" name="alumnos_activos" type="number" min="0" max="9999" required inputmode="numeric" placeholder="Ej. 12" />
+        </div>
+        <div class="field-block">
+          <label>Situación</label>
+          <div class="options" data-q="situacion" role="radiogroup"></div>
+        </div>
+        <div class="field-block">
+          <label for="whatsapp">WhatsApp <span class="hint">(opcional — para avisarte más rápido al arrancar)</span></label>
+          <input class="input" id="whatsapp" name="whatsapp" type="tel" autocomplete="tel" placeholder="+34 600 000 000" />
+        </div>
+
+        <div class="error-banner" id="opsError" role="alert"></div>
+        <div class="config-warn" id="configWarn">
+          Falta conectar Google Sheets: abre <code>index.html</code>, pega la URL del Apps Script en <code>CONFIG.SHEETS_WEBAPP_URL</code> y vuelve a publicar. Mientras tanto, la respuesta se guarda en este navegador.
+        </div>
+
+        <div class="nav-row">
+          <button type="button" class="btn btn-ghost" data-back>Atrás</button>
+          <button type="button" class="btn btn-primary" id="btnSubmit">Enviar pre-acceso</button>
+        </div>
+      </section>
+
+      <!-- SUCCESS -->
+      <section class="panel" data-panel="success">
+        <div class="success">
+          <div class="success-badge" aria-hidden="true">✓</div>
+          <h1>¡Gracias! Ya estás en la lista de pre-acceso.</h1>
+          <p class="lead">
+            En las próximas semanas te iremos avisando de novedades y del momento exacto del lanzamiento.
+            Si has marcado <strong>“cuenta conmigo desde el día 1”</strong>, te contactaremos directamente en breve para reservar tu plaza VIP.
+          </p>
+          <p class="lead" style="margin-bottom: 8px;">
+            Cualquier duda, respóndenos al correo con el que llegaste al formulario. Lo vemos personalmente.
+          </p>
+          <div class="actions" style="margin-top: 24px;">
+            <a class="btn btn-primary" href="https://gimaddmentor.com/" target="_blank" rel="noopener">Volver a Gimadd Mentor</a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="legal">
+      <a href="https://gimaddmentor.com/politica-de-privacidad/" target="_blank" rel="noopener">Privacidad</a>
+      · Gimadd Mentor
+    </footer>
+  </div>
+
+  <script>
+    /**
+     * ═══════════════════════════════════════════════════════════
+     * CONFIG — pega aquí la URL de tu Google Apps Script (web app)
+     * ═══════════════════════════════════════════════════════════
+     */
+    const CONFIG = {
+      SHEETS_WEBAPP_URL: "https://script.google.com/macros/s/AKfycbyARt3NHasPnF1RCFSYjtUU-k0S0DWONG9O5BfyNVZ9LVi96ro99WDjtKjheEyrE-qBWg/exec",
+      LOCAL_FALLBACK: true
+    };
+
+    const QUESTIONS = {
+      p1: [
+        "No me lo he planteado, prefiero seguir solo con clases en pista",
+        "Me lo he planteado pero no sé cómo empezar",
+        "Ya lo estoy haciendo de forma improvisada (WhatsApp, vídeos sueltos)",
+        "Ya tengo un sistema estructurado y busco mejorarlo"
+      ],
+      p2: [
+        "Ninguno o casi ninguno",
+        "Entre 1 y 3 alumnos",
+        "Entre 4 y 10 alumnos",
+        "Más de 10 alumnos"
+      ],
+      p3: [
+        "Menos de 2 horas",
+        "Entre 2 y 5 horas",
+        "Entre 5 y 10 horas",
+        "Más de 10 horas"
+      ],
+      p4: [
+        "No conozco ninguna",
+        "No creo que mis alumnos la usen",
+        "No tengo tiempo para aprender otra herramienta",
+        "El precio",
+        "Nada, estoy listo para probarla",
+        "Otro"
+      ],
+      p5: [
+        "Sí, cuenta conmigo desde el día 1",
+        "Sí, pero avísame cuando esté disponible para decidir",
+        "Todavía no lo sé",
+        "Prefiero que me contactéis más adelante"
+      ],
+      situacion: [
+        "Entrenador independiente",
+        "Trabajo en academia o club",
+        "Dirijo una academia"
+      ]
+    };
+
+    const FLOW = ["welcome", "p1", "p2", "p3", "p4", "p5", "p6", "ops", "success"];
+    const PROGRESS_STEPS = ["p1", "p2", "p3", "p4", "p5", "p6", "ops"];
+
+    const state = {
+      panel: "welcome",
+      answers: {
+        p1: "", p2: "", p3: "", p4: "", p4_other: "", p5: "", p6: "",
+        situacion: "", nombre: "", email: "", ciudad_pais: "", alumnos_activos: "", whatsapp: ""
+      },
+      fromEmail: false
+    };
+
+    /* ── URL identity (Klaviyo) ─────────────────────────────── */
+    function params() {
+      return new URLSearchParams(window.location.search);
+    }
+
+    function decodeSafe(v) {
+      if (!v) return "";
+      try { return decodeURIComponent(v.replace(/\+/g, " ")).trim(); }
+      catch { return String(v).trim(); }
+    }
+
+    function hydrateIdentity() {
+      const q = params();
+      const email = decodeSafe(q.get("email") || q.get("Email") || "");
+      const first = decodeSafe(q.get("nombre") || q.get("first_name") || q.get("firstName") || "");
+      const last = decodeSafe(q.get("apellidos") || q.get("last_name") || q.get("lastName") || "");
+      const full = decodeSafe(q.get("name") || q.get("nombre_completo") || "") || [first, last].filter(Boolean).join(" ");
+
+      if (email) {
+        state.answers.email = email;
+        state.fromEmail = true;
+        const emailEl = document.getElementById("email");
+        emailEl.value = email;
+        emailEl.readOnly = true;
+        document.getElementById("emailHint").textContent = "(desde tu invitación)";
+      }
+      if (full) {
+        state.answers.nombre = full;
+        document.getElementById("nombre").value = full;
+      }
+
+      const chip = document.getElementById("helloChip");
+      if (full || email) {
+        chip.hidden = false;
+        document.getElementById("helloName").textContent = full
+          ? `Hola, ${full.split(" ")[0]}`
+          : "Hola";
+        document.getElementById("helloEmail").textContent = email || "";
+      }
+
+      ["utm_source", "utm_medium", "utm_campaign"].forEach((k) => {
+        const v = decodeSafe(q.get(k));
+        if (v) state.answers[k] = v;
+      });
+    }
+
+    /* ── Scoring (reglas aprobadas) ─────────────────────────── */
+    function scoreAnswers(a) {
+      const i1 = QUESTIONS.p1.indexOf(a.p1) + 1;
+      const i2 = QUESTIONS.p2.indexOf(a.p2) + 1;
+      const i3 = QUESTIONS.p3.indexOf(a.p3) + 1;
+      const i5 = QUESTIONS.p5.indexOf(a.p5) + 1;
+
+      let readiness = "media";
+      if (i1 === 1 || i2 === 1) readiness = "baja";
+      else if (i1 >= 3 && i2 >= 3) readiness = "alta";
+
+      const painAlto = i3 >= 2;
+      const objAlumnos = a.p4 === "No creo que mis alumnos la usen";
+      const listo = a.p4 === "Nada, estoy listo para probarla";
+
+      if (i5 === 4) return "cold";
+      if (objAlumnos && readiness === "baja") return "cold";
+      if (i5 === 1 && readiness === "alta" && painAlto && !objAlumnos) return "hot";
+      if (i5 === 1 && readiness === "alta" && listo && !painAlto) return "warm";
+      if ((i5 === 2 || i5 === 3) && readiness === "baja" && (!painAlto || objAlumnos)) return "cold";
+      return "warm";
+    }
+
+    /* ── Options UI ─────────────────────────────────────────── */
+    function renderOptions() {
+      document.querySelectorAll(".options[data-q]").forEach((root) => {
+        const key = root.dataset.q;
+        const list = QUESTIONS[key];
+        root.innerHTML = "";
+        list.forEach((label, idx) => {
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "opt";
+          btn.setAttribute("role", "radio");
+          btn.dataset.value = label;
+          btn.innerHTML = `<span class="mark" aria-hidden="true"></span><span class="label">${label}</span>`;
+          btn.addEventListener("click", () => selectOption(key, label, root));
+          btn.addEventListener("keydown", (e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              selectOption(key, label, root);
+            }
+          });
+          root.appendChild(btn);
+          if (state.answers[key] === label) {
+            btn.classList.add("selected");
+            btn.setAttribute("aria-checked", "true");
+          } else {
+            btn.setAttribute("aria-checked", "false");
+          }
+        });
+      });
+    }
+
+    function selectOption(key, value, root) {
+      state.answers[key] = value;
+      root.querySelectorAll(".opt").forEach((el) => {
+        const on = el.dataset.value === value;
+        el.classList.toggle("selected", on);
+        el.setAttribute("aria-checked", on ? "true" : "false");
+      });
+
+      if (key === "p4") {
+        const wrap = document.getElementById("p4OtherWrap");
+        const show = value === "Otro";
+        wrap.classList.toggle("show", show);
+        if (!show) {
+          state.answers.p4_other = "";
+          document.getElementById("p4Other").value = "";
+        }
+      }
+
+      const panel = root.closest(".panel");
+      const nextBtn = panel && panel.querySelector("[data-next]");
+      if (nextBtn) nextBtn.disabled = !canAdvance(panel.dataset.panel);
+
+      // Auto-advance on mindset radios (not situacion — lives on ops step)
+      if (["p1", "p2", "p3", "p5"].includes(key)) {
+        window.setTimeout(() => {
+          if (state.panel === key) goNext();
+        }, 280);
+      }
+      if (key === "p4" && value !== "Otro") {
+        window.setTimeout(() => {
+          if (state.panel === "p4") goNext();
+        }, 280);
+      }
+    }
+
+    function canAdvance(panel) {
+      if (panel === "p1") return !!state.answers.p1;
+      if (panel === "p2") return !!state.answers.p2;
+      if (panel === "p3") return !!state.answers.p3;
+      if (panel === "p4") {
+        if (!state.answers.p4) return false;
+        if (state.answers.p4 === "Otro") return !!document.getElementById("p4Other").value.trim();
+        return true;
+      }
+      if (panel === "p5") return !!state.answers.p5;
+      if (panel === "p6") return true;
+      return true;
+    }
+
+    /* ── Navigation ─────────────────────────────────────────── */
+    function setPanel(name) {
+      state.panel = name;
+      document.querySelectorAll(".panel").forEach((p) => {
+        p.classList.toggle("active", p.dataset.panel === name);
+      });
+      updateProgress();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+
+      const panel = document.querySelector(`.panel[data-panel="${name}"]`);
+      const nextBtn = panel && panel.querySelector("[data-next]");
+      if (nextBtn) nextBtn.disabled = !canAdvance(name);
+    }
+
+    function updateProgress() {
+      const wrap = document.getElementById("progressWrap");
+      const idx = PROGRESS_STEPS.indexOf(state.panel);
+      const show = idx >= 0;
+      wrap.classList.toggle("visible", show);
+      wrap.setAttribute("aria-hidden", show ? "false" : "true");
+      if (!show) return;
+      const pct = Math.round(((idx + 1) / PROGRESS_STEPS.length) * 100);
+      document.getElementById("progressBar").style.width = pct + "%";
+      document.getElementById("progressLabel").textContent = pct + "%";
+      document.getElementById("progressTrack").setAttribute("aria-valuenow", String(pct));
+    }
+
+    function goNext() {
+      if (state.panel === "p4" && state.answers.p4 === "Otro") {
+        state.answers.p4_other = document.getElementById("p4Other").value.trim();
+        if (!state.answers.p4_other) return;
+      }
+      if (state.panel === "p6") {
+        state.answers.p6 = document.getElementById("p6").value.trim();
+      }
+      const i = FLOW.indexOf(state.panel);
+      if (i < 0 || i >= FLOW.length - 1) return;
+      if (!canAdvance(state.panel) && state.panel !== "welcome") return;
+      setPanel(FLOW[i + 1]);
+    }
+
+    function goBack() {
+      const i = FLOW.indexOf(state.panel);
+      if (i <= 0) return;
+      setPanel(FLOW[i - 1]);
+    }
+
+    /* ── Submit ─────────────────────────────────────────────── */
+    async function submitForm() {
+      const err = document.getElementById("opsError");
+      err.classList.remove("show");
+
+      const nombre = document.getElementById("nombre").value.trim();
+      const email = document.getElementById("email").value.trim();
+      const ciudad = document.getElementById("ciudad").value.trim();
+      const alumnos = document.getElementById("alumnos").value.trim();
+      const whatsapp = document.getElementById("whatsapp").value.trim();
+      const situacion = state.answers.situacion;
+
+      if (!nombre || !email || !ciudad || !alumnos || !situacion) {
+        err.textContent = "Completa los campos obligatorios para enviar.";
+        err.classList.add("show");
+        return;
+      }
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        err.textContent = "Revisa el email — no parece válido.";
+        err.classList.add("show");
+        return;
+      }
+
+      Object.assign(state.answers, {
+        nombre, email, ciudad_pais: ciudad, alumnos_activos: alumnos, whatsapp,
+        p6: document.getElementById("p6").value.trim(),
+        p4_other: document.getElementById("p4Other").value.trim()
+      });
+
+      const score = scoreAnswers(state.answers);
+      const payload = {
+        timestamp: new Date().toISOString(),
+        score,
+        ...state.answers,
+        user_agent: navigator.userAgent
+      };
+
+      const btn = document.getElementById("btnSubmit");
+      btn.disabled = true;
+      btn.textContent = "Enviando…";
+
+      const url = (CONFIG.SHEETS_WEBAPP_URL || "").trim();
+      let ok = false;
+
+      if (url) {
+        try {
+          await fetch(url, {
+            method: "POST",
+            mode: "no-cors",
+            headers: { "Content-Type": "text/plain;charset=utf-8" },
+            body: JSON.stringify(payload)
+          });
+          ok = true;
+        } catch (e) {
+          console.error(e);
+        }
+      } else {
+        document.getElementById("configWarn").classList.add("show");
+      }
+
+      if (!ok && CONFIG.LOCAL_FALLBACK) {
+        try {
+          const key = "gimadd_preacceso_submissions";
+          const prev = JSON.parse(localStorage.getItem(key) || "[]");
+          prev.push(payload);
+          localStorage.setItem(key, JSON.stringify(prev));
+          ok = true;
+        } catch (e) {
+          console.error(e);
+        }
+      }
+
+      if (!ok) {
+        err.textContent = "No se pudo enviar. Revisa la conexión e inténtalo de nuevo.";
+        err.classList.add("show");
+        btn.disabled = false;
+        btn.textContent = "Enviar pre-acceso";
+        return;
+      }
+
+      setPanel("success");
+    }
+
+    /* ── Boot ───────────────────────────────────────────────── */
+    function boot() {
+      renderOptions();
+      hydrateIdentity();
+
+      document.getElementById("btnStart").addEventListener("click", () => setPanel("p1"));
+      document.getElementById("btnSubmit").addEventListener("click", submitForm);
+      document.getElementById("p4Other").addEventListener("input", (e) => {
+        state.answers.p4_other = e.target.value;
+        const panel = document.querySelector('.panel[data-panel="p4"]');
+        const nextBtn = panel.querySelector("[data-next]");
+        nextBtn.disabled = !canAdvance("p4");
+      });
+
+      document.querySelectorAll("[data-next]").forEach((btn) => {
+        btn.addEventListener("click", goNext);
+      });
+      document.querySelectorAll("[data-back]").forEach((btn) => {
+        btn.addEventListener("click", goBack);
+      });
+
+      if (!(CONFIG.SHEETS_WEBAPP_URL || "").trim()) {
+        document.getElementById("configWarn").classList.add("show");
+      }
+
+      updateProgress();
+    }
+
+    boot();
+  </script>
+</body>
+</html>

@@ -117,22 +117,10 @@
       pointer-events: auto;
       text-decoration: none;
     }
-    .brand-mark {
-      width: 28px; height: 28px;
-      border-radius: 8px;
-      background: var(--yellow);
-      color: #111;
-      font-family: "Space Grotesk", sans-serif;
-      font-weight: 700;
-      font-size: 0.72rem;
-      display: grid; place-items: center;
-      letter-spacing: -0.04em;
-    }
-    .brand-name {
-      font-family: "Space Grotesk", sans-serif;
-      font-weight: 700;
-      font-size: 0.92rem;
-      letter-spacing: -0.02em;
+    .brand-logo {
+      height: 34px; width: auto; max-width: min(46vw, 160px);
+      object-fit: contain;
+      filter: drop-shadow(0 4px 14px rgba(0, 0, 0, 0.35));
     }
     .slot-pill {
       pointer-events: auto;
@@ -752,8 +740,7 @@
 <body>
   <header class="topbar">
     <a class="brand" href="#s1" aria-label="Gimadd Mentor">
-      <span class="brand-mark">GM</span>
-      <span class="brand-name">Gimadd Mentor</span>
+      <img class="brand-logo" src="assets/logos/imagotipo-blanco-800.png" alt="Gimadd Mentor" width="160" height="89" decoding="async" />
     </a>
     <span class="slot-pill" id="slotPill" aria-live="polite">Quedan 80 / 100 plazas</span>
   </header>
