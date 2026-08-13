@@ -1372,8 +1372,6 @@
         <p class="impact reveal reveal-d3" style="font-size:0.95rem">Más valor para tus jugadores. <strong>Más ingresos para ti.</strong></p>
 
         <div class="calc reveal reveal-d4" id="calc" aria-label="Calculadora de ingresos estimados">
-          <p class="calc-hint">Packs y programas se cobran <strong>una vez</strong> (el alumno los disfruta X meses). El seguimiento se cobra <strong>cada mes</strong>.</p>
-
           <div class="calc-block">
             <div class="calc-block-title">Pago único <span>ventas este mes · cobras 1 vez</span></div>
             <div class="calc-head" aria-hidden="true">
@@ -1381,31 +1379,31 @@
             </div>
             <div class="calc-rows">
               <div class="calc-row" data-calc-row data-kind="once">
-                <div class="svc">Videoanálisis <small>1 sesión · mercado ~40–55€</small></div>
+                <div class="svc">Videoanálisis</div>
                 <input class="qty" type="number" min="0" max="999" value="4" inputmode="numeric" aria-label="Ventas videoanálisis" />
                 <input class="price" type="number" min="0" max="9999" value="45" inputmode="decimal" aria-label="Precio videoanálisis" />
                 <div class="line-total" data-line-total>180 €</div>
               </div>
               <div class="calc-row" data-calc-row data-kind="once">
-                <div class="svc">Pack pista + vídeo <small>pago único · ~2 clases + 1 vídeo</small></div>
+                <div class="svc">Pack pista + vídeo</div>
                 <input class="qty" type="number" min="0" max="999" value="2" inputmode="numeric" aria-label="Ventas packs" />
                 <input class="price" type="number" min="0" max="9999" value="129" inputmode="decimal" aria-label="Precio pack" />
                 <div class="line-total" data-line-total>258 €</div>
               </div>
               <div class="calc-row" data-calc-row data-kind="once">
-                <div class="svc">Programa 3 meses <small>1 pago · dura 3 meses</small></div>
+                <div class="svc">Programa 3 meses</div>
                 <input class="qty" type="number" min="0" max="999" value="2" inputmode="numeric" aria-label="Ventas programas 3 meses" />
                 <input class="price" type="number" min="0" max="9999" value="199" inputmode="decimal" aria-label="Precio programa 3 meses" />
                 <div class="line-total" data-line-total>398 €</div>
               </div>
               <div class="calc-row" data-calc-row data-kind="once">
-                <div class="svc">Programa 6 meses <small>1 pago · dura 6 meses</small></div>
+                <div class="svc">Programa 6 meses</div>
                 <input class="qty" type="number" min="0" max="999" value="1" inputmode="numeric" aria-label="Ventas programas 6 meses" />
                 <input class="price" type="number" min="0" max="9999" value="349" inputmode="decimal" aria-label="Precio programa 6 meses" />
                 <div class="line-total" data-line-total>349 €</div>
               </div>
               <div class="calc-row" data-calc-row data-kind="once">
-                <div class="svc">Programa 12 meses <small>1 pago · dura 12 meses</small></div>
+                <div class="svc">Programa 12 meses</div>
                 <input class="qty" type="number" min="0" max="999" value="0" inputmode="numeric" aria-label="Ventas programas 12 meses" />
                 <input class="price" type="number" min="0" max="9999" value="599" inputmode="decimal" aria-label="Precio programa 12 meses" />
                 <div class="line-total" data-line-total>0 €</div>
@@ -1420,7 +1418,7 @@
             </div>
             <div class="calc-rows">
               <div class="calc-row" data-calc-row data-kind="recur">
-                <div class="svc">Seguimiento mensual <small>cuota · mercado ~50–70€</small></div>
+                <div class="svc">Seguimiento mensual</div>
                 <input class="qty" type="number" min="0" max="999" value="6" inputmode="numeric" aria-label="Alumnos con seguimiento mensual" />
                 <input class="price" type="number" min="0" max="9999" value="59" inputmode="decimal" aria-label="Cuota seguimiento mensual" />
                 <div class="line-total" data-line-total>354 €</div>
@@ -1439,10 +1437,9 @@
             </div>
             <div class="metric is-year">
               <div class="lbl">Total año</div>
-              <div class="val" id="mYear">18.468 € <small>/año*</small></div>
+              <div class="val" id="mYear">18.468 € <small>/año</small></div>
             </div>
           </div>
-          <p class="calc-hint">* Año = si mantienes el mismo ritmo de ventas de pago único + las cuotas recurrentes × 12. Precios orientativos de mercado ES/EU.</p>
         </div>
 
         <div class="cta-stack reveal reveal-d5">
@@ -1743,7 +1740,7 @@
         if (onceEl) onceEl.textContent = euro(once);
         if (recurEl) recurEl.textContent = euro(recur);
         if (mEl) mEl.innerHTML = euro(month) + " <small>/mes</small>";
-        if (yEl) yEl.innerHTML = euro(year) + " <small>/año*</small>";
+        if (yEl) yEl.innerHTML = euro(year) + " <small>/año</small>";
       }
       var calcRoot = document.getElementById("calc");
       if (calcRoot) {
