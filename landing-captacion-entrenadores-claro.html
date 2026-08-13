@@ -395,6 +395,78 @@
       font-weight: 800;
     }
 
+    /* Attention motion — only on active screen */
+    .card.is-active .impact strong,
+    .card.is-active .extra-copy strong,
+    .card.is-active .trust strong,
+    .card.is-active .list-block li strong,
+    .card.is-active .offer-feats strong,
+    .card.is-active .lw-cta-line strong,
+    .card.is-active .fly-caption strong,
+    .card.is-active .micro strong,
+    .card.is-active .price-disclaimer strong,
+    .card.is-active .cmp-after strong {
+      display: inline-block;
+      animation: attnPulse 2.4s var(--ease-spring) infinite;
+    }
+    .card.is-active .extra-copy strong:nth-of-type(2),
+    .card.is-active .list-block li:nth-child(2) strong,
+    .card.is-active .offer-feats li:nth-child(2) strong { animation-delay: 0.15s; }
+    .card.is-active .extra-copy strong:nth-of-type(3),
+    .card.is-active .list-block li:nth-child(3) strong,
+    .card.is-active .offer-feats li:nth-child(3) strong { animation-delay: 0.3s; }
+    .card.is-active .extra-copy strong:nth-of-type(4),
+    .card.is-active .list-block li:nth-child(4) strong,
+    .card.is-active .offer-feats li:nth-child(4) strong { animation-delay: 0.45s; }
+    .card.is-active .list-block li:nth-child(5) strong { animation-delay: 0.6s; }
+    .card.is-active .list-block li:nth-child(6) strong { animation-delay: 0.75s; }
+    @keyframes attnPulse {
+      0%, 100% { transform: translateY(0) scale(1); filter: brightness(1); }
+      50% { transform: translateY(-1px) scale(1.035); filter: brightness(1.08); }
+    }
+
+    .card.is-active .list-block li::before {
+      animation: checkPop 2.2s var(--ease-spring) infinite;
+    }
+    .card.is-active .list-block li:nth-child(2)::before { animation-delay: 0.12s; }
+    .card.is-active .list-block li:nth-child(3)::before { animation-delay: 0.24s; }
+    .card.is-active .list-block li:nth-child(4)::before { animation-delay: 0.36s; }
+    .card.is-active .list-block li:nth-child(5)::before { animation-delay: 0.48s; }
+    .card.is-active .list-block li:nth-child(6)::before { animation-delay: 0.6s; }
+    @keyframes checkPop {
+      0%, 100% { transform: scale(1); }
+      40% { transform: scale(1.25); }
+      70% { transform: scale(0.95); }
+    }
+
+    .card.is-active .offer-price .amount {
+      display: inline-block;
+      animation: priceGlow 2.8s ease-in-out infinite;
+    }
+    .card.is-active .offer.is-featured .offer-price .amount { animation-duration: 2.2s; }
+    @keyframes priceGlow {
+      0%, 100% { transform: scale(1); text-shadow: none; }
+      50% { transform: scale(1.06); text-shadow: 0 0 18px rgba(255,90,60,0.35); }
+    }
+
+    .card.is-active .offer-tag {
+      animation: tagWiggle 3s var(--ease-spring) infinite;
+    }
+    @keyframes tagWiggle {
+      0%, 100% { transform: translateX(0); }
+      30% { transform: translateX(2px); }
+      60% { transform: translateX(-1px); }
+    }
+
+    .card.is-active h1 em {
+      background-size: 200% 100%;
+      animation: emShine 3.5s ease-in-out infinite;
+    }
+    @keyframes emShine {
+      0%, 100% { background-position: 0% 50%; filter: brightness(1); }
+      50% { background-position: 100% 50%; filter: brightness(1.12); }
+    }
+
     /* Media — video local + fallback animado */
     .media {
       position: relative;
@@ -655,6 +727,19 @@
       font-size: 0.58rem; font-weight: 800; line-height: 1;
       color: #fff; background: var(--coral);
     }
+    .card.is-active .offer-feats li::before {
+      animation: checkPop 2.2s var(--ease-spring) infinite;
+    }
+    .card.is-active .offer-feats li:nth-child(2)::before { animation-delay: 0.15s; }
+    .card.is-active .offer-feats li:nth-child(3)::before { animation-delay: 0.3s; }
+    .card.is-active .offer-feats li:nth-child(4)::before { animation-delay: 0.45s; }
+    .card.is-active .btn-primary {
+      animation: ctaPulse 2.4s ease-in-out infinite;
+    }
+    @keyframes ctaPulse {
+      0%, 100% { transform: translateY(0); box-shadow: 0 12px 32px rgba(255, 90, 60, 0.38); }
+      50% { transform: translateY(-2px); box-shadow: 0 16px 36px rgba(255, 90, 60, 0.5); }
+    }
     .price-disclaimer {
       margin: 0.15rem 0 0;
       text-align: center;
@@ -738,24 +823,81 @@
       font-size: 0.66rem; color: var(--mute); line-height: 1.3;
     }
     .calc-split strong { color: var(--ink); font-weight: 700; }
+    .card.is-active .calc-split strong {
+      display: inline-block;
+      animation: attnPulse 2.2s var(--ease-spring) infinite;
+    }
     .calc-result { display: grid; grid-template-columns: 1fr 1fr; gap: 0.4rem; }
     .metric {
+      position: relative;
       border-radius: 14px; padding: 0.65rem 0.7rem;
       background: linear-gradient(145deg, rgba(200,245,66,0.35), rgba(200,245,66,0.12));
       border: 1px solid rgba(11,61,58,0.1);
+      overflow: hidden;
+    }
+    .card.is-active .metric {
+      animation: metricBreathe 2.6s ease-in-out infinite;
+    }
+    .card.is-active .metric.is-year { animation-delay: 0.35s; }
+    @keyframes metricBreathe {
+      0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(57,181,74,0); }
+      50% { transform: scale(1.02); box-shadow: 0 8px 22px rgba(31,122,50,0.14); }
     }
     .metric.is-year {
       background: linear-gradient(145deg, rgba(255,90,60,0.16), rgba(255,90,60,0.06));
       border-color: rgba(255,90,60,0.22);
+    }
+    .card.is-active .metric.is-year {
+      animation-name: metricBreatheCoral;
+    }
+    @keyframes metricBreatheCoral {
+      0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255,90,60,0); }
+      50% { transform: scale(1.025); box-shadow: 0 8px 24px rgba(255,90,60,0.2); }
     }
     .metric .lbl { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--mute); margin-bottom: 0.15rem; font-weight: 700; }
     .metric .val {
       font-family: "IBM Plex Mono", monospace;
       font-weight: 700; font-size: 1.15rem; color: var(--court);
       letter-spacing: -0.03em;
+      display: inline-block;
+      transform-origin: left center;
+    }
+    .card.is-active .metric .val {
+      animation: totalPulse 1.8s var(--ease-spring) infinite;
+    }
+    .card.is-active .metric.is-year .val { animation-delay: 0.25s; }
+    @keyframes totalPulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.08); text-shadow: 0 0 16px rgba(31,122,50,0.28); }
     }
     .metric.is-year .val { color: var(--coral-deep); }
+    .card.is-active .metric.is-year .val {
+      animation-name: totalPulseCoral;
+    }
+    @keyframes totalPulseCoral {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.1); text-shadow: 0 0 18px rgba(255,90,60,0.35); }
+    }
     .metric .val small { font-size: 0.68rem; color: var(--mute); font-weight: 500; }
+    .metric.is-pop .val {
+      animation: totalPop 0.55s var(--ease-spring) both !important;
+    }
+    @keyframes totalPop {
+      0% { transform: scale(0.86); opacity: 0.55; }
+      55% { transform: scale(1.18); opacity: 1; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    .metric::after {
+      content: "";
+      position: absolute; inset: 0;
+      background: linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.45) 50%, transparent 60%);
+      transform: translateX(-120%);
+      pointer-events: none;
+    }
+    .card.is-active .metric::after {
+      animation: shine 3.4s ease-in-out infinite;
+    }
+    .card.is-active .metric.is-year::after { animation-delay: 0.7s; }
 
     .trust {
       font-size: 0.78rem; color: var(--ink-soft); line-height: 1.4;
@@ -1154,6 +1296,21 @@
         animation: none !important;
       }
       .lw-arrow-rotator { transform: rotate(0deg); }
+      .card.is-active .impact strong,
+      .card.is-active .extra-copy strong,
+      .card.is-active .trust strong,
+      .card.is-active .list-block li strong,
+      .card.is-active .offer-feats strong,
+      .card.is-active .lw-cta-line strong,
+      .card.is-active .metric,
+      .card.is-active .metric .val,
+      .card.is-active .offer-price .amount,
+      .card.is-active h1 em {
+        animation: none !important;
+        transform: none !important;
+        filter: none !important;
+        text-shadow: none !important;
+      }
     }
   </style>
 </head>
@@ -1728,7 +1885,18 @@
       function euro(n) {
         return new Intl.NumberFormat("es-ES", { maximumFractionDigits: 0 }).format(Math.round(n)) + " €";
       }
-      function recalc() {
+      var lastMonth = null;
+      var lastYear = null;
+      function popMetric(el) {
+        if (!el) return;
+        var metric = el.closest(".metric");
+        if (!metric) return;
+        metric.classList.remove("is-pop");
+        void metric.offsetWidth;
+        metric.classList.add("is-pop");
+        window.setTimeout(function () { metric.classList.remove("is-pop"); }, 600);
+      }
+      function recalc(fromInput) {
         var once = 0;
         var recur = 0;
         document.querySelectorAll("[data-calc-row]").forEach(function (row) {
@@ -1751,17 +1919,23 @@
         if (recurEl) recurEl.textContent = euro(recur);
         if (mEl) mEl.innerHTML = euro(month) + " <small>/mes</small>";
         if (yEl) yEl.innerHTML = euro(year) + " <small>/año</small>";
+        if (fromInput) {
+          if (lastMonth !== month) popMetric(mEl);
+          if (lastYear !== year) popMetric(yEl);
+        }
+        lastMonth = month;
+        lastYear = year;
       }
       var calcRoot = document.getElementById("calc");
       if (calcRoot) {
         calcRoot.addEventListener("input", function (e) {
-          if (e.target.matches(".qty, .price")) recalc();
+          if (e.target.matches(".qty, .price")) recalc(true);
         });
         calcRoot.addEventListener("change", function (e) {
-          if (e.target.matches(".qty, .price")) recalc();
+          if (e.target.matches(".qty, .price")) recalc(true);
         });
       }
-      recalc();
+      recalc(false);
 
       /* Navigation */
       var deck = document.getElementById("deck");
