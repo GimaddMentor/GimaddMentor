@@ -292,9 +292,11 @@
       scroll-behavior: smooth;
       -webkit-overflow-scrolling: touch;
       overscroll-behavior-y: contain;
-      /* Ensure wheel/trackpad works on desktop */
       touch-action: pan-y;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
     }
+    .deck::-webkit-scrollbar { display: none; width: 0; height: 0; }
     .card {
       position: relative;
       min-height: 100dvh;
@@ -303,6 +305,8 @@
       scroll-snap-stop: always;
       display: flex;
       flex-direction: column;
+      justify-content: center;
+      align-items: center;
       padding:
         calc(var(--safe-t) + clamp(3rem, 5.2vh, 3.85rem))
         clamp(0.85rem, 3.2vw, 1.35rem)
@@ -311,19 +315,23 @@
       isolation: isolate;
     }
     .card-inner {
+      --fit-scale: 1;
       width: min(560px, 100%);
+      max-width: 100%;
       margin: 0 auto;
-      flex: 1;
+      flex: 1 1 auto;
       min-height: 0;
+      height: 100%;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: clamp(0.4rem, 1.35vh, 0.9rem);
-      overflow-x: hidden;
-      overflow-y: auto;
-      -webkit-overflow-scrolling: touch;
+      gap: clamp(0.35rem, 1.2vh, 0.85rem);
+      overflow: hidden;
       text-align: center;
+      transform: scale(var(--fit-scale));
+      transform-origin: center center;
+      will-change: transform;
     }
     .card-inner > * { width: 100%; max-width: 100%; }
     .card-inner > .feel,
@@ -351,9 +359,9 @@
     #s3 .media,
     #s5 .media {
       flex: 1 1 auto;
-      min-height: clamp(120px, 18vh, 200px);
-      max-height: min(34vh, 280px);
-      margin-block: clamp(0.2rem, 1vh, 0.65rem);
+      min-height: clamp(120px, 16vh, 180px);
+      max-height: min(42vh, 420px);
+      margin-block: clamp(0.15rem, 0.9vh, 0.55rem);
     }
     #s1 .cta-stack,
     #s3 .cta-stack,
@@ -545,7 +553,7 @@
       overflow: hidden;
       aspect-ratio: 16 / 9;
       width: 100%;
-      max-height: min(30vh, 240px);
+      max-height: min(36vh, 360px);
       box-shadow: var(--shadow);
       border: 1px solid rgba(255,255,255,0.7);
       background: linear-gradient(145deg, #0b3d3a 0%, #14635c 50%, #c8f542 100%);
@@ -1291,8 +1299,12 @@
     }
 
     @media (min-width: 768px) {
-      .card-inner { width: min(640px, 100%); }
-      .card--fly .card-inner { width: min(760px, 100%); }
+      .card {
+        padding-left: clamp(1rem, 4vw, 3rem);
+        padding-right: clamp(4.25rem, 5.5vw, 5.5rem);
+      }
+      .card-inner { width: min(680px, 100%); }
+      .card--fly .card-inner { width: min(820px, 100%); }
       .lw-wrap[data-count="9"] {
         --ring-size: min(48vw, 52vh, 500px);
         --step-w: clamp(80px, 9vw, 96px);
@@ -1309,7 +1321,13 @@
       .split-lists { grid-template-columns: 1fr 1fr; max-height: none; overflow: visible; }
       .progress { right: 0.75rem; }
       .deck { scroll-snap-type: y proximity; }
-      #s1 .media, #s3 .media, #s5 .media { max-height: min(32vh, 280px); }
+      #s1 .media, #s3 .media, #s5 .media { max-height: min(40vh, 400px); }
+    }
+
+    @media (min-width: 1100px) {
+      .card-inner { width: min(720px, 100%); }
+      .card--fly .card-inner { width: min(880px, 100%); }
+      #s1 .media, #s3 .media, #s5 .media { max-height: min(44vh, 460px); }
     }
 
     @media (max-height: 740px) {
@@ -1958,6 +1976,7 @@
           });
           item.classList.toggle("is-open", !open);
           btn.setAttribute("aria-expanded", open ? "false" : "true");
+          if (typeof scheduleFit === "function") scheduleFit();
         });
       });
 
@@ -2024,6 +2043,38 @@
       var btnPrev = document.getElementById("btnPrev");
       var btnNext = document.getElementById("btnNext");
       var active = 0;
+      var fitRaf = 0;
+
+      function fitCard(card) {
+        var inner = card.querySelector(".card-inner");
+        if (!inner) return;
+        inner.style.setProperty("--fit-scale", "1");
+        /* Forzar medición sin escala */
+        void inner.offsetHeight;
+        var availH = inner.clientHeight;
+        var availW = inner.clientWidth;
+        if (!availH || !availW) return;
+        var needH = inner.scrollHeight;
+        var needW = inner.scrollWidth;
+        var scale = Math.min(1, availH / Math.max(needH, 1), availW / Math.max(needW, 1));
+        if (scale < 0.98) {
+          scale = Math.max(0.68, scale);
+          inner.style.setProperty("--fit-scale", scale.toFixed(4));
+        }
+      }
+
+      function fitAllCards() {
+        cards.forEach(fitCard);
+      }
+
+      function scheduleFit() {
+        cancelAnimationFrame(fitRaf);
+        fitRaf = requestAnimationFrame(function () {
+          fitAllCards();
+          /* Segunda pasada tras layout estable */
+          requestAnimationFrame(fitAllCards);
+        });
+      }
 
       cards.forEach(function (card, i) {
         var b = document.createElement("button");
@@ -2052,6 +2103,7 @@
         if (hint) hint.classList.toggle("is-hidden", index >= cards.length - 1);
         if (btnPrev) btnPrev.disabled = index <= 0;
         if (btnNext) btnNext.disabled = index >= cards.length - 1;
+        scheduleFit();
       }
 
       if (btnPrev) btnPrev.addEventListener("click", function () { goTo(active - 1); });
@@ -2114,7 +2166,17 @@
         }, 140);
       }, { passive: true });
 
+      window.addEventListener("resize", scheduleFit);
+      window.addEventListener("orientationchange", scheduleFit);
+      if (window.visualViewport) {
+        window.visualViewport.addEventListener("resize", scheduleFit);
+      }
+      if (document.fonts && document.fonts.ready) {
+        document.fonts.ready.then(scheduleFit);
+      }
+
       setActive(0);
+      scheduleFit();
     })();
   </script>
 </body>
