@@ -168,6 +168,7 @@
   .card-title{font-size:14px;font-weight:600;line-height:1.3;margin:0 0 4px;}
   .card-module{font-size:11px;color:var(--primary);font-weight:600;margin-bottom:6px;}
   .card-thumb{width:100%;height:92px;object-fit:cover;border-radius:7px;border:1px solid var(--border);margin-bottom:7px;display:block;background:var(--surface-soft);}
+  .zoomable{cursor:zoom-in;}
   .card-desc{font-size:12px;color:var(--ink-soft);line-height:1.4;margin:0 0 8px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
   .card-foot{display:flex;justify-content:space-between;align-items:center;font-size:11px;color:var(--ink-faint);}
   .card-foot .who{max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
@@ -193,6 +194,10 @@
   }
   .drop.drag{border-color:var(--primary);background:var(--primary-soft);color:var(--primary-dark);}
   .drop img{max-width:100%;max-height:220px;border-radius:8px;display:block;margin:0 auto 8px;}
+  .drop video,.detail-video,.comment video,.comment-preview-video{
+    width:100%;max-height:240px;border-radius:8px;display:block;margin:0 auto 8px;background:#0b1220;
+  }
+  .card-video{width:100%;height:92px;object-fit:cover;border-radius:7px;border:1px solid var(--border);margin-bottom:7px;display:block;background:#0b1220;}
   .drop small{display:block;margin-top:6px;}
   .status-row{display:flex;gap:6px;flex-wrap:wrap;}
   .status-btn{
@@ -206,9 +211,11 @@
   .comment-head b{color:var(--ink-soft);}
   .comment p{margin:0;font-size:13.5px;line-height:1.4;white-space:pre-wrap;}
   .comment img{max-width:100%;border-radius:8px;margin-top:8px;border:1px solid var(--border);}
+  .comment video{max-height:240px;margin-top:8px;border:1px solid var(--border);}
   .comment-form{display:flex;gap:8px;align-items:center;}
   .comment-form input{flex:1;border:1px solid var(--border);background:var(--surface-soft);color:var(--ink);border-radius:9px;padding:9px 11px;font-size:13.5px;font-family:inherit;}
   .comment-preview{max-height:72px;border-radius:8px;border:1px solid var(--border);}
+  .comment-preview-video{max-height:120px;margin-top:8px;border:1px solid var(--border);}
   .modal-foot{display:flex;gap:8px;padding:14px 20px;border-top:1px solid var(--border);align-items:center;}
   .confirm-inline{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--danger);}
   .toast{
@@ -216,6 +223,19 @@
     padding:9px 16px;border-radius:20px;font-size:13px;box-shadow:var(--shadow);z-index:80;
   }
   .footnote{margin-top:26px;font-size:11.5px;color:var(--ink-faint);text-align:center;}
+  .lightbox{
+    position:fixed;inset:0;z-index:100;background:rgba(8,12,20,.88);
+    display:flex;align-items:center;justify-content:center;padding:28px 16px;cursor:zoom-out;
+  }
+  .lightbox img{
+    max-width:min(96vw,1400px);max-height:92vh;object-fit:contain;border-radius:8px;
+    box-shadow:0 20px 60px rgba(0,0,0,.5);cursor:default;
+  }
+  .lightbox-close{
+    position:absolute;top:12px;right:14px;border:none;background:rgba(255,255,255,.12);
+    color:#fff;width:36px;height:36px;border-radius:50%;font-size:20px;line-height:1;cursor:pointer;
+  }
+  .lightbox-close:hover{background:rgba(255,255,255,.22);}
 </style>
 </head>
 <body>
@@ -257,6 +277,10 @@
 </div>
 <div id="modalRoot"></div>
 <div id="toastRoot"></div>
+<div id="lightbox" class="lightbox" hidden role="dialog" aria-modal="true">
+  <button type="button" class="lightbox-close" id="lightboxClose" aria-label="Cerrar imagen">✕</button>
+  <img id="lightboxImg" alt="">
+</div>
 
 <script>
 (function(){
@@ -297,17 +321,22 @@
       fieldPriority: "Prioridad",
       fieldDesc: "Descripción",
       descPh: "Qué esperabas que pasara y qué ha pasado…",
-      fieldShot: "Captura o imagen (opcional)",
-      dropEmpty: "Arrastra una imagen, haz clic para elegirla, o pega (Ctrl/Cmd+V) una captura",
-      dropReplace: "Haz clic para reemplazar · pega otra captura con Ctrl/Cmd+V",
+      fieldShot: "Captura, imagen o vídeo (opcional)",
+      dropEmpty: "Arrastra una imagen o un vídeo, haz clic para elegir, o pega (Ctrl/Cmd+V) una captura",
+      dropReplace: "Haz clic para añadir o reemplazar · pega otra captura con Ctrl/Cmd+V",
+      dropHint: "Imagen y vídeo pueden ir juntos. Vídeo: MP4, WebM o MOV, hasta 80 MB.",
       cancel: "Cancelar",
       save: "Guardar hallazgo",
       comments: "Comentarios",
       noComments: "Aún no hay comentarios",
-      commentPh: "Añadir un comentario… También puedes pegar una imagen",
+      commentPh: "Añadir un comentario… También puedes pegar una imagen o adjuntar un vídeo",
       send: "Enviar",
       status: "Estado",
       capture: "Captura",
+      videoLabel: "Vídeo",
+      attachImage: "Adjuntar imagen",
+      attachVideo: "Adjuntar vídeo",
+      closeImg: "Cerrar imagen",
       reportedBy: "Reportado por",
       updated: "Actualizado",
       deleteAsk: "¿Eliminar este hallazgo?",
@@ -317,6 +346,10 @@
       deleted: "Hallazgo eliminado.",
       imgWait: "Procesando imagen…",
       imgFail: "No se pudo procesar la imagen.",
+      vidWait: "Subiendo vídeo…",
+      vidFail: "No se pudo subir el vídeo. Prueba con un MP4 o WebM más pequeño.",
+      vidBig: "El vídeo es demasiado grande (máximo 80 MB).",
+      vidType: "Usa un vídeo MP4, WebM o MOV.",
       saveFail: "No se pudo guardar. Inténtalo de nuevo.",
       translating: "Traduciendo…",
       syncFail: "No se pudo sincronizar el tablero compartido. Trabajando en este navegador.",
@@ -369,17 +402,22 @@
       fieldPriority: "Приоритет",
       fieldDesc: "Описание",
       descPh: "Что должно было произойти и что произошло…",
-      fieldShot: "Скриншот или изображение (необязательно)",
-      dropEmpty: "Перетащи изображение, нажми чтобы выбрать, или вставь (Ctrl/Cmd+V) скриншот",
-      dropReplace: "Нажми чтобы заменить · вставь другой скриншот Ctrl/Cmd+V",
+      fieldShot: "Скриншот, изображение или видео (необязательно)",
+      dropEmpty: "Перетащи изображение или видео, нажми чтобы выбрать, или вставь (Ctrl/Cmd+V) скриншот",
+      dropReplace: "Нажми чтобы добавить или заменить · вставь другой скриншот Ctrl/Cmd+V",
+      dropHint: "Изображение и видео можно приложить вместе. Видео: MP4, WebM или MOV, до 80 МБ.",
       cancel: "Отмена",
       save: "Сохранить",
       comments: "Комментарии",
       noComments: "Комментариев пока нет",
-      commentPh: "Добавить комментарий… Можно также вставить изображение",
+      commentPh: "Добавить комментарий… Можно вставить изображение или приложить видео",
       send: "Отправить",
       status: "Статус",
       capture: "Скриншот",
+      videoLabel: "Видео",
+      attachImage: "Приложить изображение",
+      attachVideo: "Приложить видео",
+      closeImg: "Закрыть изображение",
       reportedBy: "Сообщил",
       updated: "Обновлено",
       deleteAsk: "Удалить эту запись?",
@@ -389,6 +427,10 @@
       deleted: "Запись удалена.",
       imgWait: "Обработка изображения…",
       imgFail: "Не удалось обработать изображение.",
+      vidWait: "Загрузка видео…",
+      vidFail: "Не удалось загрузить видео. Попробуй меньший MP4 или WebM.",
+      vidBig: "Видео слишком большое (максимум 80 МБ).",
+      vidType: "Нужен файл MP4, WebM или MOV.",
       saveFail: "Не удалось сохранить. Попробуй ещё раз.",
       translating: "Перевод…",
       syncFail: "Не удалось синхронизировать общую доску. Работа в этом браузере.",
@@ -440,6 +482,7 @@
     confirmDeleteId: null,
     draft: null,
     commentImage: null,
+    commentVideo: null,
     translating: false
   };
 
@@ -481,8 +524,17 @@
   function safeImg(src){
     return typeof src === "string" && (src.indexOf("data:image/") === 0 || src.indexOf("https://") === 0);
   }
+  function safeVideo(src){
+    return typeof src === "string" && /^https:\/\/[^\s"'<>]+$/i.test(src);
+  }
+  function videoPlayerHtml(url, cls, poster){
+    return '<video class="' + (cls || "") + '" controls playsinline preload="metadata" crossorigin="anonymous"'
+      + (safeImg(poster) ? ' poster="' + poster + '"' : "")
+      + ' src="' + escapeHtml(url) + '"></video>';
+  }
   function warnIcon(){ return '<svg class="icn" style="width:16px;height:16px" viewBox="0 0 24 24" fill="none"><path d="M12 9v4m0 4h.01M10.3 3.9 2.7 17.5c-.6 1 .1 2.3 1.3 2.3h16c1.2 0 1.9-1.3 1.3-2.3L13.7 3.9c-.6-1.1-2-1.1-2.7 0Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>'; }
   function camIcon(){ return '<svg class="icn" viewBox="0 0 24 24" fill="none"><path d="M4 8h3l1.5-2h7L17 8h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1Z" stroke="currentColor" stroke-width="1.4"/><circle cx="12" cy="13" r="3.2" stroke="currentColor" stroke-width="1.4"/></svg>'; }
+  function videoIcon(){ return '<svg class="icn" viewBox="0 0 24 24" fill="none"><rect x="3" y="6.5" width="12" height="11" rx="1.6" stroke="currentColor" stroke-width="1.4"/><path d="M15 10.2 20.5 7v10L15 13.8v-3.6Z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>'; }
   function chatIcon(){ return '<svg class="icn" viewBox="0 0 24 24" fill="none"><path d="M21 11.5a8.4 8.4 0 0 1-8.5 8.4c-1.2 0-2.3-.2-3.3-.7L3 20l1-5.6a8.4 8.4 0 0 1 8.5-11.9A8.4 8.4 0 0 1 21 11.5Z" stroke="currentColor" stroke-width="1.4"/></svg>'; }
 
   function persistTrCache(){
@@ -609,11 +661,11 @@
   }
   function clearBanner(){ document.getElementById("banner").innerHTML = ""; }
   var toastTimer = null;
-  function showToast(msg){
+  function showToast(msg, ms){
     var root = document.getElementById("toastRoot");
     root.innerHTML = '<div class="toast">' + escapeHtml(msg) + "</div>";
     clearTimeout(toastTimer);
-    toastTimer = setTimeout(function(){ root.innerHTML = ""; }, 2600);
+    toastTimer = setTimeout(function(){ root.innerHTML = ""; }, ms || 2600);
   }
 
   function setupLocalStore(){
@@ -694,7 +746,7 @@
       var writes = [mantlePath("t/" + id, "POST", packed.doc)];
       if (packed.extra) writes.push(mantlePath("i/" + id, "POST", packed.extra));
       return Promise.all(writes).then(function(){
-        state.items.unshift(Object.assign({}, packed.doc, packed.extra || {}, {screenshot: item.screenshot}));
+        state.items.unshift(Object.assign({}, packed.doc, packed.extra || {}, {screenshot: item.screenshot, video: item.video || packed.doc.video || null}));
         render();
       }).catch(function(err){
         console.error(err);
@@ -710,7 +762,7 @@
       if (packed.extra) writes.push(mantlePath("i/" + id, "POST", packed.extra));
       Promise.all(writes).then(function(){
         var idx = state.items.findIndex(function(i){ return i.id === id; });
-        if (idx > -1) state.items[idx] = Object.assign({}, packed.doc, packed.extra || {}, {screenshot: merged.screenshot});
+        if (idx > -1) state.items[idx] = Object.assign({}, packed.doc, packed.extra || {}, {screenshot: merged.screenshot, video: merged.video || packed.doc.video || null});
         render();
       }).catch(function(err){
         console.error(err);
@@ -734,6 +786,95 @@
 
   function init(){
     setupDbStore();
+  }
+
+  var MAX_VIDEO_BYTES = 80 * 1024 * 1024;
+  var VIDEO_NAME_RE = /\.(mp4|webm|mov|m4v|ogv)$/i;
+
+  function isImageFile(file){
+    return !!(file && String(file.type || "").indexOf("image/") === 0);
+  }
+  function isVideoFile(file){
+    if (!file) return false;
+    var t = String(file.type || "").toLowerCase();
+    if (t.indexOf("video/") === 0) return true;
+    return VIDEO_NAME_RE.test(file.name || "");
+  }
+  function videoUploadName(file){
+    var name = String(file && file.name || "clip.mp4");
+    if (VIDEO_NAME_RE.test(name)) return name.replace(/[^\w.\-]+/g, "_");
+    var t = String(file && file.type || "");
+    var ext = t === "video/webm" ? ".webm" : (t === "video/quicktime" ? ".mov" : ".mp4");
+    return "clip" + ext;
+  }
+  function uploadVideoFile(file){
+    var fd = new FormData();
+    fd.append("reqtype", "fileupload");
+    fd.append("time", "72h");
+    fd.append("fileToUpload", file, videoUploadName(file));
+    return fetch("https://litterbox.catbox.moe/resources/internals/api.php", { method: "POST", body: fd }).then(function(res){
+      if (!res.ok) throw new Error("http");
+      return res.text();
+    }).then(function(txt){
+      var url = String(txt || "").trim().split(/\s+/)[0];
+      if (!safeVideo(url) || url.indexOf("https://litter.catbox.moe/") !== 0) throw new Error("bad_url");
+      return url;
+    });
+  }
+  function videoFileToPoster(file){
+    return new Promise(function(resolve, reject){
+      var url = URL.createObjectURL(file);
+      var v = document.createElement("video");
+      var done = false;
+      function finish(err, data){
+        if (done) return;
+        done = true;
+        URL.revokeObjectURL(url);
+        if (err) reject(err);
+        else resolve(data);
+      }
+      v.muted = true;
+      v.playsInline = true;
+      v.preload = "auto";
+      v.onloadeddata = function(){
+        try { v.currentTime = Math.min(0.25, (v.duration && isFinite(v.duration) ? v.duration : 1) * 0.1); }
+        catch(e){ capture(); }
+      };
+      v.onseeked = capture;
+      v.onerror = function(){ finish(new Error("poster")); };
+      function capture(){
+        try {
+          var w = v.videoWidth || 0, h = v.videoHeight || 0;
+          if (!w || !h){ finish(new Error("poster")); return; }
+          var scale = Math.min(1, 640 / w);
+          var cw = Math.max(1, Math.round(w * scale));
+          var ch = Math.max(1, Math.round(h * scale));
+          var canvas = document.createElement("canvas");
+          canvas.width = cw; canvas.height = ch;
+          canvas.getContext("2d").drawImage(v, 0, 0, cw, ch);
+          finish(null, canvas.toDataURL("image/jpeg", 0.7));
+        } catch(e){ finish(e || new Error("poster")); }
+      }
+      setTimeout(function(){ finish(new Error("poster")); }, 5000);
+      v.src = url;
+    });
+  }
+  function wireRemoteVideos(){
+    var nodes = document.querySelectorAll("video[src^='https://']");
+    Array.prototype.forEach.call(nodes, function(el){
+      if (el.getAttribute("data-wired") === "1") return;
+      el.setAttribute("data-wired", "1");
+      el.addEventListener("error", function(){
+        if (el.getAttribute("data-blobbed") === "1") return;
+        var src = el.getAttribute("src");
+        if (!safeVideo(src)) return;
+        el.setAttribute("data-blobbed", "1");
+        fetch(src).then(function(r){ if (!r.ok) throw new Error("http"); return r.blob(); }).then(function(blob){
+          el.removeAttribute("crossorigin");
+          el.src = URL.createObjectURL(blob);
+        }).catch(function(){});
+      });
+    });
   }
 
   function fileToCompressedDataUrl(file){
@@ -839,6 +980,7 @@
       html += "</div></div>";
     });
     document.getElementById("board").innerHTML = html;
+    wireRemoteVideos();
     items.forEach(function(it){
       if (it.hasRemoteShot && !it.screenshot && !it._loadingShot){
         it._loadingShot = true;
@@ -854,37 +996,37 @@
   function cardHtml(it){
     var commentCount = (it.comments || []).length;
     var shot = it.screenshot;
+    var media = "";
+    if (safeImg(shot)) media += '<img class="card-thumb zoomable" data-lightbox src="' + shot + '" alt="">';
+    if (safeVideo(it.video)) media += videoPlayerHtml(it.video, "card-video", shot);
     return '<div class="card" data-open="' + escapeHtml(it.id) + '">'
       + '<div class="card-top"><span class="chip chip-' + escapeHtml(it.priority||"media") + '">' + escapeHtml(priLabel(it.priority)) + "</span></div>"
       + '<div class="card-module">' + escapeHtml(moduleLabel(it.module)) + "</div>"
-      + (safeImg(shot) ? '<img class="card-thumb" src="' + shot + '" alt="">' : "")
+      + media
       + '<p class="card-title" data-i18n-text="' + escapeHtml(it.title || "") + '">' + escapeHtml(it.title || t("untitled")) + "</p>"
       + (it.description ? '<p class="card-desc" data-i18n-text="' + escapeHtml(it.description) + '">' + escapeHtml(it.description) + "</p>" : "")
       + '<div class="card-foot"><span class="who">' + escapeHtml(it.reporter || t("anon")) + " · " + fmtDate(it.createdAt) + "</span>"
-      + '<span class="meta">' + (shot || it.hasRemoteShot ? camIcon() : "") + (commentCount ? chatIcon() + commentCount : "") + "</span></div>"
+      + '<span class="meta">' + (shot || it.hasRemoteShot ? camIcon() : "") + (safeVideo(it.video) ? videoIcon() : "") + (commentCount ? chatIcon() + commentCount : "") + "</span></div>"
       + "</div>";
   }
 
   function openNewModal(){
-    state.draft = { title:"", module: "video", priority:"media", description:"", screenshot:null };
+    state.draft = { title:"", module: "video", priority:"media", description:"", screenshot:null, video:null };
     state.newOpen = true;
     render();
     setTimeout(function(){ var el = document.getElementById("draftTitle"); if (el) el.focus(); }, 30);
   }
 
-  function dropzoneHtml(dataUrl){
-    if (dataUrl){
-      return '<div class="drop" id="dropzone" tabindex="0">'
-        + '<img src="' + dataUrl + '" alt="">'
-        + "<small>" + escapeHtml(t("dropReplace")) + "</small>"
-        + '<input type="file" accept="image/*" id="fileInput" hidden>'
-      + "</div>";
-    }
-    return '<div class="drop" id="dropzone" tabindex="0">'
-      + camIcon()
-      + "<div>" + escapeHtml(t("dropEmpty")) + "</div>"
-      + '<input type="file" accept="image/*" id="fileInput" hidden>'
-    + "</div>";
+  function dropzoneHtml(shot, video){
+    var has = safeImg(shot) || safeVideo(video);
+    var inner = "";
+    if (safeVideo(video)) inner += videoPlayerHtml(video, "drop-video", shot);
+    else if (safeImg(shot)) inner += '<img src="' + shot + '" alt="">';
+    else inner += "<div>" + videoIcon() + camIcon() + "</div>";
+    inner += "<div>" + escapeHtml(t(has ? "dropReplace" : "dropEmpty")) + "</div>";
+    inner += "<small>" + escapeHtml(t("dropHint")) + "</small>";
+    inner += '<input type="file" accept="image/*,video/mp4,video/webm,video/quicktime,video/*" id="fileInput" hidden multiple>';
+    return '<div class="drop" id="dropzone" tabindex="0">' + inner + "</div>";
   }
 
   function newModalHtml(){
@@ -906,7 +1048,7 @@
             + '<div class="field"><label>' + escapeHtml(t("fieldPriority")) + "</label><select id=\"draftPriority\">" + prOpts + "</select></div>"
           + "</div>"
           + '<div class="field"><label>' + escapeHtml(t("fieldDesc")) + '</label><textarea id="draftDesc" rows="4" placeholder="' + escapeHtml(t("descPh")) + '">' + escapeHtml(d.description) + "</textarea></div>"
-          + '<div class="field"><label>' + escapeHtml(t("fieldShot")) + "</label>" + dropzoneHtml(d.screenshot) + "</div>"
+          + '<div class="field"><label>' + escapeHtml(t("fieldShot")) + "</label>" + dropzoneHtml(d.screenshot, d.video) + "</div>"
         + "</div>"
         + '<div class="modal-foot">'
           + '<button class="btn btn-ghost" data-close="new">' + escapeHtml(t("cancel")) + "</button>"
@@ -926,7 +1068,8 @@
     var comments = (it.comments || []).slice().reverse().map(function(c){
       return '<div class="comment"><div class="comment-head"><b>' + escapeHtml(c.author||t("anon")) + "</b><span>" + fmtDate(c.at) + "</span></div>"
         + (c.text ? '<p data-i18n-text="' + escapeHtml(c.text) + '">' + escapeHtml(c.text) + "</p>" : "")
-        + (safeImg(c.image) ? '<img src="' + c.image + '" alt="">' : "")
+        + (safeImg(c.image) ? '<img class="zoomable" data-lightbox src="' + c.image + '" alt="">' : "")
+        + (safeVideo(c.video) ? videoPlayerHtml(c.video, "", c.image) : "")
         + "</div>";
     }).join("") || '<div class="empty-col">' + escapeHtml(t("noComments")) + "</div>";
 
@@ -937,6 +1080,9 @@
     var commentImg = state.commentImage
       ? '<img class="comment-preview" src="' + state.commentImage + '" alt="">'
       : "";
+    var commentVid = safeVideo(state.commentVideo)
+      ? videoPlayerHtml(state.commentVideo, "comment-preview-video")
+      : "";
 
     return '<div class="overlay" data-close-overlay="detail">'
       + '<div class="modal" role="dialog" aria-modal="true">'
@@ -944,16 +1090,19 @@
         + '<div class="modal-body">'
           + '<div class="field"><label>' + escapeHtml(t("fieldModule")) + "</label><div>" + escapeHtml(moduleLabel(it.module)) + "</div></div>"
           + (it.description ? '<div class="field"><label>' + escapeHtml(t("fieldDesc")) + '</label><p style="margin:0;font-size:14px;line-height:1.5;" data-i18n-text="' + escapeHtml(it.description) + '">' + escapeHtml(it.description) + "</p></div>" : "")
-          + (safeImg(it.screenshot) ? '<div class="field"><label>' + escapeHtml(t("capture")) + '</label><img src="' + it.screenshot + '" alt="" style="width:100%;border-radius:10px;border:1px solid var(--border);"></div>' : "")
+          + (safeImg(it.screenshot) ? '<div class="field"><label>' + escapeHtml(t("capture")) + '</label><img class="zoomable" data-lightbox src="' + it.screenshot + '" alt="" style="width:100%;border-radius:10px;border:1px solid var(--border);"></div>' : "")
+          + (safeVideo(it.video) ? '<div class="field"><label>' + escapeHtml(t("videoLabel")) + "</label>" + videoPlayerHtml(it.video, "detail-video", it.screenshot) + "</div>" : "")
           + '<div class="field"><label>' + escapeHtml(t("status")) + '</label><div class="status-row">' + statusBtns + "</div></div>"
           + '<div class="field"><label>' + escapeHtml(t("comments")) + '</label><div class="comments">' + comments + "</div>"
             + '<div class="comment-form" style="margin-top:8px;">'
               + '<input type="text" id="commentInput" placeholder="' + escapeHtml(t("commentPh")) + '" maxlength="600">'
-              + '<button class="btn btn-ghost btn-icon" id="attachComment" title="image">' + camIcon() + "</button>"
+              + '<button class="btn btn-ghost btn-icon" id="attachComment" title="' + escapeHtml(t("attachImage")) + '">' + camIcon() + "</button>"
+              + '<button class="btn btn-ghost btn-icon" id="attachCommentVideo" title="' + escapeHtml(t("attachVideo")) + '">' + videoIcon() + "</button>"
               + '<input type="file" accept="image/*" id="commentFile" hidden>'
+              + '<input type="file" accept="video/*" id="commentVideoFile" hidden>'
               + '<button class="btn btn-primary btn-icon" id="sendComment">' + escapeHtml(t("send")) + "</button>"
             + "</div>"
-            + commentImg
+            + commentImg + commentVid
           + "</div>"
           + '<div style="font-size:11.5px;color:var(--ink-faint);">' + escapeHtml(t("reportedBy")) + " " + escapeHtml(it.reporter||t("anon")) + " · " + fmtDate(it.createdAt) + (it.updatedAt ? " · " + escapeHtml(t("updated")) + " " + fmtDate(it.updatedAt) : "") + "</div>"
         + "</div>"
@@ -967,6 +1116,7 @@
     renderBoard();
     document.getElementById("modalRoot").innerHTML = newModalHtml() + detailModalHtml();
     wireDropzone();
+    wireRemoteVideos();
     applyContentTranslations();
   }
 
@@ -1009,11 +1159,26 @@
   document.getElementById("filterSearch").addEventListener("input", function(e){ state.filterSearch = e.target.value; renderBoard(); applyContentTranslations(); });
 
   document.addEventListener("click", function(e){
+    if (e.target.id === "lightbox" || e.target.id === "lightboxClose"){
+      closeLightbox();
+      return;
+    }
+    var lbImg = e.target.closest && e.target.closest("[data-lightbox]");
+    if (lbImg && (lbImg.tagName === "IMG") && safeImg(lbImg.getAttribute("src") || lbImg.src)){
+      e.preventDefault();
+      e.stopPropagation();
+      openLightbox(lbImg.getAttribute("src") || lbImg.src);
+      return;
+    }
+    if (e.target.closest && e.target.closest(".card video, video.card-video")){
+      return;
+    }
     var openCard = e.target.closest("[data-open]");
     if (openCard){
       state.openId = openCard.getAttribute("data-open");
       state.confirmDeleteId = null;
       state.commentImage = null;
+      state.commentVideo = null;
       var it = state.items.filter(function(i){ return i.id === state.openId; })[0];
       if (it) loadRemoteShot(it).then(function(){ render(); });
       else render();
@@ -1023,7 +1188,7 @@
     if (closeBtn){
       var which = closeBtn.getAttribute("data-close");
       if (which === "new") { state.newOpen = false; state.draft = null; }
-      if (which === "detail") { state.openId = null; state.confirmDeleteId = null; state.commentImage = null; }
+      if (which === "detail") { state.openId = null; state.confirmDeleteId = null; state.commentImage = null; state.commentVideo = null; }
       render();
       return;
     }
@@ -1031,7 +1196,7 @@
     if (overlay && e.target === overlay){
       var w = overlay.getAttribute("data-close-overlay");
       if (w === "new") { state.newOpen = false; state.draft = null; }
-      if (w === "detail") { state.openId = null; state.confirmDeleteId = null; state.commentImage = null; }
+      if (w === "detail") { state.openId = null; state.confirmDeleteId = null; state.commentImage = null; state.commentVideo = null; }
       render();
       return;
     }
@@ -1045,6 +1210,7 @@
         priority: document.getElementById("draftPriority").value,
         description: document.getElementById("draftDesc").value.trim(),
         screenshot: state.draft.screenshot,
+        video: state.draft.video || null,
         status: "pendiente",
         reporter: getReporter()
       };
@@ -1063,16 +1229,21 @@
       if (cf) cf.click();
       return;
     }
+    if (e.target.id === "attachCommentVideo" || (e.target.closest && e.target.closest("#attachCommentVideo"))){
+      var vf = document.getElementById("commentVideoFile");
+      if (vf) vf.click();
+      return;
+    }
     if (e.target.id === "askDelete"){ state.confirmDeleteId = state.openId; render(); return; }
     if (e.target.id === "confirmDeleteNo"){ state.confirmDeleteId = null; render(); return; }
     if (e.target.id === "confirmDeleteYes" && state.openId){
       store.remove(state.openId);
-      state.openId = null; state.confirmDeleteId = null; state.commentImage = null;
+      state.openId = null; state.confirmDeleteId = null; state.commentImage = null; state.commentVideo = null;
       render();
       showToast(t("deleted"));
       return;
     }
-    if (e.target.closest && e.target.closest("#dropzone") && e.target.tagName !== "INPUT"){
+    if (e.target.closest && e.target.closest("#dropzone") && e.target.tagName !== "INPUT" && e.target.tagName !== "VIDEO"){
       var fi = document.getElementById("fileInput");
       if (fi) fi.click();
     }
@@ -1083,8 +1254,9 @@
       sendCommentFor(state.openId);
     }
     if (e.key === "Escape"){
+      if (isLightboxOpen()){ closeLightbox(); return; }
       if (state.newOpen){ state.newOpen = false; state.draft = null; render(); }
-      else if (state.openId){ state.openId = null; state.confirmDeleteId = null; state.commentImage = null; render(); }
+      else if (state.openId){ state.openId = null; state.confirmDeleteId = null; state.commentImage = null; state.commentVideo = null; render(); }
     }
   });
 
@@ -1092,11 +1264,13 @@
     var input = document.getElementById("commentInput");
     var text = (input && input.value || "").trim();
     var image = state.commentImage;
-    if (!text && !image) return;
+    var video = state.commentVideo;
+    if (!text && !image && !video) return;
     var it = state.items.filter(function(i){ return i.id === id; })[0];
     var comments = (it && it.comments || []).slice();
-    comments.push({author: getReporter(), text: text, at: new Date().toISOString(), image: image || null});
+    comments.push({author: getReporter(), text: text, at: new Date().toISOString(), image: image || null, video: video || null});
     state.commentImage = null;
+    state.commentVideo = null;
     store.update(id, {comments: comments});
     if (input) input.value = "";
   }
@@ -1106,7 +1280,8 @@
     var fileInput = document.getElementById("fileInput");
     if (fileInput){
       fileInput.addEventListener("change", function(){
-        if (fileInput.files && fileInput.files[0]) handleImageFile(fileInput.files[0], "draft");
+        handleFiles(fileInput.files, "draft");
+        fileInput.value = "";
       });
     }
     if (dz){
@@ -1114,14 +1289,21 @@
       dz.addEventListener("dragleave", function(){ dz.classList.remove("drag"); });
       dz.addEventListener("drop", function(e){
         e.preventDefault(); dz.classList.remove("drag");
-        var f = e.dataTransfer.files && e.dataTransfer.files[0];
-        if (f) handleImageFile(f, "draft");
+        handleFiles(e.dataTransfer.files, "draft");
       });
     }
     var commentFile = document.getElementById("commentFile");
     if (commentFile){
       commentFile.addEventListener("change", function(){
-        if (commentFile.files && commentFile.files[0]) handleImageFile(commentFile.files[0], "comment");
+        if (commentFile.files && commentFile.files[0]) handlePickedFile(commentFile.files[0], "comment");
+        commentFile.value = "";
+      });
+    }
+    var commentVideoFile = document.getElementById("commentVideoFile");
+    if (commentVideoFile){
+      commentVideoFile.addEventListener("change", function(){
+        if (commentVideoFile.files && commentVideoFile.files[0]) handlePickedFile(commentVideoFile.files[0], "comment");
+        commentVideoFile.value = "";
       });
     }
   }
@@ -1141,6 +1323,30 @@
     }
   });
 
+  function handlePickedFile(file, target){
+    if (isVideoFile(file)) handleVideoFile(file, target);
+    else if (isImageFile(file)) handleImageFile(file, target);
+    else showToast(t("vidType"), 4000);
+  }
+  function handleFiles(list, target){
+    Array.prototype.forEach.call(list || [], function(f){ handlePickedFile(f, target); });
+  }
+  function handleVideoFile(file, target){
+    if (file.size > MAX_VIDEO_BYTES){ showToast(t("vidBig"), 4000); return; }
+    if (!isVideoFile(file)){ showToast(t("vidType"), 4000); return; }
+    showToast(t("vidWait"), 20000);
+    snapshotDraft();
+    uploadVideoFile(file).then(function(url){
+      if (target === "comment") state.commentVideo = url;
+      else if (state.draft) state.draft.video = url;
+      var needPoster = target !== "comment" && state.draft && !state.draft.screenshot;
+      if (!needPoster){ render(); return; }
+      return videoFileToPoster(file).then(function(poster){
+        if (state.draft && !state.draft.screenshot) state.draft.screenshot = poster;
+      }).catch(function(){}).then(function(){ render(); });
+    }).catch(function(){ showToast(t("vidFail"), 4000); });
+  }
+
   function handleImageFile(file, target){
     showToast(t("imgWait"));
     snapshotDraft();
@@ -1152,6 +1358,26 @@
       }
       render();
     }).catch(function(){ showToast(t("imgFail")); });
+  }
+
+  function openLightbox(src){
+    var root = document.getElementById("lightbox");
+    var img = document.getElementById("lightboxImg");
+    var btn = document.getElementById("lightboxClose");
+    if (!root || !img || !safeImg(src)) return;
+    img.src = src;
+    if (btn) btn.setAttribute("aria-label", t("closeImg"));
+    root.hidden = false;
+  }
+  function closeLightbox(){
+    var root = document.getElementById("lightbox");
+    var img = document.getElementById("lightboxImg");
+    if (root) root.hidden = true;
+    if (img) img.removeAttribute("src");
+  }
+  function isLightboxOpen(){
+    var root = document.getElementById("lightbox");
+    return !!(root && !root.hidden);
   }
 
   var origRender = render;
