@@ -781,7 +781,7 @@
     setInterval(function(){
       if (state.dbMode !== "db" || state.newOpen) return;
       refresh().catch(function(){});
-    }, 12000);
+    }, 5 * 60 * 1000);
   }
 
   function init(){
