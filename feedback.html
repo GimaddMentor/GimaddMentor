@@ -289,10 +289,14 @@
 (function(){
   "use strict";
 
-  var MANTLE_NS = "gimaddmentorqa1788895376";
-  var MANTLE_KEY = "9dae6eabb0a0c33e95ca7916624092229026364f3e7478e76c6230a7ae302d88";
+  /* Namespace nuevo (oct 2026): el anterior agotó el cupo gratis 10k/día por el poll agresivo. */
+  var MANTLE_NS = "gimadd-mentor-qa-20261023";
+  var MANTLE_KEY = "b84b1187f396c12e5857a242314a1364481528e4a786afd34dd931c27aa67828";
   var MANTLE_BASE = "https://mantledb.sh/v2/" + MANTLE_NS;
   var MAX_DOC = 58000;
+  var SYNC_MS = 5 * 60 * 1000;
+  var syncTimer = null;
+  var syncBackoffMs = SYNC_MS;
 
   var MODULE_IDS = [
     "auth","player","crm","catalog","goals","diary","video","library",
@@ -356,6 +360,7 @@
       saveFail: "No se pudo guardar. Inténtalo de nuevo.",
       translating: "Traduciendo…",
       syncFail: "No se pudo sincronizar el tablero compartido. Trabajando en este navegador.",
+      syncFailRate: "El almacén compartido está temporalmente saturado. Reintentando en unos minutos…",
       anon: "Anon.",
       untitled: "(sin título)",
       pri_bloqueante: "Bloqueante",
@@ -437,6 +442,7 @@
       saveFail: "Не удалось сохранить. Попробуй ещё раз.",
       translating: "Перевод…",
       syncFail: "Не удалось синхронизировать общую доску. Работа в этом браузере.",
+      syncFailRate: "Общее хранилище временно перегружено. Повтор через несколько минут…",
       anon: "Анон.",
       untitled: "(без названия)",
       pri_bloqueante: "Блокирующий",
@@ -613,7 +619,15 @@
       opts.body = JSON.stringify(body);
     }
     return fetch(url, opts).then(function(res){
-      if (!res.ok) return res.text().then(function(txt){ throw new Error(res.status + " " + txt); });
+      if (!res.ok){
+        return res.text().then(function(txt){
+          var err = new Error(res.status + " " + txt);
+          err.status = res.status;
+          err.body = txt;
+          if (res.status === 429 || /rate limit/i.test(txt || "")) err.rateLimited = true;
+          throw err;
+        });
+      }
       if (res.status === 204) return null;
       var ct = res.headers.get("content-type") || "";
       if (ct.indexOf("json") === -1) return res.text();
@@ -704,18 +718,72 @@
     render();
   }
 
+  function ticketIndexRow(item){
+    return {
+      id: item.id,
+      title: item.title || "",
+      status: item.status || "pendiente",
+      priority: item.priority || "media",
+      module: item.module || "other",
+      reporter: item.reporter || "",
+      createdAt: item.createdAt || "",
+      updatedAt: item.updatedAt || item.createdAt || "",
+      hasRemoteShot: !!(item.hasRemoteShot || item.screenshot),
+      description: item.description || "",
+      video: item.video || null
+    };
+  }
+
+  function writeMetaIndex(items){
+    var index = (items || []).map(ticketIndexRow);
+    index.sort(function(a,b){ return (b.createdAt||"").localeCompare(a.createdAt||""); });
+    return mantlePath("meta", "POST", {
+      v: 2,
+      updatedAt: new Date().toISOString(),
+      ids: index.map(function(i){ return i.id; }),
+      index: index
+    }).catch(function(){});
+  }
+
   function fetchAllTickets(){
-    return mantlePath("list/" + MANTLE_NS, "GET").then(function(list){
-      var entries = (list && list.entries) || [];
-      var ticketPaths = entries.map(function(e){ return e.path; }).filter(function(p){ return p && p.indexOf("t/") === 0; });
-      if (!ticketPaths.length) return [];
-      return Promise.all(ticketPaths.map(function(p){
-        return mantlePath(p, "GET").then(function(data){
-          var id = p.slice(2);
-          return Object.assign({id: id, comments: []}, data, {id: id});
-        }).catch(function(){ return null; });
-      })).then(function(rows){ return rows.filter(Boolean); });
+    /* 1 GET del índice en vez de list + N tickets (evita saturar el cupo gratis). */
+    return mantlePath("meta", "GET").then(function(meta){
+      if (meta && Array.isArray(meta.index)){
+        return meta.index.map(function(row){
+          return Object.assign({comments: []}, row);
+        });
+      }
+      throw new Error("no_meta");
+    }).catch(function(){
+      return mantlePath("list/" + MANTLE_NS, "GET").then(function(list){
+        var entries = (list && list.entries) || [];
+        var ticketPaths = entries.map(function(e){ return e.path; }).filter(function(p){ return p && p.indexOf("t/") === 0; });
+        if (!ticketPaths.length) return [];
+        return Promise.all(ticketPaths.map(function(p){
+          return mantlePath(p, "GET").then(function(data){
+            var id = p.slice(2);
+            return Object.assign({id: id, comments: []}, data, {id: id});
+          }).catch(function(){ return null; });
+        })).then(function(rows){
+          var items = rows.filter(Boolean);
+          writeMetaIndex(items);
+          return items;
+        });
+      });
     });
+  }
+
+  function hydrateTicket(item){
+    if (!item || !item.id) return Promise.resolve(item);
+    if (item._full) return Promise.resolve(item);
+    return mantlePath("t/" + item.id, "GET").then(function(data){
+      if (!data) return item;
+      var merged = Object.assign({}, item, data, {id: item.id, _full: true});
+      if (!merged.comments) merged.comments = [];
+      var idx = state.items.findIndex(function(i){ return i.id === item.id; });
+      if (idx > -1) state.items[idx] = merged;
+      return merged;
+    }).catch(function(){ return item; });
   }
 
   function maybeHeartbeat(){
@@ -728,20 +796,49 @@
     }).catch(function(){});
   }
 
+  function scheduleSync(ms){
+    clearTimeout(syncTimer);
+    syncTimer = setTimeout(function(){
+      if (state.dbMode !== "db" || state.newOpen || document.hidden){
+        scheduleSync(SYNC_MS);
+        return;
+      }
+      refreshBoard().catch(function(){});
+    }, ms || SYNC_MS);
+  }
+
+  function refreshBoard(){
+    return fetchAllTickets().then(function(items){
+      mergeItems(items);
+      clearBanner();
+      state.dbMode = "db";
+      setFootnote();
+      syncBackoffMs = SYNC_MS;
+      maybeHeartbeat();
+      scheduleSync(SYNC_MS);
+    }).catch(function(err){
+      console.error(err);
+      if (err && err.rateLimited){
+        showBanner(t("syncFailRate"));
+        syncBackoffMs = Math.min((syncBackoffMs || SYNC_MS) * 2, 30 * 60 * 1000);
+        scheduleSync(syncBackoffMs);
+        return;
+      }
+      showBanner(t("syncFail"));
+      /* Si ya hay datos en memoria, no tirar a local vacío; reintentar. */
+      if (state.items && state.items.length){
+        scheduleSync(SYNC_MS);
+        return;
+      }
+      setupLocalStore();
+      scheduleSync(SYNC_MS);
+    });
+  }
+
   function setupDbStore(){
     state.dbMode = "db";
     setFootnote();
-    function refresh(){
-      return fetchAllTickets().then(function(items){
-        mergeItems(items);
-        maybeHeartbeat();
-      });
-    }
-    refresh().catch(function(err){
-      console.error(err);
-      showBanner(t("syncFail"));
-      setupLocalStore();
-    });
+    refreshBoard();
     store.add = function(data){
       var id = uid();
       var item = Object.assign({id: id, createdAt: new Date().toISOString(), comments: []}, data);
@@ -749,7 +846,9 @@
       var writes = [mantlePath("t/" + id, "POST", packed.doc)];
       if (packed.extra) writes.push(mantlePath("i/" + id, "POST", packed.extra));
       return Promise.all(writes).then(function(){
-        state.items.unshift(Object.assign({}, packed.doc, packed.extra || {}, {screenshot: item.screenshot, video: item.video || packed.doc.video || null}));
+        var full = Object.assign({}, packed.doc, packed.extra || {}, {screenshot: item.screenshot, video: item.video || packed.doc.video || null, _full: true});
+        state.items.unshift(full);
+        writeMetaIndex(state.items);
         render();
       }).catch(function(err){
         console.error(err);
@@ -765,7 +864,8 @@
       if (packed.extra) writes.push(mantlePath("i/" + id, "POST", packed.extra));
       Promise.all(writes).then(function(){
         var idx = state.items.findIndex(function(i){ return i.id === id; });
-        if (idx > -1) state.items[idx] = Object.assign({}, packed.doc, packed.extra || {}, {screenshot: merged.screenshot, video: merged.video || packed.doc.video || null});
+        if (idx > -1) state.items[idx] = Object.assign({}, packed.doc, packed.extra || {}, {screenshot: merged.screenshot, video: merged.video || packed.doc.video || null, _full: true});
+        writeMetaIndex(state.items);
         render();
       }).catch(function(err){
         console.error(err);
@@ -778,13 +878,10 @@
         mantlePath("i/" + id, "DELETE").catch(function(){})
       ]).then(function(){
         state.items = state.items.filter(function(i){ return i.id !== id; });
+        writeMetaIndex(state.items);
         render();
       }).catch(function(){ showToast(t("saveFail")); });
     };
-    setInterval(function(){
-      if (state.dbMode !== "db" || state.newOpen) return;
-      refresh().catch(function(){});
-    }, 5 * 60 * 1000);
   }
 
   function init(){
@@ -1183,8 +1280,11 @@
       state.commentImage = null;
       state.commentVideo = null;
       var it = state.items.filter(function(i){ return i.id === state.openId; })[0];
-      if (it) loadRemoteShot(it).then(function(){ render(); });
-      else render();
+      if (it){
+        hydrateTicket(it).then(function(full){
+          return loadRemoteShot(full || it);
+        }).then(function(){ render(); });
+      } else render();
       return;
     }
     var closeBtn = e.target.closest("[data-close]");
