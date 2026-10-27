@@ -156,9 +156,9 @@
   .empty-col{font-size:12px;color:var(--ink-faint);padding:14px 8px;text-align:center;}
   .card{
     background:var(--surface);border:1px solid var(--border);border-radius:11px;padding:11px 12px;cursor:pointer;
-    box-shadow:var(--shadow);transition:transform .1s ease, border-color .1s ease;
+    box-shadow:var(--shadow);transition:box-shadow .12s ease, border-color .1s ease;
   }
-  .card:hover{transform:translateY(-1px);border-color:var(--primary);}
+  .card:hover{border-color:var(--primary);box-shadow:0 2px 8px rgba(15,30,55,.12), 0 8px 24px -8px rgba(15,30,55,.22);}
   .card-top{display:flex;justify-content:space-between;gap:8px;align-items:flex-start;margin-bottom:6px;}
   .chip{
     font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;
@@ -297,6 +297,8 @@
   var SYNC_MS = 5 * 60 * 1000;
   var syncTimer = null;
   var syncBackoffMs = SYNC_MS;
+  var lastIndexFp = "";
+  var lastBoardSig = "";
 
   var MODULE_IDS = [
     "auth","player","crm","catalog","goals","diary","video","library",
@@ -522,6 +524,7 @@
     });
   }
   function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,8); }
+  function sameId(a, b){ return String(a || "") === String(b || ""); }
   function hasCyrillic(s){ return /[\u0400-\u04FF]/.test(s || ""); }
   function fmtDate(iso){
     if (!iso) return "";
@@ -601,9 +604,53 @@
     nodes.forEach(function(el){
       var src = el.getAttribute("data-i18n-text");
       translateText(src, state.lang).then(function(out){
-        if (el.getAttribute("data-i18n-text") === src) el.textContent = out;
+        if (el.getAttribute("data-i18n-text") === src && el.textContent !== out) el.textContent = out;
       });
     });
+  }
+
+  function indexFingerprint(items){
+    return (items || []).map(function(i){
+      return [i.id, i.updatedAt || "", i.status || "", i.priority || "", i.title || ""].join(":");
+    }).join("|");
+  }
+
+  function boardSignature(items){
+    return (items || []).map(function(it){
+      return [
+        it.id, it.status || "", it.priority || "", it.title || "", it.module || "",
+        it.reporter || "", it.createdAt || "",
+        safeImg(it.screenshot) ? "1" : (it.hasRemoteShot ? "r" : "0"),
+        safeVideo(it.video) ? "1" : "0",
+        (it.comments || []).length
+      ].join("\t");
+    }).join("\n") + "|" + state.lang + "|" + state.filterModule + "|" + state.filterPriority + "|" + state.filterSearch;
+  }
+
+  function cssEscape(s){
+    if (window.CSS && CSS.escape) return CSS.escape(String(s));
+    return String(s).replace(/[^a-zA-Z0-9_-]/g, "\\$&");
+  }
+
+  function eventPath(e){
+    if (e.composedPath) return e.composedPath();
+    var p = [];
+    var n = e.target;
+    while (n){ p.push(n); n = n.parentElement || n.parentNode; }
+    return p;
+  }
+
+  function closestFromEvent(e, selector){
+    var path = eventPath(e);
+    for (var i = 0; i < path.length; i++){
+      var n = path[i];
+      if (n && n.nodeType === 1 && n.matches && n.matches(selector)) return n;
+    }
+    return null;
+  }
+
+  function uiBusy(){
+    return !!(state.openId || state.newOpen || isLightboxOpen());
   }
 
   function mantlePath(path, method, body){
@@ -711,11 +758,36 @@
     localListeners.push(function(items){ state.items = items; render(); });
   }
 
-  function mergeItems(incoming){
+  function mergeIncoming(incoming){
     incoming.sort(function(a,b){ return (b.createdAt||"").localeCompare(a.createdAt||""); });
-    state.items = incoming;
+    var prevById = {};
+    (state.items || []).forEach(function(it){ prevById[String(it.id)] = it; });
+    var seen = {};
+    var merged = incoming.map(function(row){
+      var id = String(row.id);
+      seen[id] = true;
+      var prev = prevById[id];
+      if (!prev) return row;
+      var out = Object.assign({}, prev, row, {id: prev.id || row.id});
+      if (prev.screenshot && !row.screenshot) out.screenshot = prev.screenshot;
+      if (prev._loadingShot) out._loadingShot = prev._loadingShot;
+      if (prev._full){
+        out._full = true;
+        if ((!row.comments || !row.comments.length) && prev.comments) out.comments = prev.comments;
+        if (!row.description && prev.description) out.description = prev.description;
+        if (!row.video && prev.video) out.video = prev.video;
+      }
+      return out;
+    });
+    Object.keys(prevById).forEach(function(id){
+      if (seen[id]) return;
+      var prev = prevById[id];
+      if (!prev || !prev._full || !prev.createdAt) return;
+      var age = Date.now() - Date.parse(prev.createdAt);
+      if (isFinite(age) && age < 15 * 60 * 1000) merged.unshift(prev);
+    });
+    state.items = merged;
     state.ready = true;
-    render();
   }
 
   function ticketIndexRow(item){
@@ -780,7 +852,7 @@
       if (!data) return item;
       var merged = Object.assign({}, item, data, {id: item.id, _full: true});
       if (!merged.comments) merged.comments = [];
-      var idx = state.items.findIndex(function(i){ return i.id === item.id; });
+      var idx = state.items.findIndex(function(i){ return sameId(i.id, item.id); });
       if (idx > -1) state.items[idx] = merged;
       return merged;
     }).catch(function(){ return item; });
@@ -799,7 +871,7 @@
   function scheduleSync(ms){
     clearTimeout(syncTimer);
     syncTimer = setTimeout(function(){
-      if (state.dbMode !== "db" || state.newOpen || document.hidden){
+      if (state.dbMode !== "db" || document.hidden){
         scheduleSync(SYNC_MS);
         return;
       }
@@ -809,13 +881,32 @@
 
   function refreshBoard(){
     return fetchAllTickets().then(function(items){
-      mergeItems(items);
+      var fp = indexFingerprint(items);
+      var busy = uiBusy();
+      if (fp === lastIndexFp && state.ready){
+        clearBanner();
+        state.dbMode = "db";
+        setFootnote();
+        syncBackoffMs = SYNC_MS;
+        maybeHeartbeat();
+        scheduleSync(SYNC_MS);
+        return;
+      }
+      lastIndexFp = fp;
+      mergeIncoming(items);
       clearBanner();
       state.dbMode = "db";
       setFootnote();
       syncBackoffMs = SYNC_MS;
       maybeHeartbeat();
       scheduleSync(SYNC_MS);
+      if (busy){
+        renderStats();
+        return;
+      }
+      renderStats();
+      renderBoard();
+      applyContentTranslations();
     }).catch(function(err){
       console.error(err);
       if (err && err.rateLimited){
@@ -848,6 +939,7 @@
       return Promise.all(writes).then(function(){
         var full = Object.assign({}, packed.doc, packed.extra || {}, {screenshot: item.screenshot, video: item.video || packed.doc.video || null, _full: true});
         state.items.unshift(full);
+        lastIndexFp = indexFingerprint(state.items);
         writeMetaIndex(state.items);
         render();
       }).catch(function(err){
@@ -857,14 +949,15 @@
       });
     };
     store.update = function(id, patch){
-      var current = state.items.filter(function(i){ return i.id === id; })[0] || {};
+      var current = state.items.filter(function(i){ return sameId(i.id, id); })[0] || {};
       var merged = Object.assign({}, current, patch, {updatedAt: new Date().toISOString()});
       var packed = fitDoc(merged);
       var writes = [mantlePath("t/" + id, "POST", packed.doc)];
       if (packed.extra) writes.push(mantlePath("i/" + id, "POST", packed.extra));
       Promise.all(writes).then(function(){
-        var idx = state.items.findIndex(function(i){ return i.id === id; });
+        var idx = state.items.findIndex(function(i){ return sameId(i.id, id); });
         if (idx > -1) state.items[idx] = Object.assign({}, packed.doc, packed.extra || {}, {screenshot: merged.screenshot, video: merged.video || packed.doc.video || null, _full: true});
+        lastIndexFp = indexFingerprint(state.items);
         writeMetaIndex(state.items);
         render();
       }).catch(function(err){
@@ -877,7 +970,8 @@
         mantlePath("t/" + id, "DELETE").catch(function(){}),
         mantlePath("i/" + id, "DELETE").catch(function(){})
       ]).then(function(){
-        state.items = state.items.filter(function(i){ return i.id !== id; });
+        state.items = state.items.filter(function(i){ return !sameId(i.id, id); });
+        lastIndexFp = indexFingerprint(state.items);
         writeMetaIndex(state.items);
         render();
       }).catch(function(){ showToast(t("saveFail")); });
@@ -1067,8 +1161,52 @@
       stat("done", byStatus.verificado || 0, t("statDone"));
   }
 
+  function patchCardShot(it){
+    if (!it || !it.id || !safeImg(it.screenshot)) return;
+    var card = document.querySelector('.card[data-open="' + cssEscape(it.id) + '"]');
+    if (!card || card.querySelector(".card-thumb")) return;
+    var img = document.createElement("img");
+    img.className = "card-thumb zoomable";
+    img.setAttribute("data-lightbox", "");
+    img.src = it.screenshot;
+    img.alt = "";
+    var titleEl = card.querySelector(".card-title");
+    if (titleEl) card.insertBefore(img, titleEl);
+    else {
+      var moduleEl = card.querySelector(".card-module");
+      if (moduleEl && moduleEl.nextSibling) card.insertBefore(img, moduleEl.nextSibling);
+      else card.appendChild(img);
+    }
+  }
+
+  function loadMissingShots(items){
+    (items || []).forEach(function(it){
+      if (it.hasRemoteShot && !it.screenshot && !it._loadingShot){
+        it._loadingShot = true;
+        loadRemoteShot(it).then(function(loaded){
+          var shotItem = loaded || it;
+          shotItem._loadingShot = false;
+          var idx = state.items.findIndex(function(i){ return sameId(i.id, shotItem.id); });
+          if (idx > -1){
+            state.items[idx]._loadingShot = false;
+            if (shotItem.screenshot) state.items[idx].screenshot = shotItem.screenshot;
+          }
+          patchCardShot(shotItem);
+          lastBoardSig = boardSignature(filteredItems());
+        });
+      }
+    });
+  }
+
   function renderBoard(){
     var items = filteredItems();
+    var sig = boardSignature(items);
+    var boardEl = document.getElementById("board");
+    if (sig === lastBoardSig && boardEl && boardEl.firstChild){
+      loadMissingShots(items);
+      return;
+    }
+    lastBoardSig = sig;
     var html = "";
     STATUSES.forEach(function(col){
       var colItems = items.filter(function(it){ return it.status === col.id; });
@@ -1079,18 +1217,9 @@
       else colItems.forEach(function(it){ html += cardHtml(it); });
       html += "</div></div>";
     });
-    document.getElementById("board").innerHTML = html;
+    boardEl.innerHTML = html;
     wireRemoteVideos();
-    items.forEach(function(it){
-      if (it.hasRemoteShot && !it.screenshot && !it._loadingShot){
-        it._loadingShot = true;
-        loadRemoteShot(it).then(function(){
-          it._loadingShot = false;
-          renderBoard();
-          applyContentTranslations();
-        });
-      }
-    });
+    loadMissingShots(items);
   }
 
   function cardHtml(it){
@@ -1113,7 +1242,7 @@
   function openNewModal(){
     state.draft = { title:"", module: "video", priority:"media", description:"", screenshot:null, video:null };
     state.newOpen = true;
-    render();
+    renderModal();
     setTimeout(function(){ var el = document.getElementById("draftTitle"); if (el) el.focus(); }, 30);
   }
 
@@ -1160,7 +1289,7 @@
 
   function detailModalHtml(){
     if (!state.openId) return "";
-    var it = state.items.filter(function(i){ return i.id === state.openId; })[0];
+    var it = state.items.filter(function(i){ return sameId(i.id, state.openId); })[0];
     if (!it) return "";
     var statusBtns = STATUSES.map(function(s){
       return '<button class="status-btn' + (s.id===it.status?" active":"") + '" data-set-status="' + s.id + '">' + escapeHtml(stLabel(s.id)) + "</button>";
@@ -1210,7 +1339,16 @@
       + "</div></div>";
   }
 
+  function renderModal(){
+    snapshotDraft();
+    document.getElementById("modalRoot").innerHTML = newModalHtml() + detailModalHtml();
+    wireDropzone();
+    wireRemoteVideos();
+    applyContentTranslations();
+  }
+
   function render(){
+    snapshotDraft();
     renderChrome();
     renderStats();
     renderBoard();
@@ -1258,49 +1396,60 @@
   document.getElementById("filterPriority").addEventListener("change", function(e){ state.filterPriority = e.target.value; renderBoard(); applyContentTranslations(); });
   document.getElementById("filterSearch").addEventListener("input", function(e){ state.filterSearch = e.target.value; renderBoard(); applyContentTranslations(); });
 
+  function openTicket(id){
+    if (!id) return;
+    state.openId = id;
+    state.confirmDeleteId = null;
+    state.commentImage = null;
+    state.commentVideo = null;
+    renderModal();
+    var it = state.items.filter(function(i){ return sameId(i.id, id); })[0];
+    if (!it) return;
+    var needHydrate = !it._full;
+    var needShot = !!(it.hasRemoteShot && !it.screenshot);
+    if (!needHydrate && !needShot) return;
+    var seq = needHydrate ? hydrateTicket(it) : Promise.resolve(it);
+    seq.then(function(full){
+      return needShot ? loadRemoteShot(full || it) : (full || it);
+    }).then(function(){
+      if (sameId(state.openId, id)) renderModal();
+    });
+  }
+
   document.addEventListener("click", function(e){
     if (e.target.id === "lightbox" || e.target.id === "lightboxClose"){
       closeLightbox();
       return;
     }
-    var lbImg = e.target.closest && e.target.closest("[data-lightbox]");
+    var lbImg = closestFromEvent(e, "[data-lightbox]");
     if (lbImg && (lbImg.tagName === "IMG") && safeImg(lbImg.getAttribute("src") || lbImg.src)){
       e.preventDefault();
       e.stopPropagation();
       openLightbox(lbImg.getAttribute("src") || lbImg.src);
       return;
     }
-    if (e.target.closest && e.target.closest(".card video, video.card-video")){
+    if (closestFromEvent(e, ".card video, video.card-video")){
       return;
     }
-    var openCard = e.target.closest("[data-open]");
+    var openCard = closestFromEvent(e, "[data-open]");
     if (openCard){
-      state.openId = openCard.getAttribute("data-open");
-      state.confirmDeleteId = null;
-      state.commentImage = null;
-      state.commentVideo = null;
-      var it = state.items.filter(function(i){ return i.id === state.openId; })[0];
-      if (it){
-        hydrateTicket(it).then(function(full){
-          return loadRemoteShot(full || it);
-        }).then(function(){ render(); });
-      } else render();
+      openTicket(openCard.getAttribute("data-open"));
       return;
     }
-    var closeBtn = e.target.closest("[data-close]");
+    var closeBtn = closestFromEvent(e, "[data-close]");
     if (closeBtn){
       var which = closeBtn.getAttribute("data-close");
       if (which === "new") { state.newOpen = false; state.draft = null; }
       if (which === "detail") { state.openId = null; state.confirmDeleteId = null; state.commentImage = null; state.commentVideo = null; }
-      render();
+      renderModal();
       return;
     }
-    var overlay = e.target.closest("[data-close-overlay]");
+    var overlay = closestFromEvent(e, "[data-close-overlay]");
     if (overlay && e.target === overlay){
       var w = overlay.getAttribute("data-close-overlay");
       if (w === "new") { state.newOpen = false; state.draft = null; }
       if (w === "detail") { state.openId = null; state.confirmDeleteId = null; state.commentImage = null; state.commentVideo = null; }
-      render();
+      renderModal();
       return;
     }
     if (e.target.id === "saveDraft"){
@@ -1322,23 +1471,24 @@
       Promise.resolve(store.add(payload)).then(function(){ showToast(t("saved")); }).catch(function(){});
       return;
     }
-    if (e.target.matches("[data-set-status]") && state.openId){
-      store.update(state.openId, {status: e.target.getAttribute("data-set-status")});
+    var statusBtn = closestFromEvent(e, "[data-set-status]");
+    if (statusBtn && state.openId){
+      store.update(state.openId, {status: statusBtn.getAttribute("data-set-status")});
       return;
     }
     if (e.target.id === "sendComment" && state.openId){ sendCommentFor(state.openId); return; }
-    if (e.target.id === "attachComment" || (e.target.closest && e.target.closest("#attachComment"))){
+    if (closestFromEvent(e, "#attachComment")){
       var cf = document.getElementById("commentFile");
       if (cf) cf.click();
       return;
     }
-    if (e.target.id === "attachCommentVideo" || (e.target.closest && e.target.closest("#attachCommentVideo"))){
+    if (closestFromEvent(e, "#attachCommentVideo")){
       var vf = document.getElementById("commentVideoFile");
       if (vf) vf.click();
       return;
     }
-    if (e.target.id === "askDelete"){ state.confirmDeleteId = state.openId; render(); return; }
-    if (e.target.id === "confirmDeleteNo"){ state.confirmDeleteId = null; render(); return; }
+    if (e.target.id === "askDelete"){ state.confirmDeleteId = state.openId; renderModal(); return; }
+    if (e.target.id === "confirmDeleteNo"){ state.confirmDeleteId = null; renderModal(); return; }
     if (e.target.id === "confirmDeleteYes" && state.openId){
       store.remove(state.openId);
       state.openId = null; state.confirmDeleteId = null; state.commentImage = null; state.commentVideo = null;
@@ -1346,7 +1496,7 @@
       showToast(t("deleted"));
       return;
     }
-    if (e.target.closest && e.target.closest("#dropzone") && e.target.tagName !== "INPUT" && e.target.tagName !== "VIDEO"){
+    if (closestFromEvent(e, "#dropzone") && e.target.tagName !== "INPUT" && e.target.tagName !== "VIDEO"){
       var fi = document.getElementById("fileInput");
       if (fi) fi.click();
     }
@@ -1358,8 +1508,8 @@
     }
     if (e.key === "Escape"){
       if (isLightboxOpen()){ closeLightbox(); return; }
-      if (state.newOpen){ state.newOpen = false; state.draft = null; render(); }
-      else if (state.openId){ state.openId = null; state.confirmDeleteId = null; state.commentImage = null; state.commentVideo = null; render(); }
+      if (state.newOpen){ state.newOpen = false; state.draft = null; renderModal(); }
+      else if (state.openId){ state.openId = null; state.confirmDeleteId = null; state.commentImage = null; state.commentVideo = null; renderModal(); }
     }
   });
 
@@ -1369,7 +1519,7 @@
     var image = state.commentImage;
     var video = state.commentVideo;
     if (!text && !image && !video) return;
-    var it = state.items.filter(function(i){ return i.id === id; })[0];
+    var it = state.items.filter(function(i){ return sameId(i.id, id); })[0];
     var comments = (it && it.comments || []).slice();
     comments.push({author: getReporter(), text: text, at: new Date().toISOString(), image: image || null, video: video || null});
     state.commentImage = null;
@@ -1443,10 +1593,10 @@
       if (target === "comment") state.commentVideo = url;
       else if (state.draft) state.draft.video = url;
       var needPoster = target !== "comment" && state.draft && !state.draft.screenshot;
-      if (!needPoster){ render(); return; }
+      if (!needPoster){ renderModal(); return; }
       return videoFileToPoster(file).then(function(poster){
         if (state.draft && !state.draft.screenshot) state.draft.screenshot = poster;
-      }).catch(function(){}).then(function(){ render(); });
+      }).catch(function(){}).then(function(){ renderModal(); });
     }).catch(function(){ showToast(t("vidFail"), 4000); });
   }
 
@@ -1459,7 +1609,7 @@
       } else if (state.draft){
         state.draft.screenshot = dataUrl;
       }
-      render();
+      renderModal();
     }).catch(function(){ showToast(t("imgFail")); });
   }
 
@@ -1482,12 +1632,6 @@
     var root = document.getElementById("lightbox");
     return !!(root && !root.hidden);
   }
-
-  var origRender = render;
-  render = function(){
-    snapshotDraft();
-    origRender();
-  };
 
   init();
   render();
