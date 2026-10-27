@@ -360,6 +360,7 @@
       vidBig: "El vídeo es demasiado grande (máximo 80 MB).",
       vidType: "Usa un vídeo MP4, WebM o MOV.",
       saveFail: "No se pudo guardar. Inténtalo de nuevo.",
+      saveFailLimit: "El tablero llegó al tope de registros. Borra algún hallazgo antiguo y vuelve a guardar.",
       translating: "Traduciendo…",
       syncFail: "No se pudo sincronizar el tablero compartido. Trabajando en este navegador.",
       syncFailRate: "El almacén compartido está temporalmente saturado. Reintentando en unos minutos…",
@@ -442,6 +443,7 @@
       vidBig: "Видео слишком большое (максимум 80 МБ).",
       vidType: "Нужен файл MP4, WebM или MOV.",
       saveFail: "Не удалось сохранить. Попробуй ещё раз.",
+      saveFailLimit: "Доска заполнена. Удали старую запись и сохрани снова.",
       translating: "Перевод…",
       syncFail: "Не удалось синхронизировать общую доску. Работа в этом браузере.",
       syncFailRate: "Общее хранилище временно перегружено. Повтор через несколько минут…",
@@ -684,28 +686,39 @@
 
   function fitDoc(obj){
     var copy = JSON.parse(JSON.stringify(obj));
-    var json = JSON.stringify(copy);
-    if (json.length <= MAX_DOC) return { doc: copy, extra: null };
-    var shot = copy.screenshot || null;
-    copy.screenshot = null;
-    copy.hasRemoteShot = !!shot;
-    json = JSON.stringify(copy);
-    if (json.length > MAX_DOC && copy.comments){
+    if (copy.screenshot) copy.hasRemoteShot = false;
+    if (JSON.stringify(copy).length > MAX_DOC && copy.comments){
       copy.comments = copy.comments.map(function(c){
         var n = Object.assign({}, c);
-        if (n.image){ n.hasRemoteImage = true; n.image = null; }
+        if (n.image){ n.image = null; }
         return n;
       });
     }
-    return { doc: copy, extra: shot ? { screenshot: shot } : null };
+    return { doc: copy, extra: null };
+  }
+
+  function isQuotaError(err){
+    var txt = String((err && (err.body || err.message)) || "");
+    return /entry limit|limit reached|100 entries/i.test(txt);
   }
 
   function loadRemoteShot(item){
-    if (item.screenshot || !item.hasRemoteShot) return Promise.resolve(item);
+    if (item.screenshot || !item.hasRemoteShot || !item.id) return Promise.resolve(item);
     return mantlePath("i/" + item.id, "GET").then(function(data){
-      if (data && data.screenshot) item.screenshot = data.screenshot;
-      return item;
-    }).catch(function(){ return item; });
+      if (data && data.screenshot){
+        item.screenshot = data.screenshot;
+        return item;
+      }
+      throw new Error("no_img");
+    }).catch(function(){
+      return mantlePath("t/" + item.id, "GET").then(function(data){
+        if (data && data.screenshot){
+          item.screenshot = data.screenshot;
+          item.hasRemoteShot = false;
+        }
+        return item;
+      }).catch(function(){ return item; });
+    });
   }
 
   function localLoad(){ try { return JSON.parse(localStorage.getItem(LOCAL_KEY) || "[]"); } catch(e){ return []; } }
@@ -858,15 +871,7 @@
     }).catch(function(){ return item; });
   }
 
-  function maybeHeartbeat(){
-    var k = "gm_qa_heartbeat";
-    var last = 0;
-    try { last = +localStorage.getItem(k) || 0; } catch(e){}
-    if (Date.now() - last < 12 * 3600 * 1000) return;
-    mantlePath("heartbeat", "POST", {at: new Date().toISOString()}).then(function(){
-      try { localStorage.setItem(k, String(Date.now())); } catch(e){}
-    }).catch(function(){});
-  }
+  function maybeHeartbeat(){ /* no crear entradas extra: el cupo gratis es 100 */ }
 
   function scheduleSync(ms){
     clearTimeout(syncTimer);
@@ -934,17 +939,15 @@
       var id = uid();
       var item = Object.assign({id: id, createdAt: new Date().toISOString(), comments: []}, data);
       var packed = fitDoc(item);
-      var writes = [mantlePath("t/" + id, "POST", packed.doc)];
-      if (packed.extra) writes.push(mantlePath("i/" + id, "POST", packed.extra));
-      return Promise.all(writes).then(function(){
-        var full = Object.assign({}, packed.doc, packed.extra || {}, {screenshot: item.screenshot, video: item.video || packed.doc.video || null, _full: true});
+      return mantlePath("t/" + id, "POST", packed.doc).then(function(){
+        var full = Object.assign({}, packed.doc, {screenshot: item.screenshot, video: item.video || packed.doc.video || null, _full: true});
         state.items.unshift(full);
         lastIndexFp = indexFingerprint(state.items);
         writeMetaIndex(state.items);
         render();
       }).catch(function(err){
         console.error(err);
-        showToast(t("saveFail"));
+        showToast(isQuotaError(err) ? t("saveFailLimit") : t("saveFail"));
         throw err;
       });
     };
@@ -952,17 +955,15 @@
       var current = state.items.filter(function(i){ return sameId(i.id, id); })[0] || {};
       var merged = Object.assign({}, current, patch, {updatedAt: new Date().toISOString()});
       var packed = fitDoc(merged);
-      var writes = [mantlePath("t/" + id, "POST", packed.doc)];
-      if (packed.extra) writes.push(mantlePath("i/" + id, "POST", packed.extra));
-      Promise.all(writes).then(function(){
+      mantlePath("t/" + id, "POST", packed.doc).then(function(){
         var idx = state.items.findIndex(function(i){ return sameId(i.id, id); });
-        if (idx > -1) state.items[idx] = Object.assign({}, packed.doc, packed.extra || {}, {screenshot: merged.screenshot, video: merged.video || packed.doc.video || null, _full: true});
+        if (idx > -1) state.items[idx] = Object.assign({}, packed.doc, {screenshot: merged.screenshot, video: merged.video || packed.doc.video || null, _full: true});
         lastIndexFp = indexFingerprint(state.items);
         writeMetaIndex(state.items);
         render();
       }).catch(function(err){
         console.error(err);
-        showToast(t("saveFail"));
+        showToast(isQuotaError(err) ? t("saveFailLimit") : t("saveFail"));
       });
     };
     store.remove = function(id){
