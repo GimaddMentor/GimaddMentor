@@ -295,8 +295,11 @@
   var MANTLE_BASE = "https://mantledb.sh/v2/" + MANTLE_NS;
   var MAX_PACK = 54000;
   var MAX_THUMB = 10000;
-  var MAX_FULL_SHOT = 52000;
+  var MAX_SHOT_PART = 57000;
+  var MAX_SHOT_PARTS = 4;
+  var MAX_FULL_SHOT = MAX_SHOT_PART * MAX_SHOT_PARTS;
   var MAX_COMMENT_SHOT = 28000;
+  var MAX_HOST_IMAGE = 8 * 1024 * 1024;
   var SYNC_MS = 5 * 60 * 1000;
   var syncTimer = null;
   var syncBackoffMs = SYNC_MS;
@@ -336,7 +339,7 @@
       fieldShot: "Captura, imagen o vídeo (opcional)",
       dropEmpty: "Arrastra una imagen o un vídeo, haz clic para elegir, o pega (Ctrl/Cmd+V) una captura",
       dropReplace: "Haz clic para añadir o reemplazar · pega otra captura con Ctrl/Cmd+V",
-      dropHint: "Imagen y vídeo pueden ir juntos. Vídeo: MP4, WebM o MOV, hasta 80 MB.",
+      dropHint: "La captura se guarda nítida, para que se lea el texto. Vídeo: MP4, WebM o MOV, hasta 80 MB.",
       cancel: "Cancelar",
       save: "Guardar hallazgo",
       comments: "Comentarios",
@@ -358,8 +361,8 @@
       shotSaved: "Captura actualizada.",
       addShot: "Añadir o reemplazar captura",
       deleted: "Hallazgo eliminado.",
-      imgWait: "Procesando imagen…",
-      imgFail: "No se pudo procesar la imagen.",
+      imgWait: "Subiendo captura nítida…",
+      imgFail: "No se pudo subir la imagen.",
       vidWait: "Subiendo vídeo…",
       vidFail: "No se pudo subir el vídeo. Prueba con un MP4 o WebM más pequeño.",
       vidBig: "El vídeo es demasiado grande (máximo 80 MB).",
@@ -421,7 +424,7 @@
       fieldShot: "Скриншот, изображение или видео (необязательно)",
       dropEmpty: "Перетащи изображение или видео, нажми чтобы выбрать, или вставь (Ctrl/Cmd+V) скриншот",
       dropReplace: "Нажми чтобы добавить или заменить · вставь другой скриншот Ctrl/Cmd+V",
-      dropHint: "Изображение и видео можно приложить вместе. Видео: MP4, WebM или MOV, до 80 МБ.",
+      dropHint: "Скриншот сохраняется чётким, чтобы читался текст. Видео: MP4, WebM или MOV, до 80 МБ.",
       cancel: "Отмена",
       save: "Сохранить",
       comments: "Комментарии",
@@ -443,8 +446,8 @@
       shotSaved: "Скриншот обновлён.",
       addShot: "Добавить или заменить скриншот",
       deleted: "Запись удалена.",
-      imgWait: "Обработка изображения…",
-      imgFail: "Не удалось обработать изображение.",
+      imgWait: "Загрузка чёткого скриншота…",
+      imgFail: "Не удалось загрузить изображение.",
       vidWait: "Загрузка видео…",
       vidFail: "Не удалось загрузить видео. Попробуй меньший MP4 или WebM.",
       vidBig: "Видео слишком большое (максимум 80 МБ).",
@@ -629,7 +632,7 @@
       return [
         it.id, it.status || "", it.priority || "", it.title || "", it.module || "",
         it.reporter || "", it.createdAt || "",
-        safeImg(it.screenshot) ? "1" : (it.hasRemoteShot ? "r" : "0"),
+        safeImg(it.screenshot) ? "1" : (safeHostedImg(it.screenshotUrl) ? "u" : (it.hasRemoteShot ? "r" : "0")),
         safeVideo(it.video) ? "1" : "0",
         (it.comments || []).length
       ].join("\t");
@@ -698,20 +701,53 @@
     delete copy._pack;
     delete copy._loadingShot;
     delete copy.screenshotFull;
-    if (hadFull) copy.hasRemoteShot = true;
+    if (safeHostedImg(copy.screenshotUrl)) copy.hasRemoteShot = false;
+    else if (hadFull) copy.hasRemoteShot = true;
     return copy;
+  }
+
+  function safeHostedImg(src){
+    if (typeof src !== "string") return false;
+    return src.indexOf("https://www.bitsandpieces.io/?key=") === 0
+      || src.indexOf("https://files.catbox.moe/") === 0
+      || src.indexOf("https://litter.catbox.moe/") === 0;
   }
 
   function bestShot(item){
     if (!item) return "";
+    if (safeHostedImg(item.screenshotUrl)) return item.screenshotUrl;
     if (safeImg(item.screenshotFull)) return item.screenshotFull;
     if (safeImg(item.screenshot)) return item.screenshot;
     return "";
   }
 
+  function imgHtml(src, cls, extra){
+    if (!safeImg(src)) return "";
+    return '<img class="' + (cls || "") + '" data-lightbox src="' + escapeHtml(src) + '" alt="" referrerpolicy="no-referrer"' + (extra || "") + ">";
+  }
+
+  function shotPartPath(id, idx){
+    return idx === 0 ? ("i/" + id) : ("i/" + id + "_" + idx);
+  }
+
   function saveFullShot(id, dataUrl){
     if (!id || !safeImg(dataUrl)) return Promise.resolve();
-    return mantlePath("i/" + id, "POST", {screenshot: dataUrl});
+    var parts = [];
+    for (var i = 0; i < dataUrl.length; i += MAX_SHOT_PART) parts.push(dataUrl.slice(i, i + MAX_SHOT_PART));
+    if (parts.length > MAX_SHOT_PARTS) parts = parts.slice(0, MAX_SHOT_PARTS);
+    var writes = parts.map(function(chunk, idx){
+      return mantlePath(shotPartPath(id, idx), "POST", {screenshot: chunk, n: parts.length, i: idx});
+    });
+    for (var extra = parts.length; extra < MAX_SHOT_PARTS; extra++){
+      writes.push(mantlePath(shotPartPath(id, extra), "DELETE").catch(function(){}));
+    }
+    return Promise.all(writes);
+  }
+
+  function deleteFullShot(id){
+    var writes = [];
+    for (var i = 0; i < MAX_SHOT_PARTS; i++) writes.push(mantlePath(shotPartPath(id, i), "DELETE").catch(function(){}));
+    return Promise.all(writes);
   }
 
   function isQuotaError(err){
@@ -779,14 +815,26 @@
 
   function loadRemoteShot(item){
     if (!item || !item.id) return Promise.resolve(item);
-    if (safeImg(item.screenshotFull) || !item.hasRemoteShot) return Promise.resolve(item);
+    if (safeHostedImg(item.screenshotUrl) || safeImg(item.screenshotFull) || !item.hasRemoteShot) return Promise.resolve(item);
     return mantlePath("i/" + item.id, "GET").then(function(data){
-      if (data && data.screenshot){
+      if (!data || !data.screenshot) return item;
+      var n = Math.min(MAX_SHOT_PARTS, Number(data.n) || 1);
+      if (n <= 1){
         item.screenshotFull = data.screenshot;
-        var idx = state.items.findIndex(function(i){ return sameId(i.id, item.id); });
-        if (idx > -1) state.items[idx].screenshotFull = data.screenshot;
+        var idx0 = state.items.findIndex(function(i){ return sameId(i.id, item.id); });
+        if (idx0 > -1) state.items[idx0].screenshotFull = data.screenshot;
+        return item;
       }
-      return item;
+      var rest = [];
+      for (var p = 1; p < n; p++) rest.push(mantlePath(shotPartPath(item.id, p), "GET").catch(function(){ return null; }));
+      return Promise.all(rest).then(function(chunks){
+        var full = data.screenshot;
+        chunks.forEach(function(c){ if (c && c.screenshot) full += c.screenshot; });
+        item.screenshotFull = full;
+        var idx = state.items.findIndex(function(i){ return sameId(i.id, item.id); });
+        if (idx > -1) state.items[idx].screenshotFull = full;
+        return item;
+      });
     }).catch(function(){ return item; });
   }
 
@@ -853,6 +901,7 @@
       var out = Object.assign({}, prev, row, {id: prev.id || row.id});
       if (prev.screenshot && !row.screenshot) out.screenshot = prev.screenshot;
       if (prev.screenshotFull && !row.screenshotFull) out.screenshotFull = prev.screenshotFull;
+      if (prev.screenshotUrl && !row.screenshotUrl) out.screenshotUrl = prev.screenshotUrl;
       if (prev._loadingShot) out._loadingShot = prev._loadingShot;
       if (prev._full){
         out._full = true;
@@ -995,12 +1044,13 @@
     store.add = function(data){
       var id = uid();
       var item = Object.assign({id: id, createdAt: new Date().toISOString(), comments: []}, data, {_full: true});
-      if (item.screenshotFull) item.hasRemoteShot = true;
+      if (item.screenshotUrl) item.hasRemoteShot = false;
+      else if (item.screenshotFull) item.hasRemoteShot = true;
       var packId = allocPackFor(item);
       item._pack = packId;
       state.items.unshift(item);
       var writes = [];
-      if (item.screenshotFull){
+      if (!item.screenshotUrl && item.screenshotFull){
         writes.push(saveFullShot(id, item.screenshotFull).catch(function(err){
           if (isQuotaError(err)) item.hasRemoteShot = false;
           else throw err;
@@ -1026,7 +1076,7 @@
       var prev = idx > -1 ? state.items[idx] : null;
       var oldPack = current._pack;
       if (idx > -1) state.items[idx] = merged;
-      if (patch.screenshot || patch.screenshotFull){
+      if (patch.screenshot || patch.screenshotFull || patch.screenshotUrl){
         var packedSize = JSON.stringify(packPayload(merged._pack)).length;
         if (packedSize > MAX_PACK){
           merged._pack = null;
@@ -1036,7 +1086,15 @@
         }
       }
       var writes = [];
-      if (patch.screenshotFull){
+      if (patch.screenshotUrl){
+        merged.hasRemoteShot = false;
+        merged.screenshotFull = null;
+        if (idx > -1){
+          state.items[idx].hasRemoteShot = false;
+          state.items[idx].screenshotFull = null;
+        }
+        writes.push(deleteFullShot(id));
+      } else if (patch.screenshotFull){
         merged.hasRemoteShot = true;
         if (idx > -1) state.items[idx].hasRemoteShot = true;
         writes.push(saveFullShot(id, patch.screenshotFull).catch(function(err){
@@ -1066,7 +1124,7 @@
       state.items = state.items.filter(function(i){ return !sameId(i.id, id); });
       var writes = [];
       if (packId) writes.push(savePack(packId));
-      writes.push(mantlePath("i/" + id, "DELETE").catch(function(){}));
+      writes.push(deleteFullShot(id));
       writes.push(saveMeta());
       Promise.all(writes).then(function(){
         lastIndexFp = indexFingerprint(state.items);
@@ -1168,13 +1226,14 @@
     });
   }
 
-  function encodeLoadedImage(img, maxW, quality, maxLen){
-    var w0 = maxW;
+  function encodeLoadedImage(img, maxW, quality, maxLen, mime){
+    mime = mime || "image/jpeg";
+    var w0 = Math.min(maxW, img.width || maxW);
     var q = quality;
     function encode(){
-      var scale = Math.min(1, w0 / img.width);
-      var w = Math.max(1, Math.round(img.width * scale));
-      var h = Math.max(1, Math.round(img.height * scale));
+      var scale = Math.min(1, w0 / (img.width || w0));
+      var w = Math.max(1, Math.round((img.width || w0) * scale));
+      var h = Math.max(1, Math.round((img.height || w0) * scale));
       var canvas = document.createElement("canvas");
       canvas.width = w; canvas.height = h;
       var ctx = canvas.getContext("2d");
@@ -1182,36 +1241,124 @@
       ctx.imageSmoothingEnabled = true;
       if (ctx.imageSmoothingQuality) ctx.imageSmoothingQuality = "high";
       ctx.drawImage(img, 0, 0, w, h);
+      if (mime === "image/webp"){
+        try {
+          var webp = canvas.toDataURL("image/webp", q);
+          if (webp && webp.indexOf("data:image/webp") === 0) return webp;
+        } catch (e){}
+      }
       return canvas.toDataURL("image/jpeg", q);
     }
     var out = encode();
     var tries = 0;
-    while (out.length > maxLen && tries < 12){
-      if (q > 0.55) q -= 0.07;
-      else w0 = Math.round(w0 * 0.88);
+    while (out.length > maxLen && tries < 14){
+      w0 = Math.round(w0 * 0.9);
+      if (w0 < 800 && q > 0.78) q -= 0.04;
       out = encode();
       tries++;
     }
     return out;
   }
 
-  function fileToImageVersions(file){
+  function loadImageFile(file){
     return new Promise(function(resolve, reject){
-      if (!file || String(file.type).indexOf("image/") !== 0){ reject(new Error("not_image")); return; }
+      var kind = String(file.type || "");
+      if (!file || (kind && kind.indexOf("image/") !== 0)){ reject(new Error("not_image")); return; }
       var reader = new FileReader();
       reader.onerror = function(){ reject(reader.error); };
       reader.onload = function(){
         var img = new Image();
         img.onerror = function(){ reject(new Error("bad_image")); };
-        img.onload = function(){
-          resolve({
-            full: encodeLoadedImage(img, 1600, 0.88, MAX_FULL_SHOT),
-            thumb: encodeLoadedImage(img, 720, 0.7, MAX_THUMB)
-          });
-        };
+        img.onload = function(){ resolve(img); };
         img.src = reader.result;
       };
       reader.readAsDataURL(file);
+    });
+  }
+
+  function fileToImageVersions(file){
+    return loadImageFile(file).then(function(img){
+      return {
+        full: encodeLoadedImage(img, 2200, 0.92, MAX_FULL_SHOT, "image/webp"),
+        thumb: encodeLoadedImage(img, 720, 0.72, MAX_THUMB)
+      };
+    });
+  }
+
+  function fileToThumb(file){
+    return loadImageFile(file).then(function(img){
+      return encodeLoadedImage(img, 720, 0.72, MAX_THUMB);
+    });
+  }
+
+  function dataUrlToBlob(dataUrl){
+    var parts = String(dataUrl || "").split(",");
+    var mime = (parts[0].match(/:(.*?);/) || [])[1] || "image/jpeg";
+    var bin = atob(parts[1] || "");
+    var arr = new Uint8Array(bin.length);
+    for (var i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
+    return new Blob([arr], {type: mime});
+  }
+
+  function imageUploadName(file){
+    var name = String((file && file.name) || "captura.png");
+    if (/\.(png|jpe?g|webp|gif)$/i.test(name)) return name.replace(/[^\w.\-]+/g, "_");
+    var t = String((file && file.type) || "");
+    if (t.indexOf("jpeg") >= 0) return "captura.jpg";
+    if (t.indexOf("webp") >= 0) return "captura.webp";
+    if (t.indexOf("gif") >= 0) return "captura.gif";
+    return "captura.png";
+  }
+
+  function prepareImageBlob(file){
+    if (file && file.size && file.size <= MAX_HOST_IMAGE) return Promise.resolve(file);
+    return loadImageFile(file).then(function(img){
+      var dataUrl = encodeLoadedImage(img, 2560, 0.92, 1800000, "image/jpeg");
+      return dataUrlToBlob(dataUrl);
+    });
+  }
+
+  function uploadCatboxImage(blob){
+    var fd = new FormData();
+    fd.append("reqtype", "fileupload");
+    fd.append("fileToUpload", blob, imageUploadName(blob));
+    return fetch("https://catbox.moe/user/api.php", {method: "POST", body: fd}).then(function(res){
+      if (!res.ok) throw new Error("http");
+      return res.text();
+    }).then(function(txt){
+      var url = String(txt || "").trim().split(/\s+/)[0];
+      if (url.indexOf("https://files.catbox.moe/") !== 0) throw new Error("bad_url");
+      return url;
+    });
+  }
+
+  function uploadBitsImage(blob){
+    return fetch("https://www.bitsandpieces.io/", {
+      method: "POST",
+      headers: {"Content-Type": blob.type || "image/png", "X-TTL": "31536000"},
+      body: blob
+    }).then(function(res){
+      if (!res.ok) throw new Error("http");
+      return res.text();
+    }).then(function(txt){
+      var m = /https:\/\/www\.bitsandpieces\.io\/\?key=[A-Z0-9]+&raw/i.exec(String(txt || ""));
+      if (!m) throw new Error("bad_url");
+      return m[0];
+    });
+  }
+
+  function withTimeout(promise, ms){
+    return Promise.race([
+      promise,
+      new Promise(function(_, reject){ setTimeout(function(){ reject(new Error("timeout")); }, ms); })
+    ]);
+  }
+
+  function uploadHostedImage(file){
+    return prepareImageBlob(file).then(function(blob){
+      return withTimeout(uploadCatboxImage(blob), 6000).catch(function(){
+        return withTimeout(uploadBitsImage(blob), 6000);
+      });
     });
   }
 
@@ -1349,8 +1496,9 @@
   function cardHtml(it){
     var commentCount = (it.comments || []).length;
     var shot = it.screenshot;
+    var fullSrc = bestShot(it);
     var media = "";
-    if (safeImg(shot)) media += '<img class="card-thumb zoomable" data-lightbox src="' + shot + '" alt=""' + (safeImg(it.screenshotFull) ? ' data-full-src="' + it.screenshotFull + '"' : "") + ">";
+    if (safeImg(shot)) media += imgHtml(shot, "card-thumb zoomable", safeImg(fullSrc) && fullSrc !== shot ? ' data-full-src="' + escapeHtml(fullSrc) + '"' : "");
     if (safeVideo(it.video)) media += videoPlayerHtml(it.video, "card-video", shot);
     return '<div class="card" data-open="' + escapeHtml(it.id) + '">'
       + '<div class="card-top"><span class="chip chip-' + escapeHtml(it.priority||"media") + '">' + escapeHtml(priLabel(it.priority)) + "</span></div>"
@@ -1359,12 +1507,12 @@
       + '<p class="card-title" data-i18n-text="' + escapeHtml(it.title || "") + '">' + escapeHtml(it.title || t("untitled")) + "</p>"
       + (it.description ? '<p class="card-desc" data-i18n-text="' + escapeHtml(it.description) + '">' + escapeHtml(it.description) + "</p>" : "")
       + '<div class="card-foot"><span class="who">' + escapeHtml(it.reporter || t("anon")) + " · " + fmtDate(it.createdAt) + "</span>"
-      + '<span class="meta">' + (shot || it.hasRemoteShot ? camIcon() : "") + (safeVideo(it.video) ? videoIcon() : "") + (commentCount ? chatIcon() + commentCount : "") + "</span></div>"
+      + '<span class="meta">' + (shot || it.screenshotUrl || it.hasRemoteShot ? camIcon() : "") + (safeVideo(it.video) ? videoIcon() : "") + (commentCount ? chatIcon() + commentCount : "") + "</span></div>"
       + "</div>";
   }
 
   function openNewModal(){
-    state.draft = { title:"", module: "video", priority:"media", description:"", screenshot:null, screenshotFull:null, video:null };
+    state.draft = { title:"", module: "video", priority:"media", description:"", screenshot:null, screenshotFull:null, screenshotUrl:null, video:null };
     state.newOpen = true;
     renderModal();
     setTimeout(function(){ var el = document.getElementById("draftTitle"); if (el) el.focus(); }, 30);
@@ -1377,7 +1525,7 @@
     var inputId = opts.inputId || "fileInput";
     var inner = "";
     if (safeVideo(video)) inner += videoPlayerHtml(video, "drop-video", shot);
-    else if (safeImg(shot)) inner += '<img src="' + shot + '" alt="">';
+    else if (safeImg(shot)) inner += '<img src="' + escapeHtml(shot) + '" alt="" referrerpolicy="no-referrer">';
     else inner += "<div>" + videoIcon() + camIcon() + "</div>";
     inner += "<div>" + escapeHtml(t(opts.hintKey || (has ? "dropReplace" : "dropEmpty"))) + "</div>";
     inner += "<small>" + escapeHtml(t("dropHint")) + "</small>";
@@ -1404,7 +1552,7 @@
             + '<div class="field"><label>' + escapeHtml(t("fieldPriority")) + "</label><select id=\"draftPriority\">" + prOpts + "</select></div>"
           + "</div>"
           + '<div class="field"><label>' + escapeHtml(t("fieldDesc")) + '</label><textarea id="draftDesc" rows="4" placeholder="' + escapeHtml(t("descPh")) + '">' + escapeHtml(d.description) + "</textarea></div>"
-          + '<div class="field"><label>' + escapeHtml(t("fieldShot")) + "</label>" + dropzoneHtml(d.screenshotFull || d.screenshot, d.video) + "</div>"
+          + '<div class="field"><label>' + escapeHtml(t("fieldShot")) + "</label>" + dropzoneHtml(d.screenshotUrl || d.screenshotFull || d.screenshot, d.video) + "</div>"
         + "</div>"
         + '<div class="modal-foot">'
           + '<button class="btn btn-ghost" data-close="new">' + escapeHtml(t("cancel")) + "</button>"
@@ -1424,7 +1572,7 @@
     var comments = (it.comments || []).slice().reverse().map(function(c){
       return '<div class="comment"><div class="comment-head"><b>' + escapeHtml(c.author||t("anon")) + "</b><span>" + fmtDate(c.at) + "</span></div>"
         + (c.text ? '<p data-i18n-text="' + escapeHtml(c.text) + '">' + escapeHtml(c.text) + "</p>" : "")
-        + (safeImg(c.image) ? '<img class="zoomable" data-lightbox src="' + c.image + '" alt="">' : "")
+        + (safeImg(c.image) ? imgHtml(c.image, "zoomable") : "")
         + (safeVideo(c.video) ? videoPlayerHtml(c.video, "", c.image) : "")
         + "</div>";
     }).join("") || '<div class="empty-col">' + escapeHtml(t("noComments")) + "</div>";
@@ -1434,7 +1582,7 @@
       : '<button class="btn btn-ghost btn-icon" id="askDelete" title="Delete">🗑</button>';
 
     var commentImg = state.commentImage
-      ? '<img class="comment-preview" src="' + state.commentImage + '" alt="">'
+      ? '<img class="comment-preview" src="' + escapeHtml(state.commentImage) + '" alt="" referrerpolicy="no-referrer">'
       : "";
     var commentVid = safeVideo(state.commentVideo)
       ? videoPlayerHtml(state.commentVideo, "comment-preview-video")
@@ -1447,7 +1595,7 @@
           + '<div class="field"><label>' + escapeHtml(t("fieldModule")) + "</label><div>" + escapeHtml(moduleLabel(it.module)) + "</div></div>"
           + (it.description ? '<div class="field"><label>' + escapeHtml(t("fieldDesc")) + '</label><p style="margin:0;font-size:14px;line-height:1.5;" data-i18n-text="' + escapeHtml(it.description) + '">' + escapeHtml(it.description) + "</p></div>" : "")
           + '<div class="field"><label>' + escapeHtml(t("addShot")) + "</label>"
-            + (safeImg(bestShot(it)) ? '<img class="zoomable" data-lightbox src="' + bestShot(it) + '" alt="" style="width:100%;border-radius:10px;border:1px solid var(--border);margin-bottom:10px;">' : "")
+            + (safeImg(bestShot(it)) ? imgHtml(bestShot(it), "zoomable", ' style="width:100%;border-radius:10px;border:1px solid var(--border);margin-bottom:10px;"') : "")
             + dropzoneHtml(null, null, {id:"detailDropzone", inputId:"detailFileInput", hintKey:"dropReplace"})
           + "</div>"
           + (safeVideo(it.video) ? '<div class="field"><label>' + escapeHtml(t("videoLabel")) + "</label>" + videoPlayerHtml(it.video, "detail-video", it.screenshot) + "</div>" : "")
@@ -1536,7 +1684,7 @@
     var it = state.items.filter(function(i){ return sameId(i.id, id); })[0];
     if (!it) return;
     var needHydrate = !it._full;
-    var needShot = !!(it.hasRemoteShot && !it.screenshotFull);
+    var needShot = !!(it.hasRemoteShot && !it.screenshotFull && !safeHostedImg(it.screenshotUrl));
     if (!needHydrate && !needShot) return;
     var seq = needHydrate ? hydrateTicket(it) : Promise.resolve(it);
     seq.then(function(full){
@@ -1558,7 +1706,7 @@
       var card = closestFromEvent(e, "[data-open]");
       var fullSrc = lbImg.getAttribute("data-full-src") || "";
       var it = card ? state.items.filter(function(i){ return sameId(i.id, card.getAttribute("data-open")); })[0] : null;
-      if (it && it.hasRemoteShot && !safeImg(it.screenshotFull) && !safeImg(fullSrc)){
+      if (it && it.hasRemoteShot && !safeImg(it.screenshotFull) && !safeHostedImg(it.screenshotUrl) && !safeImg(fullSrc)){
         loadRemoteShot(it).then(function(){ openLightbox(bestShot(it) || lbImg.getAttribute("src")); });
         return;
       }
@@ -1598,7 +1746,8 @@
         module: document.getElementById("draftModule").value,
         priority: document.getElementById("draftPriority").value,
         description: document.getElementById("draftDesc").value.trim(),
-        screenshotFull: state.draft.screenshotFull || null,
+        screenshotFull: state.draft.screenshotUrl ? null : (state.draft.screenshotFull || null),
+        screenshotUrl: state.draft.screenshotUrl || null,
         screenshot: state.draft.screenshot,
         video: state.draft.video || null,
         status: "pendiente",
@@ -1761,30 +1910,56 @@
     }).catch(function(){ showToast(t("vidFail"), 4000); });
   }
 
+  function applyFindingShot(target, shot){
+    if (target === "detail" && state.openId){
+      store.update(state.openId, shot);
+      showToast(t("shotSaved"));
+      return;
+    }
+    if (!state.draft) return;
+    state.draft.screenshot = shot.screenshot;
+    state.draft.screenshotFull = shot.screenshotFull || null;
+    state.draft.screenshotUrl = shot.screenshotUrl || null;
+    renderModal();
+  }
+
   function handleImageFile(file, target){
     showToast(t("imgWait"));
     snapshotDraft();
     if (target === "comment"){
-      fileToCompressedDataUrl(file, MAX_COMMENT_SHOT).then(function(dataUrl){
-        state.commentImage = dataUrl;
+      uploadHostedImage(file).then(function(url){
+        state.commentImage = url;
         renderModal();
-      }).catch(function(){ showToast(t("imgFail")); });
+      }).catch(function(){
+        fileToCompressedDataUrl(file, MAX_COMMENT_SHOT).then(function(dataUrl){
+          state.commentImage = dataUrl;
+          renderModal();
+        }).catch(function(){ showToast(t("imgFail")); });
+      });
       return;
     }
-    fileToImageVersions(file).then(function(v){
-      if (target === "detail" && state.openId){
-        store.update(state.openId, {
-          screenshot: v.thumb,
-          screenshotFull: v.full,
-          hasRemoteShot: true
+    var thumbP = fileToThumb(file);
+    var hostP = uploadHostedImage(file).then(function(url){ return url; }).catch(function(){ return null; });
+    Promise.all([thumbP, hostP]).then(function(parts){
+      var thumb = parts[0];
+      var url = parts[1];
+      if (url){
+        applyFindingShot(target, {
+          screenshot: thumb,
+          screenshotUrl: url,
+          screenshotFull: null,
+          hasRemoteShot: false
         });
-        showToast(t("shotSaved"));
         return;
       }
-      if (!state.draft) return;
-      state.draft.screenshot = v.thumb;
-      state.draft.screenshotFull = v.full;
-      renderModal();
+      return fileToImageVersions(file).then(function(v){
+        applyFindingShot(target, {
+          screenshot: v.thumb,
+          screenshotFull: v.full,
+          screenshotUrl: null,
+          hasRemoteShot: true
+        });
+      });
     }).catch(function(){ showToast(t("imgFail")); });
   }
 
@@ -1793,6 +1968,7 @@
     var img = document.getElementById("lightboxImg");
     var btn = document.getElementById("lightboxClose");
     if (!root || !img || !safeImg(src)) return;
+    img.setAttribute("referrerpolicy", "no-referrer");
     img.src = src;
     if (btn) btn.setAttribute("aria-label", t("closeImg"));
     root.hidden = false;
