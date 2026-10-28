@@ -293,7 +293,8 @@
   var MANTLE_NS = "gimadd-mentor-qa-20261023";
   var MANTLE_KEY = "b84b1187f396c12e5857a242314a1364481528e4a786afd34dd931c27aa67828";
   var MANTLE_BASE = "https://mantledb.sh/v2/" + MANTLE_NS;
-  var MAX_DOC = 58000;
+  var MAX_PACK = 54000;
+  var MAX_SHOT = 14000;
   var SYNC_MS = 5 * 60 * 1000;
   var syncTimer = null;
   var syncBackoffMs = SYNC_MS;
@@ -684,22 +685,76 @@
     });
   }
 
-  function fitDoc(obj){
-    var copy = JSON.parse(JSON.stringify(obj));
+  function stripInternal(item){
+    var copy = JSON.parse(JSON.stringify(item || {}));
+    delete copy._full;
+    delete copy._pack;
+    delete copy._loadingShot;
     if (copy.screenshot) copy.hasRemoteShot = false;
-    if (JSON.stringify(copy).length > MAX_DOC && copy.comments){
-      copy.comments = copy.comments.map(function(c){
-        var n = Object.assign({}, c);
-        if (n.image){ n.image = null; }
-        return n;
-      });
-    }
-    return { doc: copy, extra: null };
+    return copy;
   }
 
   function isQuotaError(err){
     var txt = String((err && (err.body || err.message)) || "");
     return /entry limit|limit reached|100 entries/i.test(txt);
+  }
+
+  function packPayload(packId){
+    return {
+      items: (state.items || []).filter(function(it){ return it._pack === packId; }).map(stripInternal)
+    };
+  }
+
+  function savePack(packId){
+    var body = packPayload(packId);
+    if (!body.items.length){
+      return mantlePath(packId, "DELETE").catch(function(){});
+    }
+    return mantlePath(packId, "POST", body);
+  }
+
+  function saveMeta(){
+    var seen = {};
+    var packs = [];
+    (state.items || []).forEach(function(it){
+      if (it._pack && !seen[it._pack]){
+        seen[it._pack] = true;
+        packs.push(it._pack);
+      }
+    });
+    packs.sort(function(a,b){
+      var na = parseInt(String(a).slice(2), 10) || 0;
+      var nb = parseInt(String(b).slice(2), 10) || 0;
+      return na - nb;
+    });
+    return mantlePath("meta", "POST", {
+      v: 3,
+      updatedAt: new Date().toISOString(),
+      packs: packs,
+      count: (state.items || []).length
+    }).catch(function(){});
+  }
+
+  function allocPackFor(item){
+    var byPack = {};
+    (state.items || []).forEach(function(it){
+      if (!it._pack) return;
+      (byPack[it._pack] = byPack[it._pack] || []).push(it);
+    });
+    var ids = Object.keys(byPack).sort(function(a,b){
+      return (parseInt(String(a).slice(2),10)||0) - (parseInt(String(b).slice(2),10)||0);
+    });
+    var cleanNew = stripInternal(item);
+    for (var i=0; i<ids.length; i++){
+      var trial = byPack[ids[i]].map(stripInternal).concat([cleanNew]);
+      if (JSON.stringify({items: trial}).length <= MAX_PACK) return ids[i];
+    }
+    var n = 0;
+    ids.forEach(function(id){
+      var m = /^p\/(\d+)$/.exec(id);
+      if (m) n = Math.max(n, parseInt(m[1], 10) + 1);
+    });
+    return "p/" + n;
   }
 
   function loadRemoteShot(item){
@@ -803,57 +858,44 @@
     state.ready = true;
   }
 
-  function ticketIndexRow(item){
-    return {
-      id: item.id,
-      title: item.title || "",
-      status: item.status || "pendiente",
-      priority: item.priority || "media",
-      module: item.module || "other",
-      reporter: item.reporter || "",
-      createdAt: item.createdAt || "",
-      updatedAt: item.updatedAt || item.createdAt || "",
-      hasRemoteShot: !!(item.hasRemoteShot || item.screenshot),
-      description: item.description || "",
-      video: item.video || null
-    };
-  }
-
-  function writeMetaIndex(items){
-    var index = (items || []).map(ticketIndexRow);
-    index.sort(function(a,b){ return (b.createdAt||"").localeCompare(a.createdAt||""); });
-    return mantlePath("meta", "POST", {
-      v: 2,
-      updatedAt: new Date().toISOString(),
-      ids: index.map(function(i){ return i.id; }),
-      index: index
-    }).catch(function(){});
-  }
-
   function fetchAllTickets(){
-    /* 1 GET del índice en vez de list + N tickets (evita saturar el cupo gratis). */
     return mantlePath("meta", "GET").then(function(meta){
-      if (meta && Array.isArray(meta.index)){
-        return meta.index.map(function(row){
-          return Object.assign({comments: []}, row);
+      if (meta && Number(meta.v) >= 3 && Array.isArray(meta.packs)){
+        if (!meta.packs.length) return [];
+        return Promise.all(meta.packs.map(function(p){
+          return mantlePath(p, "GET").then(function(doc){
+            return ((doc && doc.items) || []).map(function(it){
+              return Object.assign({comments: []}, it, {id: it.id, _pack: p, _full: true});
+            });
+          }).catch(function(){ return []; });
+        })).then(function(groups){
+          return groups.reduce(function(acc, rows){ return acc.concat(rows); }, []);
         });
       }
-      throw new Error("no_meta");
+      throw new Error("no_packs");
     }).catch(function(){
       return mantlePath("list/" + MANTLE_NS, "GET").then(function(list){
         var entries = (list && list.entries) || [];
+        var packPaths = entries.map(function(e){ return e.path; }).filter(function(p){ return p && p.indexOf("p/") === 0; });
+        if (packPaths.length){
+          return Promise.all(packPaths.map(function(p){
+            return mantlePath(p, "GET").then(function(doc){
+              return ((doc && doc.items) || []).map(function(it){
+                return Object.assign({comments: []}, it, {id: it.id, _pack: p, _full: true});
+              });
+            }).catch(function(){ return []; });
+          })).then(function(groups){
+            return groups.reduce(function(acc, rows){ return acc.concat(rows); }, []);
+          });
+        }
         var ticketPaths = entries.map(function(e){ return e.path; }).filter(function(p){ return p && p.indexOf("t/") === 0; });
         if (!ticketPaths.length) return [];
         return Promise.all(ticketPaths.map(function(p){
           return mantlePath(p, "GET").then(function(data){
             var id = p.slice(2);
-            return Object.assign({id: id, comments: []}, data, {id: id});
+            return Object.assign({id: id, comments: []}, data, {id: id, _full: true});
           }).catch(function(){ return null; });
-        })).then(function(rows){
-          var items = rows.filter(Boolean);
-          writeMetaIndex(items);
-          return items;
-        });
+        })).then(function(rows){ return rows.filter(Boolean); });
       });
     });
   }
@@ -937,43 +979,45 @@
     refreshBoard();
     store.add = function(data){
       var id = uid();
-      var item = Object.assign({id: id, createdAt: new Date().toISOString(), comments: []}, data);
-      var packed = fitDoc(item);
-      return mantlePath("t/" + id, "POST", packed.doc).then(function(){
-        var full = Object.assign({}, packed.doc, {screenshot: item.screenshot, video: item.video || packed.doc.video || null, _full: true});
-        state.items.unshift(full);
+      var item = Object.assign({id: id, createdAt: new Date().toISOString(), comments: []}, data, {_full: true});
+      var packId = allocPackFor(item);
+      item._pack = packId;
+      state.items.unshift(item);
+      return savePack(packId).then(function(){ return saveMeta(); }).then(function(){
         lastIndexFp = indexFingerprint(state.items);
-        writeMetaIndex(state.items);
         render();
       }).catch(function(err){
         console.error(err);
+        state.items = state.items.filter(function(i){ return !sameId(i.id, id); });
         showToast(isQuotaError(err) ? t("saveFailLimit") : t("saveFail"));
         throw err;
       });
     };
     store.update = function(id, patch){
       var current = state.items.filter(function(i){ return sameId(i.id, id); })[0] || {};
-      var merged = Object.assign({}, current, patch, {updatedAt: new Date().toISOString()});
-      var packed = fitDoc(merged);
-      mantlePath("t/" + id, "POST", packed.doc).then(function(){
-        var idx = state.items.findIndex(function(i){ return sameId(i.id, id); });
-        if (idx > -1) state.items[idx] = Object.assign({}, packed.doc, {screenshot: merged.screenshot, video: merged.video || packed.doc.video || null, _full: true});
+      var merged = Object.assign({}, current, patch, {updatedAt: new Date().toISOString(), _full: true, _pack: current._pack});
+      if (!merged._pack) merged._pack = allocPackFor(merged);
+      var idx = state.items.findIndex(function(i){ return sameId(i.id, id); });
+      var prev = idx > -1 ? state.items[idx] : null;
+      if (idx > -1) state.items[idx] = merged;
+      savePack(merged._pack).then(function(){ return saveMeta(); }).then(function(){
         lastIndexFp = indexFingerprint(state.items);
-        writeMetaIndex(state.items);
         render();
       }).catch(function(err){
         console.error(err);
+        if (idx > -1 && prev) state.items[idx] = prev;
         showToast(isQuotaError(err) ? t("saveFailLimit") : t("saveFail"));
       });
     };
     store.remove = function(id){
-      Promise.all([
-        mantlePath("t/" + id, "DELETE").catch(function(){}),
-        mantlePath("i/" + id, "DELETE").catch(function(){})
-      ]).then(function(){
-        state.items = state.items.filter(function(i){ return !sameId(i.id, id); });
+      var current = state.items.filter(function(i){ return sameId(i.id, id); })[0];
+      var packId = current && current._pack;
+      state.items = state.items.filter(function(i){ return !sameId(i.id, id); });
+      var writes = [];
+      if (packId) writes.push(savePack(packId));
+      writes.push(saveMeta());
+      Promise.all(writes).then(function(){
         lastIndexFp = indexFingerprint(state.items);
-        writeMetaIndex(state.items);
         render();
       }).catch(function(){ showToast(t("saveFail")); });
     };
@@ -1081,8 +1125,8 @@
         var img = new Image();
         img.onerror = function(){ reject(new Error("bad_image")); };
         img.onload = function(){
-          var maxW = 1000;
-          var quality = 0.7;
+          var maxW = 800;
+          var quality = 0.55;
           function encode(){
             var scale = Math.min(1, maxW / img.width);
             var w = Math.max(1, Math.round(img.width * scale));
@@ -1096,8 +1140,8 @@
           }
           var out = encode();
           var tries = 0;
-          while (out.length > 48000 && tries < 8){
-            if (quality > 0.28) quality -= 0.12;
+          while (out.length > MAX_SHOT && tries < 10){
+            if (quality > 0.28) quality -= 0.08;
             else maxW = Math.round(maxW * 0.82);
             out = encode();
             tries++;
