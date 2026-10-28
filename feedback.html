@@ -355,6 +355,8 @@
       deleteYes: "Sí, eliminar",
       needTitle: "Ponle un título al hallazgo.",
       saved: "Hallazgo guardado.",
+      shotSaved: "Captura actualizada.",
+      addShot: "Añadir o reemplazar captura",
       deleted: "Hallazgo eliminado.",
       imgWait: "Procesando imagen…",
       imgFail: "No se pudo procesar la imagen.",
@@ -438,6 +440,8 @@
       deleteYes: "Да, удалить",
       needTitle: "Добавь заголовок.",
       saved: "Запись сохранена.",
+      shotSaved: "Скриншот обновлён.",
+      addShot: "Добавить или заменить скриншот",
       deleted: "Запись удалена.",
       imgWait: "Обработка изображения…",
       imgFail: "Не удалось обработать изображение.",
@@ -1020,9 +1024,35 @@
       if (!merged._pack) merged._pack = allocPackFor(merged);
       var idx = state.items.findIndex(function(i){ return sameId(i.id, id); });
       var prev = idx > -1 ? state.items[idx] : null;
+      var oldPack = current._pack;
       if (idx > -1) state.items[idx] = merged;
-      savePack(merged._pack).then(function(){ return saveMeta(); }).then(function(){
+      if (patch.screenshot || patch.screenshotFull){
+        var packedSize = JSON.stringify(packPayload(merged._pack)).length;
+        if (packedSize > MAX_PACK){
+          merged._pack = null;
+          if (idx > -1) state.items[idx]._pack = null;
+          merged._pack = allocPackFor(merged);
+          if (idx > -1) state.items[idx]._pack = merged._pack;
+        }
+      }
+      var writes = [];
+      if (patch.screenshotFull){
+        merged.hasRemoteShot = true;
+        if (idx > -1) state.items[idx].hasRemoteShot = true;
+        writes.push(saveFullShot(id, patch.screenshotFull).catch(function(err){
+          if (isQuotaError(err)){
+            if (idx > -1) state.items[idx].hasRemoteShot = false;
+            return;
+          }
+          throw err;
+        }));
+      }
+      writes.push(savePack(merged._pack));
+      if (oldPack && oldPack !== merged._pack) writes.push(savePack(oldPack));
+      writes.push(saveMeta());
+      return Promise.all(writes).then(function(){
         lastIndexFp = indexFingerprint(state.items);
+        lastBoardSig = "";
         render();
       }).catch(function(err){
         console.error(err);
@@ -1340,16 +1370,19 @@
     setTimeout(function(){ var el = document.getElementById("draftTitle"); if (el) el.focus(); }, 30);
   }
 
-  function dropzoneHtml(shot, video){
+  function dropzoneHtml(shot, video, opts){
+    opts = opts || {};
     var has = safeImg(shot) || safeVideo(video);
+    var zoneId = opts.id || "dropzone";
+    var inputId = opts.inputId || "fileInput";
     var inner = "";
     if (safeVideo(video)) inner += videoPlayerHtml(video, "drop-video", shot);
     else if (safeImg(shot)) inner += '<img src="' + shot + '" alt="">';
     else inner += "<div>" + videoIcon() + camIcon() + "</div>";
-    inner += "<div>" + escapeHtml(t(has ? "dropReplace" : "dropEmpty")) + "</div>";
+    inner += "<div>" + escapeHtml(t(opts.hintKey || (has ? "dropReplace" : "dropEmpty"))) + "</div>";
     inner += "<small>" + escapeHtml(t("dropHint")) + "</small>";
-    inner += '<input type="file" accept="image/*,video/mp4,video/webm,video/quicktime,video/*" id="fileInput" hidden multiple>';
-    return '<div class="drop" id="dropzone" tabindex="0">' + inner + "</div>";
+    inner += '<input type="file" accept="image/*,video/mp4,video/webm,video/quicktime,video/*" id="' + inputId + '" hidden multiple>';
+    return '<div class="drop" id="' + zoneId + '" tabindex="0">' + inner + "</div>";
   }
 
   function newModalHtml(){
@@ -1413,7 +1446,10 @@
         + '<div class="modal-body">'
           + '<div class="field"><label>' + escapeHtml(t("fieldModule")) + "</label><div>" + escapeHtml(moduleLabel(it.module)) + "</div></div>"
           + (it.description ? '<div class="field"><label>' + escapeHtml(t("fieldDesc")) + '</label><p style="margin:0;font-size:14px;line-height:1.5;" data-i18n-text="' + escapeHtml(it.description) + '">' + escapeHtml(it.description) + "</p></div>" : "")
-          + (safeImg(bestShot(it)) ? '<div class="field"><label>' + escapeHtml(t("capture")) + '</label><img class="zoomable" data-lightbox src="' + bestShot(it) + '" alt="" style="width:100%;border-radius:10px;border:1px solid var(--border);"></div>' : "")
+          + '<div class="field"><label>' + escapeHtml(t("addShot")) + "</label>"
+            + (safeImg(bestShot(it)) ? '<img class="zoomable" data-lightbox src="' + bestShot(it) + '" alt="" style="width:100%;border-radius:10px;border:1px solid var(--border);margin-bottom:10px;">' : "")
+            + dropzoneHtml(null, null, {id:"detailDropzone", inputId:"detailFileInput", hintKey:"dropReplace"})
+          + "</div>"
           + (safeVideo(it.video) ? '<div class="field"><label>' + escapeHtml(t("videoLabel")) + "</label>" + videoPlayerHtml(it.video, "detail-video", it.screenshot) + "</div>" : "")
           + '<div class="field"><label>' + escapeHtml(t("status")) + '</label><div class="status-row">' + statusBtns + "</div></div>"
           + '<div class="field"><label>' + escapeHtml(t("comments")) + '</label><div class="comments">' + comments + "</div>"
@@ -1601,6 +1637,11 @@
     if (closestFromEvent(e, "#dropzone") && e.target.tagName !== "INPUT" && e.target.tagName !== "VIDEO"){
       var fi = document.getElementById("fileInput");
       if (fi) fi.click();
+      return;
+    }
+    if (closestFromEvent(e, "#detailDropzone") && e.target.tagName !== "INPUT" && e.target.tagName !== "VIDEO"){
+      var df = document.getElementById("detailFileInput");
+      if (df) df.click();
     }
   });
 
@@ -1630,12 +1671,12 @@
     if (input) input.value = "";
   }
 
-  function wireDropzone(){
-    var dz = document.getElementById("dropzone");
-    var fileInput = document.getElementById("fileInput");
+  function bindDropzone(zoneId, inputId, target){
+    var dz = document.getElementById(zoneId);
+    var fileInput = document.getElementById(inputId);
     if (fileInput){
       fileInput.addEventListener("change", function(){
-        handleFiles(fileInput.files, "draft");
+        handleFiles(fileInput.files, target);
         fileInput.value = "";
       });
     }
@@ -1644,9 +1685,14 @@
       dz.addEventListener("dragleave", function(){ dz.classList.remove("drag"); });
       dz.addEventListener("drop", function(e){
         e.preventDefault(); dz.classList.remove("drag");
-        handleFiles(e.dataTransfer.files, "draft");
+        handleFiles(e.dataTransfer.files, target);
       });
     }
+  }
+
+  function wireDropzone(){
+    bindDropzone("dropzone", "fileInput", "draft");
+    bindDropzone("detailDropzone", "detailFileInput", "detail");
     var commentFile = document.getElementById("commentFile");
     if (commentFile){
       commentFile.addEventListener("change", function(){
@@ -1670,7 +1716,11 @@
       if (items[i].type.indexOf("image/") === 0){
         var f = items[i].getAsFile();
         if (f){
-          handleImageFile(f, state.newOpen ? "draft" : "comment");
+          var pasteTarget = "comment";
+          if (state.newOpen) pasteTarget = "draft";
+          else if (document.activeElement && document.activeElement.id === "commentInput") pasteTarget = "comment";
+          else if (state.openId) pasteTarget = "detail";
+          handleImageFile(f, pasteTarget);
           e.preventDefault();
         }
         return;
@@ -1692,9 +1742,18 @@
     showToast(t("vidWait"), 20000);
     snapshotDraft();
     uploadVideoFile(file).then(function(url){
-      if (target === "comment") state.commentVideo = url;
-      else if (state.draft) state.draft.video = url;
-      var needPoster = target !== "comment" && state.draft && !state.draft.screenshot;
+      if (target === "comment"){
+        state.commentVideo = url;
+        renderModal();
+        return;
+      }
+      if (target === "detail" && state.openId){
+        store.update(state.openId, {video: url});
+        showToast(t("saved"));
+        return;
+      }
+      if (state.draft) state.draft.video = url;
+      var needPoster = state.draft && !state.draft.screenshot;
       if (!needPoster){ renderModal(); return; }
       return videoFileToPoster(file).then(function(poster){
         if (state.draft && !state.draft.screenshot) state.draft.screenshot = poster;
@@ -1713,6 +1772,15 @@
       return;
     }
     fileToImageVersions(file).then(function(v){
+      if (target === "detail" && state.openId){
+        store.update(state.openId, {
+          screenshot: v.thumb,
+          screenshotFull: v.full,
+          hasRemoteShot: true
+        });
+        showToast(t("shotSaved"));
+        return;
+      }
       if (!state.draft) return;
       state.draft.screenshot = v.thumb;
       state.draft.screenshotFull = v.full;
