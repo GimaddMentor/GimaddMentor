@@ -231,7 +231,7 @@
     display:flex;align-items:center;justify-content:center;padding:28px 16px;cursor:zoom-out;
   }
   .lightbox img{
-    max-width:min(96vw,1400px);max-height:92vh;object-fit:contain;border-radius:8px;
+    max-width:96vw;max-height:94vh;object-fit:contain;border-radius:8px;
     box-shadow:0 20px 60px rgba(0,0,0,.5);cursor:default;
   }
   .lightbox-close{
@@ -294,7 +294,9 @@
   var MANTLE_KEY = "b84b1187f396c12e5857a242314a1364481528e4a786afd34dd931c27aa67828";
   var MANTLE_BASE = "https://mantledb.sh/v2/" + MANTLE_NS;
   var MAX_PACK = 54000;
-  var MAX_SHOT = 14000;
+  var MAX_THUMB = 10000;
+  var MAX_FULL_SHOT = 52000;
+  var MAX_COMMENT_SHOT = 28000;
   var SYNC_MS = 5 * 60 * 1000;
   var syncTimer = null;
   var syncBackoffMs = SYNC_MS;
@@ -686,12 +688,26 @@
   }
 
   function stripInternal(item){
+    var hadFull = !!(item && (item.screenshotFull || item.hasRemoteShot));
     var copy = JSON.parse(JSON.stringify(item || {}));
     delete copy._full;
     delete copy._pack;
     delete copy._loadingShot;
-    if (copy.screenshot) copy.hasRemoteShot = false;
+    delete copy.screenshotFull;
+    if (hadFull) copy.hasRemoteShot = true;
     return copy;
+  }
+
+  function bestShot(item){
+    if (!item) return "";
+    if (safeImg(item.screenshotFull)) return item.screenshotFull;
+    if (safeImg(item.screenshot)) return item.screenshot;
+    return "";
+  }
+
+  function saveFullShot(id, dataUrl){
+    if (!id || !safeImg(dataUrl)) return Promise.resolve();
+    return mantlePath("i/" + id, "POST", {screenshot: dataUrl});
   }
 
   function isQuotaError(err){
@@ -758,22 +774,16 @@
   }
 
   function loadRemoteShot(item){
-    if (item.screenshot || !item.hasRemoteShot || !item.id) return Promise.resolve(item);
+    if (!item || !item.id) return Promise.resolve(item);
+    if (safeImg(item.screenshotFull) || !item.hasRemoteShot) return Promise.resolve(item);
     return mantlePath("i/" + item.id, "GET").then(function(data){
       if (data && data.screenshot){
-        item.screenshot = data.screenshot;
-        return item;
+        item.screenshotFull = data.screenshot;
+        var idx = state.items.findIndex(function(i){ return sameId(i.id, item.id); });
+        if (idx > -1) state.items[idx].screenshotFull = data.screenshot;
       }
-      throw new Error("no_img");
-    }).catch(function(){
-      return mantlePath("t/" + item.id, "GET").then(function(data){
-        if (data && data.screenshot){
-          item.screenshot = data.screenshot;
-          item.hasRemoteShot = false;
-        }
-        return item;
-      }).catch(function(){ return item; });
-    });
+      return item;
+    }).catch(function(){ return item; });
   }
 
   function localLoad(){ try { return JSON.parse(localStorage.getItem(LOCAL_KEY) || "[]"); } catch(e){ return []; } }
@@ -838,6 +848,7 @@
       if (!prev) return row;
       var out = Object.assign({}, prev, row, {id: prev.id || row.id});
       if (prev.screenshot && !row.screenshot) out.screenshot = prev.screenshot;
+      if (prev.screenshotFull && !row.screenshotFull) out.screenshotFull = prev.screenshotFull;
       if (prev._loadingShot) out._loadingShot = prev._loadingShot;
       if (prev._full){
         out._full = true;
@@ -980,10 +991,20 @@
     store.add = function(data){
       var id = uid();
       var item = Object.assign({id: id, createdAt: new Date().toISOString(), comments: []}, data, {_full: true});
+      if (item.screenshotFull) item.hasRemoteShot = true;
       var packId = allocPackFor(item);
       item._pack = packId;
       state.items.unshift(item);
-      return savePack(packId).then(function(){ return saveMeta(); }).then(function(){
+      var writes = [];
+      if (item.screenshotFull){
+        writes.push(saveFullShot(id, item.screenshotFull).catch(function(err){
+          if (isQuotaError(err)) item.hasRemoteShot = false;
+          else throw err;
+        }));
+      }
+      writes.push(savePack(packId));
+      writes.push(saveMeta());
+      return Promise.all(writes).then(function(){
         lastIndexFp = indexFingerprint(state.items);
         render();
       }).catch(function(err){
@@ -1015,6 +1036,7 @@
       state.items = state.items.filter(function(i){ return !sameId(i.id, id); });
       var writes = [];
       if (packId) writes.push(savePack(packId));
+      writes.push(mantlePath("i/" + id, "DELETE").catch(function(){}));
       writes.push(saveMeta());
       Promise.all(writes).then(function(){
         lastIndexFp = indexFingerprint(state.items);
@@ -1116,7 +1138,34 @@
     });
   }
 
-  function fileToCompressedDataUrl(file){
+  function encodeLoadedImage(img, maxW, quality, maxLen){
+    var w0 = maxW;
+    var q = quality;
+    function encode(){
+      var scale = Math.min(1, w0 / img.width);
+      var w = Math.max(1, Math.round(img.width * scale));
+      var h = Math.max(1, Math.round(img.height * scale));
+      var canvas = document.createElement("canvas");
+      canvas.width = w; canvas.height = h;
+      var ctx = canvas.getContext("2d");
+      ctx.fillStyle = "#fff"; ctx.fillRect(0,0,w,h);
+      ctx.imageSmoothingEnabled = true;
+      if (ctx.imageSmoothingQuality) ctx.imageSmoothingQuality = "high";
+      ctx.drawImage(img, 0, 0, w, h);
+      return canvas.toDataURL("image/jpeg", q);
+    }
+    var out = encode();
+    var tries = 0;
+    while (out.length > maxLen && tries < 12){
+      if (q > 0.55) q -= 0.07;
+      else w0 = Math.round(w0 * 0.88);
+      out = encode();
+      tries++;
+    }
+    return out;
+  }
+
+  function fileToImageVersions(file){
     return new Promise(function(resolve, reject){
       if (!file || String(file.type).indexOf("image/") !== 0){ reject(new Error("not_image")); return; }
       var reader = new FileReader();
@@ -1125,28 +1174,27 @@
         var img = new Image();
         img.onerror = function(){ reject(new Error("bad_image")); };
         img.onload = function(){
-          var maxW = 800;
-          var quality = 0.55;
-          function encode(){
-            var scale = Math.min(1, maxW / img.width);
-            var w = Math.max(1, Math.round(img.width * scale));
-            var h = Math.max(1, Math.round(img.height * scale));
-            var canvas = document.createElement("canvas");
-            canvas.width = w; canvas.height = h;
-            var ctx = canvas.getContext("2d");
-            ctx.fillStyle = "#fff"; ctx.fillRect(0,0,w,h);
-            ctx.drawImage(img, 0, 0, w, h);
-            return canvas.toDataURL("image/jpeg", quality);
-          }
-          var out = encode();
-          var tries = 0;
-          while (out.length > MAX_SHOT && tries < 10){
-            if (quality > 0.28) quality -= 0.08;
-            else maxW = Math.round(maxW * 0.82);
-            out = encode();
-            tries++;
-          }
-          resolve(out);
+          resolve({
+            full: encodeLoadedImage(img, 1600, 0.88, MAX_FULL_SHOT),
+            thumb: encodeLoadedImage(img, 720, 0.7, MAX_THUMB)
+          });
+        };
+        img.src = reader.result;
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  function fileToCompressedDataUrl(file, maxLen){
+    return new Promise(function(resolve, reject){
+      if (!file || String(file.type).indexOf("image/") !== 0){ reject(new Error("not_image")); return; }
+      var reader = new FileReader();
+      reader.onerror = function(){ reject(reader.error); };
+      reader.onload = function(){
+        var img = new Image();
+        img.onerror = function(){ reject(new Error("bad_image")); };
+        img.onload = function(){
+          resolve(encodeLoadedImage(img, 1200, 0.82, maxLen || MAX_COMMENT_SHOT));
         };
         img.src = reader.result;
       };
@@ -1235,6 +1283,7 @@
           if (idx > -1){
             state.items[idx]._loadingShot = false;
             if (shotItem.screenshot) state.items[idx].screenshot = shotItem.screenshot;
+            if (shotItem.screenshotFull) state.items[idx].screenshotFull = shotItem.screenshotFull;
           }
           patchCardShot(shotItem);
           lastBoardSig = boardSignature(filteredItems());
@@ -1271,7 +1320,7 @@
     var commentCount = (it.comments || []).length;
     var shot = it.screenshot;
     var media = "";
-    if (safeImg(shot)) media += '<img class="card-thumb zoomable" data-lightbox src="' + shot + '" alt="">';
+    if (safeImg(shot)) media += '<img class="card-thumb zoomable" data-lightbox src="' + shot + '" alt=""' + (safeImg(it.screenshotFull) ? ' data-full-src="' + it.screenshotFull + '"' : "") + ">";
     if (safeVideo(it.video)) media += videoPlayerHtml(it.video, "card-video", shot);
     return '<div class="card" data-open="' + escapeHtml(it.id) + '">'
       + '<div class="card-top"><span class="chip chip-' + escapeHtml(it.priority||"media") + '">' + escapeHtml(priLabel(it.priority)) + "</span></div>"
@@ -1285,7 +1334,7 @@
   }
 
   function openNewModal(){
-    state.draft = { title:"", module: "video", priority:"media", description:"", screenshot:null, video:null };
+    state.draft = { title:"", module: "video", priority:"media", description:"", screenshot:null, screenshotFull:null, video:null };
     state.newOpen = true;
     renderModal();
     setTimeout(function(){ var el = document.getElementById("draftTitle"); if (el) el.focus(); }, 30);
@@ -1322,7 +1371,7 @@
             + '<div class="field"><label>' + escapeHtml(t("fieldPriority")) + "</label><select id=\"draftPriority\">" + prOpts + "</select></div>"
           + "</div>"
           + '<div class="field"><label>' + escapeHtml(t("fieldDesc")) + '</label><textarea id="draftDesc" rows="4" placeholder="' + escapeHtml(t("descPh")) + '">' + escapeHtml(d.description) + "</textarea></div>"
-          + '<div class="field"><label>' + escapeHtml(t("fieldShot")) + "</label>" + dropzoneHtml(d.screenshot, d.video) + "</div>"
+          + '<div class="field"><label>' + escapeHtml(t("fieldShot")) + "</label>" + dropzoneHtml(d.screenshotFull || d.screenshot, d.video) + "</div>"
         + "</div>"
         + '<div class="modal-foot">'
           + '<button class="btn btn-ghost" data-close="new">' + escapeHtml(t("cancel")) + "</button>"
@@ -1364,7 +1413,7 @@
         + '<div class="modal-body">'
           + '<div class="field"><label>' + escapeHtml(t("fieldModule")) + "</label><div>" + escapeHtml(moduleLabel(it.module)) + "</div></div>"
           + (it.description ? '<div class="field"><label>' + escapeHtml(t("fieldDesc")) + '</label><p style="margin:0;font-size:14px;line-height:1.5;" data-i18n-text="' + escapeHtml(it.description) + '">' + escapeHtml(it.description) + "</p></div>" : "")
-          + (safeImg(it.screenshot) ? '<div class="field"><label>' + escapeHtml(t("capture")) + '</label><img class="zoomable" data-lightbox src="' + it.screenshot + '" alt="" style="width:100%;border-radius:10px;border:1px solid var(--border);"></div>' : "")
+          + (safeImg(bestShot(it)) ? '<div class="field"><label>' + escapeHtml(t("capture")) + '</label><img class="zoomable" data-lightbox src="' + bestShot(it) + '" alt="" style="width:100%;border-radius:10px;border:1px solid var(--border);"></div>' : "")
           + (safeVideo(it.video) ? '<div class="field"><label>' + escapeHtml(t("videoLabel")) + "</label>" + videoPlayerHtml(it.video, "detail-video", it.screenshot) + "</div>" : "")
           + '<div class="field"><label>' + escapeHtml(t("status")) + '</label><div class="status-row">' + statusBtns + "</div></div>"
           + '<div class="field"><label>' + escapeHtml(t("comments")) + '</label><div class="comments">' + comments + "</div>"
@@ -1451,7 +1500,7 @@
     var it = state.items.filter(function(i){ return sameId(i.id, id); })[0];
     if (!it) return;
     var needHydrate = !it._full;
-    var needShot = !!(it.hasRemoteShot && !it.screenshot);
+    var needShot = !!(it.hasRemoteShot && !it.screenshotFull);
     if (!needHydrate && !needShot) return;
     var seq = needHydrate ? hydrateTicket(it) : Promise.resolve(it);
     seq.then(function(full){
@@ -1470,7 +1519,14 @@
     if (lbImg && (lbImg.tagName === "IMG") && safeImg(lbImg.getAttribute("src") || lbImg.src)){
       e.preventDefault();
       e.stopPropagation();
-      openLightbox(lbImg.getAttribute("src") || lbImg.src);
+      var card = closestFromEvent(e, "[data-open]");
+      var fullSrc = lbImg.getAttribute("data-full-src") || "";
+      var it = card ? state.items.filter(function(i){ return sameId(i.id, card.getAttribute("data-open")); })[0] : null;
+      if (it && it.hasRemoteShot && !safeImg(it.screenshotFull) && !safeImg(fullSrc)){
+        loadRemoteShot(it).then(function(){ openLightbox(bestShot(it) || lbImg.getAttribute("src")); });
+        return;
+      }
+      openLightbox(fullSrc || (it ? bestShot(it) : "") || lbImg.getAttribute("src") || lbImg.src);
       return;
     }
     if (closestFromEvent(e, ".card video, video.card-video")){
@@ -1506,6 +1562,7 @@
         module: document.getElementById("draftModule").value,
         priority: document.getElementById("draftPriority").value,
         description: document.getElementById("draftDesc").value.trim(),
+        screenshotFull: state.draft.screenshotFull || null,
         screenshot: state.draft.screenshot,
         video: state.draft.video || null,
         status: "pendiente",
@@ -1648,12 +1705,17 @@
   function handleImageFile(file, target){
     showToast(t("imgWait"));
     snapshotDraft();
-    fileToCompressedDataUrl(file).then(function(dataUrl){
-      if (target === "comment"){
+    if (target === "comment"){
+      fileToCompressedDataUrl(file, MAX_COMMENT_SHOT).then(function(dataUrl){
         state.commentImage = dataUrl;
-      } else if (state.draft){
-        state.draft.screenshot = dataUrl;
-      }
+        renderModal();
+      }).catch(function(){ showToast(t("imgFail")); });
+      return;
+    }
+    fileToImageVersions(file).then(function(v){
+      if (!state.draft) return;
+      state.draft.screenshot = v.thumb;
+      state.draft.screenshotFull = v.full;
       renderModal();
     }).catch(function(){ showToast(t("imgFail")); });
   }
