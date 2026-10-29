@@ -305,6 +305,7 @@
   var syncBackoffMs = SYNC_MS;
   var lastIndexFp = "";
   var lastBoardSig = "";
+  var verifiedCleanupDone = false;
 
   var MODULE_IDS = [
     "auth","player","crm","catalog","goals","diary","video","library",
@@ -361,6 +362,7 @@
       shotSaved: "Captura actualizada.",
       addShot: "Añadir o reemplazar captura",
       deleted: "Hallazgo eliminado.",
+      verifiedGone: "Hallazgo verificado. Sale del tablero.",
       imgWait: "Subiendo captura nítida…",
       imgFail: "No se pudo subir la imagen.",
       vidWait: "Subiendo vídeo…",
@@ -446,6 +448,7 @@
       shotSaved: "Скриншот обновлён.",
       addShot: "Добавить или заменить скриншот",
       deleted: "Запись удалена.",
+      verifiedGone: "Запись проверена и снята с доски.",
       imgWait: "Загрузка чёткого скриншота…",
       imgFail: "Не удалось загрузить изображение.",
       vidWait: "Загрузка видео…",
@@ -922,6 +925,33 @@
     state.ready = true;
   }
 
+  function persistVerifiedCleanup(items){
+    var gone = [];
+    var keep = [];
+    (items || []).forEach(function(it){
+      if (it && it.status === "verificado") gone.push(it);
+      else keep.push(it);
+    });
+    if (!gone.length || verifiedCleanupDone) return Promise.resolve(keep);
+    verifiedCleanupDone = true;
+    var prev = state.items;
+    state.items = keep;
+    var packIds = {};
+    gone.forEach(function(it){ if (it._pack) packIds[it._pack] = true; });
+    keep.forEach(function(it){ if (it._pack) packIds[it._pack] = true; });
+    var writes = Object.keys(packIds).map(function(p){ return savePack(p); });
+    gone.forEach(function(it){ if (it.id) writes.push(deleteFullShot(it.id)); });
+    writes.push(saveMeta());
+    return Promise.all(writes).then(function(){
+      lastIndexFp = indexFingerprint(keep);
+      return keep;
+    }).catch(function(){
+      state.items = prev;
+      verifiedCleanupDone = false;
+      return keep;
+    });
+  }
+
   function fetchAllTickets(){
     return mantlePath("meta", "GET").then(function(meta){
       if (meta && Number(meta.v) >= 3 && Array.isArray(meta.packs)){
@@ -992,6 +1022,8 @@
 
   function refreshBoard(){
     return fetchAllTickets().then(function(items){
+      return persistVerifiedCleanup(items);
+    }).then(function(items){
       var fp = indexFingerprint(items);
       var busy = uiBusy();
       if (fp === lastIndexFp && state.ready){
@@ -1760,7 +1792,18 @@
     }
     var statusBtn = closestFromEvent(e, "[data-set-status]");
     if (statusBtn && state.openId){
-      store.update(state.openId, {status: statusBtn.getAttribute("data-set-status")});
+      var nextStatus = statusBtn.getAttribute("data-set-status");
+      if (nextStatus === "verificado"){
+        var verifiedId = state.openId;
+        state.openId = null;
+        state.confirmDeleteId = null;
+        state.commentImage = null;
+        state.commentVideo = null;
+        store.remove(verifiedId);
+        showToast(t("verifiedGone"));
+        return;
+      }
+      store.update(state.openId, {status: nextStatus});
       return;
     }
     if (e.target.id === "sendComment" && state.openId){ sendCommentFor(state.openId); return; }
