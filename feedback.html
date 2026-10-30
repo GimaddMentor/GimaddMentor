@@ -772,26 +772,61 @@
     return mantlePath(packId, "POST", body);
   }
 
-  function saveMeta(){
+  function packPathSort(a, b){
+    return (parseInt(String(a).slice(2), 10) || 0) - (parseInt(String(b).slice(2), 10) || 0);
+  }
+
+  function uniquePackPaths(paths){
     var seen = {};
-    var packs = [];
-    (state.items || []).forEach(function(it){
-      if (it._pack && !seen[it._pack]){
-        seen[it._pack] = true;
-        packs.push(it._pack);
+    var out = [];
+    (paths || []).forEach(function(p){
+      if (p && String(p).indexOf("p/") === 0 && !seen[p]){
+        seen[p] = true;
+        out.push(p);
       }
     });
-    packs.sort(function(a,b){
-      var na = parseInt(String(a).slice(2), 10) || 0;
-      var nb = parseInt(String(b).slice(2), 10) || 0;
-      return na - nb;
+    out.sort(packPathSort);
+    return out;
+  }
+
+  function packsFromState(){
+    var packs = [];
+    (state.items || []).forEach(function(it){
+      if (it._pack) packs.push(it._pack);
     });
-    return mantlePath("meta", "POST", {
-      v: 3,
-      updatedAt: new Date().toISOString(),
-      packs: packs,
-      count: (state.items || []).length
-    }).catch(function(){});
+    return uniquePackPaths(packs);
+  }
+
+  function itemsFromPackDoc(doc, p){
+    return ((doc && doc.items) || []).map(function(it){
+      return Object.assign({comments: []}, it, {id: it.id, _pack: p, _full: true});
+    });
+  }
+
+  function discoverPackPaths(){
+    return Promise.all([
+      mantlePath("list/" + MANTLE_NS, "GET").catch(function(){ return null; }),
+      mantlePath("meta", "GET").catch(function(){ return null; })
+    ]).then(function(pair){
+      var fromList = ((pair[0] && pair[0].entries) || []).map(function(e){ return e.path; });
+      var fromMeta = (pair[1] && pair[1].packs) || [];
+      return uniquePackPaths(fromList.concat(fromMeta));
+    });
+  }
+
+  function saveMeta(){
+    var fromState = packsFromState();
+    function write(packs){
+      return mantlePath("meta", "POST", {
+        v: 3,
+        updatedAt: new Date().toISOString(),
+        packs: uniquePackPaths(packs),
+        count: (state.items || []).length
+      }).catch(function(){});
+    }
+    return discoverPackPaths().then(function(discovered){
+      return write(fromState.concat(discovered));
+    }).catch(function(){ return write(fromState); });
   }
 
   function allocPackFor(item){
@@ -936,10 +971,9 @@
     verifiedCleanupDone = true;
     var prev = state.items;
     state.items = keep;
-    var packIds = {};
-    gone.forEach(function(it){ if (it._pack) packIds[it._pack] = true; });
-    keep.forEach(function(it){ if (it._pack) packIds[it._pack] = true; });
-    var writes = Object.keys(packIds).map(function(p){ return savePack(p); });
+    var packsToRewrite = {};
+    gone.forEach(function(it){ if (it._pack) packsToRewrite[it._pack] = true; });
+    var writes = Object.keys(packsToRewrite).map(function(p){ return savePack(p); });
     gone.forEach(function(it){ if (it.id) writes.push(deleteFullShot(it.id)); });
     writes.push(saveMeta());
     return Promise.all(writes).then(function(){
@@ -953,43 +987,14 @@
   }
 
   function fetchAllTickets(){
-    return mantlePath("meta", "GET").then(function(meta){
-      if (meta && Number(meta.v) >= 3 && Array.isArray(meta.packs)){
-        if (!meta.packs.length) return [];
-        return Promise.all(meta.packs.map(function(p){
-          return mantlePath(p, "GET").then(function(doc){
-            return ((doc && doc.items) || []).map(function(it){
-              return Object.assign({comments: []}, it, {id: it.id, _pack: p, _full: true});
-            });
-          }).catch(function(){ return []; });
-        })).then(function(groups){
-          return groups.reduce(function(acc, rows){ return acc.concat(rows); }, []);
-        });
-      }
-      throw new Error("no_packs");
-    }).catch(function(){
-      return mantlePath("list/" + MANTLE_NS, "GET").then(function(list){
-        var entries = (list && list.entries) || [];
-        var packPaths = entries.map(function(e){ return e.path; }).filter(function(p){ return p && p.indexOf("p/") === 0; });
-        if (packPaths.length){
-          return Promise.all(packPaths.map(function(p){
-            return mantlePath(p, "GET").then(function(doc){
-              return ((doc && doc.items) || []).map(function(it){
-                return Object.assign({comments: []}, it, {id: it.id, _pack: p, _full: true});
-              });
-            }).catch(function(){ return []; });
-          })).then(function(groups){
-            return groups.reduce(function(acc, rows){ return acc.concat(rows); }, []);
-          });
-        }
-        var ticketPaths = entries.map(function(e){ return e.path; }).filter(function(p){ return p && p.indexOf("t/") === 0; });
-        if (!ticketPaths.length) return [];
-        return Promise.all(ticketPaths.map(function(p){
-          return mantlePath(p, "GET").then(function(data){
-            var id = p.slice(2);
-            return Object.assign({id: id, comments: []}, data, {id: id, _full: true});
-          }).catch(function(){ return null; });
-        })).then(function(rows){ return rows.filter(Boolean); });
+    return discoverPackPaths().then(function(paths){
+      if (!paths.length) return [];
+      return Promise.all(paths.map(function(p){
+        return mantlePath(p, "GET").then(function(doc){
+          return itemsFromPackDoc(doc, p);
+        }).catch(function(){ return []; });
+      })).then(function(groups){
+        return groups.reduce(function(acc, rows){ return acc.concat(rows); }, []);
       });
     });
   }
