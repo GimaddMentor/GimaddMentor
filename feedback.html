@@ -764,12 +764,152 @@
     };
   }
 
-  function savePack(packId){
-    var body = packPayload(packId);
-    if (!body.items.length){
-      return mantlePath(packId, "DELETE").catch(function(){});
+  function mergeTicketRows(serverRows, localRows, removedIds){
+    var removed = {};
+    (removedIds || []).forEach(function(id){ removed[String(id)] = true; });
+    var byId = {};
+    function consider(row){
+      if (!row || row.id == null || row.id === "") return;
+      var id = String(row.id);
+      if (removed[id]) return;
+      var prev = byId[id];
+      if (!prev){ byId[id] = row; return; }
+      var a = prev.updatedAt || prev.createdAt || "";
+      var b = row.updatedAt || row.createdAt || "";
+      byId[id] = (b >= a) ? Object.assign({}, prev, row) : Object.assign({}, row, prev);
     }
-    return mantlePath(packId, "POST", body);
+    (serverRows || []).forEach(consider);
+    (localRows || []).forEach(consider);
+    return Object.keys(byId).map(function(k){ return byId[k]; });
+  }
+
+  function fitPackItems(items){
+    var rows = (items || []).slice();
+    var n = 0;
+    while (JSON.stringify({items: rows}).length > MAX_PACK && n < 40){
+      var idx = -1;
+      for (var i = rows.length - 1; i >= 0; i--){
+        if (rows[i] && rows[i].screenshot){ idx = i; break; }
+      }
+      if (idx === -1) break;
+      var copy = Object.assign({}, rows[idx]);
+      delete copy.screenshot;
+      copy.hasRemoteShot = true;
+      rows[idx] = copy;
+      n++;
+    }
+    return rows;
+  }
+
+  function savePack(packId, removedIds){
+    if (!packId) return Promise.resolve();
+    var localItems = packPayload(packId).items;
+    return mantlePath(packId, "GET").then(function(doc){
+      var merged = fitPackItems(mergeTicketRows((doc && doc.items) || [], localItems, removedIds));
+      if (!merged.length) return mantlePath(packId, "DELETE").catch(function(){});
+      return mantlePath(packId, "POST", {items: merged});
+    }).catch(function(err){
+      var missing = err && (err.status === 404 || /not found/i.test(String(err.body || err.message || "")));
+      if (missing){
+        if (!localItems.length) return;
+        return mantlePath(packId, "POST", {items: localItems});
+      }
+      throw err;
+    });
+  }
+
+  function compactTicket(it){
+    return {
+      id: it.id,
+      title: it.title || "",
+      status: it.status || "pendiente",
+      module: it.module || "other",
+      priority: it.priority || "media",
+      description: String(it.description || "").slice(0, 800),
+      reporter: it.reporter || "",
+      createdAt: it.createdAt || "",
+      updatedAt: it.updatedAt || "",
+      pack: it._pack || it.pack || "",
+      video: it.video || "",
+      screenshotUrl: it.screenshotUrl || "",
+      shot: !!(it.screenshot || it.screenshotFull || it.hasRemoteShot || it.screenshotUrl || it.shot),
+      comments: (it.comments || []).map(function(c){
+        return {author: c.author, text: String(c.text || "").slice(0, 400), at: c.at};
+      }).slice(-6)
+    };
+  }
+
+  function trimBackup(rows){
+    var out = (rows || []).map(compactTicket);
+    var n = 0;
+    while (JSON.stringify({at:"", v:1, items: out}).length > 54000 && n < 12){
+      out = out.map(function(r){
+        var c = Object.assign({}, r);
+        if (c.description && c.description.length > 160) c.description = c.description.slice(0, 160);
+        if (c.comments && c.comments.length > 2) c.comments = c.comments.slice(-2);
+        return c;
+      });
+      n++;
+    }
+    return out;
+  }
+
+  function saveBackup(removedIds){
+    var localRows = (state.items || []).map(compactTicket);
+    function persist(rows){
+      var payload = {at: new Date().toISOString(), v: 1, items: trimBackup(rows)};
+      try { localStorage.setItem("gm_qa_bak_v1", JSON.stringify(payload)); } catch(e){}
+      return mantlePath("bak", "POST", payload);
+    }
+    return mantlePath("bak", "GET").then(function(doc){
+      return persist(mergeTicketRows((doc && doc.items) || [], localRows, removedIds));
+    }).catch(function(err){
+      var missing = err && (err.status === 404 || /not found/i.test(String(err.body || err.message || "")));
+      if (missing) return persist(localRows);
+    });
+  }
+
+  function resurrectFromBackup(items){
+    function fromDoc(bak){
+      var have = {};
+      (items || []).forEach(function(it){ if (it && it.id != null) have[String(it.id)] = true; });
+      var missing = ((bak && bak.items) || []).filter(function(row){
+        return row && row.id && !have[String(row.id)] && row.status !== "verificado";
+      });
+      if (!missing.length) return Promise.resolve(items);
+      var restored = missing.map(function(row){
+        return Object.assign({comments: row.comments || [], _full: true}, row, {
+          id: row.id,
+          _pack: row.pack || "",
+          hasRemoteShot: !!row.shot,
+          status: row.status || "pendiente"
+        });
+      });
+      var next = (items || []).concat(restored);
+      state.items = next;
+      restored.forEach(function(it){
+        if (!it._pack) it._pack = allocPackFor(it);
+      });
+      var packIds = {};
+      restored.forEach(function(it){ if (it._pack) packIds[it._pack] = true; });
+      var writes = Object.keys(packIds).map(function(p){ return savePack(p); });
+      writes.push(saveMeta());
+      return Promise.all(writes).then(function(){ return next; }).catch(function(){ return next; });
+    }
+    return mantlePath("bak", "GET").then(function(bak){
+      var local = null;
+      try { local = JSON.parse(localStorage.getItem("gm_qa_bak_v1") || "null"); } catch(e){}
+      if (local && local.items && local.items.length){
+        bak = {items: mergeTicketRows((bak && bak.items) || [], local.items, [])};
+      }
+      return fromDoc(bak);
+    }).catch(function(){
+      try {
+        var local = JSON.parse(localStorage.getItem("gm_qa_bak_v1") || "null");
+        if (local && local.items) return fromDoc(local);
+      } catch(e){}
+      return items;
+    });
   }
 
   function packPathSort(a, b){
@@ -827,6 +967,10 @@
     return discoverPackPaths().then(function(discovered){
       return write(fromState.concat(discovered));
     }).catch(function(){ return write(fromState); });
+  }
+
+  function persistIndex(removedIds){
+    return Promise.all([saveMeta(), saveBackup(removedIds || [])]);
   }
 
   function allocPackFor(item){
@@ -954,7 +1098,7 @@
       var prev = prevById[id];
       if (!prev || !prev._full || !prev.createdAt) return;
       var age = Date.now() - Date.parse(prev.createdAt);
-      if (isFinite(age) && age < 15 * 60 * 1000) merged.unshift(prev);
+      if (isFinite(age) && age < 24 * 60 * 60 * 1000) merged.unshift(prev);
     });
     state.items = merged;
     state.ready = true;
@@ -973,9 +1117,10 @@
     state.items = keep;
     var packsToRewrite = {};
     gone.forEach(function(it){ if (it._pack) packsToRewrite[it._pack] = true; });
-    var writes = Object.keys(packsToRewrite).map(function(p){ return savePack(p); });
+    var goneIds = gone.map(function(it){ return it.id; }).filter(Boolean);
+    var writes = Object.keys(packsToRewrite).map(function(p){ return savePack(p, goneIds); });
     gone.forEach(function(it){ if (it.id) writes.push(deleteFullShot(it.id)); });
-    writes.push(saveMeta());
+    writes.push(persistIndex(goneIds));
     return Promise.all(writes).then(function(){
       lastIndexFp = indexFingerprint(keep);
       return keep;
@@ -995,6 +1140,8 @@
         }).catch(function(){ return []; });
       })).then(function(groups){
         return groups.reduce(function(acc, rows){ return acc.concat(rows); }, []);
+      }).then(function(items){
+        return resurrectFromBackup(items);
       });
     });
   }
@@ -1094,7 +1241,7 @@
         }));
       }
       writes.push(savePack(packId));
-      writes.push(saveMeta());
+      writes.push(persistIndex());
       return Promise.all(writes).then(function(){
         lastIndexFp = indexFingerprint(state.items);
         render();
@@ -1143,8 +1290,8 @@
         }));
       }
       writes.push(savePack(merged._pack));
-      if (oldPack && oldPack !== merged._pack) writes.push(savePack(oldPack));
-      writes.push(saveMeta());
+      if (oldPack && oldPack !== merged._pack) writes.push(savePack(oldPack, [id]));
+      writes.push(persistIndex());
       return Promise.all(writes).then(function(){
         lastIndexFp = indexFingerprint(state.items);
         lastBoardSig = "";
@@ -1160,9 +1307,9 @@
       var packId = current && current._pack;
       state.items = state.items.filter(function(i){ return !sameId(i.id, id); });
       var writes = [];
-      if (packId) writes.push(savePack(packId));
+      if (packId) writes.push(savePack(packId, [id]));
       writes.push(deleteFullShot(id));
-      writes.push(saveMeta());
+      writes.push(persistIndex([id]));
       Promise.all(writes).then(function(){
         lastIndexFp = indexFingerprint(state.items);
         render();
