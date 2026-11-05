@@ -306,7 +306,8 @@
   var syncBackoffMs = SYNC_MS;
   var lastIndexFp = "";
   var lastBoardSig = "";
-  var verifiedCleanupDone = false;
+  var GONE_KEY = "gm_qa_gone_ids_v1";
+  var GONE_MAX = 400;
 
   var MODULE_IDS = [
     "auth","player","crm","catalog","goals","diary","video","library",
@@ -517,6 +518,7 @@
     commentImage: null,
     commentVideo: null,
     commentDrafts: {},
+    goneIds: [],
     translating: false
   };
 
@@ -533,6 +535,54 @@
 
   var store = { add:null, update:null, remove:null };
   var localListeners = [];
+
+  function loadGone(){
+    try {
+      var rows = JSON.parse(localStorage.getItem(GONE_KEY) || "[]");
+      if (Array.isArray(rows)) return rows.map(String).filter(Boolean);
+    } catch(e){}
+    return [];
+  }
+  state.goneIds = loadGone();
+
+  function persistGoneLocal(){
+    try { localStorage.setItem(GONE_KEY, JSON.stringify((state.goneIds || []).slice(-GONE_MAX))); } catch(e){}
+  }
+  function absorbGone(ids){
+    var have = {};
+    (state.goneIds = state.goneIds || []).forEach(function(id){ have[String(id)] = true; });
+    var added = false;
+    (ids || []).forEach(function(id){
+      if (id == null || id === "") return;
+      var s = String(id);
+      if (have[s]) return;
+      have[s] = true;
+      state.goneIds.push(s);
+      added = true;
+    });
+    if (state.goneIds.length > GONE_MAX) state.goneIds = state.goneIds.slice(-GONE_MAX);
+    if (added) persistGoneLocal();
+  }
+  function isGone(id){
+    if (id == null || id === "") return false;
+    return (state.goneIds || []).indexOf(String(id)) !== -1;
+  }
+  function isDroppedTicket(row){
+    if (!row || row.id == null || row.id === "") return true;
+    if (isGone(row.id)) return true;
+    if (row.status === "verificado") return true;
+    return false;
+  }
+  function allRemovedIds(extra){
+    var out = (state.goneIds || []).slice();
+    (extra || []).forEach(function(id){
+      if (id != null && id !== "") out.push(String(id));
+    });
+    return out;
+  }
+  function gonePayload(){
+    return (state.goneIds || []).slice(-GONE_MAX);
+  }
 
   function t(key){
     return (I18N[state.lang] && I18N[state.lang][key]) || I18N.es[key] || key;
@@ -774,13 +824,19 @@
   }
 
   function mergeTicketRows(serverRows, localRows, removedIds){
+    absorbGone(removedIds);
     var removed = {};
-    (removedIds || []).forEach(function(id){ removed[String(id)] = true; });
+    allRemovedIds(removedIds).forEach(function(id){ removed[String(id)] = true; });
     var byId = {};
     function consider(row){
       if (!row || row.id == null || row.id === "") return;
       var id = String(row.id);
       if (removed[id]) return;
+      if (row.status === "verificado"){
+        absorbGone([id]);
+        removed[id] = true;
+        return;
+      }
       var prev = byId[id];
       if (!prev){ byId[id] = row; return; }
       var a = prev.updatedAt || prev.createdAt || "";
@@ -834,16 +890,18 @@
 
   function savePack(packId, removedIds){
     if (!packId) return Promise.resolve();
-    var localItems = packPayload(packId).items;
+    absorbGone(removedIds);
+    var localItems = packPayload(packId).items.filter(function(it){ return !isDroppedTicket(it); });
     return mantlePath(packId, "GET").then(function(doc){
-      var merged = fitPackItems(mergeTicketRows((doc && doc.items) || [], localItems, removedIds));
+      absorbGone((doc && doc.gone) || []);
+      var merged = fitPackItems(mergeTicketRows((doc && doc.items) || [], localItems, allRemovedIds(removedIds)));
       if (!merged.length) return mantlePath(packId, "DELETE").catch(function(){});
-      return mantlePath(packId, "POST", {items: merged});
+      return mantlePath(packId, "POST", {items: merged, gone: gonePayload()});
     }).catch(function(err){
       var missing = err && (err.status === 404 || /not found/i.test(String(err.body || err.message || "")));
       if (missing){
         if (!localItems.length) return;
-        return mantlePath(packId, "POST", {items: localItems});
+        return mantlePath(packId, "POST", {items: localItems, gone: gonePayload()});
       }
       throw err;
     });
@@ -886,14 +944,16 @@
   }
 
   function saveBackup(removedIds){
-    var localRows = (state.items || []).map(compactTicket);
+    absorbGone(removedIds);
+    var localRows = (state.items || []).filter(function(it){ return !isDroppedTicket(it); }).map(compactTicket);
     function persist(rows){
-      var payload = {at: new Date().toISOString(), v: 1, items: trimBackup(rows)};
+      var payload = {at: new Date().toISOString(), v: 1, items: trimBackup(rows), gone: gonePayload()};
       try { localStorage.setItem("gm_qa_bak_v1", JSON.stringify(payload)); } catch(e){}
       return mantlePath("bak", "POST", payload);
     }
     return mantlePath("bak", "GET").then(function(doc){
-      return persist(mergeTicketRows((doc && doc.items) || [], localRows, removedIds));
+      absorbGone((doc && doc.gone) || []);
+      return persist(mergeTicketRows((doc && doc.items) || [], localRows, allRemovedIds(removedIds)));
     }).catch(function(err){
       var missing = err && (err.status === 404 || /not found/i.test(String(err.body || err.message || "")));
       if (missing) return persist(localRows);
@@ -904,8 +964,9 @@
     function fromDoc(bak){
       var have = {};
       (items || []).forEach(function(it){ if (it && it.id != null) have[String(it.id)] = true; });
+      absorbGone((bak && bak.gone) || []);
       var missing = ((bak && bak.items) || []).filter(function(row){
-        return row && row.id && !have[String(row.id)] && row.status !== "verificado";
+        return row && row.id && !have[String(row.id)] && !isDroppedTicket(row);
       });
       if (!missing.length) return Promise.resolve(items);
       var restored = missing.map(function(row){
@@ -931,7 +992,8 @@
       var local = null;
       try { local = JSON.parse(localStorage.getItem("gm_qa_bak_v1") || "null"); } catch(e){}
       if (local && local.items && local.items.length){
-        bak = {items: mergeTicketRows((bak && bak.items) || [], local.items, [])};
+        absorbGone((local && local.gone) || []);
+        bak = {items: mergeTicketRows((bak && bak.items) || [], local.items, []), gone: gonePayload()};
       }
       return fromDoc(bak);
     }).catch(function(){
@@ -969,7 +1031,8 @@
   }
 
   function itemsFromPackDoc(doc, p){
-    return ((doc && doc.items) || []).map(function(it){
+    absorbGone((doc && doc.gone) || []);
+    return ((doc && doc.items) || []).filter(function(it){ return !isDroppedTicket(it); }).map(function(it){
       return Object.assign({comments: []}, it, {id: it.id, _pack: p, _full: true});
     });
   }
@@ -979,6 +1042,7 @@
       mantlePath("list/" + MANTLE_NS, "GET").catch(function(){ return null; }),
       mantlePath("meta", "GET").catch(function(){ return null; })
     ]).then(function(pair){
+      absorbGone((pair[1] && pair[1].gone) || []);
       var fromList = ((pair[0] && pair[0].entries) || []).map(function(e){ return e.path; });
       var fromMeta = (pair[1] && pair[1].packs) || [];
       return uniquePackPaths(fromList.concat(fromMeta));
@@ -989,10 +1053,11 @@
     var fromState = packsFromState();
     function write(packs){
       return mantlePath("meta", "POST", {
-        v: 3,
+        v: 4,
         updatedAt: new Date().toISOString(),
         packs: uniquePackPaths(packs),
-        count: (state.items || []).length
+        count: (state.items || []).length,
+        gone: gonePayload()
       }).catch(function(){});
     }
     return discoverPackPaths().then(function(discovered){
@@ -1096,12 +1161,14 @@
       }
     };
     store.remove = function(id){
+      absorbGone([id]);
       localSave(localLoad().filter(function(i){ return i.id !== id; }));
     };
     localListeners.push(function(items){ state.items = items; render(); });
   }
 
   function mergeIncoming(incoming){
+    incoming = (incoming || []).filter(function(row){ return !isDroppedTicket(row); });
     incoming.sort(function(a,b){ return (b.createdAt||"").localeCompare(a.createdAt||""); });
     var prevById = {};
     (state.items || []).forEach(function(it){ prevById[String(it.id)] = it; });
@@ -1123,11 +1190,13 @@
         if (!row.video && prev.video) out.video = prev.video;
       }
       return out;
-    });
+    }).filter(function(row){ return !isDroppedTicket(row); });
     Object.keys(prevById).forEach(function(id){
       if (seen[id]) return;
+      if (isGone(id)) return;
       var prev = prevById[id];
       if (!prev || !prev._full || !prev.createdAt) return;
+      if (isDroppedTicket(prev)) return;
       var age = Date.now() - Date.parse(prev.createdAt);
       if (isFinite(age) && age < 24 * 60 * 60 * 1000) merged.unshift(prev);
     });
@@ -1136,28 +1205,24 @@
   }
 
   function persistVerifiedCleanup(items){
-    var gone = [];
+    var dropped = [];
     var keep = [];
     (items || []).forEach(function(it){
-      if (it && it.status === "verificado") gone.push(it);
+      if (isDroppedTicket(it)) dropped.push(it);
       else keep.push(it);
     });
-    if (!gone.length || verifiedCleanupDone) return Promise.resolve(keep);
-    verifiedCleanupDone = true;
-    var prev = state.items;
-    state.items = keep;
+    if (!dropped.length) return Promise.resolve(keep);
+    var goneIds = dropped.map(function(it){ return it.id; }).filter(Boolean);
+    absorbGone(goneIds);
     var packsToRewrite = {};
-    gone.forEach(function(it){ if (it._pack) packsToRewrite[it._pack] = true; });
-    var goneIds = gone.map(function(it){ return it.id; }).filter(Boolean);
+    dropped.forEach(function(it){ if (it._pack) packsToRewrite[it._pack] = true; });
     var writes = Object.keys(packsToRewrite).map(function(p){ return savePack(p, goneIds); });
-    gone.forEach(function(it){ if (it.id) writes.push(deleteFullShot(it.id)); });
+    dropped.forEach(function(it){ if (it.id) writes.push(deleteFullShot(it.id)); });
     writes.push(persistIndex(goneIds));
     return Promise.all(writes).then(function(){
       lastIndexFp = indexFingerprint(keep);
       return keep;
     }).catch(function(){
-      state.items = prev;
-      verifiedCleanupDone = false;
       return keep;
     });
   }
@@ -1284,6 +1349,8 @@
       });
     };
     store.update = function(id, patch){
+      if (isGone(id)) return Promise.resolve();
+      if (patch && patch.status === "verificado") return store.remove(id);
       var current = state.items.filter(function(i){ return sameId(i.id, id); })[0] || {};
       var merged = Object.assign({}, current, patch, {updatedAt: new Date().toISOString(), _full: true, _pack: current._pack});
       if (!merged._pack) merged._pack = allocPackFor(merged);
@@ -1334,17 +1401,23 @@
       });
     };
     store.remove = function(id){
+      absorbGone([id]);
       var current = state.items.filter(function(i){ return sameId(i.id, id); })[0];
       var packId = current && current._pack;
       state.items = state.items.filter(function(i){ return !sameId(i.id, id); });
+      lastBoardSig = "";
+      lastIndexFp = indexFingerprint(state.items);
+      render();
       var writes = [];
       if (packId) writes.push(savePack(packId, [id]));
       writes.push(deleteFullShot(id));
       writes.push(persistIndex([id]));
-      Promise.all(writes).then(function(){
+      return Promise.all(writes).then(function(){
         lastIndexFp = indexFingerprint(state.items);
-        render();
-      }).catch(function(){ showToast(t("saveFail")); });
+      }).catch(function(){
+        showToast(t("saveFail"));
+        if (packId) return savePack(packId, [id]).then(function(){ return persistIndex([id]); });
+      });
     };
   }
 
@@ -1596,6 +1669,7 @@
 
   function filteredItems(){
     return state.items.filter(function(it){
+      if (isDroppedTicket(it)) return false;
       if (state.filterModule !== "all" && it.module !== state.filterModule) return false;
       if (state.filterPriority !== "all" && it.priority !== state.filterPriority) return false;
       if (state.filterSearch){
@@ -2042,11 +2116,10 @@
     }
     var statusBtn = closestFromEvent(e, "[data-set-status]");
     if (statusBtn && state.openId){
-      snapshotDraft();
-      saveDetailDesc(state.openId);
       var nextStatus = statusBtn.getAttribute("data-set-status");
       if (nextStatus === "verificado"){
         var verifiedId = state.openId;
+        absorbGone([verifiedId]);
         state.openId = null;
         state.confirmDeleteId = null;
         state.commentImage = null;
@@ -2055,6 +2128,8 @@
         showToast(t("verifiedGone"));
         return;
       }
+      snapshotDraft();
+      saveDetailDesc(state.openId);
       Promise.resolve(store.update(state.openId, {status: nextStatus})).catch(function(){});
       return;
     }
