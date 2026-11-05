@@ -1,0 +1,724 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="robots" content="noindex, nofollow">
+<meta http-equiv="X-Content-Type-Options" content="nosniff">
+<title>Checklist legal MVP · Gimadd Mentor</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@600;700&family=DM+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+  :root{
+    --bg:#f4f7fb; --surface:#fff; --surface-soft:#f1f5f9; --border:#d9e3ee;
+    --ink:#0f172a; --ink-soft:#475569; --ink-faint:#7c8b99;
+    --primary:#0369a1; --primary-dark:#0c4a6e; --primary-soft:#e0f2fe;
+    --accent:#f2ec1f; --accent-ink:#121212;
+    --danger:#c93f3f; --danger-soft:#fbe6e6;
+    --warn:#c98a1f; --warn-soft:#faefdb;
+    --ok:#15803d; --ok-soft:#e3f2e8;
+    --todo:#64748b; --todo-soft:#eef2f6;
+    --wip:#b45309; --wip-soft:#fff4e5;
+    --shadow: 0 1px 2px rgba(15,30,55,.06), 0 6px 20px -8px rgba(15,30,55,.18);
+    --radius: 12px;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#0b1220; --surface:#132033; --surface-soft:#18263c; --border:#2a3c55;
+      --ink:#e8eef6; --ink-soft:#b4c2d4; --ink-faint:#7f91a8;
+      --primary:#38bdf8; --primary-dark:#0ea5e9; --primary-soft:#0c2a3d;
+      --accent:#f2ec1f; --accent-ink:#121212;
+      --danger:#e57373; --danger-soft:#3a1f22;
+      --warn:#e3b563; --warn-soft:#3a2f18;
+      --ok:#7fca97; --ok-soft:#1c3324;
+      --todo:#94a3b8; --todo-soft:#1a2738;
+      --wip:#f0b56a; --wip-soft:#3a2d18;
+      --shadow: 0 1px 2px rgba(0,0,0,.3), 0 10px 30px -10px rgba(0,0,0,.5);
+    }
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg); color:var(--ink);
+    font-family:"DM Sans",system-ui,-apple-system,sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3{font-family:"Barlow Semi Condensed","DM Sans",sans-serif;font-weight:700;letter-spacing:.01em;margin:0;}
+  a{color:inherit;}
+  button,input,select{font-family:inherit;}
+  [hidden]{display:none!important;}
+  .wrap{max-width:980px;margin:0 auto;padding:20px 16px 80px;}
+  .topbar{
+    display:flex;flex-wrap:wrap;gap:16px 24px;align-items:flex-end;justify-content:space-between;
+    padding-bottom:18px;margin-bottom:16px;border-bottom:1px solid var(--border);
+  }
+  .brand{display:flex;align-items:center;gap:12px;}
+  .brand-mark{
+    width:38px;height:38px;border-radius:10px;flex:none;
+    background:linear-gradient(155deg,var(--primary),var(--primary-dark));
+    display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow);
+  }
+  .brand-mark svg{width:20px;height:20px;}
+  .brand-text h1{font-size:22px;line-height:1.1;}
+  .brand-text p{margin:2px 0 0;font-size:12.5px;color:var(--ink-faint);}
+  .home-link{font-size:12px;color:var(--primary);font-weight:600;text-decoration:none;margin-right:10px;}
+  .home-link:hover{text-decoration:underline;}
+  .top-actions{display:flex;flex-wrap:wrap;align-items:center;gap:10px;}
+  .reporter{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--ink-soft);}
+  .reporter input{
+    border:1px solid var(--border);background:var(--surface);color:var(--ink);
+    border-radius:8px;padding:6px 9px;font-size:13px;width:150px;
+  }
+  .reporter input:focus,.toolbar select:focus,.toolbar input:focus,.note-input:focus{
+    outline:2px solid var(--primary);outline-offset:1px;
+  }
+  .lang-toggle{display:inline-flex;border:1px solid var(--border);border-radius:999px;overflow:hidden;background:var(--surface);}
+  .lang-toggle button{border:none;background:transparent;color:var(--ink-soft);padding:7px 12px;font-size:12.5px;font-weight:700;cursor:pointer;}
+  .lang-toggle button.active{background:var(--accent);color:var(--accent-ink);}
+  .banner{
+    display:flex;gap:10px;align-items:flex-start;background:var(--warn-soft);
+    border:1px solid var(--warn);border-radius:10px;padding:10px 13px;font-size:12.5px;margin-bottom:14px;
+  }
+  .stats{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px;}
+  .stat{
+    flex:1 1 110px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+    padding:12px 14px;box-shadow:var(--shadow);
+  }
+  .stat b{display:block;font-family:"Barlow Semi Condensed";font-size:26px;font-variant-numeric:tabular-nums;line-height:1;}
+  .stat span{font-size:11.5px;color:var(--ink-faint);text-transform:uppercase;letter-spacing:.06em;}
+  .stat.todo b{color:var(--todo);}
+  .stat.wip b{color:var(--wip);}
+  .stat.done b{color:var(--ok);}
+  .stat.p0 b{color:var(--danger);}
+  .progress{height:8px;background:var(--surface-soft);border:1px solid var(--border);border-radius:99px;overflow:hidden;margin:0 0 14px;display:flex;}
+  .progress i{display:block;height:100%;}
+  .progress .p-done{background:var(--ok);}
+  .progress .p-wip{background:var(--wip);}
+  .toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:16px;position:sticky;top:0;z-index:8;background:var(--bg);padding:8px 0;}
+  .toolbar select,.toolbar input[type="search"]{
+    border:1px solid var(--border);background:var(--surface);color:var(--ink);
+    border-radius:9px;padding:8px 10px;font-size:13px;
+  }
+  .toolbar input[type="search"]{min-width:180px;flex:1 1 180px;}
+  .pills{display:flex;flex-wrap:wrap;gap:6px;}
+  .pill{
+    border:1px solid var(--border);background:var(--surface);color:var(--ink-soft);
+    border-radius:999px;padding:6px 11px;font-size:12px;font-weight:600;cursor:pointer;
+  }
+  .pill.active{background:var(--primary);border-color:var(--primary);color:#fff;}
+  .btn{
+    display:inline-flex;align-items:center;gap:6px;border:1px solid var(--border);
+    background:var(--surface);color:var(--ink-soft);border-radius:9px;
+    padding:7px 12px;font-size:12.5px;font-weight:600;cursor:pointer;
+  }
+  .sec{
+    background:var(--surface);border:1px solid var(--border);border-radius:14px;
+    margin-bottom:12px;box-shadow:var(--shadow);overflow:hidden;
+  }
+  .sec > summary{
+    list-style:none;cursor:pointer;display:flex;align-items:center;gap:10px;
+    padding:14px 16px;font-family:"Barlow Semi Condensed",sans-serif;font-size:17px;font-weight:700;
+  }
+  .sec > summary::-webkit-details-marker{display:none;}
+  .sec > summary:hover{background:var(--surface-soft);}
+  .sec-mark{width:8px;height:8px;border-radius:50%;background:var(--primary);flex:none;}
+  .sec-counts{margin-left:auto;font-family:"DM Sans",sans-serif;font-size:12px;font-weight:600;color:var(--ink-faint);background:var(--surface-soft);border:1px solid var(--border);border-radius:20px;padding:2px 9px;}
+  .rows{border-top:1px solid var(--border);}
+  .row{
+    display:grid;grid-template-columns:auto 1fr;gap:6px 12px;
+    padding:12px 14px;border-bottom:1px solid var(--border);align-items:start;
+  }
+  .row:last-child{border-bottom:none;}
+  .row.st-done{background:color-mix(in srgb, var(--ok-soft) 45%, transparent);}
+  .row.st-wip{background:color-mix(in srgb, var(--wip-soft) 50%, transparent);}
+  .row-head{display:flex;gap:8px;align-items:flex-start;}
+  .row-id{
+    font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:12px;font-weight:500;
+    color:var(--primary);min-width:36px;padding-top:2px;
+  }
+  .q{
+    margin:0;font-size:14.5px;font-weight:600;line-height:1.35;cursor:pointer;
+  }
+  .q:hover{color:var(--primary);}
+  .chips{display:flex;gap:5px;flex-wrap:wrap;margin:4px 0 0;}
+  .chip{
+    font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;
+    padding:2px 7px;border-radius:20px;white-space:nowrap;
+  }
+  .chip-p0{background:var(--danger-soft);color:var(--danger);}
+  .chip-p1{background:var(--todo-soft);color:var(--todo);}
+  .extra{grid-column:1 / -1;display:none;padding:4px 0 2px 36px;}
+  .row.open .extra{display:block;}
+  .extra .box{
+    background:var(--surface-soft);border:1px solid var(--border);border-radius:10px;
+    padding:10px 12px;margin-bottom:8px;
+  }
+  .extra .box label,.note-wrap label{
+    display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;
+    color:var(--ink-faint);margin-bottom:4px;
+  }
+  .extra p{margin:0;font-size:13.5px;line-height:1.5;color:var(--ink-soft);white-space:pre-wrap;}
+  .st-row{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:8px;grid-column:1 / -1;}
+  .st-btn{
+    border:1px solid var(--border);background:var(--surface);color:var(--ink-soft);
+    border-radius:20px;padding:6px 11px;font-size:12px;font-weight:600;cursor:pointer;
+  }
+  .st-btn[data-s="todo"].active{background:var(--todo-soft);border-color:var(--todo);color:var(--todo);}
+  .st-btn[data-s="wip"].active{background:var(--wip-soft);border-color:var(--wip);color:var(--wip);}
+  .st-btn[data-s="done"].active{background:var(--ok-soft);border-color:var(--ok);color:var(--ok);}
+  .who{font-size:11.5px;color:var(--ink-faint);margin-left:4px;}
+  .note-input{
+    width:100%;border:1px solid var(--border);background:var(--surface);color:var(--ink);
+    border-radius:9px;padding:8px 10px;font-size:13px;
+  }
+  .empty{text-align:center;color:var(--ink-faint);padding:28px 12px;font-size:14px;}
+  .toast{
+    position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;
+    padding:9px 16px;border-radius:20px;font-size:13px;box-shadow:var(--shadow);z-index:80;
+  }
+  .footnote{margin-top:22px;font-size:11.5px;color:var(--ink-faint);text-align:center;}
+  @media (min-width:720px){
+    .row{grid-template-columns:auto 1fr auto;align-items:center;}
+    .st-row{grid-column:auto;margin-top:0;justify-content:flex-end;max-width:360px;}
+    .extra{grid-column:2 / -1;padding-left:0;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topbar">
+    <div class="brand">
+      <div class="brand-mark">
+        <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8.5" stroke="#fff" stroke-width="1.6"/><path d="M8 12h8M12 8v8" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </div>
+      <div class="brand-text">
+        <a class="home-link" href="index.html" id="homeLink">← Gimadd Mentor</a>
+        <a class="home-link" href="feedback.html" id="qaLink">Pruebas y feedback</a>
+        <h1 id="pageTitle">Checklist legal MVP</h1>
+        <p id="pageSubtitle">Decisiones de producto para programar. El estado lo ve todo el equipo.</p>
+      </div>
+    </div>
+    <div class="top-actions">
+      <div class="lang-toggle" role="group" aria-label="Idioma">
+        <button type="button" id="langEs" class="active">ES</button>
+        <button type="button" id="langRu">RU</button>
+      </div>
+      <div class="reporter">
+        <span id="reporterLabel">Yo soy</span>
+        <input type="text" id="reporterInput" maxlength="40" placeholder="tu nombre">
+      </div>
+    </div>
+  </div>
+  <div id="banner"></div>
+  <div class="stats" id="stats"></div>
+  <div class="progress" id="progress" aria-hidden="true"><i class="p-done" style="width:0"></i><i class="p-wip" style="width:0"></i></div>
+  <div class="toolbar">
+    <div class="pills" id="statusPills"></div>
+    <select id="filterSec"></select>
+    <select id="filterPri"></select>
+    <input type="search" id="filterSearch" placeholder="">
+    <button type="button" class="btn" id="btnPending"></button>
+    <button type="button" class="btn" id="btnToggleSecs"></button>
+  </div>
+  <div id="list"></div>
+  <p class="footnote" id="footnote"></p>
+</div>
+<div id="toastRoot"></div>
+<script>
+(function(){
+  "use strict";
+  var MANTLE_NS = "gimadd-mentor-qa-20261023";
+  var MANTLE_KEY = "b84b1187f396c12e5857a242314a1364481528e4a786afd34dd931c27aa67828";
+  var MANTLE_BASE = "https://mantledb.sh/v2/" + MANTLE_NS;
+  var LEGAL_PATH = "legal";
+  var SYNC_MS = 45 * 1000;
+  var ITEMS = [{"id":"PAY1","kind":"pay","pri":"P0","q":"Servicio online: ¿quién cobra y quién emite factura?","a":"Cobra el vendedor más comisión Gimadd por Stripe Connect. Factura del servicio: vendedor (documento generado por Gimadd en su nombre). Comisión: Gimadd.","note":"","sec":"pay"},{"id":"PAY2","kind":"pay","pri":"P0","q":"SaaS entrenador: ¿quién cobra y quién emite factura?","a":"Cobra Gimadd. Factura: Gimadd al titular del SaaS.","note":"","sec":"pay"},{"id":"PAY3","kind":"pay","pri":"P0","q":"Clase en efectivo: ¿quién cobra y quién emite factura?","a":"Cobra el entrenador fuera de Stripe. El entrenador factura fuera de Gimadd; Gimadd no emite factura de la clase.","note":"","sec":"pay"},{"id":"PAY4","kind":"pay","pri":"P0","q":"Reembolso online: ¿quién cobra y quién emite factura?","a":"Reverso coordinado. Rectificaciones y abonos según emisor y operación.","note":"","sec":"pay"},{"id":"01","kind":"q","pri":"P0","q":"¿A qué productos se aplicará esta documentación?","a":"Solo Gimadd Mentor: web, marketplace y aplicación para entrenadores y jugadores. No se aplica a la tienda de Gimadd Support.","note":"","sec":"s01"},{"id":"02","kind":"q","pri":"P0","q":"¿Quién podrá registrarse como entrenador?","a":"Solo personas mayores de 18 años.","note":"","sec":"s01"},{"id":"03","kind":"q","pri":"P0","q":"¿Podrán usar la plataforma los jugadores menores de edad?","a":"Sí, con autorización verificable del padre, madre o representante legal, especialmente para contratar servicios de pago.","note":"Registrar el consentimiento y el adulto autorizante; no pedir documentos de identidad por defecto.","sec":"s01"},{"id":"04","kind":"q","pri":"P0","q":"¿Cómo se autorizará la cuenta de un menor?","a":"Mediante un flujo de autorización por correo electrónico del representante legal, con aceptación registrada y enlace verificable.","note":"El menor no debe acceder a contratación sin autorización válida.","sec":"s01"},{"id":"05","kind":"q","pri":"P0","q":"¿Qué ocurrirá si el representante legal revoca la autorización?","a":"El representante podrá revocarla mediante un enlace seguro y verificado; se limitará la cuenta del menor conforme a la ley y contratos pendientes.","note":"","sec":"s01"},{"id":"06","kind":"q","pri":"P0","q":"¿Qué ocurre cuando un jugador menor cumple 18 años?","a":"Deberá aceptar personalmente las condiciones vigentes y confirmar sus datos; se conservará su historial conforme a los plazos aplicables.","note":"","sec":"s01"},{"id":"07","kind":"q","pri":"P0","q":"¿Qué usuarios pueden contratar la suscripción SaaS?","a":"Entrenadores individuales y academias o sociedades, con un espacio de trabajo individual por entrenador en el MVP.","note":"","sec":"s01"},{"id":"08","kind":"q","pri":"P0","q":"¿Qué se exige para vender servicios en el marketplace?","a":"Mayoría de edad, declaración de actividad profesional y obligaciones fiscales, y verificación de identidad y datos requeridos mediante Stripe Connect; Gimadd podrá pedir información adicional.","note":"","sec":"s01"},{"id":"09","kind":"q","pri":"P0","q":"¿Quién presta contractualmente el servicio deportivo al jugador?","a":"El entrenador profesional o la academia identificada como vendedor. Gimadd facilita la plataforma y los pagos, pero no presta directamente el servicio de entrenamiento.","note":"","sec":"s01"},{"id":"10","kind":"q","pri":"P0","q":"¿Puede figurar una academia como prestadora y titular del cobro?","a":"Sí. El vendedor del servicio, beneficiario del cobro y emisor legal de la factura deben coincidir, ya sea entrenador autónomo o academia/sociedad.","note":"","sec":"s01"},{"id":"11","kind":"q","pri":"P0","q":"¿Puede ser distinto el comprador del SaaS respecto al vendedor de clases?","a":"Sí. La suscripción SaaS la paga quien contrata el SaaS; cada servicio al jugador debe registrar su vendedor real, independiente del titular de la suscripción SaaS.","note":"","sec":"s01"},{"id":"12","kind":"q","pri":"P0","q":"¿Cómo se identifica a un profesional frente al comprador?","a":"La información legal y de contacto exigida del prestador será accesible al jugador antes de pagar; la factura incorporará sus datos fiscales completos.","note":"","sec":"s01"},{"id":"13","kind":"q","pri":"P1","q":"¿Puede el entrenador ocultar su perfil en el marketplace?","a":"Sí, mediante un control de visibilidad del perfil; para vender públicamente deberá completar la verificación pertinente.","note":"","sec":"s01"},{"id":"14","kind":"q","pri":"P1","q":"¿Cómo se ordenarán los entrenadores en el marketplace?","a":"Por criterios relevantes como ubicación, idioma, especialidad, reseñas verificadas y filtros del jugador; sin priorización pagada encubierta en el lanzamiento.","note":"","sec":"s01"},{"id":"15","kind":"q","pri":"P0","q":"¿Qué idiomas tendrán los documentos legales de lanzamiento?","a":"Español e inglés, con versión y fecha de aceptación identificables.","note":"","sec":"s01"},{"id":"16","kind":"q","pri":"P1","q":"¿Se ofrecerá el marketplace internacionalmente sin restricciones?","a":"Solo en territorios donde sea viable cumplir las obligaciones de contratación, pagos, protección de datos y fiscalidad.","note":"","sec":"s01"},{"id":"17","kind":"q","pri":"P0","q":"¿Qué modalidades de servicios incluirá el MVP?","a":"Programas individuales de 3, 6 y 12 meses; videoanálisis individuales; clases presenciales; packs; y suscripciones mensuales de seguimiento.","note":"","sec":"s02"},{"id":"18","kind":"q","pri":"P0","q":"¿Los servicios tendrán modalidad para parejas?","a":"No. La contratación y el seguimiento son individuales en el MVP.","note":"","sec":"s02"},{"id":"19","kind":"q","pri":"P0","q":"¿Cómo se contratan los programas de 3, 6 y 12 meses?","a":"Mediante pago único por duración cerrada y condiciones previamente visibles y aceptadas.","note":"","sec":"s02"},{"id":"20","kind":"q","pri":"P0","q":"¿Desde cuándo empieza a contar la duración del programa?","a":"Desde la fecha de pago; debe distinguirse del momento en el que realmente comienza a prestarse el servicio a efectos de cancelaciones.","note":"","sec":"s02"},{"id":"21","kind":"q","pri":"P0","q":"¿El entrenador puede fijar el precio de sus servicios?","a":"Sí, indicando precios con los impuestos aplicables y las condiciones particulares de cada servicio antes de su contratación.","note":"","sec":"s02"},{"id":"22","kind":"q","pri":"P1","q":"¿Qué tipos de packs pueden venderse?","a":"Combinaciones de servicios individuales; mostrar composición, vigencia, precio y condiciones particulares antes de pagar.","note":"","sec":"s02"},{"id":"23","kind":"q","pri":"P0","q":"¿La clase presencial se reserva automáticamente en un calendario externo?","a":"No. Solicitud del jugador, acuerdo por chat y registro manual de fecha/hora por el entrenador.","note":"","sec":"s02"},{"id":"24","kind":"q","pri":"P0","q":"¿Qué estados tendrá una clase presencial?","a":"Pendiente de acordar; programada; completada; cancelada.","note":"","sec":"s02"},{"id":"25","kind":"q","pri":"P0","q":"¿Qué estados de pago se necesitan para una clase?","a":"Pagado online; pago pendiente en efectivo; pagado en efectivo; incluido en pack.","note":"","sec":"s02"},{"id":"26","kind":"q","pri":"P0","q":"¿Puede el entrenador modificar objetivos y planes durante el programa?","a":"Sí. Es parte del seguimiento deportivo ordinario; modificaciones sustanciales del contrato requieren aceptación expresa del jugador.","note":"","sec":"s02"},{"id":"27","kind":"q","pri":"P0","q":"¿El entrenador puede ofrecer una política de cancelación más favorable?","a":"Sí. Gimadd fija garantías mínimas; la política del entrenador puede ampliar, nunca reducir, los derechos mínimos y legales.","note":"","sec":"s02"},{"id":"28","kind":"q","pri":"P0","q":"¿Qué infraestructura tramitará los cobros online?","a":"Stripe Connect, con verificación KYC del vendedor, asignación de transacciones al prestador correspondiente, webhooks y conciliación.","note":"Comprobar idempotencia de los webhooks y gestión de errores.","sec":"s03"},{"id":"29","kind":"q","pri":"P0","q":"¿Cómo se muestra el precio al jugador antes del pago?","a":"Separar precio final del servicio del entrenador (impuestos incluidos), comisión de Gimadd y su impuesto aplicable, y total a pagar.","note":"","sec":"s03"},{"id":"30","kind":"q","pri":"P0","q":"¿Cuál es la comisión de Gimadd al comprador?","a":"5 % del importe del servicio o mínimo de 1,50 €, con promociones o condiciones especiales preinformadas y tributación aplicable.","note":"","sec":"s03"},{"id":"31","kind":"q","pri":"P0","q":"¿Quién paga la comisión del marketplace?","a":"El jugador/comprador, por separado del precio del servicio del entrenador. No se descontará por defecto como comisión facturada al entrenador.","note":"","sec":"s03"},{"id":"32","kind":"q","pri":"P0","q":"¿Quién emite la factura del servicio deportivo vendido online?","a":"El entrenador o academia prestadora; Gimadd la genera por cuenta y en nombre del vendedor, con acuerdo de facturación y sus datos fiscales correctos.","note":"","sec":"s03"},{"id":"33","kind":"q","pri":"P0","q":"¿Quién factura la comisión de Gimadd al jugador?","a":"Gimadd Fitness S.L. emite un documento fiscal propio por el servicio de intermediación/comisión cobrado al jugador.","note":"","sec":"s03"},{"id":"34","kind":"q","pri":"P0","q":"¿Quién emite la factura mensual de suscripción SaaS?","a":"Gimadd Fitness S.L. al entrenador, academia o sociedad que figure como contratante del SaaS, no necesariamente al vendedor de cada clase.","note":"","sec":"s03"},{"id":"35","kind":"q","pri":"P0","q":"¿Se factura por Gimadd una clase pagada en efectivo?","a":"No. Gimadd no cobra, procesa ni factura la clase en efectivo. El entrenador se ocupa directamente de la facturación que legalmente corresponda.","note":"","sec":"s03"},{"id":"36","kind":"q","pri":"P0","q":"¿Se cobra comisión Gimadd en clases presenciales pagadas en efectivo?","a":"No se cobra comisión de marketplace por las clases pagadas fuera de la pasarela en efectivo.","note":"","sec":"s03"},{"id":"37","kind":"q","pri":"P0","q":"¿Qué servicio permite pago en efectivo?","a":"Solo la clase presencial. Los demás productos del marketplace se pagan online cuando se contratan a través de Gimadd.","note":"","sec":"s03"},{"id":"38","kind":"q","pri":"P0","q":"¿Qué ocurre cuando el pago online se confirma pero falla la emisión documental?","a":"La operación debe quedar conciliable, no duplicarse y pasar a cola de reintento/alerta. Pago, servicio, split y documentos fiscales deben tener referencias cruzadas.","note":"Prueba obligatoria: webhook duplicado y fallo de factura.","sec":"s03"},{"id":"39","kind":"q","pri":"P0","q":"¿Cómo debe aplicarse un reembolso de compra online?","a":"Reembolsar por separado, cuando corresponda, el importe del servicio del vendedor y la comisión de Gimadd, y generar las rectificaciones fiscales pertinentes.","note":"","sec":"s03"},{"id":"40","kind":"q","pri":"P0","q":"¿Qué datos deben guardarse por cada operación?","a":"Vendedor legal, comprador, servicio, importe con impuestos, base y cuota que correspondan, comisión Gimadd, moneda, país, estado Stripe, documento fiscal y eventual abono.","note":"","sec":"s03"},{"id":"41","kind":"q","pri":"P0","q":"¿Qué sucede si el entrenador cancela un servicio sin causa justificada?","a":"Reembolso del 100 % del importe del servicio y del 100 % de la comisión Gimadd; salvo reprogramación expresamente aceptada por el jugador.","note":"","sec":"s04"},{"id":"42","kind":"q","pri":"P0","q":"¿Hasta cuándo puede cancelar gratuitamente el jugador una clase presencial?","a":"Hasta 24 horas antes de la fecha y hora acordadas: reembolso íntegro del precio del servicio y de la comisión Gimadd.","note":"","sec":"s04"},{"id":"43","kind":"q","pri":"P0","q":"¿Qué ocurre con la cancelación de una clase dentro de las últimas 24 horas?","a":"Se aplicará la política particular del entrenador comunicada antes de contratar, siempre que sea legalmente válida.","note":"","sec":"s04"},{"id":"44","kind":"q","pri":"P0","q":"¿Quién gestiona penalizaciones por no asistencia a una clase pagadera en efectivo?","a":"El entrenador directamente, solo si la penalización fue pactada previamente y es válida; Gimadd no la cobra ni la factura.","note":"","sec":"s04"},{"id":"45","kind":"q","pri":"P0","q":"¿Puede el jugador cancelar un programa si todavía no se ha prestado ningún servicio?","a":"Sí, reembolso íntegro del precio del programa y de la comisión de Gimadd, sin perjuicio de otras garantías legales.","note":"","sec":"s04"},{"id":"46","kind":"q","pri":"P0","q":"¿Qué ocurre si se cancela un programa ya iniciado?","a":"Aplicar la política previamente aceptada del entrenador y los mínimos de Gimadd, con respeto al desistimiento y demás derechos legales.","note":"","sec":"s04"},{"id":"47","kind":"q","pri":"P0","q":"¿Qué ocurre si se cancela un pack totalmente sin usar?","a":"Reembolso del 100 % del precio del pack y de la comisión Gimadd.","note":"","sec":"s04"},{"id":"48","kind":"q","pri":"P0","q":"¿Qué ocurre con un pack usado parcialmente?","a":"Aplicar la política del entrenador aceptada antes de contratar, sin perjuicio de derechos legales.","note":"","sec":"s04"},{"id":"49","kind":"q","pri":"P0","q":"¿Cuándo deja de ser cancelable gratis un videoanálisis ordinario?","a":"El jugador recibe reembolso íntegro mientras el entrenador no haya comenzado efectivamente el análisis; el inicio real debe quedar registrado y nunca eliminar derechos legales de desistimiento por sí solo.","note":"","sec":"s04"},{"id":"50","kind":"q","pri":"P0","q":"¿Cómo se informa del derecho de desistimiento en compras a distancia?","a":"Checkout con información legal adaptada al tipo de servicio y, cuando proceda, solicitud expresa para empezar antes de 14 días; no asumir pérdida automática del derecho por iniciar la actividad.","note":"","sec":"s04"},{"id":"51","kind":"q","pri":"P0","q":"¿Qué ocurre con un impago de la suscripción mensual de un jugador?","a":"Día 0 fallo; días 1–3 acceso y reintentos; días 4–6 servicio suspendido; día 7 cancelación por impago, sin borrar historial.","note":"","sec":"s04"},{"id":"52","kind":"q","pri":"P0","q":"¿Qué sucede si falla el pago de la suscripción SaaS del entrenador?","a":"Días 1–7 acceso completo; días 8–30 únicamente funciones para cumplir contratos activos; tras 30 días Gimadd puede iniciar terminación y gestión de obligaciones pendientes.","note":"","sec":"s04"},{"id":"53","kind":"q","pri":"P0","q":"¿Cómo cancela su SaaS un entrenador sin servicios activos pendientes?","a":"Desactivar la renovación; acceso hasta fin del periodo pagado; sin devolución proporcional ordinaria, salvo derechos legales.","note":"","sec":"s04"},{"id":"54","kind":"q","pri":"P0","q":"¿Qué opciones tiene el entrenador que desea cancelar SaaS con servicios ya vendidos activos?","a":"Mantener SaaS y cumplir obligaciones hasta terminar los contratos previos, o resolver los servicios pendientes con devolución íntegra al jugador, incluso si se hubieran prestado parcialmente, según la política acordada.","note":"Servicios externos no pagados en Gimadd no bloquean la baja SaaS.","sec":"s04"},{"id":"55","kind":"q","pri":"P0","q":"¿Qué ocurre con las renovaciones de suscripciones de jugadores si el entrenador cancela su SaaS?","a":"Desactivar renovaciones futuras y notificar. Mantener el seguimiento del periodo ya cobrado o devolver íntegramente si se interrumpe por decisión del entrenador.","note":"","sec":"s04"},{"id":"56","kind":"q","pri":"P0","q":"¿Qué ocurre con el acceso del entrenador tras terminar su SaaS?","a":"90 días de acceso de solo lectura desde la baja efectiva; posibilitar reactivación. Después, eliminar el espacio de trabajo salvo conservación legal; no borrar los datos independientes de jugadores.","note":"","sec":"s04"},{"id":"57","kind":"q","pri":"P1","q":"¿Qué avisos habrá antes de borrar el espacio del entrenador?","a":"En fechas 0, 7, 30, 60, 83, 89 y 90 días, con canales legalmente permitidos y diferenciación de avisos operativos frente a marketing.","note":"","sec":"s04"},{"id":"58","kind":"q","pri":"P0","q":"¿Cómo se aplican las subidas de precio del SaaS de Gimadd?","a":"Aviso mínimo de 30 días; entrenador puede cancelar. Contratos de jugadores contraídos antes del anuncio protegen la tarifa anterior hasta cumplirse; nuevos contratos posteriores no prolongan protección.","note":"","sec":"s04"},{"id":"59","kind":"q","pri":"P1","q":"¿Cuándo se considera cliente a un jugador del CRM?","a":"Todo jugador vinculado es cliente; el servicio activo es un estado independiente, y también puede existir actividad deportiva sin compra online.","note":"","sec":"s05"},{"id":"60","kind":"q","pri":"P0","q":"¿Cómo se identifica un seguimiento contratado fuera de Gimadd?","a":"Como Servicio externo, distinto de un servicio comprado en la plataforma y sin transacción de marketplace asociada.","note":"","sec":"s05"},{"id":"61","kind":"q","pri":"P0","q":"¿Cómo se incorporan alumnos al entrenador?","a":"Alta manual de contacto; enlace genérico o código de entrenador, con aceptación de vinculación antes de compartir datos deportivos.","note":"","sec":"s05"},{"id":"62","kind":"q","pri":"P0","q":"¿Puede un entrenador ver datos de una cuenta solo porque la añadió manualmente?","a":"No. El alta manual no da acceso a la cuenta ni a datos personales deportivos hasta aceptación de vínculo por el jugador.","note":"","sec":"s05"},{"id":"63","kind":"q","pri":"P0","q":"¿Pueden los entrenadores exportar su CRM para campañas publicitarias?","a":"No incluir una función estándar de exportación masiva orientada a marketing externo ni campañas de marketing en el CRM MVP.","note":"","sec":"s05"},{"id":"64","kind":"q","pri":"P0","q":"¿Quién decide qué datos de salud ve el entrenador?","a":"Solo el jugador incorpora lesiones, molestias o limitaciones y autoriza por separado el acceso de cada entrenador; revocación inmediata.","note":"","sec":"s05"},{"id":"65","kind":"q","pri":"P0","q":"¿Qué ocurre con los vídeos cuando vence su plazo de conservación?","a":"Plazo general máximo 12 meses desde subida, con avisos 30, 7 y 1 días antes; resolver antes los casos necesarios para servicios aún activos.","note":"","sec":"s05"},{"id":"66","kind":"q","pri":"P0","q":"¿Cuál es el límite de almacenamiento de vídeo por jugador?","a":"10 GB por jugador (no por entrenador).","note":"No introducir mensajes comerciales sobre almacenamiento ampliable o compras futuras.","sec":"s05"},{"id":"67","kind":"q","pri":"P0","q":"¿Qué ocurre cuando un usuario borra un vídeo original?","a":"Eliminar el original y los clips de feedback asociados; mantener objetivos, planes y diario como registros independientes. Advertir si afecta a servicios pendientes.","note":"","sec":"s05"},{"id":"68","kind":"q","pri":"P1","q":"¿Qué piezas del videoanálisis puede descargar el jugador?","a":"Clips de feedback creados por el entrenador con comentarios, no el vídeo completo de devolución como descarga estándar; derechos RGPD de acceso/portabilidad aparte.","note":"","sec":"s05"},{"id":"69","kind":"q","pri":"P0","q":"¿Puede Gimadd publicar un vídeo de un jugador para promocionarse?","a":"No por el hecho de haberlo subido o por haber permitido compartirlo; se requiere autorización específica apropiada de los afectados.","note":"","sec":"s05"},{"id":"70","kind":"q","pri":"P1","q":"¿Puede el jugador publicar clips del entrenador en redes?","a":"Solo si el entrenador habilita la opción general, desactivada por defecto, y se respetan derechos de imagen y terceros.","note":"","sec":"s05"},{"id":"71","kind":"q","pri":"P0","q":"¿Qué consentimiento debe existir para terceros identificables en vídeos?","a":"La persona que graba o sube debe disponer de derechos/autorizaciones suficientes; no pedir una casilla nueva en cada subida, pero ofrecer aviso y canal de retirada.","note":"","sec":"s05"},{"id":"72","kind":"q","pri":"P0","q":"¿Qué ocurre al desactivar voluntariamente una cuenta de jugador?","a":"Previo cierre de servicios activos; ventana de reactivación de 90 días con avisos 0,30,60,83,89; respetar por separado el derecho RGPD de supresión sin demora indebida.","note":"","sec":"s05"},{"id":"73","kind":"q","pri":"P0","q":"¿Cómo se gestionan los consentimientos comerciales?","a":"Tres preferencias independientes y desactivadas inicialmente: email comercial, push promocional y permiso para recibir solicitudes de uso público de vídeos; esta tercera no autoriza la difusión.","note":"","sec":"s05"},{"id":"74","kind":"q","pri":"P0","q":"¿Qué autenticación se requiere por rol?","a":"2FA obligatorio para administradores; opcional para entrenadores y jugadores; control de acceso y registro auditado para soporte.","note":"","sec":"s05"},{"id":"75","kind":"q","pri":"P0","q":"¿Qué acceso tiene el equipo de soporte de Gimadd a contenidos privados?","a":"Solo ante causa legítima de soporte, seguridad o exigencia legal, con roles de mínimo privilegio y auditoría de accesos.","note":"","sec":"s05"},{"id":"76","kind":"q","pri":"P1","q":"¿Qué conexión se permite con Google Calendar?","a":"Opcional y unidireccional desde Gimadd hacia el calendario conectado del entrenador; no leer eventos privados ajenos.","note":"","sec":"s05"},{"id":"77","kind":"q","pri":"P1","q":"¿Qué reseñas se podrán publicar y cómo se moderan?","a":"Solo reseñas de servicios pagados y completados dentro de la plataforma; publicación automática de opiniones positivas y negativas, con denuncia y revisión de contenidos indebidos.","note":"","sec":"s05"},{"id":"78","kind":"q","pri":"P0","q":"¿Cuándo se pueden cargar cookies no esenciales?","a":"Solo tras consentimiento válido; banner con aceptar/rechazar/configurar equivalentes y revocación fácil; inventario exacto de cookies según instalaciones reales.","note":"","sec":"s05"},{"id":"79","kind":"q","pri":"P0","q":"¿Qué ocurre si un jugador elimina el vídeo necesario para un análisis pendiente?","a":"El entrenador podrá solicitar una nueva grabación sin que se genere automáticamente un reembolso.","note":"Advertencia antes de borrar y registro de petición de sustitución.","sec":"s06"},{"id":"80","kind":"q","pri":"P0","q":"¿Durante cuánto tiempo se conservarán los mensajes privados?","a":"Mientras las cuentas estén activas, respetando los derechos de supresión y las obligaciones legales de conservación.","note":"","sec":"s06"},{"id":"81","kind":"q","pri":"P0","q":"¿Podrán los usuarios eliminar mensajes o conversaciones desde el chat?","a":"No. No habrá eliminación manual desde el chat; se aplicarán los derechos legales de supresión.","note":"","sec":"s06"},{"id":"82","kind":"q","pri":"P0","q":"¿Cómo se gestionarán las infracciones de las condiciones de uso?","a":"Medidas proporcionales: advertencia, restricción, suspensión o cierre según gravedad, con actuación inmediata ante riesgos graves.","note":"","sec":"s06"},{"id":"83","kind":"q","pri":"P1","q":"¿Cómo se revisarán las suspensiones y restricciones de cuenta?","a":"Mediante soporte por email o centro de ayuda, con revisión individual y respuesta motivada.","note":"","sec":"s06"},{"id":"84","kind":"q","pri":"P0","q":"¿Qué información puede introducir el entrenador sobre clientes externos?","a":"Datos básicos de contacto; el seguimiento deportivo requiere que el jugador acepte la vinculación.","note":"","sec":"s06"},{"id":"85","kind":"q","pri":"P1","q":"¿Podrá el entrenador invitar a clientes externos desde Gimadd?","a":"Sí, invitaciones individuales por email o enlaces compartibles; sin campañas comerciales.","note":"","sec":"s06"},{"id":"86","kind":"q","pri":"P0","q":"¿Qué ocurre con el chat cuando un jugador se desvincula?","a":"Se cierra para mensajes nuevos; ambos conservan acceso al historial anterior conforme a las reglas de conservación.","note":"","sec":"s06"},{"id":"87","kind":"q","pri":"P0","q":"¿Puede el jugador estar vinculado a varios entrenadores simultáneamente?","a":"Sí, sin límite contractual fijo y manteniendo separados los datos y contenidos de cada relación.","note":"","sec":"s06"},{"id":"88","kind":"q","pri":"P0","q":"¿Qué perfil general verá el entrenador vinculado?","a":"Nombre, fotografía, nivel de juego y datos deportivos generales. Nunca los contenidos privados de otros entrenadores.","note":"","sec":"s06"},{"id":"89","kind":"q","pri":"P0","q":"¿Cómo funcionarán los servicios de seguimiento en pareja?","a":"Funcionalidad eliminada del MVP. No programar contratación, precios ni seguimiento en pareja.","note":"","sec":"s06"},{"id":"90","kind":"q","pri":"P0","q":"¿Qué cinco tipos de servicios individuales estarán disponibles?","a":"Programas 3/6/12 meses, videoanálisis, clases presenciales, packs y suscripciones mensuales.","note":"","sec":"s06"},{"id":"91","kind":"q","pri":"P0","q":"¿Cómo cambian los precios de suscripciones mensuales de jugadores?","a":"Aviso previo mínimo de 30 días y aceptación expresa del jugador antes de cobrar el nuevo precio.","note":"","sec":"s06"},{"id":"92","kind":"q","pri":"P0","q":"¿Cómo retira un entrenador una suscripción de su catálogo?","a":"Puede retirarla para nuevos clientes de inmediato; debe avisar a suscriptores activos con 30 días de antelación y cumplir los periodos ya pagados.","note":"","sec":"s06"},{"id":"93","kind":"q","pri":"P0","q":"¿Qué ocurre al terminar un programa de 3, 6 o 12 meses?","a":"Renovación manual: termina automáticamente y, para continuar, el jugador realiza nueva contratación y nuevo pago. Sin cargos automáticos.","note":"","sec":"s06"},{"id":"94","kind":"q","pri":"P0","q":"¿Qué puede modificar el entrenador durante un programa activo?","a":"Objetivos y planes deportivos libremente; modificaciones sustanciales de precio, duración o prestaciones necesitan aceptación expresa.","note":"","sec":"s06"},{"id":"95","kind":"q","pri":"P1","q":"¿Pueden pausarse programas por lesión u otras causas?","a":"Solo por acuerdo entre jugador y entrenador, conforme a las condiciones contratadas y derechos legales.","note":"","sec":"s06"},{"id":"96","kind":"q","pri":"P0","q":"¿Cómo se tramitará la pausa de un programa?","a":"Se acuerda por chat; el entrenador registra nueva fecha final y el jugador confirma expresamente el cambio.","note":"","sec":"s06"},{"id":"97","kind":"q","pri":"P0","q":"¿Cómo se reembolsa una cancelación voluntaria de suscripción mensual?","a":"Se desactiva siguiente renovación, sin prorrateo automático; el servicio continúa hasta fin del periodo pagado, salvo derechos legales o incumplimiento.","note":"","sec":"s06"},{"id":"98","kind":"q","pri":"P0","q":"¿Qué avisos de renovación se enviarán al jugador?","a":"Mostrar precio y renovación automática con claridad en el checkout; no recordatorios adicionales, salvo los exigidos legalmente.","note":"","sec":"s06"},{"id":"99","kind":"q","pri":"P0","q":"¿Cómo se reprogramará una clase presencial?","a":"Por acuerdo en el chat; el entrenador modifica manualmente fecha y hora, sin segunda confirmación en la app.","note":"La conversación debe acreditar el acuerdo.","sec":"s06"},{"id":"A01","kind":"a","pri":"P0","q":"Facturación — prioridad absoluta","a":"En cada pago online comprobar tres sujetos distintos cuando proceda: vendedor del servicio, comprador del servicio y contratante del SaaS. El NIF y razón social del emisor del servicio deben ser los del vendedor; la factura de comisión, Gimadd; la del SaaS, Gimadd al suscriptor.","note":"","sec":"notes"},{"id":"A02","kind":"a","pri":"P0","q":"Factura por cuenta de terceros","a":"La generación de documentos del servicio se hará en nombre y por cuenta del entrenador/academia, con acuerdo de facturación y controles fiscales. No convertir a Gimadd por error en proveedor del entrenamiento.","note":"","sec":"notes"},{"id":"A03","kind":"a","pri":"P0","q":"Desglose en checkout","a":"En pantalla antes de pagar: precio del entrenador con impuestos, comisión Gimadd con su impuesto aplicable, total. En factura, aplicar tratamiento fiscal correcto al territorio y operación (sin tipo impositivo fijo asumido).","note":"","sec":"notes"},{"id":"A04","kind":"a","pri":"P0","q":"Pago efectivo","a":"Solo clases presenciales: sin Stripe, sin comisión Gimadd, sin factura Gimadd de clase; estados claros de pendiente/pagado. El entrenador puede registrar el pago y es responsable de facturar por su cuenta.","note":"","sec":"notes"},{"id":"A05","kind":"a","pri":"P0","q":"Refund / abonos","a":"Casos de prueba separados: clase cancelada 25 horas antes; cancelada 2 horas antes; cancelación por coach; pack no usado; programa no iniciado; videoanálisis sin empezar; suscripción ya renovada; cobro fallido. Cada abono debe conciliar ambos componentes (servicio + comisión) y los documentos rectificativos.","note":"","sec":"notes"},{"id":"A06","kind":"a","pri":"P0","q":"Suscripciones diferentes","a":"No confundir suscripción SaaS del entrenador, suscripción mensual del jugador y programa prepago 3/6/12 meses. Tienen métodos de renovación, impago y cancelación distintos.","note":"","sec":"notes"},{"id":"A07","kind":"a","pri":"P0","q":"Stripe Connect","a":"Verificar KYC, vendedor efectivo, Stripe account ID, reparto, reversos, devoluciones, chargebacks, reintentos, eventos duplicados y conciliación contra documentos.","note":"","sec":"notes"},{"id":"A08","kind":"a","pri":"P0","q":"Cuenta entrenador: baja y retención","a":"90 días solo lectura desde baja efectiva con avisos. Servicio activo comprado online bloquea borrado directo; servicio externo no bloquea cancelación SaaS.","note":"","sec":"notes"},{"id":"A09","kind":"a","pri":"P0","q":"Diseño del consentimiento","a":"Marketing: email/push/permiso para solicitar uso público de vídeos en tres toggles desligados del alta; nada marcado por defecto. Último toggle no equivale a autorización de uso.","note":"","sec":"notes"},{"id":"A10","kind":"a","pri":"P0","q":"Vídeos","a":"10 GB por jugador, 12 meses desde subida, avisos 30/7/1; eliminación original elimina clips de feedback vinculados, no objetivos ni diario; advertir si hay videoanálisis pendiente.","note":"","sec":"notes"},{"id":"A11","kind":"a","pri":"P0","q":"Datos de lesiones","a":"Solo el jugador edita información de salud; permisos separados por entrenador, revocación inmediata y tratamiento sensible con consentimiento explícito cuando corresponda.","note":"","sec":"notes"},{"id":"A12","kind":"a","pri":"P0","q":"Separación multi-entrenador","a":"Test de seguridad con dos entrenadores vinculados al mismo jugador: ninguno ve vídeos, objetivos, plan, notas ni chat correspondiente al otro.","note":"","sec":"notes"},{"id":"A13","kind":"a","pri":"P0","q":"Incidencias y accesos","a":"2FA obligatorio admin; accesos de soporte registrados; reclamaciones de suspensión por soporte; denuncias de vídeos/reseñas, moderación proporcional y notificación.","note":"","sec":"notes"},{"id":"A14","kind":"a","pri":"P0","q":"Cookies y marketing técnico","a":"Revisar integraciones REALES del despliegue; consentimiento previo a píxeles y etiquetas, rechazo equivalente y revocación. Herramientas deseadas para evaluar: GA4, GTM, Google Ads, Meta Pixel/CAPI, TikTok, Clarity, OneSignal, CMP. No instalar ni declararlas como activas por mera mención.","note":"","sec":"notes"},{"id":"A15","kind":"a","pri":"P0","q":"Autorización de menores","a":"Email al representante con enlace verificable; aceptar antes de pagos y funciones restringidas; guardar versión y fecha; revocación; al cumplir 18 años nueva aceptación por titular.","note":"","sec":"notes"},{"id":"A16","kind":"a","pri":"P0","q":"Funcionalidades excluidas","a":"Sin servicio en pareja, sin videollamada para mentoría, sin reconocimiento facial, sin calendario externo bidireccional y sin IA no implantada. Revisar textos comerciales y checkout.","note":"","sec":"notes"},{"id":"A17","kind":"a","pri":"P0","q":"Copy legal y consentimientos","a":"Registrar versión de términos, política comercial, idioma, fecha/hora y actor. Checkout debe distinguir cancelación contractual de desistimiento legal.","note":"","sec":"notes"},{"id":"A18","kind":"a","pri":"P0","q":"No mezclar confirmaciones","a":"Pausa de programa: nuevo vencimiento necesita botón de aceptación del jugador. Reprogramar clase: coach cambia fecha/hora tras acuerdo en chat, SIN segundo botón.","note":"","sec":"notes"},{"id":"A19","kind":"a","pri":"P0","q":"Cómo se marca cada fila","a":"Cada decisión se marca sin implementar, en proceso o implementado. El estado lo ven Miguel Ángel, Radu y el equipo en cuanto se guarda.","note":"","sec":"notes"},{"id":"F01","kind":"f","pri":"P0","q":"Compra online entrenador autónomo","a":"Servicio a nombre del autónomo, comisión facturada por Gimadd, importes e impuestos correctos.","note":"","sec":"tests"},{"id":"F02","kind":"f","pri":"P0","q":"Compra online academia","a":"Factura de servicio a nombre de academia aunque la sesión la imparta un coach individual.","note":"","sec":"tests"},{"id":"F03","kind":"f","pri":"P0","q":"SaaS contratado por academia","a":"Factura mensual SaaS a academia, sin confundirse con facturas de clases.","note":"","sec":"tests"},{"id":"F04","kind":"f","pri":"P0","q":"Clase pagada en efectivo","a":"No cargo Stripe, no comisión, no factura de servicio de Gimadd, estado registrado.","note":"","sec":"tests"},{"id":"F05","kind":"f","pri":"P0","q":"Cancelación de clase 25 h antes","a":"Reembolso 100 % precio servicio + 100 % fee, con rectificaciones.","note":"","sec":"tests"},{"id":"F06","kind":"f","pri":"P0","q":"Cancelación clase 2 h antes","a":"Aplicar política preaceptada y derechos legales, no refund total automático.","note":"","sec":"tests"},{"id":"F07","kind":"f","pri":"P0","q":"Coach cancela injustificadamente","a":"100 % servicio y fee; no dejar saldo parcial inadvertido.","note":"","sec":"tests"},{"id":"F08","kind":"f","pri":"P0","q":"Videoanálisis sin inicio real","a":"Reembolso completo; fecha de inicio real auditable.","note":"","sec":"tests"},{"id":"F09","kind":"f","pri":"P0","q":"Pack sin uso y programa sin prestación","a":"Reembolso completo servicio + fee.","note":"","sec":"tests"},{"id":"F10","kind":"f","pri":"P0","q":"Jugador no acepta subida de precio","a":"No cobrar nuevo importe; cancelar renovación si procede.","note":"","sec":"tests"},{"id":"F11","kind":"f","pri":"P0","q":"Webhook Stripe recibido dos veces","a":"Una sola orden, split y factura; sin duplicados.","note":"","sec":"tests"},{"id":"F12","kind":"f","pri":"P0","q":"Fallo de emisión fiscal tras pago","a":"Pago conciliado, alerta y reintento; nunca duplicar cargo.","note":"","sec":"tests"},{"id":"F13","kind":"f","pri":"P0","q":"Reembolso parcial/total y contracargo","a":"Reversos, comisión, conciliación y abonos correctos.","note":"","sec":"tests"},{"id":"F14","kind":"f","pri":"P0","q":"Impago SaaS y jugador mensual","a":"Aplicar dos cronogramas diferentes sin bloquear servicios activos indebidamente.","note":"","sec":"tests"}];
+  var SECTIONS = [
+    {id:"pay", es:"Pagos · quién cobra y factura", ru:"Платежи · кто получает деньги и счёт"},
+    {id:"s01", es:"01 · Ámbito y usuarios", ru:"01 · Область и пользователи"},
+    {id:"s02", es:"02 · Catálogo de servicios", ru:"02 · Каталог услуг"},
+    {id:"s03", es:"03 · Pagos, Stripe y facturas", ru:"03 · Платежи, Stripe и счета"},
+    {id:"s04", es:"04 · Cancelaciones y baja", ru:"04 · Отмены и закрытие аккаунта"},
+    {id:"s05", es:"05 · CRM, datos y privacidad", ru:"05 · CRM, данные и конфиденциальность"},
+    {id:"s06", es:"06 · Decisiones extra de producto", ru:"06 · Дополнительные решения по продукту"},
+    {id:"notes", es:"Notas para programar", ru:"Заметки для разработки"},
+    {id:"tests", es:"Pruebas de facturación y pagos", ru:"Тесты биллинга и платежей"}
+  ];
+  var I18N = {
+    es: {
+      pageTitle: "Checklist legal MVP",
+      pageSubtitle: "Decisiones de producto para programar. El estado lo ve todo el equipo.",
+      home: "← Gimadd Mentor",
+      qa: "Pruebas y feedback",
+      reporter: "Yo soy",
+      reporterPh: "tu nombre",
+      allSec: "Todas las secciones",
+      allPri: "P0 y P1",
+      search: "Buscar decisión…",
+      onlyPending: "Solo pendientes",
+      showAll: "Ver todas",
+      collapse: "Cerrar secciones",
+      expand: "Abrir secciones",
+      statTotal: "Decisiones",
+      statTodo: "Sin implementar",
+      statWip: "En proceso",
+      statDone: "Implementado",
+      statP0: "P0 pendientes",
+      todo: "Sin implementar",
+      wip: "En proceso",
+      done: "Implementado",
+      all: "Todas",
+      answer: "Respuesta aprobada",
+      noteDev: "Nota para desarrollo",
+      noteTeam: "Nota del equipo",
+      notePh: "Comentario breve para Radu, Miguel Ángel o desarrollo…",
+      empty: "Ninguna fila con este filtro.",
+      saved: "Estado guardado.",
+      footnoteDb: "Los cambios se guardan automáticamente y los ve todo el equipo.",
+      footnoteLocal: "Sin conexión compartida: el estado queda solo en este navegador.",
+      syncFail: "No se pudo sincronizar. Trabajando en este navegador.",
+      syncFailRate: "El almacén compartido está saturado. Reintentando…",
+      translating: "Traduciendo…",
+      anon: "Anon.",
+      by: "por",
+      justNow: "ahora",
+      mins: "min",
+      hours: "h"
+    },
+    ru: {
+      pageTitle: "Юридический чеклист MVP",
+      pageSubtitle: "Продуктовые решения для разработки. Статус видит вся команда.",
+      home: "← Gimadd Mentor",
+      qa: "Тесты и обратная связь",
+      reporter: "Я",
+      reporterPh: "твоё имя",
+      allSec: "Все разделы",
+      allPri: "P0 и P1",
+      search: "Поиск решения…",
+      onlyPending: "Только открытые",
+      showAll: "Показать все",
+      collapse: "Свернуть разделы",
+      expand: "Раскрыть разделы",
+      statTotal: "Решения",
+      statTodo: "Не сделано",
+      statWip: "В работе",
+      statDone: "Сделано",
+      statP0: "P0 открыто",
+      todo: "Не реализовано",
+      wip: "В работе",
+      done: "Реализовано",
+      all: "Все",
+      answer: "Утверждённый ответ",
+      noteDev: "Заметка для разработки",
+      noteTeam: "Заметка команды",
+      notePh: "Короткий комментарий для Radu, Мигеля или разработки…",
+      empty: "Нет строк с этим фильтром.",
+      saved: "Статус сохранён.",
+      footnoteDb: "Изменения сохраняются автоматически и видны всей команде.",
+      footnoteLocal: "Нет общей синхронизации: статус только в этом браузере.",
+      syncFail: "Не удалось синхронизировать. Работаем в этом браузере.",
+      syncFailRate: "Общее хранилище перегружено. Повторная попытка…",
+      translating: "Перевод…",
+      anon: "Анон.",
+      by: "от",
+      justNow: "сейчас",
+      mins: "мин",
+      hours: "ч"
+    }
+  };
+
+  var reporterKey = "gm_qa_reporter_name";
+  var langKey = "gm_qa_lang";
+  var LOCAL_KEY = "gm_legal_status_v1";
+  var trCache = {};
+  try { trCache = JSON.parse(localStorage.getItem("gm_legal_tr_cache") || "{}"); } catch(e){ trCache = {}; }
+
+  var state = {
+    lang: "es",
+    reporter: "",
+    dbMode: null,
+    filterSt: "all",
+    filterSec: "all",
+    filterPri: "all",
+    filterSearch: "",
+    onlyPending: false,
+    secsOpen: true,
+    status: {},
+    dirty: {},
+    saving: false
+  };
+  var syncTimer = null;
+  var syncBackoffMs = SYNC_MS;
+  var noteTimers = {};
+  var toastTimer = null;
+
+  function t(key){
+    return (I18N[state.lang] && I18N[state.lang][key]) || I18N.es[key] || key;
+  }
+  function secTitle(id){
+    for (var i=0;i<SECTIONS.length;i++) if (SECTIONS[i].id===id) return SECTIONS[i][state.lang] || SECTIONS[i].es;
+    return id;
+  }
+  function escapeHtml(s){
+    return String(s==null?"":s).replace(/[&<>"']/g, function(c){
+      return ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[c];
+    });
+  }
+  function hasCyrillic(s){ return /[\u0400-\u04FF]/.test(s || ""); }
+  function persistTrCache(){
+    try { localStorage.setItem("gm_legal_tr_cache", JSON.stringify(trCache)); } catch(e){}
+  }
+  function translateText(text, target){
+    text = String(text || "").trim();
+    if (!text) return Promise.resolve("");
+    if (target === "ru" && hasCyrillic(text)) return Promise.resolve(text);
+    if (target === "es" && !hasCyrillic(text)) return Promise.resolve(text);
+    var cacheKey = target + ":" + text;
+    if (trCache[cacheKey]) return Promise.resolve(trCache[cacheKey]);
+    var sl = hasCyrillic(text) ? "ru" : "es";
+    if (sl === target) return Promise.resolve(text);
+    function save(out){ trCache[cacheKey] = out; persistTrCache(); return out; }
+    function googleOne(q){
+      var url = "https://translate.googleapis.com/translate_a/single?client=gtx&sl=" + sl + "&tl=" + target + "&dt=t&q=" + encodeURIComponent(q);
+      return fetch(url).then(function(r){ return r.json(); }).then(function(data){
+        return (data[0] || []).map(function(row){ return row[0]; }).join("");
+      });
+    }
+    function memoryOne(q){
+      var url = "https://api.mymemory.translated.net/get?q=" + encodeURIComponent(q) + "&langpair=" + sl + "|" + target;
+      return fetch(url).then(function(r){ return r.json(); }).then(function(data){
+        return (data.responseData && data.responseData.translatedText) || q;
+      });
+    }
+    return googleOne(text).catch(function(){ return memoryOne(text); }).then(save).catch(function(){ return text; });
+  }
+  function applyContentTranslations(){
+    var nodes = document.querySelectorAll("[data-i18n-text]");
+    nodes.forEach(function(el){
+      var src = el.getAttribute("data-i18n-text");
+      translateText(src, state.lang).then(function(out){
+        if (el.getAttribute("data-i18n-text") === src && el.textContent !== out) el.textContent = out;
+      });
+    });
+  }
+  function toast(msg){
+    var root = document.getElementById("toastRoot");
+    root.innerHTML = '<div class="toast">' + escapeHtml(msg) + "</div>";
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function(){ root.innerHTML = ""; }, 2400);
+  }
+  function reporterName(){
+    return (state.reporter || "").trim() || t("anon");
+  }
+  function itemStatus(id){
+    var row = state.status[id];
+    if (!row || !row.s) return { s:"todo", by:"", at:"", note:"" };
+    return row;
+  }
+  function counts(){
+    var c = { total: ITEMS.length, todo:0, wip:0, done:0, p0:0 };
+    ITEMS.forEach(function(it){
+      var s = itemStatus(it.id).s;
+      c[s] = (c[s]||0)+1;
+      if (it.pri === "P0" && s !== "done") c.p0++;
+    });
+    return c;
+  }
+  function matches(it){
+    if (state.filterSec !== "all" && it.sec !== state.filterSec) return false;
+    if (state.filterPri !== "all" && it.pri !== state.filterPri) return false;
+    var s = itemStatus(it.id).s;
+    if (state.filterSt !== "all" && s !== state.filterSt) return false;
+    if (state.onlyPending && s === "done") return false;
+    var q = (state.filterSearch || "").trim().toLowerCase();
+    if (q){
+      var blob = (it.id + " " + it.q + " " + it.a + " " + (it.note||"") + " " + (itemStatus(it.id).note||"")).toLowerCase();
+      if (blob.indexOf(q) === -1) return false;
+    }
+    return true;
+  }
+  function fmtWhen(iso){
+    if (!iso) return "";
+    var d = new Date(iso);
+    if (isNaN(d.getTime())) return "";
+    var now = Date.now();
+    var diff = (now - d.getTime()) / 1000;
+    if (diff < 60) return t("justNow");
+    if (diff < 3600) return Math.floor(diff/60) + " " + t("mins");
+    if (diff < 86400) return Math.floor(diff/3600) + " " + t("hours");
+    return d.toLocaleDateString(state.lang === "ru" ? "ru-RU" : "es-ES", {day:"numeric", month:"short"});
+  }
+
+  function chrome(){
+    document.getElementById("pageTitle").textContent = t("pageTitle");
+    document.getElementById("pageSubtitle").textContent = t("pageSubtitle");
+    document.getElementById("homeLink").textContent = t("home");
+    document.getElementById("qaLink").textContent = t("qa");
+    document.getElementById("reporterLabel").textContent = t("reporter");
+    document.getElementById("reporterInput").placeholder = t("reporterPh");
+    document.getElementById("filterSearch").placeholder = t("search");
+    document.getElementById("langEs").classList.toggle("active", state.lang==="es");
+    document.getElementById("langRu").classList.toggle("active", state.lang==="ru");
+    document.documentElement.lang = state.lang;
+    var pills = [
+      {id:"all", label:t("all")},
+      {id:"todo", label:t("todo")},
+      {id:"wip", label:t("wip")},
+      {id:"done", label:t("done")}
+    ];
+    document.getElementById("statusPills").innerHTML = pills.map(function(p){
+      return '<button type="button" class="pill' + (state.filterSt===p.id?" active":"") + '" data-st="' + p.id + '">' + escapeHtml(p.label) + "</button>";
+    }).join("");
+    var secSel = document.getElementById("filterSec");
+    secSel.innerHTML = '<option value="all">' + escapeHtml(t("allSec")) + "</option>" + SECTIONS.map(function(s){
+      return '<option value="' + s.id + '"' + (state.filterSec===s.id?" selected":"") + ">" + escapeHtml(secTitle(s.id)) + "</option>";
+    }).join("");
+    var priSel = document.getElementById("filterPri");
+    priSel.innerHTML = '<option value="all">' + escapeHtml(t("allPri")) + "</option>"
+      + '<option value="P0"' + (state.filterPri==="P0"?" selected":"") + ">P0</option>"
+      + '<option value="P1"' + (state.filterPri==="P1"?" selected":"") + ">P1</option>";
+    document.getElementById("btnPending").textContent = state.onlyPending ? t("showAll") : t("onlyPending");
+    document.getElementById("btnToggleSecs").textContent = state.secsOpen ? t("collapse") : t("expand");
+    var c = counts();
+    document.getElementById("stats").innerHTML =
+      '<div class="stat"><b>' + c.total + "</b><span>" + escapeHtml(t("statTotal")) + "</span></div>"
+      + '<div class="stat todo"><b>' + c.todo + "</b><span>" + escapeHtml(t("statTodo")) + "</span></div>"
+      + '<div class="stat wip"><b>' + c.wip + "</b><span>" + escapeHtml(t("statWip")) + "</span></div>"
+      + '<div class="stat done"><b>' + c.done + "</b><span>" + escapeHtml(t("statDone")) + "</span></div>"
+      + '<div class="stat p0"><b>' + c.p0 + "</b><span>" + escapeHtml(t("statP0")) + "</span></div>";
+    var pd = Math.round(100 * c.done / c.total);
+    var pw = Math.round(100 * c.wip / c.total);
+    document.getElementById("progress").innerHTML =
+      '<i class="p-done" style="width:' + pd + '%"></i><i class="p-wip" style="width:' + pw + '%"></i>';
+    document.getElementById("footnote").textContent = state.dbMode === "remote" ? t("footnoteDb") : t("footnoteLocal");
+  }
+
+  function render(){
+    chrome();
+    var openIds = {};
+    document.querySelectorAll(".row.open").forEach(function(el){ openIds[el.getAttribute("data-id")] = true; });
+    var openSecs = {};
+    var hadSecs = false;
+    document.querySelectorAll("details.sec").forEach(function(el){
+      hadSecs = true;
+      openSecs[el.getAttribute("data-sec")] = el.open;
+    });
+    var html = "";
+    var any = false;
+    SECTIONS.forEach(function(sec){
+      var rows = ITEMS.filter(function(it){ return it.sec === sec.id && matches(it); });
+      if (!rows.length) return;
+      any = true;
+      var allInSec = ITEMS.filter(function(it){ return it.sec === sec.id; });
+      var doneN = allInSec.filter(function(it){ return itemStatus(it.id).s === "done"; }).length;
+      var isOpen;
+      if (hadSecs && Object.prototype.hasOwnProperty.call(openSecs, sec.id)) isOpen = openSecs[sec.id];
+      else isOpen = doneN < allInSec.length;
+      if (!state.secsOpen) isOpen = false;
+      html += '<details class="sec" data-sec="' + sec.id + '"' + (isOpen ? " open" : "") + ">"
+        + '<summary><span class="sec-mark"></span><span>' + escapeHtml(secTitle(sec.id)) + "</span>"
+        + '<span class="sec-counts">' + doneN + " / " + allInSec.length + "</span></summary><div class=\"rows\">";
+      rows.forEach(function(it){
+        var st = itemStatus(it.id);
+        var open = !!openIds[it.id];
+        html += '<article class="row st-' + st.s + (open?" open":"") + '" data-id="' + escapeHtml(it.id) + '">'
+          + '<div class="row-id">' + escapeHtml(it.id) + "</div>"
+          + '<div><p class="q" data-i18n-text="' + escapeHtml(it.q) + '">' + escapeHtml(it.q) + "</p>"
+          + '<div class="chips"><span class="chip chip-' + it.pri.toLowerCase() + '">' + it.pri + "</span></div></div>"
+          + '<div class="st-row">'
+          + '<button type="button" class="st-btn' + (st.s==="todo"?" active":"") + '" data-s="todo">' + escapeHtml(t("todo")) + "</button>"
+          + '<button type="button" class="st-btn' + (st.s==="wip"?" active":"") + '" data-s="wip">' + escapeHtml(t("wip")) + "</button>"
+          + '<button type="button" class="st-btn' + (st.s==="done"?" active":"") + '" data-s="done">' + escapeHtml(t("done")) + "</button>"
+          + (st.by ? '<span class="who">' + escapeHtml(t("by") + " " + st.by + (st.at ? " · " + fmtWhen(st.at) : "")) + "</span>" : "")
+          + "</div>"
+          + '<div class="extra">'
+          + '<div class="box"><label>' + escapeHtml(t("answer")) + '</label><p data-i18n-text="' + escapeHtml(it.a) + '">' + escapeHtml(it.a) + "</p></div>"
+          + (it.note ? '<div class="box"><label>' + escapeHtml(t("noteDev")) + '</label><p data-i18n-text="' + escapeHtml(it.note) + '">' + escapeHtml(it.note) + "</p></div>" : "")
+          + '<div class="note-wrap"><label>' + escapeHtml(t("noteTeam")) + "</label>"
+          + '<input class="note-input" data-note-id="' + escapeHtml(it.id) + '" maxlength="280" placeholder="' + escapeHtml(t("notePh")) + '" value="' + escapeHtml(st.note || "") + '">'
+          + "</div></div></article>";
+      });
+      html += "</div></details>";
+    });
+    document.getElementById("list").innerHTML = any ? html : '<p class="empty">' + escapeHtml(t("empty")) + "</p>";
+    if (state.lang === "ru") applyContentTranslations();
+  }
+
+  function persistLocal(){
+    try { localStorage.setItem(LOCAL_KEY, JSON.stringify({ v:1, items: state.status, savedAt: new Date().toISOString() })); } catch(e){}
+  }
+  function loadLocal(){
+    try {
+      var raw = JSON.parse(localStorage.getItem(LOCAL_KEY) || "null");
+      if (raw && raw.items) state.status = raw.items;
+    } catch(e){}
+  }
+  function mergeStatus(remote){
+    var out = {};
+    var ids = {};
+    ITEMS.forEach(function(it){ ids[it.id] = true; });
+    function take(map, force){
+      if (!map) return;
+      Object.keys(map).forEach(function(id){
+        if (!ids[id]) return;
+        var a = out[id];
+        var b = map[id];
+        if (!b || !b.s) return;
+        if (force || !a || (b.at && (!a.at || b.at >= a.at))) out[id] = {
+          s: b.s, by: b.by || "", at: b.at || "", note: b.note || ""
+        };
+      });
+    }
+    take(state.status, false);
+    take(remote, false);
+    take(state.dirty, true);
+    state.status = out;
+  }
+  function mantlePath(path, method, body){
+    var url = MANTLE_BASE + "/" + path;
+    var opts = { method: method || "GET", headers: { "X-Mantle-Key": MANTLE_KEY, "Accept": "application/json" } };
+    if (body !== undefined){
+      opts.headers["Content-Type"] = "application/json";
+      opts.body = JSON.stringify(body);
+    }
+    return fetch(url, opts).then(function(res){
+      if (res.status === 404) return null;
+      if (!res.ok){
+        return res.text().then(function(txt){
+          var err = new Error(res.status + " " + txt);
+          err.status = res.status;
+          if (res.status === 429 || /rate limit/i.test(txt || "")) err.rateLimited = true;
+          throw err;
+        });
+      }
+      if (res.status === 204) return null;
+      return res.json();
+    });
+  }
+  function showBanner(msg){
+    var el = document.getElementById("banner");
+    if (!msg){ el.innerHTML = ""; el.hidden = true; return; }
+    el.hidden = false;
+    el.className = "banner";
+    el.textContent = msg;
+  }
+  function saveRemote(){
+    if (state.saving) return Promise.resolve();
+    state.saving = true;
+    return mantlePath(LEGAL_PATH, "GET").then(function(remote){
+      var remoteItems = (remote && remote.items) || {};
+      mergeStatus(remoteItems);
+      var payload = { v:1, updatedAt: new Date().toISOString(), items: Object.assign({}, remoteItems) };
+      Object.keys(state.dirty).forEach(function(id){ payload.items[id] = state.dirty[id]; });
+      Object.keys(state.status).forEach(function(id){
+        if (!payload.items[id]) payload.items[id] = state.status[id];
+      });
+      return mantlePath(LEGAL_PATH, "POST", payload).then(function(){
+        state.dirty = {};
+        state.status = payload.items;
+        state.dbMode = "remote";
+        persistLocal();
+        showBanner("");
+        syncBackoffMs = SYNC_MS;
+      });
+    }).catch(function(err){
+      state.dbMode = "local";
+      persistLocal();
+      showBanner(err && err.rateLimited ? t("syncFailRate") : t("syncFail"));
+      if (err && err.rateLimited) syncBackoffMs = Math.min(syncBackoffMs * 2, 10 * 60 * 1000);
+    }).then(function(){ state.saving = false; });
+  }
+  function pullRemote(silent){
+    return mantlePath(LEGAL_PATH, "GET").then(function(remote){
+      mergeStatus((remote && remote.items) || {});
+      state.dbMode = "remote";
+      persistLocal();
+      showBanner("");
+      if (!silent) render();
+      else {
+        chrome();
+        render();
+      }
+    }).catch(function(err){
+      if (state.dbMode !== "remote") state.dbMode = "local";
+      showBanner(err && err.rateLimited ? t("syncFailRate") : t("syncFail"));
+    });
+  }
+  function setStatus(id, s){
+    var prev = itemStatus(id);
+    var row = { s:s, by: reporterName(), at: new Date().toISOString(), note: prev.note || "" };
+    state.status[id] = row;
+    state.dirty[id] = row;
+    persistLocal();
+    render();
+    saveRemote().then(function(){ toast(t("saved")); });
+  }
+  function setNote(id, note){
+    var prev = itemStatus(id);
+    var row = { s: prev.s || "todo", by: reporterName(), at: new Date().toISOString(), note: note };
+    state.status[id] = row;
+    state.dirty[id] = row;
+    persistLocal();
+    saveRemote();
+  }
+  function scheduleSync(){
+    clearTimeout(syncTimer);
+    syncTimer = setTimeout(function(){
+      if (document.hidden){ scheduleSync(); return; }
+      pullRemote(true).then(scheduleSync);
+    }, syncBackoffMs);
+  }
+
+  document.getElementById("langEs").addEventListener("click", function(){ state.lang = "es"; localStorage.setItem(langKey, "es"); render(); });
+  document.getElementById("langRu").addEventListener("click", function(){ state.lang = "ru"; localStorage.setItem(langKey, "ru"); render(); });
+  document.getElementById("reporterInput").addEventListener("input", function(e){
+    state.reporter = e.target.value;
+    try { localStorage.setItem(reporterKey, state.reporter); } catch(err){}
+  });
+  document.getElementById("statusPills").addEventListener("click", function(e){
+    var btn = e.target.closest("[data-st]");
+    if (!btn) return;
+    state.filterSt = btn.getAttribute("data-st");
+    render();
+  });
+  document.getElementById("filterSec").addEventListener("change", function(e){ state.filterSec = e.target.value; render(); });
+  document.getElementById("filterPri").addEventListener("change", function(e){ state.filterPri = e.target.value; render(); });
+  document.getElementById("filterSearch").addEventListener("input", function(e){ state.filterSearch = e.target.value; render(); });
+  document.getElementById("btnPending").addEventListener("click", function(){ state.onlyPending = !state.onlyPending; render(); });
+  document.getElementById("btnToggleSecs").addEventListener("click", function(){
+    state.secsOpen = !state.secsOpen;
+    document.querySelectorAll("details.sec").forEach(function(el){ el.open = state.secsOpen; });
+    chrome();
+  });
+  document.getElementById("list").addEventListener("click", function(e){
+    var stBtn = e.target.closest(".st-btn");
+    if (stBtn){
+      var row = stBtn.closest(".row");
+      setStatus(row.getAttribute("data-id"), stBtn.getAttribute("data-s"));
+      return;
+    }
+    var q = e.target.closest(".q");
+    if (q){
+      q.closest(".row").classList.toggle("open");
+      if (state.lang === "ru") applyContentTranslations();
+    }
+  });
+  document.getElementById("list").addEventListener("input", function(e){
+    var inp = e.target.closest(".note-input");
+    if (!inp) return;
+    var id = inp.getAttribute("data-note-id");
+    clearTimeout(noteTimers[id]);
+    noteTimers[id] = setTimeout(function(){ setNote(id, inp.value); }, 700);
+  });
+
+  state.lang = localStorage.getItem(langKey) === "ru" ? "ru" : "es";
+  state.reporter = localStorage.getItem(reporterKey) || "";
+  document.getElementById("reporterInput").value = state.reporter;
+  loadLocal();
+  render();
+  pullRemote(false).then(scheduleSync);
+})();
+</script>
+</body>
+</html>
