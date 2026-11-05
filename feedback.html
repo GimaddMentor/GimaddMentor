@@ -215,8 +215,8 @@
   .comment p{margin:0;font-size:13.5px;line-height:1.4;white-space:pre-wrap;}
   .comment img{max-width:100%;border-radius:8px;margin-top:8px;border:1px solid var(--border);}
   .comment video{max-height:240px;margin-top:8px;border:1px solid var(--border);}
-  .comment-form{display:flex;gap:8px;align-items:center;}
-  .comment-form input{flex:1;border:1px solid var(--border);background:var(--surface-soft);color:var(--ink);border-radius:9px;padding:9px 11px;font-size:13.5px;font-family:inherit;}
+  .comment-form{display:flex;gap:8px;align-items:flex-end;}
+  .comment-form input,.comment-form textarea{flex:1;border:1px solid var(--border);background:var(--surface-soft);color:var(--ink);border-radius:9px;padding:9px 11px;font-size:13.5px;font-family:inherit;resize:vertical;min-height:40px;}
   .comment-preview{max-height:72px;border-radius:8px;border:1px solid var(--border);}
   .comment-preview-video{max-height:120px;margin-top:8px;border:1px solid var(--border);}
   .modal-foot{display:flex;gap:8px;padding:14px 20px;border-top:1px solid var(--border);align-items:center;}
@@ -361,6 +361,8 @@
       deleteYes: "Sí, eliminar",
       needTitle: "Ponle un título al hallazgo.",
       saved: "Hallazgo guardado.",
+      commentSaved: "Comentario guardado.",
+      noteSaved: "Nota guardada.",
       shotSaved: "Captura actualizada.",
       addShot: "Añadir o reemplazar captura",
       deleted: "Hallazgo eliminado.",
@@ -448,6 +450,8 @@
       deleteYes: "Да, удалить",
       needTitle: "Добавь заголовок.",
       saved: "Запись сохранена.",
+      commentSaved: "Комментарий сохранён.",
+      noteSaved: "Заметка сохранена.",
       shotSaved: "Скриншот обновлён.",
       addShot: "Добавить или заменить скриншот",
       deleted: "Запись удалена.",
@@ -512,6 +516,7 @@
     draft: null,
     commentImage: null,
     commentVideo: null,
+    commentDrafts: {},
     translating: false
   };
 
@@ -706,6 +711,7 @@
     delete copy._full;
     delete copy._pack;
     delete copy._loadingShot;
+    delete copy._descSaved;
     delete copy.screenshotFull;
     if (safeHostedImg(copy.screenshotUrl)) copy.hasRemoteShot = false;
     else if (hadFull) copy.hasRemoteShot = true;
@@ -799,6 +805,28 @@
       delete copy.screenshot;
       copy.hasRemoteShot = true;
       rows[idx] = copy;
+      n++;
+    }
+    n = 0;
+    while (JSON.stringify({items: rows}).length > MAX_PACK && n < 40){
+      var tIdx = -1;
+      var cIdx = -1;
+      for (var r = rows.length - 1; r >= 0; r--){
+        var comments = (rows[r] && rows[r].comments) || [];
+        for (var c = comments.length - 1; c >= 0; c--){
+          if (comments[c] && comments[c].image){ tIdx = r; cIdx = c; break; }
+        }
+        if (tIdx !== -1) break;
+      }
+      if (tIdx === -1) break;
+      var next = Object.assign({}, rows[tIdx]);
+      next.comments = (next.comments || []).map(function(com, j){
+        if (j !== cIdx) return com;
+        var stripped = Object.assign({}, com);
+        delete stripped.image;
+        return stripped;
+      });
+      rows[tIdx] = next;
       n++;
     }
     return rows;
@@ -1263,14 +1291,12 @@
       var prev = idx > -1 ? state.items[idx] : null;
       var oldPack = current._pack;
       if (idx > -1) state.items[idx] = merged;
-      if (patch.screenshot || patch.screenshotFull || patch.screenshotUrl){
-        var packedSize = JSON.stringify(packPayload(merged._pack)).length;
-        if (packedSize > MAX_PACK){
-          merged._pack = null;
-          if (idx > -1) state.items[idx]._pack = null;
-          merged._pack = allocPackFor(merged);
-          if (idx > -1) state.items[idx]._pack = merged._pack;
-        }
+      var packedSize = JSON.stringify(packPayload(merged._pack)).length;
+      if (packedSize > MAX_PACK){
+        merged._pack = null;
+        if (idx > -1) state.items[idx]._pack = null;
+        merged._pack = allocPackFor(merged);
+        if (idx > -1) state.items[idx]._pack = merged._pack;
       }
       var writes = [];
       if (patch.screenshotUrl){
@@ -1303,6 +1329,8 @@
         console.error(err);
         if (idx > -1 && prev) state.items[idx] = prev;
         showToast(isQuotaError(err) ? t("saveFailLimit") : t("saveFail"));
+        render();
+        throw err;
       });
     };
     store.remove = function(id){
@@ -1781,7 +1809,7 @@
         + '<div class="modal-head"><span class="chip chip-' + escapeHtml(it.priority||"media") + '">' + escapeHtml(priLabel(it.priority)) + '</span><h2 data-i18n-text="' + escapeHtml(it.title||"") + '">' + escapeHtml(it.title||"") + '</h2><button class="close-x" data-close="detail">✕</button></div>'
         + '<div class="modal-body">'
           + '<div class="field"><label>' + escapeHtml(t("fieldModule")) + "</label><div>" + escapeHtml(moduleLabel(it.module)) + "</div></div>"
-          + (it.description ? '<div class="field"><label>' + escapeHtml(t("fieldDesc")) + '</label><p style="margin:0;font-size:14px;line-height:1.5;" data-i18n-text="' + escapeHtml(it.description) + '">' + escapeHtml(it.description) + "</p></div>" : "")
+          + '<div class="field"><label>' + escapeHtml(t("fieldDesc")) + '</label><textarea id="detailDesc" rows="3" placeholder="' + escapeHtml(t("descPh")) + '">' + escapeHtml(it.description || "") + "</textarea></div>"
           + '<div class="field"><label>' + escapeHtml(t("addShot")) + "</label>"
             + (safeImg(bestShot(it)) ? imgHtml(bestShot(it), "zoomable", ' style="width:100%;border-radius:10px;border:1px solid var(--border);margin-bottom:10px;"') : "")
             + dropzoneHtml(null, null, {id:"detailDropzone", inputId:"detailFileInput", hintKey:"dropReplace"})
@@ -1790,7 +1818,7 @@
           + '<div class="field"><label>' + escapeHtml(t("status")) + '</label><div class="status-row">' + statusBtns + "</div></div>"
           + '<div class="field"><label>' + escapeHtml(t("comments")) + '</label><div class="comments">' + comments + "</div>"
             + '<div class="comment-form" style="margin-top:8px;">'
-              + '<input type="text" id="commentInput" placeholder="' + escapeHtml(t("commentPh")) + '" maxlength="600">'
+              + '<textarea id="commentInput" rows="2" placeholder="' + escapeHtml(t("commentPh")) + '" maxlength="600">' + escapeHtml(((state.commentDrafts[it.id] || {}).text) || "") + "</textarea>"
               + '<button class="btn btn-ghost btn-icon" id="attachComment" title="' + escapeHtml(t("attachImage")) + '">' + camIcon() + "</button>"
               + '<button class="btn btn-ghost btn-icon" id="attachCommentVideo" title="' + escapeHtml(t("attachVideo")) + '">' + videoIcon() + "</button>"
               + '<input type="file" accept="image/*" id="commentFile" hidden>'
@@ -1839,6 +1867,16 @@
     showToast(t("translating"));
   }
 
+  function rememberCommentDraft(){
+    if (!state.openId) return;
+    var input = document.getElementById("commentInput");
+    var cur = state.commentDrafts[state.openId] || {text: "", image: null, video: null};
+    if (input) cur.text = input.value;
+    cur.image = state.commentImage;
+    cur.video = state.commentVideo;
+    state.commentDrafts[state.openId] = cur;
+  }
+
   function snapshotDraft(){
     if (state.newOpen && state.draft){
       var tEl = document.getElementById("draftTitle");
@@ -1850,6 +1888,79 @@
       if (pEl) state.draft.priority = pEl.value;
       if (dEl) state.draft.description = dEl.value;
     }
+    if (state.openId){
+      var descEl = document.getElementById("detailDesc");
+      if (descEl){
+        var openItem = state.items.filter(function(i){ return sameId(i.id, state.openId); })[0];
+        if (openItem) openItem.description = descEl.value;
+      }
+      rememberCommentDraft();
+    }
+  }
+
+  function saveDetailDesc(id){
+    if (!id) return;
+    var el = document.getElementById("detailDesc");
+    var it = state.items.filter(function(i){ return sameId(i.id, id); })[0];
+    if (!it) return;
+    var text = (el ? el.value : (it.description || "")).trim();
+    var saved = String(it._descSaved != null ? it._descSaved : (it.description || "")).trim();
+    if (saved === text) return;
+    it._descSaved = text;
+    Promise.resolve(store.update(id, {description: text})).then(function(){
+      var fresh = state.items.filter(function(i){ return sameId(i.id, id); })[0];
+      if (fresh) fresh._descSaved = text;
+      showToast(t("noteSaved"));
+    }).catch(function(){
+      var fresh = state.items.filter(function(i){ return sameId(i.id, id); })[0];
+      if (fresh) fresh._descSaved = saved;
+    });
+  }
+
+  function submitNewDraft(){
+    snapshotDraft();
+    var titleEl = document.getElementById("draftTitle");
+    var title = ((titleEl && titleEl.value) || (state.draft && state.draft.title) || "").trim();
+    if (!title){
+      if (titleEl) titleEl.focus();
+      showToast(t("needTitle"));
+      return false;
+    }
+    var payload = {
+      title: title,
+      module: (document.getElementById("draftModule") || {}).value || (state.draft && state.draft.module) || "other",
+      priority: (document.getElementById("draftPriority") || {}).value || (state.draft && state.draft.priority) || "media",
+      description: ((document.getElementById("draftDesc") || {}).value || (state.draft && state.draft.description) || "").trim(),
+      screenshotFull: state.draft && state.draft.screenshotUrl ? null : ((state.draft && state.draft.screenshotFull) || null),
+      screenshotUrl: (state.draft && state.draft.screenshotUrl) || null,
+      screenshot: state.draft && state.draft.screenshot,
+      video: (state.draft && state.draft.video) || null,
+      status: "pendiente",
+      reporter: getReporter()
+    };
+    state.newOpen = false;
+    state.draft = null;
+    render();
+    Promise.resolve(store.add(payload)).then(function(){ showToast(t("saved")); }).catch(function(){});
+    return true;
+  }
+
+  function closeNew(){
+    state.newOpen = false;
+    state.draft = null;
+    renderModal();
+  }
+
+  function closeDetail(){
+    var id = state.openId;
+    snapshotDraft();
+    saveDetailDesc(id);
+    sendCommentFor(id);
+    state.openId = null;
+    state.confirmDeleteId = null;
+    state.commentImage = null;
+    state.commentVideo = null;
+    renderModal();
   }
 
   document.getElementById("reporterInput").addEventListener("input", function(e){
@@ -1866,10 +1977,12 @@
     if (!id) return;
     state.openId = id;
     state.confirmDeleteId = null;
-    state.commentImage = null;
-    state.commentVideo = null;
-    renderModal();
+    var draft = state.commentDrafts[id] || {};
+    state.commentImage = draft.image || null;
+    state.commentVideo = draft.video || null;
     var it = state.items.filter(function(i){ return sameId(i.id, id); })[0];
+    if (it && it._descSaved == null) it._descSaved = String(it.description || "");
+    renderModal();
     if (!it) return;
     var needHydrate = !it._full;
     var needShot = !!(it.hasRemoteShot && !it.screenshotFull && !safeHostedImg(it.screenshotUrl));
@@ -1912,42 +2025,25 @@
     var closeBtn = closestFromEvent(e, "[data-close]");
     if (closeBtn){
       var which = closeBtn.getAttribute("data-close");
-      if (which === "new") { state.newOpen = false; state.draft = null; }
-      if (which === "detail") { state.openId = null; state.confirmDeleteId = null; state.commentImage = null; state.commentVideo = null; }
-      renderModal();
+      if (which === "new") closeNew();
+      if (which === "detail") closeDetail();
       return;
     }
     var overlay = closestFromEvent(e, "[data-close-overlay]");
     if (overlay && e.target === overlay){
       var w = overlay.getAttribute("data-close-overlay");
-      if (w === "new") { state.newOpen = false; state.draft = null; }
-      if (w === "detail") { state.openId = null; state.confirmDeleteId = null; state.commentImage = null; state.commentVideo = null; }
-      renderModal();
+      if (w === "new") closeNew();
+      if (w === "detail") closeDetail();
       return;
     }
     if (e.target.id === "saveDraft"){
-      var titleEl = document.getElementById("draftTitle");
-      var title = titleEl.value.trim();
-      if (!title){ titleEl.focus(); showToast(t("needTitle")); return; }
-      var payload = {
-        title: title,
-        module: document.getElementById("draftModule").value,
-        priority: document.getElementById("draftPriority").value,
-        description: document.getElementById("draftDesc").value.trim(),
-        screenshotFull: state.draft.screenshotUrl ? null : (state.draft.screenshotFull || null),
-        screenshotUrl: state.draft.screenshotUrl || null,
-        screenshot: state.draft.screenshot,
-        video: state.draft.video || null,
-        status: "pendiente",
-        reporter: getReporter()
-      };
-      state.newOpen = false; state.draft = null;
-      render();
-      Promise.resolve(store.add(payload)).then(function(){ showToast(t("saved")); }).catch(function(){});
+      submitNewDraft();
       return;
     }
     var statusBtn = closestFromEvent(e, "[data-set-status]");
     if (statusBtn && state.openId){
+      snapshotDraft();
+      saveDetailDesc(state.openId);
       var nextStatus = statusBtn.getAttribute("data-set-status");
       if (nextStatus === "verificado"){
         var verifiedId = state.openId;
@@ -1959,7 +2055,7 @@
         showToast(t("verifiedGone"));
         return;
       }
-      store.update(state.openId, {status: nextStatus});
+      Promise.resolve(store.update(state.openId, {status: nextStatus})).catch(function(){});
       return;
     }
     if (e.target.id === "sendComment" && state.openId){ sendCommentFor(state.openId); return; }
@@ -1973,7 +2069,7 @@
       if (vf) vf.click();
       return;
     }
-    if (e.target.id === "askDelete"){ state.confirmDeleteId = state.openId; renderModal(); return; }
+    if (e.target.id === "askDelete"){ snapshotDraft(); saveDetailDesc(state.openId); state.confirmDeleteId = state.openId; renderModal(); return; }
     if (e.target.id === "confirmDeleteNo"){ state.confirmDeleteId = null; renderModal(); return; }
     if (e.target.id === "confirmDeleteYes" && state.openId){
       store.remove(state.openId);
@@ -1994,29 +2090,50 @@
   });
 
   document.addEventListener("keydown", function(e){
-    if (e.key === "Enter" && document.activeElement && document.activeElement.id === "commentInput" && state.openId){
+    if (e.key === "Enter" && !e.shiftKey && document.activeElement && document.activeElement.id === "commentInput" && state.openId){
+      e.preventDefault();
       sendCommentFor(state.openId);
     }
     if (e.key === "Escape"){
       if (isLightboxOpen()){ closeLightbox(); return; }
-      if (state.newOpen){ state.newOpen = false; state.draft = null; renderModal(); }
-      else if (state.openId){ state.openId = null; state.confirmDeleteId = null; state.commentImage = null; state.commentVideo = null; renderModal(); }
+      if (state.newOpen) closeNew();
+      else if (state.openId) closeDetail();
     }
   });
 
+  document.addEventListener("input", function(e){
+    if (e.target && e.target.id === "commentInput") rememberCommentDraft();
+  });
+
+  document.addEventListener("focusout", function(e){
+    if (e.target && e.target.id === "detailDesc" && state.openId) saveDetailDesc(state.openId);
+  });
+
   function sendCommentFor(id){
-    var input = document.getElementById("commentInput");
-    var text = (input && input.value || "").trim();
-    var image = state.commentImage;
-    var video = state.commentVideo;
-    if (!text && !image && !video) return;
+    if (!id) return Promise.resolve();
+    rememberCommentDraft();
+    var draft = state.commentDrafts[id] || {};
+    var text = String(draft.text || "").trim();
+    var image = draft.image || state.commentImage;
+    var video = draft.video || state.commentVideo;
+    if (!text && !image && !video) return Promise.resolve();
     var it = state.items.filter(function(i){ return sameId(i.id, id); })[0];
     var comments = (it && it.comments || []).slice();
     comments.push({author: getReporter(), text: text, at: new Date().toISOString(), image: image || null, video: video || null});
+    var pending = {text: draft.text || "", image: image || null, video: video || null};
+    delete state.commentDrafts[id];
     state.commentImage = null;
     state.commentVideo = null;
-    store.update(id, {comments: comments});
+    var input = document.getElementById("commentInput");
     if (input) input.value = "";
+    return Promise.resolve(store.update(id, {comments: comments})).then(function(){
+      showToast(t("commentSaved"));
+    }).catch(function(){
+      state.commentDrafts[id] = pending;
+      state.commentImage = pending.image;
+      state.commentVideo = pending.video;
+      if (sameId(state.openId, id)) renderModal();
+    });
   }
 
   function bindDropzone(zoneId, inputId, target){
@@ -2096,8 +2213,9 @@
         return;
       }
       if (target === "detail" && state.openId){
-        store.update(state.openId, {video: url});
-        showToast(t("saved"));
+        Promise.resolve(store.update(state.openId, {video: url})).then(function(){
+          showToast(t("saved"));
+        }).catch(function(){});
         return;
       }
       if (state.draft) state.draft.video = url;
@@ -2111,8 +2229,9 @@
 
   function applyFindingShot(target, shot){
     if (target === "detail" && state.openId){
-      store.update(state.openId, shot);
-      showToast(t("shotSaved"));
+      Promise.resolve(store.update(state.openId, shot)).then(function(){
+        showToast(t("shotSaved"));
+      }).catch(function(){});
       return;
     }
     if (!state.draft) return;
