@@ -364,6 +364,7 @@
       saved: "Hallazgo guardado.",
       commentSaved: "Comentario guardado.",
       noteSaved: "Nota guardada.",
+      moduleSaved: "Módulo actualizado.",
       shotSaved: "Captura actualizada.",
       addShot: "Añadir o reemplazar captura",
       deleted: "Hallazgo eliminado.",
@@ -453,6 +454,7 @@
       saved: "Запись сохранена.",
       commentSaved: "Комментарий сохранён.",
       noteSaved: "Заметка сохранена.",
+      moduleSaved: "Модуль обновлён.",
       shotSaved: "Скриншот обновлён.",
       addShot: "Добавить или заменить скриншот",
       deleted: "Запись удалена.",
@@ -1823,12 +1825,19 @@
     return '<div class="drop" id="' + zoneId + '" tabindex="0">' + inner + "</div>";
   }
 
+  function moduleOptionsHtml(selected){
+    var sel = selected || "other";
+    var ids = MODULE_IDS.slice();
+    if (sel && ids.indexOf(sel) === -1) ids.push(sel);
+    return ids.map(function(id){
+      return '<option value="' + escapeHtml(id) + '"' + (id===sel?" selected":"") + ">" + escapeHtml(moduleLabel(id)) + "</option>";
+    }).join("");
+  }
+
   function newModalHtml(){
     if (!state.newOpen) return "";
     var d = state.draft;
-    var modOpts = MODULE_IDS.map(function(id){
-      return '<option value="' + id + '"' + (id===d.module?" selected":"") + ">" + escapeHtml(moduleLabel(id)) + "</option>";
-    }).join("");
+    var modOpts = moduleOptionsHtml(d.module);
     var prOpts = PRIORITIES.map(function(id){
       return '<option value="' + id + '"' + (id===d.priority?" selected":"") + ">" + escapeHtml(priLabel(id)) + "</option>";
     }).join("");
@@ -1882,7 +1891,7 @@
       + '<div class="modal" role="dialog" aria-modal="true">'
         + '<div class="modal-head"><span class="chip chip-' + escapeHtml(it.priority||"media") + '">' + escapeHtml(priLabel(it.priority)) + '</span><h2 data-i18n-text="' + escapeHtml(it.title||"") + '">' + escapeHtml(it.title||"") + '</h2><button class="close-x" data-close="detail">✕</button></div>'
         + '<div class="modal-body">'
-          + '<div class="field"><label>' + escapeHtml(t("fieldModule")) + "</label><div>" + escapeHtml(moduleLabel(it.module)) + "</div></div>"
+          + '<div class="field"><label>' + escapeHtml(t("fieldModule")) + "</label><select id=\"detailModule\">" + moduleOptionsHtml(it.module) + "</select></div>"
           + '<div class="field"><label>' + escapeHtml(t("fieldDesc")) + '</label><textarea id="detailDesc" rows="3" placeholder="' + escapeHtml(t("descPh")) + '">' + escapeHtml(it.description || "") + "</textarea></div>"
           + '<div class="field"><label>' + escapeHtml(t("addShot")) + "</label>"
             + (safeImg(bestShot(it)) ? imgHtml(bestShot(it), "zoomable", ' style="width:100%;border-radius:10px;border:1px solid var(--border);margin-bottom:10px;"') : "")
@@ -1963,13 +1972,26 @@
       if (dEl) state.draft.description = dEl.value;
     }
     if (state.openId){
+      var openItem = state.items.filter(function(i){ return sameId(i.id, state.openId); })[0];
       var descEl = document.getElementById("detailDesc");
-      if (descEl){
-        var openItem = state.items.filter(function(i){ return sameId(i.id, state.openId); })[0];
-        if (openItem) openItem.description = descEl.value;
-      }
+      var modEl = document.getElementById("detailModule");
+      if (openItem && descEl) openItem.description = descEl.value;
+      if (openItem && modEl) openItem.module = modEl.value;
       rememberCommentDraft();
     }
+  }
+
+  function saveDetailModule(id){
+    if (!id) return;
+    var el = document.getElementById("detailModule");
+    var it = state.items.filter(function(i){ return sameId(i.id, id); })[0];
+    if (!it) return;
+    var next = (el && el.value) || it.module || "other";
+    if (MODULE_IDS.indexOf(next) === -1 && next !== it.module) next = "other";
+    if (String(it.module || "") === next) return;
+    Promise.resolve(store.update(id, {module: next})).then(function(){
+      showToast(t("moduleSaved"));
+    }).catch(function(){});
   }
 
   function saveDetailDesc(id){
@@ -2027,6 +2049,7 @@
 
   function closeDetail(){
     var id = state.openId;
+    saveDetailModule(id);
     snapshotDraft();
     saveDetailDesc(id);
     sendCommentFor(id);
@@ -2130,6 +2153,7 @@
       }
       snapshotDraft();
       saveDetailDesc(state.openId);
+      saveDetailModule(state.openId);
       Promise.resolve(store.update(state.openId, {status: nextStatus})).catch(function(){});
       return;
     }
@@ -2144,7 +2168,7 @@
       if (vf) vf.click();
       return;
     }
-    if (e.target.id === "askDelete"){ snapshotDraft(); saveDetailDesc(state.openId); state.confirmDeleteId = state.openId; renderModal(); return; }
+    if (e.target.id === "askDelete"){ snapshotDraft(); saveDetailDesc(state.openId); saveDetailModule(state.openId); state.confirmDeleteId = state.openId; renderModal(); return; }
     if (e.target.id === "confirmDeleteNo"){ state.confirmDeleteId = null; renderModal(); return; }
     if (e.target.id === "confirmDeleteYes" && state.openId){
       store.remove(state.openId);
@@ -2182,6 +2206,10 @@
 
   document.addEventListener("focusout", function(e){
     if (e.target && e.target.id === "detailDesc" && state.openId) saveDetailDesc(state.openId);
+  });
+
+  document.addEventListener("change", function(e){
+    if (e.target && e.target.id === "detailModule" && state.openId) saveDetailModule(state.openId);
   });
 
   function sendCommentFor(id){
